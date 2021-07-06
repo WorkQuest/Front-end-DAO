@@ -1,5 +1,89 @@
 [
   {
+    "name": "about",
+    "path": "/about",
+    "component": "/Users/user/Documents/GitHub/Front-end-DAO/pages/about.vue",
+    "chunkName": "pages/about",
+    "_name": "_56b62c14"
+  },
+  {
+    "name": "confirm",
+    "path": "/confirm",
+    "component": "/Users/user/Documents/GitHub/Front-end-DAO/pages/confirm.vue",
+    "chunkName": "pages/confirm",
+    "_name": "_53a68b69"
+  },
+  {
+    "name": "my",
+    "path": "/my",
+    "component": "/Users/user/Documents/GitHub/Front-end-DAO/pages/my.vue",
+    "chunkName": "pages/my",
+    "_name": "_64d21cda"
+  },
+  {
+    "name": "profile",
+    "path": "/profile",
+    "component": "/Users/user/Documents/GitHub/Front-end-DAO/pages/profile.vue",
+    "chunkName": "pages/profile",
+    "_name": "_49b691d2"
+  },
+  {
+    "name": "proposals",
+    "path": "/proposals",
+    "component": "/Users/user/Documents/GitHub/Front-end-DAO/pages/proposals/index.vue",
+    "chunkName": "pages/proposals/index",
+    "_name": "_d0b6e2a6"
+  },
+  {
+    "name": "role",
+    "path": "/role",
+    "component": "/Users/user/Documents/GitHub/Front-end-DAO/pages/role.vue",
+    "chunkName": "pages/role",
+    "_name": "_22c5579d"
+  },
+  {
+    "name": "settings",
+    "path": "/settings",
+    "component": "/Users/user/Documents/GitHub/Front-end-DAO/pages/settings.vue",
+    "chunkName": "pages/settings",
+    "_name": "_72bad56c"
+  },
+  {
+    "name": "show-profile",
+    "path": "/show-profile",
+    "component": "/Users/user/Documents/GitHub/Front-end-DAO/pages/show-profile.vue",
+    "chunkName": "pages/show-profile",
+    "_name": "_5c9c2d00"
+  },
+  {
+    "name": "sign-in",
+    "path": "/sign-in",
+    "component": "/Users/user/Documents/GitHub/Front-end-DAO/pages/sign-in.vue",
+    "chunkName": "pages/sign-in",
+    "_name": "_b7bff544"
+  },
+  {
+    "name": "sign-up",
+    "path": "/sign-up",
+    "component": "/Users/user/Documents/GitHub/Front-end-DAO/pages/sign-up.vue",
+    "chunkName": "pages/sign-up",
+    "_name": "_8e934858"
+  },
+  {
+    "name": "wallet",
+    "path": "/wallet",
+    "component": "/Users/user/Documents/GitHub/Front-end-DAO/pages/wallet.vue",
+    "chunkName": "pages/wallet",
+    "_name": "_006909e0"
+  },
+  {
+    "name": "proposals-id",
+    "path": "/proposals/:id",
+    "component": "/Users/user/Documents/GitHub/Front-end-DAO/pages/proposals/_id/index.vue",
+    "chunkName": "pages/proposals/_id/index",
+    "_name": "_770c8b18"
+  },
+  {
     "name": "index",
     "path": "/",
     "component": "/Users/user/Documents/GitHub/Front-end-DAO/pages/index.vue",

@@ -1,42 +1,18 @@
 {
-  "CtmModal": {
-    "description": "Auto imported from components/CtmModal/index.vue"
-  },
   "ScreenQuests": {
     "description": "Auto imported from components/screen/quests.vue"
   },
-  "AppCardsQuestCard": {
-    "description": "Auto imported from components/app/Cards/QuestCard.vue"
-  },
-  "AppHeader": {
-    "description": "Auto imported from components/app/Header/index.vue"
-  },
-  "AppPanelsContact": {
-    "description": "Auto imported from components/app/Panels/Contact.vue"
-  },
-  "AppPanelsContactOther": {
-    "description": "Auto imported from components/app/Panels/ContactOther.vue"
-  },
-  "AppPanelsQuestPanel": {
-    "description": "Auto imported from components/app/Panels/QuestPanel.vue"
-  },
-  "AppPanelsSocial": {
-    "description": "Auto imported from components/app/Panels/Social.vue"
-  },
-  "AppPanelsUserStatistic": {
-    "description": "Auto imported from components/app/Panels/UserStatistic.vue"
-  },
-  "AppInfo": {
-    "description": "Auto imported from components/app/Info/index.vue"
+  "CtmModal": {
+    "description": "Auto imported from components/CtmModal/index.vue"
   },
   "CtmModalCtmModalAddCard": {
     "description": "Auto imported from components/CtmModal/CtmModalAddCard/index.vue"
   },
-  "CtmModalCtmModalAddCase": {
-    "description": "Auto imported from components/CtmModal/CtmModalAddCase/index.vue"
-  },
   "CtmModalCtmModalAddLiquidity": {
     "description": "Auto imported from components/CtmModal/CtmModalAddLiquidity/index.vue"
+  },
+  "CtmModalCtmModalAddCase": {
+    "description": "Auto imported from components/CtmModal/CtmModalAddCase/index.vue"
   },
   "CtmModalCtmModalApplyForAPension": {
     "description": "Auto imported from components/CtmModal/CtmModalApplyForAPension/index.vue"
@@ -86,11 +62,11 @@
   "CtmModalCtmModalMessageSend": {
     "description": "Auto imported from components/CtmModal/CtmModalMessageSend/index.vue"
   },
-  "CtmModalCtmModalOpenADeposit": {
-    "description": "Auto imported from components/CtmModal/CtmModalOpenADeposit/index.vue"
-  },
   "CtmModalCtmModalNotice": {
     "description": "Auto imported from components/CtmModal/CtmModalNotice/index.vue"
+  },
+  "CtmModalCtmModalOpenADeposit": {
+    "description": "Auto imported from components/CtmModal/CtmModalOpenADeposit/index.vue"
   },
   "CtmModalCtmModalOpenADispute": {
     "description": "Auto imported from components/CtmModal/CtmModalOpenADispute/index.vue"
@@ -116,17 +92,17 @@
   "CtmModalCtmModalRestore": {
     "description": "Auto imported from components/CtmModal/CtmModalRestore/index.vue"
   },
+  "CtmModalCtmModalReviewEmployer": {
+    "description": "Auto imported from components/CtmModal/CtmModalReviewEmployer/index.vue"
+  },
   "CtmModalCtmModalSendARequest": {
     "description": "Auto imported from components/CtmModal/CtmModalSendARequest/index.vue"
-  },
-  "CtmModalCtmModalStatus": {
-    "description": "Auto imported from components/CtmModal/CtmModalStatus/index.vue"
   },
   "CtmModalCtmModalSkills": {
     "description": "Auto imported from components/CtmModal/CtmModalSkills/index.vue"
   },
-  "CtmModalCtmModalReviewEmployer": {
-    "description": "Auto imported from components/CtmModal/CtmModalReviewEmployer/index.vue"
+  "CtmModalCtmModalStatus": {
+    "description": "Auto imported from components/CtmModal/CtmModalStatus/index.vue"
   },
   "CtmModalCtmModalThanksSend": {
     "description": "Auto imported from components/CtmModal/CtmModalThanksSend/index.vue"
@@ -143,11 +119,35 @@
   "CtmModalCtmModalWelcome": {
     "description": "Auto imported from components/CtmModal/CtmModalWelcome/index.vue"
   },
+  "CtmModalCtmModalWithdraw": {
+    "description": "Auto imported from components/CtmModal/CtmModalWithdraw/index.vue"
+  },
   "CtmModalCtmModalWithdrawAbout": {
     "description": "Auto imported from components/CtmModal/CtmModalWithdrawAbout/index.vue"
   },
-  "CtmModalCtmModalWithdraw": {
-    "description": "Auto imported from components/CtmModal/CtmModalWithdraw/index.vue"
+  "AppCardsQuestCard": {
+    "description": "Auto imported from components/app/Cards/QuestCard.vue"
+  },
+  "AppHeader": {
+    "description": "Auto imported from components/app/Header/index.vue"
+  },
+  "AppInfo": {
+    "description": "Auto imported from components/app/Info/index.vue"
+  },
+  "AppPanelsContact": {
+    "description": "Auto imported from components/app/Panels/Contact.vue"
+  },
+  "AppPanelsContactOther": {
+    "description": "Auto imported from components/app/Panels/ContactOther.vue"
+  },
+  "AppPanelsQuestPanel": {
+    "description": "Auto imported from components/app/Panels/QuestPanel.vue"
+  },
+  "AppPanelsSocial": {
+    "description": "Auto imported from components/app/Panels/Social.vue"
+  },
+  "AppPanelsUserStatistic": {
+    "description": "Auto imported from components/app/Panels/UserStatistic.vue"
   },
   "UiBaseButton": {
     "description": "Auto imported from components/ui/BaseButton/index.vue"

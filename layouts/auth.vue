@@ -91,7 +91,7 @@ export default {
     align-items: center;
   }
   &__right {
-    background:  url("/assets/img/app/auth_bg.svg") center center no-repeat;
+    background:  url("~assets/img/app/auth_bg.svg") center center no-repeat;
     background-size: cover;
     display: grid;
     grid-template-rows: auto 1fr;

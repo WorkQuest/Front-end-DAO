@@ -8,5 +8,5 @@ export default(context, inject) =>{
   Vue.component('GMapMarker', GMapMarker);
   Vue.component('GMapCircle', GMapCircle);
   Vue.component('GMapInfoWindow', GMapInfoWindow);
-  inject('GMaps', {apiKey: "AIzaSyD32Aorm6CU9xUIrUznzYyw2d_0NTqt3Zw", loaded: false, libraries: undefined})
+  inject('GMaps', {apiKey: undefined, loaded: false, libraries: undefined})
 }
