@@ -1,167 +1,84 @@
 <template>
   <div
-      ref="templateScroll"
-      class="primary"
+    ref="templateScroll"
+    class="primary"
   >
     <div
-        class="primary__template template"
+      class="primary__template template"
     >
       <div class="template__content">
         <div
-            class="template__header header"
+          class="template__header header"
         >
           <div class="header__body">
             <div class="header__left">
               <div
-                  class="header__logo"
+                class="header__logo"
               >
                 <img
-                    src="~assets/img/app/logo.svg"
-                    alt="WorkQuest"
+                  src="~assets/img/app/logo.svg"
+                  alt="WorkQuest"
                 >
                 <span class="header__text">WorkQuest</span>
               </div>
               <div
-                  v-if="userRole === 'employer'"
-                  class="header__links"
+                class="header__links"
               >
                 <nuxt-link
-                    to="/workers"
-                    class="header__link"
-                    :exact-active-class="'header__link_active'"
+                  to="/proposals/index"
+                  class="header__link"
+                  :exact-active-class="'header__link_active'"
                 >
-                  {{ $t('ui.workers') }}
+                  {{ $t('ui.proposals') }}
                 </nuxt-link>
                 <nuxt-link
-                    to="/my"
-                    class="header__link"
-                    :exact-active-class="'header__link_active'"
-                >
-                  {{ $t('quests.MyQuests') }}
-                </nuxt-link>
-                <nuxt-link
-                    to="/wallet"
-                    class="header__link"
-                    :exact-active-class="'header__link_active'"
+                  to="/wallet"
+                  class="header__link"
+                  :exact-active-class="'header__link_active'"
                 >
                   {{ $t('ui.wallet') }}
                 </nuxt-link>
-                <button
-                    class="header__link header__link_menu"
-                    :class="'header__link_active'"
-                >
-                  {{ $t('ui.profile.instruments') }}
-                  <span class="icon-caret_down" />
-                  <transition name="fade">
-                    <div
-                        class="menu"
-                    >
-                      <!--<div class="menu__items">
-                        <n-link
-                            v-for="item in additionalMenuLinks"
-                            :key="`item-${item.title}`"
-                            :to="item.path"
-                            tag="div"
-                            class="menu__item"
-                        >
-                          <div class="menu__top">
-                            <div class="menu__text menu__text_header">
-                              {{ item.title }}
-                            </div>
-                            <span class="icon-chevron_right" />
-                          </div>
-                          <div class="menu__bottom">
-                            <div class="menu__text menu__text_grey">
-                              <span>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing ...
-                              </span>
-                            </div>
-                          </div>
-                        </n-link>
-                      </div>-->
-                    </div>
-                  </transition>
-                </button>
-              </div>
-              <div
-                  v-if="userRole === 'worker'"
-                  class="header__links"
-              >
                 <nuxt-link
-                    to="/quests"
-                    class="header__link"
-                    :exact-active-class="'header__link_active'"
+                  to="/wallet"
+                  class="header__link"
+                  :exact-active-class="'header__link_active'"
                 >
-                  {{ $t('ui.quests') }}
+                  {{ $t('ui.investors') }}
                 </nuxt-link>
                 <nuxt-link
-                    to="/my"
-                    class="header__link"
-                    :exact-active-class="'header__link_active'"
+                  to="/wallet"
+                  class="header__link"
+                  :exact-active-class="'header__link_active'"
                 >
-                  {{ $t('ui.myQuests') }}
+                  {{ $t('ui.discussions') }}
                 </nuxt-link>
                 <nuxt-link
-                    to="/wallet"
-                    class="header__link"
-                    :exact-active-class="'header__link_active'"
+                  to="/wallet"
+                  class="header__link"
+                  :exact-active-class="'header__link_active'"
                 >
-                  {{ $t('ui.wallet') }}
+                  {{ $t('ui.KYC') }}
                 </nuxt-link>
-                <button
-                    class="header__link header__link_menu"
-                    :class="'header__link_active'"
-                >
-                  {{ $t('ui.profile.instruments') }}
-                  <span class="icon-caret_down" />
-                  <transition name="fade">
-                    <div
-                        class="menu"
-                    >
-                      <!--<div class="menu__items">
-                        <n-link
-                            v-for="item in additionalMenuLinks"
-                            :key="`item-${item.title}`"
-                            :to="item.path"
-                            tag="div"
-                            class="menu__item"
-                        >
-                          <div class="menu__top">
-                            <div class="menu__text menu__text_header">
-                              {{ item.title }}
-                            </div>
-                            <span class="icon-chevron_right" />
-                          </div>
-                          <div class="menu__bottom">
-                            <div class="menu__text menu__text_grey">
-                              <span>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing ...
-                              </span>
-                            </div>
-                          </div>
-                        </n-link>
-                      </div>-->
-                    </div>
-                  </transition>
-                </button>
               </div>
             </div>
             <div class="header__right">
               <button
-                  class="header__button header__button_locale"
+                class="header__button header__button_locale"
+                @click="showLocale()"
               >
                 {{ $t('ui.locals.en') }}
                 <span class="icon-caret_down" />
                 <transition name="fade">
                   <div
-                      class="locale"
+                    v-if="isShowLocale"
+                    class="locale"
                   >
                     <div class="locale__items">
                       <div class="locale__item">
                         <img
-                            src="/img/app/en.svg"
-                            alt="EN"
-                            class="locale__icon"
+                          src="/img/app/en.svg"
+                          alt="EN"
+                          class="locale__icon"
                         >
                         <div class="locale__text">
                           {{ $t('ui.locals.en') }}
@@ -169,9 +86,9 @@
                       </div>
                       <div class="locale__item">
                         <img
-                            src="/img/app/ru.svg"
-                            alt="RU"
-                            class="locale__icon"
+                          src="/img/app/ru.svg"
+                          alt="RU"
+                          class="locale__icon"
                         >
                         <div class="locale__text">
                           {{ $t('ui.locals.ru') }}
@@ -182,27 +99,33 @@
                 </transition>
               </button>
               <button
-                  class="header__button"
+                class="header__button"
+                @click="goToMessages()"
               >
                 <span class="icon-message" />
               </button>
               <button class="header__button header__button_notify">
                 <span
-                    class="icon-notification_outline_dot"
+                  v-if="notification"
+                  class="icon-notification_outline_dot"
+                  @click="showNotification()"
                 />
                 <span
-                    class="icon-notification_outline"
+                  v-else
+                  class="icon-notification_outline"
                 />
                 <transition name="fade">
                   <div
-                      class="notify"
+                    v-if="isShowNotify"
+                    class="notify"
                   >
                     <div class="notify__header">
                       <div class="notify__title">
                         {{ $t('ui.notifications.title') }}
                       </div>
                       <span
-                          class="icon-close_small"
+                        class="icon-close_small"
+                        @click="showNotification()"
                       />
                     </div>
                     <div class="notify__body">
@@ -213,8 +136,8 @@
                               <div class="notify__user">
                                 <div class="notify__avatar">
                                   <img
-                                      src="~assets/img/app/fakeavatarcomp.svg"
-                                      alt=""
+                                    src="~assets/img/app/fakeavatarcomp.svg"
+                                    alt=""
                                   >
                                 </div>
                                 <div class="notify__info">
@@ -251,8 +174,8 @@
                               <div class="notify__user">
                                 <div class="notify__avatar">
                                   <img
-                                      src="~assets/img/app/fakeavatar.svg"
-                                      alt=""
+                                    src="~assets/img/app/fakeavatar.svg"
+                                    alt=""
                                   >
                                 </div>
                                 <div class="notify__info">
@@ -287,42 +210,47 @@
               </button>
               <!-- Кнопка мобильного меню -->
               <div
-                  class="ctm-menu__toggle"
+                class="ctm-menu__toggle"
+                @click="toggleMobileMenu()"
               >
                 <button
-                    class="header__button header__button_menu"
+                  class="header__button header__button_menu"
                 >
                   <span
-                      class="icon-hamburger"
+                    v-if="!isMobileMenu"
+                    class="icon-hamburger"
                   />
                   <span
-                      class="icon-close_big"
+                    v-if="isMobileMenu"
+                    class="icon-close_big"
                   />
                 </button>
               </div>
               <button
-                  class="header__button header__button_profile"
+                class="header__button header__button_profile"
+                @click="showProfile()"
               >
                 <span class="icon-hamburger" />
                 <transition name="fade">
                   <div
-                      class="profile"
+                    v-if="isShowProfile"
+                    class="profile"
                   >
                     <div class="profile__header">
                       <div class="profile__avatar">
                         <img
-                            v-if="imageData"
-                            id="userAvatarThree"
-                            class="profile__img"
-                            :src="imageData"
-                            alt=""
+                          v-if="imageData"
+                          id="userAvatarThree"
+                          class="profile__img"
+                          :src="imageData"
+                          alt=""
                         >
                         <img
-                            v-if="!imageData"
-                            id="userAvatarTwo"
-                            class="profile__img"
-                            src="~/assets/img/app/avatar_empty.png"
-                            alt=""
+                          v-if="!imageData"
+                          id="userAvatarTwo"
+                          class="profile__img"
+                          src="~/assets/img/app/avatar_empty.png"
+                          alt=""
                         >
                       </div>
                       <div class="profile__info">
@@ -330,14 +258,14 @@
                           {{ userData.firstName }} {{ userData.lastName }}
                         </div>
                         <div
-                            v-if="userRole === 'employer'"
-                            class="profile__text profile__text_blue"
+                          v-if="userRole === 'employer'"
+                          class="profile__text profile__text_blue"
                         >
                           {{ $t('role.employer') }}
                         </div>
                         <div
-                            v-if="userRole === 'worker'"
-                            class="profile__text profile__text_green"
+                          v-if="userRole === 'worker'"
+                          class="profile__text profile__text_green"
                         >
                           {{ $t('role.worker') }}
                         </div>
@@ -345,17 +273,17 @@
                     </div>
                     <div class="profile__items">
                       <nuxt-link
-                          v-for="item in profileLinks"
-                          :key="`item-${item.title}`"
-                          tag="button"
-                          class="profile__item"
-                          :to="item.path"
+                        v-for="item in profileLinks"
+                        :key="`item-${item.title}`"
+                        tag="button"
+                        class="profile__item"
+                        :to="item.path"
                       >
                         {{ item.title }}
                       </nuxt-link>
                       <button
-                          class="profile__item profile__item_red"
-                          @click="logout()"
+                        class="profile__item profile__item_red"
+                        @click="logout()"
                       >
                         {{ $t('ui.profile.logout') }}
                       </button>
@@ -363,38 +291,45 @@
                   </div>
                 </transition>
               </button>
+              <base-btn
+                v-if="userRole === 'employer'"
+                class="header__btn"
+                @click="createNewQuest()"
+              >
+                {{ $t('layout.create') }}
+              </base-btn>
             </div>
           </div>
         </div>
         <div
-            :class="[{'ctm-open': isMobileMenu},
+          :class="[{'ctm-open': isMobileMenu},
                    {'ctm-open': isNotFlexContainer}]"
         >
           <!-- Меню -->
           <transition name="fade-fast">
             <div
-                class="ctm-menu"
-                :class="{'ctm-menu_opened': isMobileMenu}"
+              class="ctm-menu"
+              :class="{'ctm-menu_opened': isMobileMenu}"
             >
               <div class="ctm-menu__content">
                 <div
-                    v-if="isMobileMenu"
-                    class="user"
-                    @click="toggleUserDD()"
+                  v-if="isMobileMenu"
+                  class="user"
+                  @click="toggleUserDD()"
                 >
                   <div class="user__container">
                     <div class="user-container__avatar">
                       <img
-                          v-if="imageData"
-                          id="userAvatarOne"
-                          class="profile__img"
-                          :src="imageData"
+                        v-if="imageData"
+                        id="userAvatarOne"
+                        class="profile__img"
+                        :src="imageData"
                       >
                       <img
-                          v-if="!imageData"
-                          id="userAvatar"
-                          class="profile__img"
-                          src="~/assets/img/app/avatar_empty.png"
+                        v-if="!imageData"
+                        id="userAvatar"
+                        class="profile__img"
+                        src="~/assets/img/app/avatar_empty.png"
                       >
                     </div>
                     <div class="user-container__user">
@@ -402,14 +337,14 @@
                         {{ userData.firstName }} {{ userData.lastName }}
                       </div>
                       <div
-                          v-if="userRole === 'employer'"
-                          class="user__role"
+                        v-if="userRole === 'employer'"
+                        class="user__role"
                       >
                         {{ $t('role.employer') }}
                       </div>
                       <div
-                          v-if="userRole === 'worker'"
-                          class="user__role"
+                        v-if="userRole === 'worker'"
+                        class="user__role"
                       >
                         {{ $t('role.worker') }}
                       </div>
@@ -418,100 +353,51 @@
                   <div class="user-container__dropdown">
                     <div class="user__container">
                       <div
-                          class="user__dropdown"
+                        class="user__dropdown"
                       >
                         <span
-                            v-if="!isUserDDOpened"
-                            class="icon-caret_down"
+                          v-if="!isUserDDOpened"
+                          class="icon-caret_down"
                         />
                         <span
-                            v-if="isUserDDOpened"
-                            class="icon-caret_up"
+                          v-if="isUserDDOpened"
+                          class="icon-caret_up"
                         />
                       </div>
                     </div>
                   </div>
                 </div>
                 <div
-                    v-if="isUserDDOpened === true"
-                    class="user-dropdown__container"
+                  v-if="isUserDDOpened === true"
+                  class="user-dropdown__container"
                 >
                   <div
-                      v-for="(item, i) in userDDLinks"
-                      :key="i"
+                    v-for="(item, i) in userDDLinks"
+                    :key="i"
                   >
                     <div
-                        class="user-dropdown__link"
-                        @click="toRoute(item.link)"
+                      class="user-dropdown__link"
+                      @click="toRoute(item.link)"
                     >
                       {{ item.title }}
                     </div>
                   </div>
                 </div>
                 <div
-                    v-if="isMobileMenu"
-                    class="mobile__links"
+                  v-if="isMobileMenu"
+                  class="mobile__links"
                 >
                   <div
-                      v-for="(item, i) in mobileMenuLinks"
-                      :key="i"
+                    v-for="(item, i) in mobileMenuLinks"
+                    :key="i"
                   >
                     <div
-                        class="mobile__link"
-                        @click="toRoute(item.path)"
+                      class="mobile__link"
+                      @click="toRoute(item.path)"
                     >
                       {{ item.title }}
                     </div>
                   </div>
-                </div>
-                <div
-                    class="mobile-dropdown"
-                    @click="toggleInstrumentDD()"
-                >
-                  <div
-                      v-if="isMobileMenu"
-                      class="mobile-dropdown__btn"
-                  >
-                    <div class="mobile-dropdown__title">
-                      Instruments
-                    </div>
-                    <div class="mobile-dropdown__arrow">
-                      <span
-                          v-if="!isInstrumentDropdownOpened"
-                          class="icon-caret_down"
-                      />
-                      <span
-                          v-if="isInstrumentDropdownOpened"
-                          class="icon-caret_up"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div
-                    v-if="isInstrumentDropdownOpened"
-                    class="mobile-dropdown__container"
-                >
-                  <div
-                      v-for="(item, i) in instrumentDDLinks"
-                      :key="i"
-                  >
-                    <div
-                        v-if="isMobileMenu"
-                        class="instrument-dropdown__link"
-                        @click="toRoute(item.link)"
-                    >
-                      {{ item.title }}
-                    </div>
-                  </div>
-                </div>
-                <div class="ctm__actions">
-                  <base-btn
-                      v-if="userRole === 'employer'"
-                      class="ctm__btn"
-                      @click="createNewQuest()"
-                  >
-                    {{ $t('layout.create') }}
-                  </base-btn>
                 </div>
               </div>
             </div>
@@ -526,11 +412,11 @@
               <div class="footer__top">
                 <div class="footer__left">
                   <div
-                      class="footer__logo"
+                    class="footer__logo"
                   >
                     <img
-                        src="/img/app/logo_gray.svg"
-                        alt="Logo"
+                      src="/img/app/logo_gray.svg"
+                      alt="Logo"
                     >
                     <span>WorkQuest</span>
                   </div>
@@ -693,34 +579,6 @@ export default {
         {
           title: this.$t('ui.profile.settings'),
           path: '/settings',
-        },
-      ];
-    },
-    additionalMenuLinks() {
-      return [
-        {
-          title: this.$t('ui.menu.pension'),
-          path: '/pension',
-        },
-        {
-          title: this.$t('ui.menu.referral'),
-          path: '/referral',
-        },
-        {
-          title: this.$t('ui.menu.p2p'),
-          path: '/insuring',
-        },
-        {
-          title: this.$t('ui.menu.savings'),
-          path: '/savings',
-        },
-        {
-          title: this.$t('ui.menu.crediting'),
-          path: '/crediting',
-        },
-        {
-          title: this.$t('ui.menu.mining'),
-          path: '/mining',
         },
       ];
     },
@@ -1293,7 +1151,7 @@ export default {
   &__links {
     display: grid;
     align-items: center;
-    grid-template-columns: repeat(4, auto);
+    grid-template-columns: repeat(5, auto);
     grid-gap: 25px;
   }
   &__right {

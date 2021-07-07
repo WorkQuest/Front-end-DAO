@@ -384,6 +384,10 @@
   },
   "ui": {
     "workers": "Workers",
+    "proposals": "Proposals",
+    "investors": "Investors",
+    "discussions": "Discussions",
+    "KYC": "KYC",
     "wallet": "Wallet",
     "myQuests": "My quests",
     "quests": "Quests",
@@ -451,6 +455,11 @@
     "you": "You:",
     "invitedYou": "invited you to a quest",
     "writeYouMessage": "Write you message"
+  },
+  "proposals": {
+    "addProposals": "Add proposals",
+    "title": "Proposals",
+    "textBanner": "Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus dolor purus non enim"
   },
   "settings": {
     "description": "And you are beautiful",
