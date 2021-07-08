@@ -34,7 +34,7 @@
         >
           <template v-slot:left>
             <img
-              src="/assets/img/icons/user.svg"
+              src="~assets/img/icons/user.svg"
               alt=""
             >
           </template>
@@ -48,7 +48,7 @@
         >
           <template v-slot:left>
             <img
-              src="/assets/img/icons/user.svg"
+              src="~assets/img/icons/user.svg"
               alt=""
             >
           </template>
@@ -63,7 +63,7 @@
         >
           <template v-slot:left>
             <img
-              src="/assets/img/icons/email.svg"
+              src="~assets/img/icons/email.svg"
               alt=""
             >
           </template>
@@ -80,7 +80,7 @@
         >
           <template v-slot:left>
             <img
-              src="/assets/img/icons/password.svg"
+              src="~assets/img/icons/password.svg"
               alt=""
             >
           </template>
@@ -95,7 +95,7 @@
         >
           <template v-slot:left>
             <img
-              src="/assets/img/icons/password.svg"
+              src="~assets/img/icons/password.svg"
               alt=""
             >
           </template>

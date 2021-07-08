@@ -298,6 +298,9 @@ export default {
         display: none;
       }
     }
+    &__social {
+      justify-content: center;
+    }
   }
 }
 @include _575 {

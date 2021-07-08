@@ -2,29 +2,21 @@
   <div class="template">
     <div class="template__container">
       <div class="template__left">
-        <div
-          class="template__logo"
-          @click="toMain()"
-        >
-          <img
-            src="~assets/img/app/logo.svg"
-            alt="WorkQuest"
-          >
-          <span>{{ $t('signIn.workQuest') }}</span>
-        </div>
         <div class="template__content">
           <nuxt />
         </div>
       </div>
       <div class="template__right">
-        <div class="template__slogan">
-          <span>{{ $t('signIn.makingMoneyIsFast') }}</span>
-        </div>
-        <img
-          class="template__long"
-          src="~assets/img/app/logo_long.svg"
-          alt=""
+        <div
+          class="template__logo"
+          @click="toMain()"
         >
+          <img
+            src="~assets/img/app/logo_white.svg"
+            alt="WorkQuest"
+          >
+          <span>{{ $t('signIn.workQuest') }}</span>
+        </div>
       </div>
     </div>
     <transition name="fade">
@@ -64,12 +56,10 @@ export default {
   }
   &__left {
     display: grid;
-    grid-template-rows: 40px 1fr;
     max-width: 470px;
     width: 100%;
     justify-self: flex-end;
     margin-right: 130px;
-    padding-top: 21px;
   }
   &__logo {
     display: grid;
@@ -77,13 +67,15 @@ export default {
     grid-template-columns: 40px 1fr;
     grid-gap: 5px;
     cursor: pointer;
+    width: 170px;
+    padding: 10px 30%;
     span {
       font-family: 'Inter', sans-serif;
       font-style: normal;
       font-weight: bold;
       font-size: 23px;
       line-height: 130%;
-      color: $black700;
+      color: #ffffff;
     }
   }
   &__content {
@@ -91,7 +83,7 @@ export default {
     align-items: center;
   }
   &__right {
-    background:  url("~assets/img/app/auth_bg.svg") center center no-repeat;
+    background:  url("~assets/img/app/auth_proposals-bg.svg") center center no-repeat;
     background-size: cover;
     display: grid;
     grid-template-rows: auto 1fr;
@@ -130,7 +122,7 @@ export default {
     }
     &__container {
       grid-template-columns: 1fr;
-      grid-template-rows: 300px 1fr;
+      grid-template-rows: 400px 1fr;
     }
     &__slogan {
       font-size: 32px;
@@ -141,11 +133,22 @@ export default {
     }
     &__left {
       margin: 0;
-      grid-column: 1/3;
       max-width: initial;
-      grid-row: 2/3;
       justify-self: initial;
-      padding: 20px;
+      padding: 0px 10px;
+    }
+    &__logo {
+      padding: 10px 10px;
+    }
+  }
+}
+@include _575 {
+  .template {
+    &__container {
+      grid-template-rows: 300px 1fr;
+    }
+    &__left {
+      padding: 0px 10px 30px;
     }
   }
 }
