@@ -200,7 +200,7 @@ export async function setContext (app, context) {
       payload: context.payload,
       error: context.error,
       base: app.router.options.base,
-      env: {"BASE_URL":"https://app-ver1.workquest.co/api"}
+      env: {}
     }
     // Only set once
 

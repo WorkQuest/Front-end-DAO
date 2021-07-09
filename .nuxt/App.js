@@ -6,15 +6,15 @@ import NuxtError from './components/nuxt-error.vue'
 import NuxtLoading from './components/nuxt-loading.vue'
 import NuxtBuildIndicator from './components/nuxt-build-indicator'
 
-import '../node_modules/bootstrap/dist/css/bootstrap.css'
+import '..\\node_modules\\bootstrap\\dist\\css\\bootstrap.css'
 
-import '../node_modules/bootstrap-vue/dist/bootstrap-vue.css'
+import '..\\node_modules\\bootstrap-vue\\dist\\bootstrap-vue.css'
 
-import '../assets/scss/main.scss'
+import '..\\assets\\scss\\main.scss'
 
-import _2d217e9e from '../layouts/auth.vue'
-import _6f6c098b from '../layouts/default.vue'
-import _2d29216c from '../layouts/role.vue'
+import _2d217e9e from '..\\layouts\\auth.vue'
+import _6f6c098b from '..\\layouts\\default.vue'
+import _2d29216c from '..\\layouts\\role.vue'
 
 const layouts = { "_auth": sanitizeComponent(_2d217e9e),"_default": sanitizeComponent(_6f6c098b),"_role": sanitizeComponent(_2d29216c) }
 

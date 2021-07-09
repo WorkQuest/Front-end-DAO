@@ -4,19 +4,20 @@ import { normalizeURL, decode } from 'ufo'
 import { interopDefault } from './utils'
 import scrollBehavior from './router.scrollBehavior.js'
 
-const _56b62c14 = () => interopDefault(import('../pages/about.vue' /* webpackChunkName: "pages/about" */))
-const _53a68b69 = () => interopDefault(import('../pages/confirm.vue' /* webpackChunkName: "pages/confirm" */))
-const _64d21cda = () => interopDefault(import('../pages/my.vue' /* webpackChunkName: "pages/my" */))
-const _49b691d2 = () => interopDefault(import('../pages/profile.vue' /* webpackChunkName: "pages/profile" */))
-const _d0b6e2a6 = () => interopDefault(import('../pages/proposals/index.vue' /* webpackChunkName: "pages/proposals/index" */))
-const _22c5579d = () => interopDefault(import('../pages/role.vue' /* webpackChunkName: "pages/role" */))
-const _72bad56c = () => interopDefault(import('../pages/settings.vue' /* webpackChunkName: "pages/settings" */))
-const _5c9c2d00 = () => interopDefault(import('../pages/show-profile.vue' /* webpackChunkName: "pages/show-profile" */))
-const _b7bff544 = () => interopDefault(import('../pages/sign-in.vue' /* webpackChunkName: "pages/sign-in" */))
-const _8e934858 = () => interopDefault(import('../pages/sign-up.vue' /* webpackChunkName: "pages/sign-up" */))
-const _006909e0 = () => interopDefault(import('../pages/wallet.vue' /* webpackChunkName: "pages/wallet" */))
-const _770c8b18 = () => interopDefault(import('../pages/proposals/_id/index.vue' /* webpackChunkName: "pages/proposals/_id/index" */))
-const _1746768a = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
+const _7594f65b = () => interopDefault(import('..\\pages\\about.vue' /* webpackChunkName: "pages/about" */))
+const _78c5128e = () => interopDefault(import('..\\pages\\confirm.vue' /* webpackChunkName: "pages/confirm" */))
+const _404ff5c9 = () => interopDefault(import('..\\pages\\discussions\\index.vue' /* webpackChunkName: "pages/discussions/index" */))
+const _3a607164 = () => interopDefault(import('..\\pages\\my.vue' /* webpackChunkName: "pages/my" */))
+const _6ed518f7 = () => interopDefault(import('..\\pages\\profile.vue' /* webpackChunkName: "pages/profile" */))
+const _813bf7da = () => interopDefault(import('..\\pages\\proposals\\index.vue' /* webpackChunkName: "pages/proposals/index" */))
+const _65c0aad0 = () => interopDefault(import('..\\pages\\role.vue' /* webpackChunkName: "pages/role" */))
+const _4554f2c5 = () => interopDefault(import('..\\pages\\settings.vue' /* webpackChunkName: "pages/settings" */))
+const _6699dd0a = () => interopDefault(import('..\\pages\\show-profile.vue' /* webpackChunkName: "pages/show-profile" */))
+const _6d82e6fa = () => interopDefault(import('..\\pages\\sign-in.vue' /* webpackChunkName: "pages/sign-in" */))
+const _44563a0e = () => interopDefault(import('..\\pages\\sign-up.vue' /* webpackChunkName: "pages/sign-up" */))
+const _7d7a8a1b = () => interopDefault(import('..\\pages\\wallet.vue' /* webpackChunkName: "pages/wallet" */))
+const _faf64632 = () => interopDefault(import('..\\pages\\proposals\\_id\\index.vue' /* webpackChunkName: "pages/proposals/_id/index" */))
+const _d5665dc0 = () => interopDefault(import('..\\pages\\index.vue' /* webpackChunkName: "pages/index" */))
 
 const emptyFn = () => {}
 
@@ -31,55 +32,59 @@ export const routerOptions = {
 
   routes: [{
     path: "/about",
-    component: _56b62c14,
+    component: _7594f65b,
     name: "about"
   }, {
     path: "/confirm",
-    component: _53a68b69,
+    component: _78c5128e,
     name: "confirm"
   }, {
+    path: "/discussions",
+    component: _404ff5c9,
+    name: "discussions"
+  }, {
     path: "/my",
-    component: _64d21cda,
+    component: _3a607164,
     name: "my"
   }, {
     path: "/profile",
-    component: _49b691d2,
+    component: _6ed518f7,
     name: "profile"
   }, {
     path: "/proposals",
-    component: _d0b6e2a6,
+    component: _813bf7da,
     name: "proposals"
   }, {
     path: "/role",
-    component: _22c5579d,
+    component: _65c0aad0,
     name: "role"
   }, {
     path: "/settings",
-    component: _72bad56c,
+    component: _4554f2c5,
     name: "settings"
   }, {
     path: "/show-profile",
-    component: _5c9c2d00,
+    component: _6699dd0a,
     name: "show-profile"
   }, {
     path: "/sign-in",
-    component: _b7bff544,
+    component: _6d82e6fa,
     name: "sign-in"
   }, {
     path: "/sign-up",
-    component: _8e934858,
+    component: _44563a0e,
     name: "sign-up"
   }, {
     path: "/wallet",
-    component: _006909e0,
+    component: _7d7a8a1b,
     name: "wallet"
   }, {
     path: "/proposals/:id",
-    component: _770c8b18,
+    component: _faf64632,
     name: "proposals-id"
   }, {
     path: "/",
-    component: _1746768a,
+    component: _d5665dc0,
     name: "index"
   }],
 
