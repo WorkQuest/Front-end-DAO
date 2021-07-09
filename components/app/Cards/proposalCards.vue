@@ -1,8 +1,5 @@
 <template>
   <div class="main__body">
-    <h2 class="main__title">
-      {{ $t('workers.topWorkers') }}
-    </h2>
     <div class="main__menu menu">
       <div class="menu__left">
         <base-btn
@@ -23,7 +20,7 @@
         </base-btn>
       </div>
       <div class="menu__right">
-        <div class="quests__search">
+        <div class="proposals__search">
           <div class="search">
             <div class="search__inputs">
               <base-field
@@ -89,6 +86,18 @@
       <ul class="nav">
         <li class="nav-item">
           <button
+            class="nav-btn nav-btn_prev"
+            @click="prevTab()"
+          >
+            <div
+              class="nav-arrow"
+              :disabled="tab === 1"
+              :class="tab === 1 ? 'nav-arrow_disabled' : 'nav-arrow_active'"
+            />
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
             class="nav-btn"
             :class="[{'nav-btn__active' :tab === 1}]"
             @click="tab = 1"
@@ -130,6 +139,18 @@
             @click="tab = 5"
           >
             5
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="nav-btn nav-btn_next"
+            :disabled="tab === 5"
+            @click="nextTab()"
+          >
+            <div
+              class="nav-arrow"
+              :class="tab === 5 ? 'nav-arrow_disabled' : 'nav-arrow_active'"
+            />
           </button>
         </li>
       </ul>
@@ -242,14 +263,6 @@ export default {
           about: 'Lorem ipsum dolor sit amet, consectetur',
         },
       ],
-      priceSort: 'desc',
-      timeSort: 'desc',
-      priority: [
-        this.$t('quests.priority.all'),
-        this.$t('quests.priority.low'),
-        this.$t('quests.priority.normal'),
-        this.$t('quests.priority.urgent'),
-      ],
     };
   },
   computed: {
@@ -266,6 +279,14 @@ export default {
     this.SetLoader(false);
   },
   methods: {
+    prevTab() {
+      if (this.tab > 1) {
+        this.tab -= 1;
+      }
+    },
+    nextTab() {
+      this.tab += 1;
+    },
     showDetails() {
       this.$router.push('/proposals/1');
     },
@@ -277,14 +298,6 @@ export default {
       };
       return statusClass[idx] || 'None';
     },
-    cardsLevelsBorder(idx) {
-      const { cards } = this;
-      return [
-        { card_lower: cards[idx].level.code === 2 },
-        { card_lower: cards[idx].level.code === 3 },
-        { card_lower: cards[idx].level.code === 0 },
-      ];
-    },
     getPriority(index) {
       const priority = {
         0: this.$t('proposals.cards.status.pending'),
@@ -293,22 +306,49 @@ export default {
       };
       return priority[index] || 'None';
     },
-    getPriorityClass(index) {
-      const priority = {
-        0: 'block__priority_low',
-        1: 'block__priority_normal',
-        2: 'block__priority_urgent',
-      };
-      return priority[index] || '';
-    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .nav_block {
+  background-color: #FFFFFF;
   display: flex;
   justify-content: flex-end;
+  border-radius: 6px;
+  width: max-content;
+  margin-top: 25px;
+  float: right;
+  .nav {
+    align-content: center;
+    &-btn {
+      border-left: 1px solid #F7F8FA;
+      width:43px;
+      height:43px;
+      &__active {
+        background-color: #E6F3F9;
+        color: #0083c7;
+      }
+      &_next .nav-arrow {
+        mask-image: url('~assets/img/ui/coolicon_next.svg');
+      }
+      &_prev .nav-arrow {
+        mask-image: url('~assets/img/ui/coolicon_prev.svg');
+      }
+    }
+    &-arrow {
+      margin-left: auto;
+      margin-right: auto;
+      height: 10px;
+      width: 5px;
+      &_disabled {
+        background-color: #c2c2c2;
+      }
+      &_active {
+        background-color: #4C5767;
+      }
+    }
+  }
 }
 .message {
   &__action {
@@ -325,17 +365,7 @@ export default {
     width: 100%;
   }
 }
-.quests {
-  &__cards {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 20px;
-    padding-top: 20px;
-  }
-  &__top {
-    position: relative;
-    min-height: 160px;
-  }
+.proposals {
   &__search {
     width: 580px;
     font-size: 16px;
@@ -348,36 +378,6 @@ export default {
     align-items: center;
     border-radius: 6px;
     flex-shrink: 0;
-  }
-  &__content {
-    display: flex;
-    justify-content: center;
-  }
-  &__body {
-    padding-top: 30px;
-    max-width: 1180px;
-    width: 100%;
-    height: 100%;
-    &_wrap {
-      padding-top: 10px;
-    }
-  }
-  &__text {
-    @include text-simple;
-    font-style: normal;
-    &_title  {
-      font-weight: 500;
-      font-size: 25px;
-      line-height: 130%;
-      color: $black800;
-    }
-  }
-  &__tags {
-    padding-top: 30px;
-    max-width: 1180px;
-  }
-  &__tools {
-    padding-top:  20px;
   }
 }
 .search {
@@ -486,23 +486,11 @@ export default {
   &_higher {
     border: 1px solid #F6CF00;
   }
-  &_lower {
-    border: none;
-  }
   &__content {
     display: grid;
     grid-template-rows: 0.8fr 0.7fr 1fr 0.5fr;
     width: 240px;
     padding: 20px 0px;
-  }
-  &__spec {
-    font-weight: 400;
-    font-size: 14px;
-    color: $blue;
-    &_title {
-      font-size: 14px;
-      font-weight: 400;
-    }
   }
   &__header {
     display: flex;
@@ -516,17 +504,6 @@ export default {
       grid-gap: 15px;
       align-items: center;
     }
-  }
-  &__img {
-    width: 61px;
-    height: 61px;
-    border-radius: 100%;
-    object-fit: cover;
-  }
-  &__name {
-    @include text-simple;
-    font-size: 18px;
-    font-weight: 500;
   }
   &__status {
     font-size: 12px;
@@ -574,63 +551,6 @@ export default {
     line-height: 28px;
     letter-spacing: 0em;
     text-align: left;
-  }
-}
-.checkbox {
-  &__isShowMap {
-    margin: 30px 50px 0 10px;
-    display: flex;
-    flex-direction: row;
-    height: 25px;
-    align-items: center;
-  }
-  &-input {
-    width: 24px;
-    height: 24px;
-  }
-  &__label {
-    display: flex;
-    flex-direction: row;
-    flex-shrink: 0;
-    margin: 0 0 0 5px;
-    font-size: 16px;
-  }
-}
-.search-bar {
-  left: 18%;
-  bottom: 30px;
-  margin: 10px 0 0 0;
-  position: absolute;
-  max-width: 1180px;
-  width: 100%;
-  height: 84px;
-  display: flex;
-  flex-direction: column;
-  border-radius: 6px;
-  background-color: $white;
-  z-index: 10;
-  box-shadow: 0 17px 17px rgba(0, 0, 0, 0.05), 0 5.125px 5.125px rgba(0, 0, 0, 0.0325794), 0 2.12866px 2.12866px rgba(0, 0, 0, 0.025), 0 0.769896px 0.769896px rgba(0, 0, 0, 0.0174206);
-  &__body {
-    display: flex;
-    flex-direction: row;
-    flex-shrink: 0;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: center;
-    height: 40px;
-  }
-  &__input {
-    margin: 30px 10px 0 0;
-    height: 25px;
-    width: 510px;
-  }
-  &__btn {
-    margin: 30px 10px 0 0;
-    flex-shrink: 0;
-  }
-  &__btn-search {
-    margin: 30px 10px 0 0;
-    width: 220px;
   }
 }
 
