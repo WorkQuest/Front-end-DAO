@@ -51,12 +51,7 @@
 
 <script>
 import proposalCards from '~/components/app/Cards/proposalCards';
-// `` data() {
-//   return {
-//     tab: 1,
-//     currentPage: 1
-//   };
-// } ``
+
 export default {
   name: 'Index',
   components: {
