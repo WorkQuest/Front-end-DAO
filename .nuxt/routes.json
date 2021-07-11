@@ -3,84 +3,98 @@
     "name": "about",
     "path": "/about",
     "component": "C:\\\\Users\\\\79138\\\\Documents\\\\GitHub\\\\Front-end-DAO\\\\pages\\\\about.vue",
-    "chunkName": "pages/about"
+    "chunkName": "pages/about",
+    "_name": "_7594f65b"
   },
   {
     "name": "confirm",
     "path": "/confirm",
     "component": "C:\\\\Users\\\\79138\\\\Documents\\\\GitHub\\\\Front-end-DAO\\\\pages\\\\confirm.vue",
-    "chunkName": "pages/confirm"
+    "chunkName": "pages/confirm",
+    "_name": "_78c5128e"
   },
   {
     "name": "discussions",
     "path": "/discussions",
     "component": "C:\\\\Users\\\\79138\\\\Documents\\\\GitHub\\\\Front-end-DAO\\\\pages\\\\discussions\\\\index.vue",
-    "chunkName": "pages/discussions/index"
+    "chunkName": "pages/discussions/index",
+    "_name": "_404ff5c9"
   },
   {
     "name": "my",
     "path": "/my",
     "component": "C:\\\\Users\\\\79138\\\\Documents\\\\GitHub\\\\Front-end-DAO\\\\pages\\\\my.vue",
-    "chunkName": "pages/my"
+    "chunkName": "pages/my",
+    "_name": "_3a607164"
   },
   {
     "name": "profile",
     "path": "/profile",
     "component": "C:\\\\Users\\\\79138\\\\Documents\\\\GitHub\\\\Front-end-DAO\\\\pages\\\\profile.vue",
-    "chunkName": "pages/profile"
+    "chunkName": "pages/profile",
+    "_name": "_6ed518f7"
   },
   {
     "name": "proposals",
     "path": "/proposals",
     "component": "C:\\\\Users\\\\79138\\\\Documents\\\\GitHub\\\\Front-end-DAO\\\\pages\\\\proposals\\\\index.vue",
-    "chunkName": "pages/proposals/index"
+    "chunkName": "pages/proposals/index",
+    "_name": "_813bf7da"
   },
   {
     "name": "role",
     "path": "/role",
     "component": "C:\\\\Users\\\\79138\\\\Documents\\\\GitHub\\\\Front-end-DAO\\\\pages\\\\role.vue",
-    "chunkName": "pages/role"
+    "chunkName": "pages/role",
+    "_name": "_65c0aad0"
   },
   {
     "name": "settings",
     "path": "/settings",
     "component": "C:\\\\Users\\\\79138\\\\Documents\\\\GitHub\\\\Front-end-DAO\\\\pages\\\\settings.vue",
-    "chunkName": "pages/settings"
+    "chunkName": "pages/settings",
+    "_name": "_4554f2c5"
   },
   {
     "name": "show-profile",
     "path": "/show-profile",
     "component": "C:\\\\Users\\\\79138\\\\Documents\\\\GitHub\\\\Front-end-DAO\\\\pages\\\\show-profile.vue",
-    "chunkName": "pages/show-profile"
+    "chunkName": "pages/show-profile",
+    "_name": "_6699dd0a"
   },
   {
     "name": "sign-in",
     "path": "/sign-in",
     "component": "C:\\\\Users\\\\79138\\\\Documents\\\\GitHub\\\\Front-end-DAO\\\\pages\\\\sign-in.vue",
-    "chunkName": "pages/sign-in"
+    "chunkName": "pages/sign-in",
+    "_name": "_6d82e6fa"
   },
   {
     "name": "sign-up",
     "path": "/sign-up",
     "component": "C:\\\\Users\\\\79138\\\\Documents\\\\GitHub\\\\Front-end-DAO\\\\pages\\\\sign-up.vue",
-    "chunkName": "pages/sign-up"
+    "chunkName": "pages/sign-up",
+    "_name": "_44563a0e"
   },
   {
     "name": "wallet",
     "path": "/wallet",
     "component": "C:\\\\Users\\\\79138\\\\Documents\\\\GitHub\\\\Front-end-DAO\\\\pages\\\\wallet.vue",
-    "chunkName": "pages/wallet"
+    "chunkName": "pages/wallet",
+    "_name": "_7d7a8a1b"
   },
   {
     "name": "proposals-id",
     "path": "/proposals/:id",
     "component": "C:\\\\Users\\\\79138\\\\Documents\\\\GitHub\\\\Front-end-DAO\\\\pages\\\\proposals\\\\_id\\\\index.vue",
-    "chunkName": "pages/proposals/_id/index"
+    "chunkName": "pages/proposals/_id/index",
+    "_name": "_faf64632"
   },
   {
     "name": "index",
     "path": "/",
     "component": "C:\\\\Users\\\\79138\\\\Documents\\\\GitHub\\\\Front-end-DAO\\\\pages\\\\index.vue",
-    "chunkName": "pages/index"
+    "chunkName": "pages/index",
+    "_name": "_d5665dc0"
   }
 ]

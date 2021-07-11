@@ -1,19 +1,23 @@
 <template>
-  <div class="NE ZABYT' POSTAVUT' CLASS">
-    <div>
-      <base-btn class="btn">
-        <slot>Add new discussion</slot>
-      </base-btn>
-      <div>
-        <base-field
-          v-model="search"
-          class="search-field"
-          :is-search="true"
-        />
-      </div>
-    </div>
+  <div>
     <div class="discussions">
-      <div class="discussions__white">
+      <div class="discussions-title">
+        Discussions
+      </div>
+      <div class="discussions__header">
+        <div>
+          <base-field
+            v-model="search"
+            class="discussions__header-search"
+            :is-search="true"
+            placeholder="Search discussion"
+          />
+        </div>
+        <base-btn class="discussions__header-btn">
+          <slot>Add new discussion</slot>
+        </base-btn>
+      </div>
+      <div class="discussions__field">
         <div class="discussions__card">
           <discussion-card
             v-for="(item, i) in discussions"
@@ -81,35 +85,48 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.btn{
-  width: 220px;
-  height: 43px;
-  margin-left: auto;
-}
-.search-field{
-  width: 680px;
-  height: 43px;
-  background: #FFFFFF;
-  border-radius: 6px;
-  margin-right: auto;
-}
+
 .discussions {
-    display: flex;
     justify-content: center;
     max-width: 1180px;
+    margin: 0 auto;
     width: 100%;
     height: 100%;
-    &__white {
-    background: $white;
-    background: #FFFFFF;
-    margin: 0 0 20px 0;
-    justify-content: center;
-    border: blueviolet solid 30px;
-  }
+    &-title{
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 36px;
+    margin-right: auto;
+    padding: 30px 0px 30px 0px;
+    }
+    &__field{
+    justify-content: space-between;
+    }
     &__card {
     display: grid;
     grid-template-columns: 1fr 1fr;
     border: gold solid 3px;
-  }
+    }
+    &__header {
+      display: flex;
+      justify-content: space-between;
+      margin: 0px 0px 30px 0px;
+      &-search {
+        flex: 1 1 auto;
+        width: 680px;
+        height: 43px;
+        background: #FFFFFF;
+        border-radius: 6px;
+        align-items: end;
+        color: #D8DFE3;
+        font-size: 16px;
+        line-height: 130%;
+      }
+      &-btn {
+        width: 220px;
+        height: 43px;
+      }
+
+    }
 }
 </style>
