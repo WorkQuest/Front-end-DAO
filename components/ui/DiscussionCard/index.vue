@@ -79,14 +79,12 @@ export default {
   },
 };
 </script>
-
 <style lang="scss" scoped>
 .discussion {
   width: 100%;
   height: 100%;
   background: #FFFFFF;
   border-radius: 8px;
-  border: red 3px solid;
   padding: 20px;
   &__user {
     display: flex;
@@ -112,7 +110,7 @@ export default {
       width: 20px;
       height: 20px;
     }
-    }
+  }
   &__title {
     font-weight: 600;
     font-size: 24px;
@@ -157,7 +155,7 @@ export default {
         line-height: 130%;
         color: #0083C7;
         margin: 6.5px 14px 6.5px 10px;
-      }
+        }
       &-arrow {
         height: 12px;
         width: 16px;
@@ -176,7 +174,6 @@ export default {
       line-height: 18.2px;
       color: #1D2127;
       margin-left: 8px;
-
     }
     &-like{
       height: 18px;

@@ -813,7 +813,10 @@
     "incorrectPass" : "Oops, something went wrong. Check the data and try again."
   },
   "discussions": {
-    "discussionCard": ""
+  "discussionTitle": "Discussions",
+  "btn": "Add new discussion",
+  "seacrhField": "Search discussion",
+  "descriptionTitle": "Description",
+  "nuxtLink": "Read completely"
   }
-
  }

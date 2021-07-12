@@ -83,9 +83,7 @@ export default {
   },
 };
 </script>
-
 <style lang="scss" scoped>
-
 .discussions {
     justify-content: center;
     max-width: 1180px;
@@ -105,7 +103,7 @@ export default {
     &__card {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    border: gold solid 3px;
+    grid-gap: 20px 20px;
     }
     &__header {
       display: flex;
@@ -121,12 +119,11 @@ export default {
         color: #D8DFE3;
         font-size: 16px;
         line-height: 130%;
-      }
+        }
       &-btn {
         width: 220px;
         height: 43px;
       }
-
     }
 }
 </style>

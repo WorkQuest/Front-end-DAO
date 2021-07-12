@@ -17,40 +17,40 @@ let store = {};
   // Enforce store modules
   store.modules = store.modules || {}
 
-  resolveStoreModules(require('..\\store\\main\\actions.js'), 'main/actions.js')
-  resolveStoreModules(require('..\\store\\main\\getters.js'), 'main/getters.js')
-  resolveStoreModules(require('..\\store\\main\\loaderModes.js'), 'main/loaderModes.js')
-  resolveStoreModules(require('..\\store\\main\\mutations.js'), 'main/mutations.js')
-  resolveStoreModules(require('..\\store\\main\\state.js'), 'main/state.js')
-  resolveStoreModules(require('..\\store\\modals\\actions.js'), 'modals/actions.js')
-  resolveStoreModules(require('..\\store\\modals\\getters.js'), 'modals/getters.js')
-  resolveStoreModules(require('..\\store\\modals\\modals.js'), 'modals/modals.js')
-  resolveStoreModules(require('..\\store\\modals\\mutations.js'), 'modals/mutations.js')
-  resolveStoreModules(require('..\\store\\modals\\state.js'), 'modals/state.js')
-  resolveStoreModules(require('..\\store\\user\\actions.js'), 'user/actions.js')
-  resolveStoreModules(require('..\\store\\user\\getters.js'), 'user/getters.js')
-  resolveStoreModules(require('..\\store\\user\\mutations.js'), 'user/mutations.js')
-  resolveStoreModules(require('..\\store\\user\\state.js'), 'user/state.js')
+  resolveStoreModules(require('../store/main/actions.js'), 'main/actions.js')
+  resolveStoreModules(require('../store/main/getters.js'), 'main/getters.js')
+  resolveStoreModules(require('../store/main/loaderModes.js'), 'main/loaderModes.js')
+  resolveStoreModules(require('../store/main/mutations.js'), 'main/mutations.js')
+  resolveStoreModules(require('../store/main/state.js'), 'main/state.js')
+  resolveStoreModules(require('../store/modals/actions.js'), 'modals/actions.js')
+  resolveStoreModules(require('../store/modals/getters.js'), 'modals/getters.js')
+  resolveStoreModules(require('../store/modals/modals.js'), 'modals/modals.js')
+  resolveStoreModules(require('../store/modals/mutations.js'), 'modals/mutations.js')
+  resolveStoreModules(require('../store/modals/state.js'), 'modals/state.js')
+  resolveStoreModules(require('../store/user/actions.js'), 'user/actions.js')
+  resolveStoreModules(require('../store/user/getters.js'), 'user/getters.js')
+  resolveStoreModules(require('../store/user/mutations.js'), 'user/mutations.js')
+  resolveStoreModules(require('../store/user/state.js'), 'user/state.js')
 
   // If the environment supports hot reloading...
 
   if (process.client && module.hot) {
     // Whenever any Vuex module is updated...
     module.hot.accept([
-      '..\\store\\main\\actions.js',
-      '..\\store\\main\\getters.js',
-      '..\\store\\main\\loaderModes.js',
-      '..\\store\\main\\mutations.js',
-      '..\\store\\main\\state.js',
-      '..\\store\\modals\\actions.js',
-      '..\\store\\modals\\getters.js',
-      '..\\store\\modals\\modals.js',
-      '..\\store\\modals\\mutations.js',
-      '..\\store\\modals\\state.js',
-      '..\\store\\user\\actions.js',
-      '..\\store\\user\\getters.js',
-      '..\\store\\user\\mutations.js',
-      '..\\store\\user\\state.js',
+      '../store/main/actions.js',
+      '../store/main/getters.js',
+      '../store/main/loaderModes.js',
+      '../store/main/mutations.js',
+      '../store/main/state.js',
+      '../store/modals/actions.js',
+      '../store/modals/getters.js',
+      '../store/modals/modals.js',
+      '../store/modals/mutations.js',
+      '../store/modals/state.js',
+      '../store/user/actions.js',
+      '../store/user/getters.js',
+      '../store/user/mutations.js',
+      '../store/user/state.js',
     ], () => {
       // Update `root.modules` with the latest definitions.
       updateModules()
