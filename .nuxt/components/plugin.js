@@ -2,8 +2,8 @@ import Vue from 'vue'
 import { wrapFunctional } from './utils'
 
 const components = {
-  CtmModal: () => import('../../components/CtmModal/index.vue' /* webpackChunkName: "components/ctm-modal" */).then(c => wrapFunctional(c.default || c)),
   ScreenQuests: () => import('../../components/screen/quests.vue' /* webpackChunkName: "components/screen-quests" */).then(c => wrapFunctional(c.default || c)),
+  CtmModal: () => import('../../components/CtmModal/index.vue' /* webpackChunkName: "components/ctm-modal" */).then(c => wrapFunctional(c.default || c)),
   AppCardsQuestCard: () => import('../../components/app/Cards/QuestCard.vue' /* webpackChunkName: "components/app-cards-quest-card" */).then(c => wrapFunctional(c.default || c)),
   AppCardsProposalCards: () => import('../../components/app/Cards/proposalCards.vue' /* webpackChunkName: "components/app-cards-proposal-cards" */).then(c => wrapFunctional(c.default || c)),
   AppHeader: () => import('../../components/app/Header/index.vue' /* webpackChunkName: "components/app-header" */).then(c => wrapFunctional(c.default || c)),

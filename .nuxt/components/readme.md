@@ -6,8 +6,8 @@ You can directly use them in pages and other components without the need to impo
 
 **Tip:** If a component is conditionally rendered with `v-if` and is big, it is better to use `Lazy` or `lazy-` prefix to lazy load.
 
-- `<CtmModal>` | `<ctm-modal>` (components/CtmModal/index.vue)
 - `<ScreenQuests>` | `<screen-quests>` (components/screen/quests.vue)
+- `<CtmModal>` | `<ctm-modal>` (components/CtmModal/index.vue)
 - `<AppCardsQuestCard>` | `<app-cards-quest-card>` (components/app/Cards/QuestCard.vue)
 - `<AppCardsProposalCards>` | `<app-cards-proposal-cards>` (components/app/Cards/proposalCards.vue)
 - `<AppHeader>` | `<app-header>` (components/app/Header/index.vue)

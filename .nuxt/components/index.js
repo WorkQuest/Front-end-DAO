@@ -1,7 +1,7 @@
 import { wrapFunctional } from './utils'
 
-export { default as CtmModal } from '../../components/CtmModal/index.vue'
 export { default as ScreenQuests } from '../../components/screen/quests.vue'
+export { default as CtmModal } from '../../components/CtmModal/index.vue'
 export { default as AppCardsQuestCard } from '../../components/app/Cards/QuestCard.vue'
 export { default as AppCardsProposalCards } from '../../components/app/Cards/proposalCards.vue'
 export { default as AppHeader } from '../../components/app/Header/index.vue'
@@ -66,8 +66,8 @@ export { default as AppPagesCommonUserInfoOther } from '../../components/app/Pag
 export { default as AppPagesProfileTabsPortfolio } from '../../components/app/Pages/Profile/Tabs/Portfolio.vue'
 export { default as AppPagesProfileTabsReviews } from '../../components/app/Pages/Profile/Tabs/Reviews.vue'
 
-export const LazyCtmModal = import('../../components/CtmModal/index.vue' /* webpackChunkName: "components/ctm-modal" */).then(c => wrapFunctional(c.default || c))
 export const LazyScreenQuests = import('../../components/screen/quests.vue' /* webpackChunkName: "components/screen-quests" */).then(c => wrapFunctional(c.default || c))
+export const LazyCtmModal = import('../../components/CtmModal/index.vue' /* webpackChunkName: "components/ctm-modal" */).then(c => wrapFunctional(c.default || c))
 export const LazyAppCardsQuestCard = import('../../components/app/Cards/QuestCard.vue' /* webpackChunkName: "components/app-cards-quest-card" */).then(c => wrapFunctional(c.default || c))
 export const LazyAppCardsProposalCards = import('../../components/app/Cards/proposalCards.vue' /* webpackChunkName: "components/app-cards-proposal-cards" */).then(c => wrapFunctional(c.default || c))
 export const LazyAppHeader = import('../../components/app/Header/index.vue' /* webpackChunkName: "components/app-header" */).then(c => wrapFunctional(c.default || c))

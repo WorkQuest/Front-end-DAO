@@ -1,9 +1,9 @@
 {
-  "CtmModal": {
-    "description": "Auto imported from components/CtmModal/index.vue"
-  },
   "ScreenQuests": {
     "description": "Auto imported from components/screen/quests.vue"
+  },
+  "CtmModal": {
+    "description": "Auto imported from components/CtmModal/index.vue"
   },
   "AppCardsQuestCard": {
     "description": "Auto imported from components/app/Cards/QuestCard.vue"
