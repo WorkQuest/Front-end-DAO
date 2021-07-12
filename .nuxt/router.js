@@ -16,6 +16,7 @@ const _0c7f9e51 = () => interopDefault(import('../pages/show-profile.vue' /* web
 const _47b6d1ed = () => interopDefault(import('../pages/sign-in.vue' /* webpackChunkName: "pages/sign-in" */))
 const _5c4d2863 = () => interopDefault(import('../pages/sign-up.vue' /* webpackChunkName: "pages/sign-up" */))
 const _fce2211e = () => interopDefault(import('../pages/wallet.vue' /* webpackChunkName: "pages/wallet" */))
+const _3f513131 = () => interopDefault(import('../pages/discussions/_id/index.vue' /* webpackChunkName: "pages/discussions/_id/index" */))
 const _0e01f927 = () => interopDefault(import('../pages/proposals/_id/index.vue' /* webpackChunkName: "pages/proposals/_id/index" */))
 const _090b690a = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
 
@@ -78,6 +79,10 @@ export const routerOptions = {
     path: "/wallet",
     component: _fce2211e,
     name: "wallet"
+  }, {
+    path: "/discussions/:id",
+    component: _3f513131,
+    name: "discussions-id"
   }, {
     path: "/proposals/:id",
     component: _0e01f927,

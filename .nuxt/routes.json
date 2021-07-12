@@ -72,6 +72,12 @@
     "chunkName": "pages/wallet"
   },
   {
+    "name": "discussions-id",
+    "path": "/discussions/:id",
+    "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/discussions/_id/index.vue",
+    "chunkName": "pages/discussions/_id/index"
+  },
+  {
     "name": "proposals-id",
     "path": "/proposals/:id",
     "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/proposals/_id/index.vue",
