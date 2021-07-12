@@ -68,6 +68,7 @@
           <div class="btn__container">
             <div class="btn__wrapper">
               <nuxt-link
+                class="btn__link"
                 to="/proposals/1"
               >
                 <base-btn
@@ -363,6 +364,9 @@ export default {
   }
   &__wrapper {
     width: 100%;
+  }
+  &__link {
+    text-decoration: none;
   }
 }
 .proposals {
