@@ -25,7 +25,7 @@
                 class="header__links"
               >
                 <nuxt-link
-                  to="/proposals/index"
+                  to="/proposals"
                   class="header__link"
                   :exact-active-class="'header__link_active'"
                 >
@@ -92,116 +92,6 @@
                         >
                         <div class="locale__text">
                           {{ $t('ui.locals.ru') }}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </transition>
-              </button>
-              <button
-                class="header__button"
-                @click="goToMessages()"
-              >
-                <span class="icon-message" />
-              </button>
-              <button class="header__button header__button_notify">
-                <span
-                  v-if="notification"
-                  class="icon-notification_outline_dot"
-                  @click="showNotification()"
-                />
-                <span
-                  v-else
-                  class="icon-notification_outline"
-                />
-                <transition name="fade">
-                  <div
-                    v-if="isShowNotify"
-                    class="notify"
-                  >
-                    <div class="notify__header">
-                      <div class="notify__title">
-                        {{ $t('ui.notifications.title') }}
-                      </div>
-                      <span
-                        class="icon-close_small"
-                        @click="showNotification()"
-                      />
-                    </div>
-                    <div class="notify__body">
-                      <div class="notify__items">
-                        <div class="notify__item">
-                          <div class="notify__content">
-                            <div class="notify__top">
-                              <div class="notify__user">
-                                <div class="notify__avatar">
-                                  <img
-                                    src="~assets/img/app/fakeavatarcomp.svg"
-                                    alt=""
-                                  >
-                                </div>
-                                <div class="notify__info">
-                                  <div class="notify__text notify__text_name">
-                                    Edward cooper
-                                  </div>
-                                  <div class="notify__text notify__text_grey">
-                                    CEO from Amazon
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="notify__text notify__text_date">
-                                14 January 2021, 14:54
-                              </div>
-                            </div>
-                            <div class="notify__reason">
-                              <div class="notify__text notify__text_blue">
-                                {{ $t('ui.notifications.invite') }}:
-                              </div>
-                            </div>
-                            <div class="notify__action">
-                              <button class="notify__btn">
-                                <span class="notify__text notify__text_btn">
-                                  Paint the garage quickly
-                                </span>
-                                <span class="icon-chevron_right" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="notify__item">
-                          <div class="notify__content">
-                            <div class="notify__top">
-                              <div class="notify__user">
-                                <div class="notify__avatar">
-                                  <img
-                                    src="~assets/img/app/fakeavatar.svg"
-                                    alt=""
-                                  >
-                                </div>
-                                <div class="notify__info">
-                                  <div class="notify__text notify__text_name">
-                                    Samantha Sparks
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="notify__text notify__text_date">
-                                14 January 2021, 14:54
-                              </div>
-                            </div>
-                            <div class="notify__reason">
-                              <div class="notify__text notify__text_blue">
-                                {{ $t('ui.notifications.invite') }}:
-                              </div>
-                            </div>
-                            <div class="notify__action">
-                              <button class="notify__btn">
-                                <span class="notify__text notify__text_btn">
-                                  Paint the garage quickly
-                                </span>
-                                <span class="icon-chevron_right" />
-                              </button>
-                            </div>
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -998,7 +888,7 @@ export default {
   border-radius: 6px;
   min-width: 223px;
   width: 100%;
-  min-height: 235px;
+  min-height: 200px;
   z-index: 10000000;
   &__header {
     border-bottom: 1px solid #F7F8FA;

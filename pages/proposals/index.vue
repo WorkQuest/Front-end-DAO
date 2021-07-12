@@ -44,13 +44,19 @@ s<template>
           </div>
         </transition>
       </div>
+      <proposalCards />
     </div>
   </div>
 </template>
 
 <script>
+import proposalCards from '~/components/app/Cards/proposalCards';
+
 export default {
   name: 'Index',
+  components: {
+    proposalCards,
+  },
   data() {
     return {
       isShowInfo: true,
