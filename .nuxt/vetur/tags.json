@@ -1,36 +1,9 @@
 {
-  "ScreenQuests": {
-    "description": "Auto imported from components/screen/quests.vue"
-  },
   "CtmModal": {
     "description": "Auto imported from components/CtmModal/index.vue"
   },
-  "UiBaseButton": {
-    "description": "Auto imported from components/ui/BaseButton/index.vue"
-  },
-  "UiBaseCheckbox": {
-    "description": "Auto imported from components/ui/BaseCheckbox/index.vue"
-  },
-  "UiBaseDD": {
-    "description": "Auto imported from components/ui/BaseDD/index.vue"
-  },
-  "UiBaseInput": {
-    "description": "Auto imported from components/ui/BaseInput/index.vue"
-  },
-  "UiBaseTable": {
-    "description": "Auto imported from components/ui/BaseTable/index.vue"
-  },
-  "UiChatMenu": {
-    "description": "Auto imported from components/ui/ChatMenu/index.vue"
-  },
-  "UiDiscussionCard": {
-    "description": "Auto imported from components/ui/DiscussionCard/index.vue"
-  },
-  "UiLoader": {
-    "description": "Auto imported from components/ui/Loader/index.vue"
-  },
-  "UiUploader": {
-    "description": "Auto imported from components/ui/Uploader/index.vue"
+  "ScreenQuests": {
+    "description": "Auto imported from components/screen/quests.vue"
   },
   "AppCardsQuestCard": {
     "description": "Auto imported from components/app/Cards/QuestCard.vue"
@@ -62,14 +35,14 @@
   "AppPanelsPagination": {
     "description": "Auto imported from components/app/Panels/pagination.vue"
   },
+  "CtmModalCtmModalAddCard": {
+    "description": "Auto imported from components/CtmModal/CtmModalAddCard/index.vue"
+  },
   "CtmModalCtmModalAddCase": {
     "description": "Auto imported from components/CtmModal/CtmModalAddCase/index.vue"
   },
   "CtmModalCtmModalAddLiquidity": {
     "description": "Auto imported from components/CtmModal/CtmModalAddLiquidity/index.vue"
-  },
-  "CtmModalCtmModalAddCard": {
-    "description": "Auto imported from components/CtmModal/CtmModalAddCard/index.vue"
   },
   "CtmModalCtmModalApplyForAPension": {
     "description": "Auto imported from components/CtmModal/CtmModalApplyForAPension/index.vue"
@@ -140,11 +113,11 @@
   "CtmModalCtmModalRaiseViews": {
     "description": "Auto imported from components/CtmModal/CtmModalRaiseViews/index.vue"
   },
-  "CtmModalCtmModalRemoveLiquidity": {
-    "description": "Auto imported from components/CtmModal/CtmModalRemoveLiquidity/index.vue"
-  },
   "CtmModalCtmModalRequestSend": {
     "description": "Auto imported from components/CtmModal/CtmModalRequestSend/index.vue"
+  },
+  "CtmModalCtmModalRemoveLiquidity": {
+    "description": "Auto imported from components/CtmModal/CtmModalRemoveLiquidity/index.vue"
   },
   "CtmModalCtmModalRestore": {
     "description": "Auto imported from components/CtmModal/CtmModalRestore/index.vue"
@@ -181,6 +154,33 @@
   },
   "CtmModalCtmModalWithdrawAbout": {
     "description": "Auto imported from components/CtmModal/CtmModalWithdrawAbout/index.vue"
+  },
+  "UiBaseButton": {
+    "description": "Auto imported from components/ui/BaseButton/index.vue"
+  },
+  "UiBaseCheckbox": {
+    "description": "Auto imported from components/ui/BaseCheckbox/index.vue"
+  },
+  "UiBaseDD": {
+    "description": "Auto imported from components/ui/BaseDD/index.vue"
+  },
+  "UiBaseInput": {
+    "description": "Auto imported from components/ui/BaseInput/index.vue"
+  },
+  "UiBaseTable": {
+    "description": "Auto imported from components/ui/BaseTable/index.vue"
+  },
+  "UiChatMenu": {
+    "description": "Auto imported from components/ui/ChatMenu/index.vue"
+  },
+  "UiDiscussionCard": {
+    "description": "Auto imported from components/ui/DiscussionCard/index.vue"
+  },
+  "UiLoader": {
+    "description": "Auto imported from components/ui/Loader/index.vue"
+  },
+  "UiUploader": {
+    "description": "Auto imported from components/ui/Uploader/index.vue"
   },
   "AppPagesCommonMessages": {
     "description": "Auto imported from components/app/Pages/Common/Messages.vue"

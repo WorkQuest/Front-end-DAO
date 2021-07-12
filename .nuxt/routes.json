@@ -3,90 +3,105 @@
     "name": "about",
     "path": "/about",
     "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/about.vue",
-    "chunkName": "pages/about"
+    "chunkName": "pages/about",
+    "_name": "_2d58e376"
   },
   {
     "name": "confirm",
     "path": "/confirm",
     "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/confirm.vue",
-    "chunkName": "pages/confirm"
+    "chunkName": "pages/confirm",
+    "_name": "_11855010"
   },
   {
     "name": "discussions",
     "path": "/discussions",
     "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/discussions/index.vue",
-    "chunkName": "pages/discussions/index"
+    "chunkName": "pages/discussions/index",
+    "_name": "_004bad74"
   },
   {
     "name": "my",
     "path": "/my",
     "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/my.vue",
-    "chunkName": "pages/my"
+    "chunkName": "pages/my",
+    "_name": "_626847a4"
   },
   {
     "name": "profile",
     "path": "/profile",
     "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/profile.vue",
-    "chunkName": "pages/profile"
+    "chunkName": "pages/profile",
+    "_name": "_2565433e"
   },
   {
     "name": "proposals",
     "path": "/proposals",
     "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/proposals/index.vue",
-    "chunkName": "pages/proposals/index"
+    "chunkName": "pages/proposals/index",
+    "_name": "_c02d4788"
   },
   {
     "name": "role",
     "path": "/role",
     "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/role.vue",
-    "chunkName": "pages/role"
+    "chunkName": "pages/role",
+    "_name": "_6ecd2524"
   },
   {
     "name": "settings",
     "path": "/settings",
     "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/settings.vue",
-    "chunkName": "pages/settings"
+    "chunkName": "pages/settings",
+    "_name": "_d4354aca"
   },
   {
     "name": "show-profile",
     "path": "/show-profile",
     "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/show-profile.vue",
-    "chunkName": "pages/show-profile"
+    "chunkName": "pages/show-profile",
+    "_name": "_0c7f9e51"
   },
   {
     "name": "sign-in",
     "path": "/sign-in",
     "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/sign-in.vue",
-    "chunkName": "pages/sign-in"
+    "chunkName": "pages/sign-in",
+    "_name": "_47b6d1ed"
   },
   {
     "name": "sign-up",
     "path": "/sign-up",
     "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/sign-up.vue",
-    "chunkName": "pages/sign-up"
+    "chunkName": "pages/sign-up",
+    "_name": "_5c4d2863"
   },
   {
     "name": "wallet",
     "path": "/wallet",
     "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/wallet.vue",
-    "chunkName": "pages/wallet"
+    "chunkName": "pages/wallet",
+    "_name": "_fce2211e"
   },
   {
     "name": "discussions-id",
     "path": "/discussions/:id",
     "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/discussions/_id/index.vue",
-    "chunkName": "pages/discussions/_id/index"
+    "chunkName": "pages/discussions/_id/index",
+    "_name": "_3f513131"
   },
   {
     "name": "proposals-id",
     "path": "/proposals/:id",
     "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/proposals/_id/index.vue",
-    "chunkName": "pages/proposals/_id/index"
+    "chunkName": "pages/proposals/_id/index",
+    "_name": "_0e01f927"
   },
   {
     "name": "index",
     "path": "/",
     "component": "/Users/andrejkondratev/Documents/GitHub/Front-end-DAO/pages/index.vue",
-    "chunkName": "pages/index"
+    "chunkName": "pages/index",
+    "_name": "_090b690a"
   }
 ]
