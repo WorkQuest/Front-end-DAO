@@ -8,12 +8,12 @@
         <div>
           <base-field
             v-model="search"
-            class="discussions__header-search"
+            class="discussions__search"
             :is-search="true"
             placeholder="Search discussion"
           />
         </div>
-        <base-btn class="discussions__header-btn">
+        <base-btn class="discussions__btn">
           <slot>Add new discussion</slot>
         </base-btn>
       </div>
@@ -130,7 +130,7 @@ export default {
       justify-content: space-between;
       margin: 0px 0px 30px 0px;
     }
-    &__header-search {
+    &__search {
         flex: 1 1 auto;
         width: 680px;
         height: 43px;
@@ -141,7 +141,7 @@ export default {
         font-size: 16px;
         line-height: 130%;
     }
-    &__header-btn {
+    &__btn {
         width: 220px;
         height: 43px;
       }
