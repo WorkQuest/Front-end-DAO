@@ -11,7 +11,7 @@
       </span>
       <div class="discussion__star">
         <img
-            src="~assets/img/ui/star_simple.svg"
+            src="item.title"
             alt="">
       </div>
     </div>
@@ -23,18 +23,21 @@
     </div>
     <hr class="discussion__line">
     <div class="discussion__description-title">
-        Description
+      {{ $t('discussions.descriptionTitle') }}
     </div>
     <div class="discussion__description">
       {{ item.description }}
     </div>
     <div class="discussion__bottom">
+      <div class="discussion__footer">
       <div class="discussion__link">
         <nuxt-link to="/">
-          Read completely
+          {{ $t('discussions.nuxtLink') }}
         </nuxt-link>
+      </div>
         <button class="discussion__arrow" >  <span class ="icon-short_right" /> </button>
       </div>
+      <div class="discussion__footer">
       <div class="discussion__comment">
         <button>
           <img
@@ -51,6 +54,7 @@
       </button>
       <div class="discussion__counter discussion__counter_right">
         {{ item.likeCounter }}
+      </div>
       </div>
     </div>
   </div>
@@ -127,18 +131,23 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
+    a.nuxt-link-active{
+      text-decoration: none;
+    }
+  }
+  &__footer{
+    display: flex;
+    align-items: center;
   }
   &__link {
-    flex: 130px;
     font-size: 16px;
     line-height: 130%;
     color: #0083C7;
     align-items: center;
     margin: 7px 14px 7px 10px;
   }
-  &__link.style{
-    text-decoration: none;
-  }
+
   &__like{
     margin-left: auto;
   }
@@ -163,7 +172,7 @@ export default {
 }
 .icon-short_right:before {
   color:  #0083C7;
-  font-size: 16px;
+  font-size: 25px;
 }
 .icon-heart_fill:before{
   font-size: 22px;

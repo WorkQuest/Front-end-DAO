@@ -2,7 +2,7 @@
   <div>
     <div class="discussions">
       <div class="discussions-title">
-        Discussions
+        {{ $t('discussions.title') }}
       </div>
       <div class="discussions__header">
         <div>
@@ -10,11 +10,11 @@
             v-model="search"
             class="discussions__search"
             :is-search="true"
-            placeholder="Search discussion"
+            :placeholder= "$t('discussions.seacrhField')"
           />
         </div>
         <base-btn class="discussions__btn">
-          <slot>Add new discussion</slot>
+          <slot>{{ $t('discussions.btn') }}</slot>
         </base-btn>
       </div>
       <div class="discussions__field">
@@ -44,7 +44,7 @@ export default {
       search: '',
       discussions: [
         {
-          ava: '~assets/img/icons/userAvatar.svg',
+          avatar: '~assets/img/icons/userAvatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
