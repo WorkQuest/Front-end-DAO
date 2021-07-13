@@ -2,18 +2,21 @@
   <div class="discussion">
     <div class="discussion__user">
       <img
-        src='~assets/img/icons/userAvatar.svg'
+        src="~assets/img/icons/userAvatar.svg"
         alt=""
         class="discussion__user-image"
       >
       <span class="discussion__user-name">
         {{ item.userName }}
       </span>
-      <img
-        src="~assets/img/ui/star_simple.svg"
-        alt=""
+      <div
         class="discussion__user-star"
       >
+        <img
+          src="~assets/img/ui/star_simple.svg"
+          alt=""
+        >
+      </div>
     </div>
     <div class="discussion__title">
       <h4>
@@ -34,37 +37,27 @@
     </div>
     <div class="discussion__bottom">
       <div class="discussion__bottom-link">
-        <div class="discussion__bottom-link-text">
-          <nuxt-link to="/">
-            Read completely
-          </nuxt-link>
-        </div>
-        <div class="discussion__bottom-link-arrow">
-          <img
-            src="~assets/img/ui/arrowRight.svg"
-            alt=""
-          >
-        </div>
+        <nuxt-link to="/">
+          Read completely
+        </nuxt-link>
+        <button>  <span class="discussion__bottom-link icon-short_right" /> </button>
       </div>
-      <div class="discussion__bottom-feedback">
-        <div class="discussion__bottom-feedback-comment">
+      <div class="discussion__bottom-comment">
+        <button>
           <img
             src="~assets/img/ui/comment.svg"
             alt=""
           >
-        </div>
-        <div class="discussion__bottom-feedback-comment-counter">
-          50
-        </div>
-        <div class="discussion__bottom-feedback-like">
-          <img
-            src="~assets/img/ui/like.svg"
-            alt=""
-          >
-        </div>
-        <div class="discussion__bottom-feedback-like-counter">
-          50
-        </div>
+        </button>
+      </div>
+      <div class="discussion__bottom-numbers">
+        {{ item.commentCounter }}
+      </div>
+      <button>
+        <span class="discussion__bottom icon-heart_fill" />
+      </button>
+      <div class="discussion__bottom-counter">
+        {{ item.likeCounter }}
       </div>
     </div>
   </div>
@@ -89,53 +82,48 @@ export default {
   &__user {
     display: flex;
     align-items: center;
-    &-name {
-      font-size: 16px;
-      line-height: 130%;
-      font-style: normal;
-      font-weight: normal;
-      color: #1D2127;
-      padding: 10px;
-    }
-    &-image {
-      flex: 0 0 0 32px;
-      width: 32px;
-      height: 32px;
-      left: 0px;
-      top: 0px;
-      border-radius: 50%;
-    }
-    &-star{
-      margin-left: auto;
-      width: 20px;
-      height: 20px;
-    }
+  }
+  &__user-name {
+    font-size: 16px;
+    line-height: 130%;
+    color: #1D2127;
+    padding: 10px;
+  }
+  &__user-image {
+    flex: 0 0 0 32px;
+    width: 32px;
+    height: 32px;
+    left: 0px;
+    top: 0px;
+    border-radius: 50%;
+  }
+  &__user-star {
+    margin-left: auto;
+    width: 20px;
+    height: 20px;
   }
   &__title {
     font-weight: 600;
     font-size: 24px;
     line-height: 32px;
-    margin: 25.5px 0px 10px 0px;
-    }
-  &__date{
+    margin: 20px 0px 10px 0px;
+  }
+  &__date {
     font-size: 14px;
     line-height: 130%;
     margin-bottom: 20px;
     color: #AAB0B9;
-    }
-  &__line{
+  }
+  &__line {
     margin-top: 20px;
-    }
-  &__description-title{
+  }
+  &__description-title {
     font-size: 18px;
     line-height: 130%;
     font-weight: 600;
-    margin: 20px 0px  10px 0px;
-   }
-  &__description{
-    font-family: Inter;
-    font-style: normal;
-    font-weight: normal;
+    margin: 20px 0px 10px 0px;
+  }
+  &__description {
     font-size: 16px;
     line-height: 130%;
     color: #7C838D;
@@ -144,48 +132,46 @@ export default {
   }
   &__bottom {
     display: flex;
+    flex-direction: row;
     align-items: center;
-    justify-content: space-between;
-    &-link {
-      display: flex;
-      align-items: center;
-      &-text {
-        flex: 0 0 auto;
-        font-size: 16px;
-        line-height: 130%;
-        color: #0083C7;
-        margin: 6.5px 14px 6.5px 10px;
-        }
-      &-arrow {
-        height: 12px;
-        width: 16px;
-        padding-top: 2px;
-      }
-    }
-    &-feedback{
-      display: flex;
-      align-items: center;
-    &-comment{
-      height: 18px;
-      width: 18px;
-    }
-    &-comment-counter{
-      font-size: 14px;
-      line-height: 18.2px;
-      color: #1D2127;
-      margin-left: 8px;
-    }
-    &-like{
-      height: 18px;
-      width: 20px;
-      margin-left: 22px;
-    }
-    &-like-counter{
-      font-size: 14px;
-      line-height: 18.2px;
-      margin-left: 7px;
-      color: #1D2127;
-    }}
   }
+  &__bottom-link {
+    flex: 130px;
+    font-size: 16px;
+    line-height: 130%;
+    color: #0083C7;
+    margin: 7px 14px 7px 10px;
   }
+  &__bottom-arrow {
+    color: #0083C7;
+  }
+  &__bottom-comment {
+    height: 18px;
+    width: 18px;
+  }
+  &__bottom-numbers {
+    font-size: 14px;
+    line-height: 18px;
+    color: #1D2127;
+    margin: 0px 22px 0px 8px;
+  }
+  &__bottom-counter {
+    font-size: 14px;
+    line-height: 18px;
+    margin: 7px;
+    color: #1D2127;
+  }
+}
+.icon-short_right:before {
+  color:  #0083C7;
+  font-size: 16px;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: 7px;
+}
+.icon-heart_fill:before{
+  font-size: 22px;
+  color: #E9EDF2;
+  margin-left: auto;
+}
 </style>

@@ -26,10 +26,9 @@
           />
         </div>
       </div>
-      <pagination/>
+      <pagination />
     </div>
   </div>
-
 </template>
 
 <script>
@@ -37,7 +36,6 @@
 import pagination from '~/components/app/Panels/pagination';
 
 export default {
-  name: 'discussions',
   components: {
     pagination,
   },
@@ -51,6 +49,8 @@ export default {
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
           description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
+          likeCounter: 50,
+          commentCounter: 50,
         },
         {
           ava: '~assets/img/icons/userAvatar.svg',
@@ -58,6 +58,8 @@ export default {
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
           description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
+          likeCounter: 50,
+          commentCounter: 50,
         },
         {
           ava: '~assets/img/icons/userAvatar.svg',
@@ -65,6 +67,8 @@ export default {
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
           description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
+          likeCounter: 50,
+          commentCounter: 50,
         },
         {
           ava: '~assets/img/icons/userAvatar.svg',
@@ -72,6 +76,8 @@ export default {
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
           description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
+          likeCounter: 50,
+          commentCounter: 50,
         },
         {
           ava: '~assets/img/icons/userAvatar.svg',
@@ -79,6 +85,8 @@ export default {
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
           description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
+          likeCounter: 50,
+          commentCounter: 50,
         },
         {
           ava: '~assets/img/icons/userAvatar.svg',
@@ -86,6 +94,8 @@ export default {
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
           description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
+          likeCounter: 50,
+          commentCounter: 50,
         },
       ],
     };
@@ -99,6 +109,7 @@ export default {
     margin: 0 auto;
     width: 100%;
     height: 100%;
+    @include _1024;
     &-title{
     font-weight: 600;
     font-size: 28px;
@@ -118,7 +129,8 @@ export default {
       display: flex;
       justify-content: space-between;
       margin: 0px 0px 30px 0px;
-      &-search {
+    }
+    &__header-search {
         flex: 1 1 auto;
         width: 680px;
         height: 43px;
@@ -128,11 +140,10 @@ export default {
         color: #D8DFE3;
         font-size: 16px;
         line-height: 130%;
-        }
-      &-btn {
+    }
+    &__header-btn {
         width: 220px;
         height: 43px;
       }
     }
-}
 </style>
