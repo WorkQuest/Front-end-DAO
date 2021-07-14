@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="discussions">
-      <div class="discussions-title">
+      <div class="discussions__title">
         {{ $t('discussions.title') }}
       </div>
       <div class="discussions__header">
@@ -14,7 +14,7 @@
           />
         </div>
         <base-btn class="discussions__btn">
-          <slot>{{ $t('discussions.btn') }}</slot>
+          {{ $t('discussions.btn') }}
         </base-btn>
       </div>
       <div class="discussions__field">
@@ -110,7 +110,7 @@ export default {
     width: 100%;
     height: 100%;
     @include _1024;
-    &-title{
+    &__title{
     font-weight: 600;
     font-size: 28px;
     line-height: 36px;

@@ -1,17 +1,17 @@
 <template>
   <div class="discussion">
-    <div class="discussion__user">
+    <div class="user">
       <img
         src="~assets/img/icons/userAvatar.svg"
         alt=""
-        class="discussion__user-image"
+        class="user__image"
       >
-      <span class="discussion__user-name">
+      <span class="user__name">
         {{ item.userName }}
       </span>
-      <div class="discussion__star">
+      <div class="user__star">
         <img
-            src="item.title"
+            src="~assets/img/ui/star_simple.svg"
             alt="">
       </div>
     </div>
@@ -22,23 +22,25 @@
       {{ item.date }}
     </div>
     <hr class="discussion__line">
-    <div class="discussion__description-title">
+    <div class="description">
+    <div class="description__title">
       {{ $t('discussions.descriptionTitle') }}
     </div>
-    <div class="discussion__description">
+    <div class="description__item">
       {{ item.description }}
     </div>
-    <div class="discussion__bottom">
-      <div class="discussion__footer">
-      <div class="discussion__link">
+    </div>
+    <div class="bottom">
+      <div class="bottom__footer">
+      <div class="bottom__link">
         <nuxt-link to="/">
-          {{ $t('discussions.nuxtLink') }}
+          {{ $t('discussions.read') }}
         </nuxt-link>
       </div>
-        <button class="discussion__arrow" >  <span class ="icon-short_right" /> </button>
+        <button class="bottom__arrow" >  <span class ="icon-short_right" /> </button>
       </div>
-      <div class="discussion__footer">
-      <div class="discussion__comment">
+      <div class="bottom__footer">
+      <div class="bottom__comment">
         <button>
           <img
             src="~assets/img/ui/comment.svg"
@@ -46,13 +48,13 @@
           >
         </button>
       </div>
-      <div class="discussion__counter">
+      <div class="bottom__counter">
         {{ item.commentCounter }}
       </div>
-      <button class= "discussion__like">
+      <button class= "bottom__like">
         <span class= "icon-heart_fill" />
       </button>
-      <div class="discussion__counter discussion__counter_right">
+      <div class="bottom__counter bottom__counter_right">
         {{ item.likeCounter }}
       </div>
       </div>
@@ -76,29 +78,6 @@ export default {
   background: #FFFFFF;
   border-radius: 8px;
   padding: 20px;
-  &__user {
-    display: flex;
-    align-items: center;
-  }
-  &__user-name {
-    font-size: 16px;
-    line-height: 130%;
-    color: #1D2127;
-    padding: 10px;
-  }
-  &__user-image {
-    flex: 0 0 0 32px;
-    width: 32px;
-    height: 32px;
-    left: 0px;
-    top: 0px;
-    border-radius: 50%;
-  }
-  &__star {
-    margin-left: auto;
-    width: 20px;
-    height: 20px;
-  }
   &__title {
     font-weight: 600;
     font-size: 24px;
@@ -114,62 +93,86 @@ export default {
   &__line {
     margin-top: 20px;
   }
-  &__description-title {
-    font-size: 18px;
-    line-height: 130%;
-    font-weight: 600;
-    margin: 20px 0px 10px 0px;
+}
+.user {
+    display: flex;
+    align-items: center;
+    &__name {
+      font-size: 16px;
+      line-height: 130%;
+      color: #1D2127;
+      padding: 10px;
+    }
+    &__image {
+      flex: 0 0 0 32px;
+      width: 32px;
+      height: 32px;
+      left: 0px;
+      top: 0px;
+      border-radius: 50%;
+    }
+    &__star {
+      margin-left: auto;
+      width: 20px;
+      height: 20px;
+    }
   }
-  &__description {
+.description {
+  &__item {
     font-size: 16px;
     line-height: 130%;
     color: #7C838D;
     align-self: stretch;
     margin-bottom: 20px;
   }
-  &__bottom {
+  &__title {
+    font-size: 18px;
+    line-height: 130%;
+    font-weight: 600;
+    margin: 20px 0px 10px 0px;
+  }
+}
+.bottom {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    a.nuxt-link-active{
+    a.nuxt-link-active {
       text-decoration: none;
     }
-  }
-  &__footer{
-    display: flex;
-    align-items: center;
-  }
-  &__link {
-    font-size: 16px;
-    line-height: 130%;
-    color: #0083C7;
-    align-items: center;
-    margin: 7px 14px 7px 10px;
-  }
-
-  &__like{
-    margin-left: auto;
-  }
-  &__arrow {
-    margin-top: 10px;
-    margin-left: auto;
-    margin-right: 7px;
-  }
-  &__comment {
-    height: 18px;
-    width: 18px;
-  }
-  &__counter {
-    font-size: 14px;
-    line-height: 18px;
-    color: #1D2127;
-    margin: 0px 22px 0px 8px;
-    &_right{
-      margin: 7px;
+    &__footer {
+      display: flex;
+      align-items: center;
+    }
+    &__link {
+      font-size: 16px;
+      line-height: 130%;
+      color: #0083C7;
+      align-items: center;
+      margin: 7px 14px 7px 10px;
+    }
+    &__like {
+      margin-left: auto;
+    }
+    &__arrow {
+      margin-top: 10px;
+      margin-left: auto;
+      margin-right: 7px;
+    }
+    &__comment {
+      height: 18px;
+      width: 18px;
+    }
+    &__counter {
+      font-size: 14px;
+      line-height: 18px;
+      color: #1D2127;
+      margin: 0px 22px 0px 8px;
+      &_right {
+        margin: 7px;
+      }
     }
   }
-}
 .icon-short_right:before {
   color:  #0083C7;
   font-size: 25px;
