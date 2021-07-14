@@ -4,7 +4,7 @@
       <img
         src="~assets/img/icons/userAvatar.svg"
         alt=""
-        class="user__image"
+        class="user__avatar"
       >
       <span class="user__name">
         {{ item.userName }}
@@ -103,7 +103,7 @@ export default {
       color: #1D2127;
       padding: 10px;
     }
-    &__image {
+    &__avatar {
       flex: 0 0 0 32px;
       width: 32px;
       height: 32px;
