@@ -120,6 +120,7 @@ export default {
       line-height: 130%;
       color: #1D2127;
       padding: 10px;
+
     }
     &__avatar {
       flex: 0 0 0 32px;
@@ -192,6 +193,7 @@ export default {
 }
 .liked:before{
   color: #0083C7;
+
 }
 .link {
   display: flex;

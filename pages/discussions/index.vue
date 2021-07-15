@@ -119,6 +119,7 @@ export default {
     }
     &__field{
     justify-content: space-between;
+
     }
     &__card {
     display: grid;
