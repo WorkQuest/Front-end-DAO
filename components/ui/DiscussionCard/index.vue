@@ -9,11 +9,17 @@
       <span class="user__name">
         {{ item.userName }}
       </span>
-      <div class="user__star">
-        <img
+      <button class="user__star"> <img
+            @click="isChecked = true"
+            v-if="!isChecked"
             src="~assets/img/ui/star_simple.svg"
             alt="">
-      </div>
+        <img
+            @click="isChecked = false"
+            v-if="isChecked"
+            src="~assets/img/ui/star_checked.svg"
+            alt="">
+      </button>
     </div>
     <div class="discussion__title">
         {{ item.title }}
@@ -32,12 +38,10 @@
     </div>
     <div class="bottom">
       <div class="bottom__footer">
-      <div class="bottom__link">
-        <nuxt-link to="/">
-          {{ $t('discussions.read') }}
+        <nuxt-link to="/discussions/_id" class="link">
+          <div class="link__text">{{ $t('discussions.read') }}</div>
+          <div link_arrow><span class="icon-short_right" /></div>
         </nuxt-link>
-      </div>
-        <button class="bottom__arrow" >  <span class ="icon-short_right" /> </button>
       </div>
       <div class="bottom__footer">
       <div class="bottom__comment">
@@ -51,9 +55,16 @@
       <div class="bottom__counter">
         {{ item.commentCounter }}
       </div>
-      <button class= "bottom__like">
+      <button class= "bottom__like"
+              @click="isLiked = true"
+              v-if="!isLiked" >
         <span class= "icon-heart_fill" />
       </button>
+        <button class= "bottom__like"
+                @click="isLiked = false"
+                v-if="isLiked" >
+          <span class= "icon-heart_fill liked" />
+        </button>
       <div class="bottom__counter bottom__counter_right">
         {{ item.likeCounter }}
       </div>
@@ -63,6 +74,13 @@
 </template>
 <script>
 export default {
+
+  data() {
+    return {
+      isChecked: false,
+      isLiked: false,
+    };
+  },
   props: {
     item: {
       type: Object,
@@ -137,19 +155,9 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    a.nuxt-link-active {
-      text-decoration: none;
-    }
     &__footer {
       display: flex;
       align-items: center;
-    }
-    &__link {
-      font-size: 16px;
-      line-height: 130%;
-      color: #0083C7;
-      align-items: center;
-      margin: 7px 14px 7px 10px;
     }
     &__like {
       margin-left: auto;
@@ -158,6 +166,7 @@ export default {
       margin-top: 10px;
       margin-left: auto;
       margin-right: 7px;
+      text-align: center;
     }
     &__comment {
       height: 18px;
@@ -177,8 +186,24 @@ export default {
   color:  #0083C7;
   font-size: 25px;
 }
-.icon-heart_fill:before{
+.icon-heart_fill:before {
   font-size: 22px;
   color: #E9EDF2;
+}
+.liked:before{
+  color: #0083C7;
+}
+.link {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  font-size: 16px;
+  line-height: 130%;
+  text-decoration: none;
+  color: #0083C7;
+  &__text{
+  margin: 7px 14px 7px 10px;
+  }
 }
 </style>
