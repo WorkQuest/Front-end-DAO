@@ -1,36 +1,9 @@
 {
-  "ScreenQuests": {
-    "description": "Auto imported from components/screen/quests.vue"
-  },
   "CtmModal": {
     "description": "Auto imported from components/CtmModal/index.vue"
   },
-  "AppCardsQuestCard": {
-    "description": "Auto imported from components/app/Cards/QuestCard.vue"
-  },
-  "AppCardsProposalCards": {
-    "description": "Auto imported from components/app/Cards/proposalCards.vue"
-  },
-  "AppHeader": {
-    "description": "Auto imported from components/app/Header/index.vue"
-  },
-  "AppInfo": {
-    "description": "Auto imported from components/app/Info/index.vue"
-  },
-  "AppPanelsContact": {
-    "description": "Auto imported from components/app/Panels/Contact.vue"
-  },
-  "AppPanelsContactOther": {
-    "description": "Auto imported from components/app/Panels/ContactOther.vue"
-  },
-  "AppPanelsQuestPanel": {
-    "description": "Auto imported from components/app/Panels/QuestPanel.vue"
-  },
-  "AppPanelsSocial": {
-    "description": "Auto imported from components/app/Panels/Social.vue"
-  },
-  "AppPanelsUserStatistic": {
-    "description": "Auto imported from components/app/Panels/UserStatistic.vue"
+  "ScreenQuests": {
+    "description": "Auto imported from components/screen/quests.vue"
   },
   "CtmModalCtmModalAddCard": {
     "description": "Auto imported from components/CtmModal/CtmModalAddCard/index.vue"
@@ -151,6 +124,33 @@
   },
   "CtmModalCtmModalWithdrawAbout": {
     "description": "Auto imported from components/CtmModal/CtmModalWithdrawAbout/index.vue"
+  },
+  "AppCardsQuestCard": {
+    "description": "Auto imported from components/app/Cards/QuestCard.vue"
+  },
+  "AppCardsProposalCards": {
+    "description": "Auto imported from components/app/Cards/proposalCards.vue"
+  },
+  "AppHeader": {
+    "description": "Auto imported from components/app/Header/index.vue"
+  },
+  "AppInfo": {
+    "description": "Auto imported from components/app/Info/index.vue"
+  },
+  "AppPanelsContact": {
+    "description": "Auto imported from components/app/Panels/Contact.vue"
+  },
+  "AppPanelsContactOther": {
+    "description": "Auto imported from components/app/Panels/ContactOther.vue"
+  },
+  "AppPanelsQuestPanel": {
+    "description": "Auto imported from components/app/Panels/QuestPanel.vue"
+  },
+  "AppPanelsSocial": {
+    "description": "Auto imported from components/app/Panels/Social.vue"
+  },
+  "AppPanelsUserStatistic": {
+    "description": "Auto imported from components/app/Panels/UserStatistic.vue"
   },
   "UiBaseButton": {
     "description": "Auto imported from components/ui/BaseButton/index.vue"

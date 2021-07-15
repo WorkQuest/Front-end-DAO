@@ -1,16 +1,7 @@
 import { wrapFunctional } from './utils'
 
-export { default as ScreenQuests } from '../../components/screen/quests.vue'
 export { default as CtmModal } from '../../components/CtmModal/index.vue'
-export { default as AppCardsQuestCard } from '../../components/app/Cards/QuestCard.vue'
-export { default as AppCardsProposalCards } from '../../components/app/Cards/proposalCards.vue'
-export { default as AppHeader } from '../../components/app/Header/index.vue'
-export { default as AppInfo } from '../../components/app/Info/index.vue'
-export { default as AppPanelsContact } from '../../components/app/Panels/Contact.vue'
-export { default as AppPanelsContactOther } from '../../components/app/Panels/ContactOther.vue'
-export { default as AppPanelsQuestPanel } from '../../components/app/Panels/QuestPanel.vue'
-export { default as AppPanelsSocial } from '../../components/app/Panels/Social.vue'
-export { default as AppPanelsUserStatistic } from '../../components/app/Panels/UserStatistic.vue'
+export { default as ScreenQuests } from '../../components/screen/quests.vue'
 export { default as CtmModalCtmModalAddCard } from '../../components/CtmModal/CtmModalAddCard/index.vue'
 export { default as CtmModalCtmModalAddCase } from '../../components/CtmModal/CtmModalAddCase/index.vue'
 export { default as CtmModalCtmModalAddLiquidity } from '../../components/CtmModal/CtmModalAddLiquidity/index.vue'
@@ -51,6 +42,15 @@ export { default as CtmModalCtmModalTwoFAAuth } from '../../components/CtmModal/
 export { default as CtmModalCtmModalWelcome } from '../../components/CtmModal/CtmModalWelcome/index.vue'
 export { default as CtmModalCtmModalWithdraw } from '../../components/CtmModal/CtmModalWithdraw/index.vue'
 export { default as CtmModalCtmModalWithdrawAbout } from '../../components/CtmModal/CtmModalWithdrawAbout/index.vue'
+export { default as AppCardsQuestCard } from '../../components/app/Cards/QuestCard.vue'
+export { default as AppCardsProposalCards } from '../../components/app/Cards/proposalCards.vue'
+export { default as AppHeader } from '../../components/app/Header/index.vue'
+export { default as AppInfo } from '../../components/app/Info/index.vue'
+export { default as AppPanelsContact } from '../../components/app/Panels/Contact.vue'
+export { default as AppPanelsContactOther } from '../../components/app/Panels/ContactOther.vue'
+export { default as AppPanelsQuestPanel } from '../../components/app/Panels/QuestPanel.vue'
+export { default as AppPanelsSocial } from '../../components/app/Panels/Social.vue'
+export { default as AppPanelsUserStatistic } from '../../components/app/Panels/UserStatistic.vue'
 export { default as UiBaseButton } from '../../components/ui/BaseButton/index.vue'
 export { default as UiBaseCheckbox } from '../../components/ui/BaseCheckbox/index.vue'
 export { default as UiBaseDD } from '../../components/ui/BaseDD/index.vue'
@@ -66,17 +66,8 @@ export { default as AppPagesCommonUserInfoOther } from '../../components/app/Pag
 export { default as AppPagesProfileTabsPortfolio } from '../../components/app/Pages/Profile/Tabs/Portfolio.vue'
 export { default as AppPagesProfileTabsReviews } from '../../components/app/Pages/Profile/Tabs/Reviews.vue'
 
-export const LazyScreenQuests = import('../../components/screen/quests.vue' /* webpackChunkName: "components/screen-quests" */).then(c => wrapFunctional(c.default || c))
 export const LazyCtmModal = import('../../components/CtmModal/index.vue' /* webpackChunkName: "components/ctm-modal" */).then(c => wrapFunctional(c.default || c))
-export const LazyAppCardsQuestCard = import('../../components/app/Cards/QuestCard.vue' /* webpackChunkName: "components/app-cards-quest-card" */).then(c => wrapFunctional(c.default || c))
-export const LazyAppCardsProposalCards = import('../../components/app/Cards/proposalCards.vue' /* webpackChunkName: "components/app-cards-proposal-cards" */).then(c => wrapFunctional(c.default || c))
-export const LazyAppHeader = import('../../components/app/Header/index.vue' /* webpackChunkName: "components/app-header" */).then(c => wrapFunctional(c.default || c))
-export const LazyAppInfo = import('../../components/app/Info/index.vue' /* webpackChunkName: "components/app-info" */).then(c => wrapFunctional(c.default || c))
-export const LazyAppPanelsContact = import('../../components/app/Panels/Contact.vue' /* webpackChunkName: "components/app-panels-contact" */).then(c => wrapFunctional(c.default || c))
-export const LazyAppPanelsContactOther = import('../../components/app/Panels/ContactOther.vue' /* webpackChunkName: "components/app-panels-contact-other" */).then(c => wrapFunctional(c.default || c))
-export const LazyAppPanelsQuestPanel = import('../../components/app/Panels/QuestPanel.vue' /* webpackChunkName: "components/app-panels-quest-panel" */).then(c => wrapFunctional(c.default || c))
-export const LazyAppPanelsSocial = import('../../components/app/Panels/Social.vue' /* webpackChunkName: "components/app-panels-social" */).then(c => wrapFunctional(c.default || c))
-export const LazyAppPanelsUserStatistic = import('../../components/app/Panels/UserStatistic.vue' /* webpackChunkName: "components/app-panels-user-statistic" */).then(c => wrapFunctional(c.default || c))
+export const LazyScreenQuests = import('../../components/screen/quests.vue' /* webpackChunkName: "components/screen-quests" */).then(c => wrapFunctional(c.default || c))
 export const LazyCtmModalCtmModalAddCard = import('../../components/CtmModal/CtmModalAddCard/index.vue' /* webpackChunkName: "components/ctm-modal-ctm-modal-add-card" */).then(c => wrapFunctional(c.default || c))
 export const LazyCtmModalCtmModalAddCase = import('../../components/CtmModal/CtmModalAddCase/index.vue' /* webpackChunkName: "components/ctm-modal-ctm-modal-add-case" */).then(c => wrapFunctional(c.default || c))
 export const LazyCtmModalCtmModalAddLiquidity = import('../../components/CtmModal/CtmModalAddLiquidity/index.vue' /* webpackChunkName: "components/ctm-modal-ctm-modal-add-liquidity" */).then(c => wrapFunctional(c.default || c))
@@ -117,6 +108,15 @@ export const LazyCtmModalCtmModalTwoFAAuth = import('../../components/CtmModal/C
 export const LazyCtmModalCtmModalWelcome = import('../../components/CtmModal/CtmModalWelcome/index.vue' /* webpackChunkName: "components/ctm-modal-ctm-modal-welcome" */).then(c => wrapFunctional(c.default || c))
 export const LazyCtmModalCtmModalWithdraw = import('../../components/CtmModal/CtmModalWithdraw/index.vue' /* webpackChunkName: "components/ctm-modal-ctm-modal-withdraw" */).then(c => wrapFunctional(c.default || c))
 export const LazyCtmModalCtmModalWithdrawAbout = import('../../components/CtmModal/CtmModalWithdrawAbout/index.vue' /* webpackChunkName: "components/ctm-modal-ctm-modal-withdraw-about" */).then(c => wrapFunctional(c.default || c))
+export const LazyAppCardsQuestCard = import('../../components/app/Cards/QuestCard.vue' /* webpackChunkName: "components/app-cards-quest-card" */).then(c => wrapFunctional(c.default || c))
+export const LazyAppCardsProposalCards = import('../../components/app/Cards/proposalCards.vue' /* webpackChunkName: "components/app-cards-proposal-cards" */).then(c => wrapFunctional(c.default || c))
+export const LazyAppHeader = import('../../components/app/Header/index.vue' /* webpackChunkName: "components/app-header" */).then(c => wrapFunctional(c.default || c))
+export const LazyAppInfo = import('../../components/app/Info/index.vue' /* webpackChunkName: "components/app-info" */).then(c => wrapFunctional(c.default || c))
+export const LazyAppPanelsContact = import('../../components/app/Panels/Contact.vue' /* webpackChunkName: "components/app-panels-contact" */).then(c => wrapFunctional(c.default || c))
+export const LazyAppPanelsContactOther = import('../../components/app/Panels/ContactOther.vue' /* webpackChunkName: "components/app-panels-contact-other" */).then(c => wrapFunctional(c.default || c))
+export const LazyAppPanelsQuestPanel = import('../../components/app/Panels/QuestPanel.vue' /* webpackChunkName: "components/app-panels-quest-panel" */).then(c => wrapFunctional(c.default || c))
+export const LazyAppPanelsSocial = import('../../components/app/Panels/Social.vue' /* webpackChunkName: "components/app-panels-social" */).then(c => wrapFunctional(c.default || c))
+export const LazyAppPanelsUserStatistic = import('../../components/app/Panels/UserStatistic.vue' /* webpackChunkName: "components/app-panels-user-statistic" */).then(c => wrapFunctional(c.default || c))
 export const LazyUiBaseButton = import('../../components/ui/BaseButton/index.vue' /* webpackChunkName: "components/ui-base-button" */).then(c => wrapFunctional(c.default || c))
 export const LazyUiBaseCheckbox = import('../../components/ui/BaseCheckbox/index.vue' /* webpackChunkName: "components/ui-base-checkbox" */).then(c => wrapFunctional(c.default || c))
 export const LazyUiBaseDD = import('../../components/ui/BaseDD/index.vue' /* webpackChunkName: "components/ui-base-d-d" */).then(c => wrapFunctional(c.default || c))

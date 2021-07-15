@@ -474,6 +474,15 @@
       }
     }
   },
+  "proposal": {
+    "title": "Proposal info",
+    "back": "Back",
+    "hashTitle": "Tx Hash",
+    "filesTitle": "Files",
+    "noFiles": "No files",
+    "description": "Description",
+    "toTheForum": "Go to the Forum"
+  },
   "settings": {
     "description": "And you are beautiful",
     "imgLoaded": "Image loaded successful",
