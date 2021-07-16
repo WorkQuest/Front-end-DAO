@@ -41,7 +41,10 @@
                 <div class="hash__title">
                   {{ $t('proposal.hashTitle') }}
                 </div>
-                <div class="hash__value">
+                <div
+                    class="hash__value"
+                    :class="{'hash__value_33height' : documents.length}"
+                >
                   {{ hash.length ? modifyHash(hash) : '...' }}
                 </div>
               </div>
@@ -59,27 +62,32 @@
                       <div class="file__icon">
                         <img
                             src="~/assets/img/ui/pdf.svg"
-                            class="file__icon-pdf"
                             alt=""
                         >
                       </div>
                       <div class="file__name">{{ doc.name }}</div>
                       <div class="file__size">{{ doc.size }}</div>
-                      <div class="file__download">
-                        <base-btn
-                            class="btn__download btn__download_size"
-                        >
+                      <div class="file__close">
+                        <span >
                           <img
-                              src="~/assets/img/ui/download.svg"
-                              class="file__icon-pdf"
+                              class="btn__delete"
+                              src="~/assets/img/ui/close.svg"
                               alt=""
                           >
-                        </base-btn>
+                        </span>
                       </div>
                     </div>
                   </template>
                   <template v-else>
-                    {{ $t('proposal.noFiles') }}
+                    <div class="files__noFiles">
+                      {{ $t('proposal.noFiles') }}
+                      <span class="btn__download">
+                        <img
+                            src="~/assets/img/ui/download.svg"
+                            alt=""
+                        >
+                      </span>
+                    </div>
                   </template>
                 </div>
               </div>
@@ -115,29 +123,29 @@
                 <div class="bar">
                   <div class="bar__result result">
                     <div class="result__name">{{ $t('proposal.yes') }}</div>
-                    <div class="result__percent">{{ `${yes}%` }}</div>
+                    <div class="result__percent">{{ `${results.percents.yes}%` }}</div>
                   </div>
                   <div class="bar__line">
                     <div class="bar__line_gray">
-                      <div class="bar__line_green" :style="`width: ${yes}%`"></div>
+                      <div class="bar__line_green" :style="`width: ${results.percents.yes}%`"></div>
                     </div>
                   </div>
                   <div class="bar__votes">
-                    {{ votes.yes }} {{ $t('proposal.votes') }}
+                    {{ results.votes.yes }} {{ $t('proposal.votes') }}
                   </div>
                 </div>
                 <div class="bar">
                   <div class="bar__result result">
                     <div class="result__name">{{ $t('proposal.no') }}</div>
-                    <div class="result__percent">{{ `${no}%` }}</div>
+                    <div class="result__percent">{{ `${results.percents.no}%` }}</div>
                   </div>
                   <div class="bar__line">
                     <div class="bar__line_gray">
-                      <div class="bar__line_red" :style="`width: ${no}%`"></div>
+                      <div class="bar__line_red" :style="`width: ${results.percents.no}%`"></div>
                     </div>
                   </div>
                   <div class="bar__votes">
-                    {{ votes.no }} {{ $t('proposal.votes') }}
+                    {{ results.votes.no }} {{ $t('proposal.votes') }}
                   </div>
                 </div>
               </div>
@@ -145,8 +153,14 @@
             <div class="results__buttons buttons">
               <div class="buttons__header">{{ $t('proposal.voteForProposal') }}</div>
               <div class="buttons__container">
-                <base-btn class="btn__votes btn__votes_size btn__votes_red">{{ $t('proposal.no') }}</base-btn>
-                <base-btn class="btn__votes btn__votes_size btn__votes_green">{{ $t('proposal.yes') }}</base-btn>
+                <base-btn
+                    class="btn__votes btn__votes_size btn__votes_red">
+                  {{ $t('proposal.no') }}
+                </base-btn>
+                <base-btn
+                    class="btn__votes btn__votes_size btn__votes_green">
+                  {{ $t('proposal.yes') }}
+                </base-btn>
               </div>
             </div>
           </div>
@@ -180,22 +194,6 @@ export default {
       type: String,
       default: '',
     },
-    hash: {
-      type: String,
-      default: '11400714819323198485',
-    },
-    descriptionValue: {
-      type: String,
-      default: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid animi, ea exercitationem fugit incidunt nesciunt nisi non officiis optio quaerat rem similique suscipit. Ab ad asperiores, commodi consequatur cum delectus distinctio eaque fugiat impedit iste laborum laudantium maxime nam odio perspiciatis quibusdam quisquam ratione sequi suscipit ullam vel veritatis voluptate.',
-    },
-    yes: {
-      type: Number,
-      default: 75,
-    },
-    no: {
-      type: Number,
-      default: 25,
-    },
   },
   data() {
     return {
@@ -214,9 +212,17 @@ export default {
           size: '1.5mb',
         },
       ],
-      votes: {
-        yes: 10,
-        no: 2,
+      hash: '11400714819323198485',
+      descriptionValue: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid animi, ea exercitationem fugit incidunt nesciunt nisi non officiis optio quaerat rem similique suscipit. Ab ad asperiores, commodi consequatur cum delectus distinctio eaque fugiat impedit iste laborum laudantium maxime nam odio perspiciatis quibusdam quisquam ratione sequi suscipit ullam vel veritatis voluptate.',
+      results: {
+        percents: {
+          yes: '65',
+          no: '35',
+        },
+        votes: {
+          yes: 10,
+          no: 2,
+        },
       },
       cards: [
         {
@@ -234,84 +240,6 @@ export default {
         {
           voting: 1,
           status: 2,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 2,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 0,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 2,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 0,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 2,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 0,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 2,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 0,
           date: 'Jan 01, 2021 - Mar 01, 2021',
           about: 'Lorem ipsum dolor sit amet, consectetur',
         },
@@ -484,14 +412,19 @@ export default {
       }
 
       &__components {
-        display: inline-flex;
+        display: grid;
+        grid-template-columns: max-content auto;
+        grid-gap: 80px;
         margin-top: 20px;
 
         .components {
+          @extend .info__components;
           &__hash {
-            margin-right: 80px;
-
+            display: grid;
+            grid-template-rows: max-content 1fr;
+            grid-row-gap: 10px;
             .hash {
+              @extend .components__hash;
               &__title {
                 font-weight: 600;
                 font-size: 18px;
@@ -504,13 +437,19 @@ export default {
                 font-size: 14px;
                 line-height: 130%;
                 color: #0083C7;
-                margin-top: 10px;
+                //margin-top: 10px;
+                &_33height {
+                  line-height: 33px;
+                }
               }
             }
           }
 
           &__files {
+            display: grid;
+            grid-template-rows: max-content 1fr;
             .files {
+              @extend .components__files;
               &__title {
                 font-weight: 600;
                 font-size: 18px;
@@ -525,6 +464,10 @@ export default {
                 color: #000000;
                 margin-top: 10px;
               }
+
+              &__noFiles {
+                display: flex;
+              }
             }
 
             .file {
@@ -535,10 +478,6 @@ export default {
 
               &__icon {
                 margin-right: 8px;
-
-                &-pdf {
-
-                }
               }
 
               &__name {
@@ -555,9 +494,6 @@ export default {
                 margin-right: 8px;
               }
 
-              &__download {
-
-              }
             }
           }
         }
@@ -691,11 +627,15 @@ export default {
   }
 
   &__download {
-    background: #F7F8FA;
-    &_size {
-      width: 33px;
-      height: 33px;
-    }
+    margin-left: 8px;
+    margin-top: 2px;
+    cursor: pointer;
+    color: #F7F8FA;
+  }
+
+  &__delete {
+    cursor: pointer;
+    height: 9px;
   }
 
   &__votes {
@@ -707,10 +647,16 @@ export default {
 
     &_red {
       background: #DF3333;
+      &:hover {
+        background: #DF3333;
+      }
     }
 
     &_green {
       background: #00AA5B;
+      &:hover {
+        background: #00AA5B;
+      }
     }
   }
 
