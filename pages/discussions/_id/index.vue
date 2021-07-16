@@ -1,27 +1,27 @@
 <template>
   <div>
     <div class="info">
-      <div class="header info__header">
-        <button class="header__arrow" >  <span class ="icon-short_left" /> </button>
+      <div class="header">
         <div class="header__link">
-        <nuxt-link to="/">
+        <nuxt-link to="/discussions">
+          <button class="header__arrow" >  <span class ="icon-short_left" /> </button>
           {{ $t('discussions.back') }}
         </nuxt-link>
         </div>
       </div>
-      <div class="info__title">
-        {{ $t('discussions.infoTitle') }}
-      </div>
       <div class="info__field">
-          <discussion-card
+          <infoCard
               v-for="(item, i) in discussions"
               :key="i"
               :item="item"
           />
-        <base-btn class="info__btn">
+      </div>
+        <div class="heading info__heading">
+          <div class="heading__title">{{ $t('discussions.commentTitle') }}</div>
+        <base-btn class="heading__btn">
           {{ $t('discussions.add') }}
         </base-btn>
-      </div>
+        </div>
         <div class="comment"
         v-for="(elem, i) in comments"
         :key="i"
@@ -65,10 +65,10 @@
                 </div>
               </div>
             </div>
-            <div class="footer">
-              <div class="footer__chain"><span class="class= con-link_02"></span></div>
-              <input class="footer__input" :placeholder="$t('discussions.input')" />12
-              <div class="arrow">12</div>
+            <div class="footer info__footer">
+              <button class="footer__chain"><span class="class= icon-link"></span></button>
+              <input class="footer__input" :placeholder="$t('discussions.input')" />
+              <button class="footer__arrow"><span class="class= icon-send"></span></button>
             </div>
           </div>
       </div>
@@ -77,8 +77,12 @@
 </template>
 
 <script>
+import infoCard from '~/components/ui/InfoCard';
 
 export default {
+  components: {
+    infoCard,
+  },
   data() {
     return {
       discussions: [
@@ -90,9 +94,54 @@ export default {
           description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
           likeCounter: 50,
           commentCounter: 50,
+          files: {
+            size: '1.2 MB',
+            name: 'Some_document.pdf',
+            image: "~assets/img/ui/rectangle.svg'",
+            name2: 'S212ome_document.pdf',
+          },
+          images: {
+            image1: '~assets/img/ui/rectangle.svg',
+            image2: '~assets/img/ui/rectangle.svg',
+            image3: '~assets/img/ui/rectangle.svg',
+            image4: '~assets/img/ui/rectangle.svg',
+            image5: '~assets/img/ui/rectangle.svg',
+          },
         },
       ],
       comments: [
+        {
+          avatar: '~assets/img/icons/userAvatar.svg',
+          userName: 'Rosalia Vans',
+          date: '10 days ago',
+          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
+          likeCounter: 50,
+          commentCounter: 50,
+        },
+        {
+          avatar: '~assets/img/icons/userAvatar.svg',
+          userName: 'Rosalia Vans',
+          date: '10 days ago',
+          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
+          likeCounter: 50,
+          commentCounter: 50,
+        },
+        {
+          avatar: '~assets/img/icons/userAvatar.svg',
+          userName: 'Rosalia Vans',
+          date: '10 days ago',
+          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
+          likeCounter: 50,
+          commentCounter: 50,
+        },
+        {
+          avatar: '~assets/img/icons/userAvatar.svg',
+          userName: 'Rosalia Vans',
+          date: '10 days ago',
+          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
+          likeCounter: 50,
+          commentCounter: 50,
+        },
         {
           avatar: '~assets/img/icons/userAvatar.svg',
           userName: 'Rosalia Vans',
@@ -114,6 +163,9 @@ export default {
   width: 100%;
   height: 100%;
   @include _1024;
+  &__header{
+    margin: 30px 0px 1px 10px;
+  }
   &__title {
     font-weight: 600;
     font-size: 28px;
@@ -121,11 +173,9 @@ export default {
     margin-right: auto;
     padding: 20px 0px 20px 0px;
   }
-
   &__field {
     justify-content: space-between;
   }
-
   &__search {
     flex: 1 1 auto;
     width: 680px;
@@ -137,11 +187,25 @@ export default {
     font-size: 16px;
     line-height: 130%;
   }
-
+  &__footer{
+    margin-top: 20px;
+  }
+  &__heading{
+    margin: 30px 0px 20px 0px;
+  }
+}
+.heading{
+  display: flex;
+  justify-content: space-between;
   &__btn {
     width: 220px;
     height: 43px;
-    margin: 30px 0px 20px auto;
+  }
+  &__title{
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 32px;
+    color: #1D2127;
   }
 }
 .header{
@@ -156,7 +220,6 @@ export default {
       line-height: 130%;
       font-weight: 500;
       align-items: center;
-      margin: 30px 0px 1px 10px;
     }
     &__arrow {
       margin: 42px 0px 6px 4px;
@@ -173,6 +236,7 @@ export default {
     background: #FFFFFF;
     border-radius: 8px;
     padding: 20px;
+    margin-bottom: 15px;
   }
   &__description{
     font-size: 16px;
@@ -257,6 +321,33 @@ export default {
     font-size: 16px;
     line-height: 130%;
     padding: 10px 20px 10px 15px;
+    margin: 0px 10px 0px 10px;
   }
+  &__chain{
+    display: flex;
+    width: 40px;
+    height: 40px;
+    background: #F7F8FA;
+    border-radius: 6px;
+    align-items: center;
+    justify-content: center;
+  }
+  &__arrow{
+    display: flex;
+    width: 40px;
+    height: 40px;
+    background: #F7F8FA;
+    border-radius: 6px;
+    align-items: center;
+    justify-content: center;
+  }
+}
+.icon-send:before {
+  font-size: 25px;
+  color: #0083C7;
+}
+.icon-link:before {
+  color: #000000;
+  font-size: 25px;
 }
 </style>

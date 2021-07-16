@@ -826,10 +826,17 @@
     "incorrectPass" : "Oops, something went wrong. Check the data and try again."
   },
   "discussions": {
-  "discussionTitle": "Discussions",
+  "title": "Discussions",
   "btn": "Add new discussion",
   "seacrhField": "Search discussion",
   "descriptionTitle": "Description",
-  "nuxtLink": "Read completely"
+  "read": "Read completely",
+  "infoTitle": "Discussion info",
+  "back": "Back",
+  "add": "Add comment",
+  "show": "Show comments",
+  "input": "Write you response",
+  "commentTitle": "Comments",
+  "files": "Files"
   }
  }
