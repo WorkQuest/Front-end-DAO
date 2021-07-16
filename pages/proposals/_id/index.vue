@@ -4,7 +4,7 @@
       <div class="proposal__back back">
         <div class="back__container">
           <nuxt-link class="back__link" to="/proposals">
-            <span class="back__icon icon-short_left" />
+            <span class="back__icon icon-short_left"/>
             {{ $t('proposal.back') }}
           </nuxt-link>
         </div>
@@ -12,9 +12,9 @@
       <div class="proposal__header">
         {{ $t('proposal.title') }}
       </div>
-      <div class="proposal__content">
-        <div class="proposal__content_grid">
-          <div class="proposal__info proposal__content_item">
+      <div class="proposal__content content">
+        <div class="content__grid">
+          <div class="proposal__info info content__column">
             <div class="info__top">
               <div class="info__top_left">
                 <span>{{ `Voting #${voting}` }}</span>
@@ -28,34 +28,64 @@
                 </div>
               </div>
             </div>
-            <div class="info__header">
-              <div class="info__header_title">
+            <div class="info__header header">
+              <div class="header__title">
                 <span>{{ about }}</span>
               </div>
-              <div class="info__header_subtitle">
+              <div class="header__subtitle">
                 <span>{{ date }}</span>
               </div>
             </div>
-            <div class="info__row">
-              <div class="hash">
+            <div class="info__components components">
+              <div class="components__hash hash">
                 <div class="hash__title">
                   {{ $t('proposal.hashTitle') }}
                 </div>
                 <div class="hash__value">
-                  {{ modifyHash(hash) }}
+                  {{ hash.length ? modifyHash(hash) : '...' }}
                 </div>
               </div>
-              <div class="files">
+              <div class="components__files files">
                 <div class="files__title">
                   {{ $t('proposal.filesTitle') }}
                 </div>
                 <div class="files__container">
-                  {{ $t('proposal.noFiles') }}
+                  <template v-if="documents.length">
+                    <div
+                        v-for="doc in documents"
+                        v-bind:key="doc.id"
+                        class="file"
+                    >
+                      <div class="file__icon">
+                        <img
+                            src="~/assets/img/ui/pdf.svg"
+                            class="file__icon-pdf"
+                            alt=""
+                        >
+                      </div>
+                      <div class="file__name">{{ doc.name }}</div>
+                      <div class="file__size">{{ doc.size }}</div>
+                      <div class="file__download">
+                        <base-btn
+                            class="btn__download btn__download_size"
+                        >
+                          <img
+                              src="~/assets/img/ui/download.svg"
+                              class="file__icon-pdf"
+                              alt=""
+                          >
+                        </base-btn>
+                      </div>
+                    </div>
+                  </template>
+                  <template v-else>
+                    {{ $t('proposal.noFiles') }}
+                  </template>
                 </div>
               </div>
             </div>
             <hr class="line">
-            <div class="description">
+            <div class="info__description description">
               <div class="description__title">
                 {{ $t('proposal.description') }}
               </div>
@@ -63,7 +93,7 @@
                 {{ descriptionValue }}
               </div>
             </div>
-            <div class="btn__container">
+            <div class="info__toForum">
               <nuxt-link
                   class="btn__link"
                   to="proposals/1">
@@ -76,7 +106,7 @@
               </nuxt-link>
             </div>
           </div>
-          <div class="proposal__results results proposal__content_item">
+          <div class="proposal__results results content__column">
             <div>
               <div class="results__header">
                 {{ $t('proposal.results') }}
@@ -127,6 +157,7 @@
 </template>
 
 <script>
+
 export default {
   props: {
     idCard: {
@@ -168,6 +199,21 @@ export default {
   },
   data() {
     return {
+      documents0: [],
+      documents: [
+        {
+          id: '1',
+          type: 'pdf',
+          name: 'some_document1.pdf',
+          size: '1.2mb',
+        },
+        {
+          id: '2',
+          type: 'pdf',
+          name: 'some_document2.pdf',
+          size: '1.5mb',
+        },
+      ],
       votes: {
         yes: 10,
         no: 2,
@@ -304,10 +350,7 @@ export default {
       return priority[index] || 'None';
     },
     modifyHash(hash) {
-      if (hash.length) {
-        return `${hash.substr(0, 6)}...${hash.substr(hash.length - 6, 6)}`;
-      }
-      return '...';
+      return `${hash.substr(0, 6)}...${hash.substr(hash.length - 6, 6)}`;
     },
   },
 };
@@ -325,31 +368,30 @@ export default {
   }
 
   &__back {
-    padding: 0;
-  }
 
-  .back {
-    @extend .proposal__back;
+    .back {
 
-    &__container {
-      width: 77px;
-      height: 24px;
+      &__container {
+        width: 77px;
+        height: 24px;
+      }
+
+      &__link {
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 130%;
+        color: #4C5767;
+      }
+
+      &__link:hover {
+        text-decoration: none;
+      }
+
+      &__icon {
+        color: #4C5767;
+      }
     }
 
-    &__link {
-      font-weight: 500;
-      font-size: 18px;
-      line-height: 130%;
-      color: #4C5767;
-    }
-
-    &__link:hover {
-      text-decoration: none;
-    }
-
-    &__icon {
-      color: #4C5767;
-    }
   }
 
   &__header {
@@ -361,146 +403,195 @@ export default {
   }
 
   &__content {
-    &_grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      grid-column-gap: 20px;
-    }
+    .content {
+      &__grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        grid-column-gap: 20px;
+      }
 
-    &_item {
-      padding: 20px;
-      background: #FFFFFF;
-      border-radius: 6px;
+      &__column {
+        padding: 20px;
+        background: #FFFFFF;
+        border-radius: 6px;
+      }
     }
   }
 
-  .info {
+  &__info {
 
-    &__top {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 15px;
+    .info {
 
-      &_left {
-        @include text-simple;
-        font-size: 14px;
-        line-height: 130%;
-        color: #0083C7;
-      }
-    }
+      &__top {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
 
-    &__status {
-      font-size: 12px;
-      justify-content: flex-start;
-      align-items: center;
-      height: 24px;
-      display: flex;
-      padding: 0 4px;
-      align-items: center;
-      border-radius: 3px;
-
-      &_pending {
-        background-color: #f6f8fa;
-        color: #AAB0B9;
-      }
-
-      &_rejected {
-        background-color: #fcebeb;
-        color: #DF3333;
-      }
-
-      &_accepted {
-        background-color: #f6f8fa;
-        color: #22CC14;
-      }
-
-      &_disabled {
-        display: none;
-      }
-    }
-
-    &__header {
-      font-family: Inter;
-      font-style: normal;
-
-      &_title {
-        font-weight: 600;
-        font-size: 24px;
-        line-height: 32px;
-      }
-
-      &_subtitle {
-        font-weight: normal;
-        font-size: 14px;
-        line-height: 130%;
-        color: #AAB0B9;
-        margin-top: 10px;
-      }
-    }
-
-    &__row {
-      display: inline-flex;
-      margin-top: 20px;
-
-      .hash {
-        font-family: Inter;
-        font-style: normal;
-        margin-right: 80px;
-
-        &__title {
-          font-weight: 600;
-          font-size: 18px;
-          line-height: 130%;
-          color: #1D2127;
-        }
-
-        &__value {
-          font-weight: normal;
+        &_left {
           font-size: 14px;
           line-height: 130%;
           color: #0083C7;
         }
       }
 
-      .files {
-        font-family: Inter;
-        font-style: normal;
+      &__status {
+        font-size: 12px;
+        justify-content: flex-start;
+        align-items: center;
+        height: 24px;
+        display: flex;
+        padding: 0 4px;
+        align-items: center;
+        border-radius: 3px;
 
-        &__title {
-          font-weight: 600;
-          font-size: 18px;
-          line-height: 130%;
-          color: #1D2127;
+        &_pending {
+          background-color: #f6f8fa;
+          color: #AAB0B9;
         }
 
-        &__container {
-          font-weight: normal;
-          font-size: 14px;
-          line-height: 130%;
-          color: #000000;
+        &_rejected {
+          background-color: #fcebeb;
+          color: #DF3333;
+        }
+
+        &_accepted {
+          background-color: #f6f8fa;
+          color: #22CC14;
+        }
+
+        &_disabled {
+          display: none;
         }
       }
-    }
-  }
 
-  .description {
-    font-family: Inter;
-    font-style: normal;
+      &__header {
 
-    &__title {
-      font-weight: 600;
-      font-size: 18px;
-      line-height: 130%;
-      color: #1D2127;
-      margin: 10px 0;
-    }
+        .header {
+          &__title {
+            font-weight: 600;
+            font-size: 24px;
+            line-height: 32px;
+          }
 
-    &__value {
-      font-weight: normal;
-      font-size: 16px;
-      line-height: 130%;
-      color: #7C838D;
-      margin: 10px 0;
+          &__subtitle {
+            font-weight: normal;
+            font-size: 14px;
+            line-height: 130%;
+            color: #AAB0B9;
+            margin-top: 10px;
+          }
+        }
+      }
+
+      &__components {
+        display: inline-flex;
+        margin-top: 20px;
+
+        .components {
+          &__hash {
+            margin-right: 80px;
+
+            .hash {
+              &__title {
+                font-weight: 600;
+                font-size: 18px;
+                line-height: 130%;
+                color: #1D2127;
+              }
+
+              &__value {
+                font-weight: normal;
+                font-size: 14px;
+                line-height: 130%;
+                color: #0083C7;
+                margin-top: 10px;
+              }
+            }
+          }
+
+          &__files {
+            .files {
+              &__title {
+                font-weight: 600;
+                font-size: 18px;
+                line-height: 130%;
+                color: #1D2127;
+              }
+
+              &__container {
+                font-weight: normal;
+                font-size: 14px;
+                line-height: 130%;
+                color: #000000;
+                margin-top: 10px;
+              }
+            }
+
+            .file {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              margin-bottom: 10px;
+
+              &__icon {
+                margin-right: 8px;
+
+                &-pdf {
+
+                }
+              }
+
+              &__name {
+                font-size: 16px;
+                line-height: 145%;
+                color: #282F39;
+                margin-right: 8px;
+              }
+
+              &__size {
+                font-size: 13px;
+                line-height: 130%;
+                color: #A7AEB9;
+                margin-right: 8px;
+              }
+
+              &__download {
+
+              }
+            }
+          }
+        }
+      }
+
+      .line {
+        background: #E9EDF2;
+      }
+
+      &__description {
+
+        .description {
+
+          &__title {
+            font-weight: 600;
+            font-size: 18px;
+            line-height: 130%;
+            color: #1D2127;
+            margin: 10px 0;
+          }
+
+          &__value {
+            font-weight: normal;
+            font-size: 16px;
+            line-height: 130%;
+            color: #7C838D;
+            margin: 10px 0;
+          }
+        }
+      }
+
+      &__toForum {
+        margin-top: 20px;
+      }
     }
   }
 
@@ -592,18 +683,19 @@ export default {
   }
 }
 
-.line {
-  background: #E9EDF2;
-}
-
 .btn {
-  &__container {
-    margin-top: 10px;
-  }
 
   &__forum_size {
     width: 220px;
     height: 43px;
+  }
+
+  &__download {
+    background: #F7F8FA;
+    &_size {
+      width: 33px;
+      height: 33px;
+    }
   }
 
   &__votes {
