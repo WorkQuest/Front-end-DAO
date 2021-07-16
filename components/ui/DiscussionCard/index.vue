@@ -40,7 +40,7 @@
       <div class="bottom__footer">
         <nuxt-link to="/discussions/_id" class="link">
           <div class="link__text">{{ $t('discussions.read') }}</div>
-          <div link_arrow><span class="icon-short_right" /></div>
+          <div class="link__arrow"><span class="icon-short_right" /></div>
         </nuxt-link>
       </div>
       <div class="bottom__footer">
@@ -159,9 +159,11 @@ export default {
     &__footer {
       display: flex;
       align-items: center;
+      justify-content: center;
     }
     &__like {
       margin-left: auto;
+      margin-top: 5px;
     }
     &__arrow {
       margin-top: 10px;
@@ -172,6 +174,7 @@ export default {
     &__comment {
       height: 18px;
       width: 18px;
+      margin-top: 5px;
     }
     &__counter {
       font-size: 14px;
@@ -206,6 +209,9 @@ export default {
   color: #0083C7;
   &__text{
   margin: 7px 14px 7px 10px;
+  }
+  &__arrow{
+    margin-top: 8px;
   }
 }
 </style>

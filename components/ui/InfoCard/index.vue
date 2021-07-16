@@ -28,26 +28,8 @@
       {{ item.date }}
     </div>
     <div class="discussion__subtitle">{{ $t('discussions.files') }}</div>
-      <div class="content"
-           v-for="(file, i) in item.files"
-           :key="i"
-           :files="files">
-      <div class="column">
-        <div class="column__icon" ><span class="icon-file_pdf"></span></div>
-        <div class="column__name"> {{ item.files.name }} </div>
-        <div class="ccolumn__size"> {{ item.files.size }} </div>
-        <div class="ccolumn__download" ><span class="icon-download"></span></div>
-      </div>
-      </div>
-    <div class="content"
-         v-for="(file, i) in item.images"
-         :key="i"
-         :image="image">
-      <img
-          :src= 'item.images.image1'
-          alt="">
-<!--      <div class="column__size"> {{ item.images }} </div>-->
-    </div>
+    <filesCard class="files"/>
+    <div class="uploader"><Uploader /></div>
     <hr class="discussion__line">
     <div class="description">
       <div class="description__title">
@@ -93,9 +75,16 @@
     </div>
   </div>
 </template>
+
 <script>
+import filesCard from '~/components/ui/FilesCard';
+import Uploader from '~/components/ui/Uploader';
 
 export default {
+  components: {
+    Uploader,
+    filesCard,
+  },
   data() {
     return {
       isChecked: false,
@@ -104,6 +93,10 @@ export default {
   },
   props: {
     item: {
+      type: Object,
+      default: () => {},
+    },
+    file: {
       type: Object,
       default: () => {},
     },
@@ -265,5 +258,13 @@ export default {
   &__text{
     margin: 7px 14px 7px 10px;
   }
+}
+.files{
+  padding: 0px;
+  margin-top: 12px;
+}
+.uploader{
+  width: 530px;
+  height: 90px;
 }
 </style>

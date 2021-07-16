@@ -94,19 +94,6 @@ export default {
           description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
           likeCounter: 50,
           commentCounter: 50,
-          files: {
-            size: '1.2 MB',
-            name: 'Some_document.pdf',
-            image: "~assets/img/ui/rectangle.svg'",
-            name2: 'S212ome_document.pdf',
-          },
-          images: {
-            image1: '~assets/img/ui/rectangle.svg',
-            image2: '~assets/img/ui/rectangle.svg',
-            image3: '~assets/img/ui/rectangle.svg',
-            image4: '~assets/img/ui/rectangle.svg',
-            image5: '~assets/img/ui/rectangle.svg',
-          },
         },
       ],
       comments: [
