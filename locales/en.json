@@ -481,7 +481,12 @@
     "filesTitle": "Files",
     "noFiles": "No files",
     "description": "Description",
-    "toTheForum": "Go to the Forum"
+    "toTheForum": "Go to the Forum",
+    "results": "Results",
+    "yes": "Yes",
+    "no": "No",
+    "voteForProposal": "Vote for Proposal",
+    "votes": "votes"
   },
   "settings": {
     "description": "And you are beautiful",

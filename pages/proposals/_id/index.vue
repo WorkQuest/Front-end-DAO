@@ -4,7 +4,7 @@
       <div class="proposal__back back">
         <div class="back__container">
           <nuxt-link class="back__link" to="/proposals">
-            <span class="back__icon icon-short_left"/>
+            <span class="back__icon icon-short_left" />
             {{ $t('proposal.back') }}
           </nuxt-link>
         </div>
@@ -33,7 +33,7 @@
                 <span>{{ about }}</span>
               </div>
               <div class="info__header_subtitle">
-                <span>{{ date }}</span>git
+                <span>{{ date }}</span>
               </div>
             </div>
             <div class="info__row">
@@ -76,8 +76,49 @@
               </nuxt-link>
             </div>
           </div>
-          <div class="proposal__result proposal__content_item">
-            result
+          <div class="proposal__results results proposal__content_item">
+            <div>
+              <div class="results__header">
+                {{ $t('proposal.results') }}
+              </div>
+              <div class="results__bar bar">
+                <div class="bar">
+                  <div class="bar__result result">
+                    <div class="result__name">{{ $t('proposal.yes') }}</div>
+                    <div class="result__percent">{{ `${yes}%` }}</div>
+                  </div>
+                  <div class="bar__line">
+                    <div class="bar__line_gray">
+                      <div class="bar__line_green" :style="`width: ${yes}%`"></div>
+                    </div>
+                  </div>
+                  <div class="bar__votes">
+                    {{ votes.yes }} {{ $t('proposal.votes') }}
+                  </div>
+                </div>
+                <div class="bar">
+                  <div class="bar__result result">
+                    <div class="result__name">{{ $t('proposal.no') }}</div>
+                    <div class="result__percent">{{ `${no}%` }}</div>
+                  </div>
+                  <div class="bar__line">
+                    <div class="bar__line_gray">
+                      <div class="bar__line_red" :style="`width: ${no}%`"></div>
+                    </div>
+                  </div>
+                  <div class="bar__votes">
+                    {{ votes.no }} {{ $t('proposal.votes') }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="results__buttons buttons">
+              <div class="buttons__header">{{ $t('proposal.voteForProposal') }}</div>
+              <div class="buttons__container">
+                <base-btn class="btn__votes btn__votes_size btn__votes_red">{{ $t('proposal.no') }}</base-btn>
+                <base-btn class="btn__votes btn__votes_size btn__votes_green">{{ $t('proposal.yes') }}</base-btn>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -116,9 +157,21 @@ export default {
       type: String,
       default: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid animi, ea exercitationem fugit incidunt nesciunt nisi non officiis optio quaerat rem similique suscipit. Ab ad asperiores, commodi consequatur cum delectus distinctio eaque fugiat impedit iste laborum laudantium maxime nam odio perspiciatis quibusdam quisquam ratione sequi suscipit ullam vel veritatis voluptate.',
     },
+    yes: {
+      type: Number,
+      default: 75,
+    },
+    no: {
+      type: Number,
+      default: 25,
+    },
   },
   data() {
     return {
+      votes: {
+        yes: 10,
+        no: 2,
+      },
       cards: [
         {
           voting: 1,
@@ -264,15 +317,6 @@ export default {
 .proposal {
   @include main;
   @include text-simple;
-
-  &-white {
-    @include main;
-    background: $white;
-    background: #FFFFFF;
-    margin: 0 0 20px 0;
-    border-radius: 6px;
-    justify-content: center;
-  }
 
   &__body {
     margin-top: 30px;
@@ -459,6 +503,93 @@ export default {
       margin: 10px 0;
     }
   }
+
+  &__results {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .results {
+      &__header {
+        font-size: 16px;
+        line-height: 130%;
+        color: #1D2127;
+        margin-bottom: 15px;
+      }
+
+      &__bar {
+        .bar {
+          margin-bottom: 15px;
+
+          &__result {
+            font-size: 16px;
+            line-height: 130%;
+            display: flex;
+            justify-content: space-between;
+          }
+
+          &__line {
+            border-radius: 4px;
+            height: 6px;
+            width: 100%;
+            margin-bottom: 7px;
+
+            &_gray {
+              @extend .bar__line;
+              background: #E9EDF2;
+            }
+
+            &_green {
+              @extend .bar__line;
+              background: #00AA5B;
+            }
+
+            &_red {
+              @extend .bar__line;
+              background: #DF3333;
+            }
+          }
+
+          &__votes {
+            font-size: 14px;
+            line-height: 130%;
+            color: #AAB0B9;
+          }
+        }
+      }
+
+      &__buttons {
+        .buttons {
+          &__header {
+            font-size: 18px;
+            line-height: 130%;
+            color: #000000;
+            margin-bottom: 20px;
+          }
+
+          &__container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 20px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.result {
+  margin-bottom: 7px;
+
+  &__name {
+    width: 100%;
+    color: #353C47;
+  }
+
+  &__percent {
+    width: 29px;
+    color: #7C838D;
+  }
 }
 
 .line {
@@ -473,6 +604,22 @@ export default {
   &__forum_size {
     width: 220px;
     height: 43px;
+  }
+
+  &__votes {
+    border-radius: 6px;
+
+    &_size {
+      height: 43px;
+    }
+
+    &_red {
+      background: #DF3333;
+    }
+
+    &_green {
+      background: #00AA5B;
+    }
   }
 
   &__link {
