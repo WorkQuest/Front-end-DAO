@@ -68,7 +68,7 @@
                       <div class="file__name">{{ doc.name }}</div>
                       <div class="file__size">{{ doc.size }}</div>
                       <div class="file__close">
-                        <span >
+                        <span>
                           <img
                               class="btn__delete"
                               src="~/assets/img/ui/close.svg"
@@ -166,13 +166,41 @@
           </div>
         </div>
       </div>
+      <div class="proposal__history history">
+        <div class="history__menu menu">
+          <div class="menu__left">
+            <base-btn
+                mode="light"
+                class="btn__sorting"
+            >
+              <template v-slot:right>
+                <span class="icon-Sorting_descending"/>
+              </template>
+              {{ $t('proposal.ui.addTime') }}
+            </base-btn>
+            <baseDD
+                class="dd dd_light"
+            >
+            </baseDD>
+          </div>
+        </div>
+        <div class="history__content">
+          <history-table></history-table>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import baseDD from '~/components/ui/BaseDD';
+import historyTable from '~/components/ui/BaseTable';
 
 export default {
+  components: {
+    baseDD,
+    historyTable,
+  },
   props: {
     idCard: {
       type: Number,
@@ -419,12 +447,15 @@ export default {
 
         .components {
           @extend .info__components;
+
           &__hash {
             display: grid;
             grid-template-rows: max-content 1fr;
             grid-row-gap: 10px;
+
             .hash {
               @extend .components__hash;
+
               &__title {
                 font-weight: 600;
                 font-size: 18px;
@@ -448,8 +479,10 @@ export default {
           &__files {
             display: grid;
             grid-template-rows: max-content 1fr;
+
             .files {
               @extend .components__files;
+
               &__title {
                 font-weight: 600;
                 font-size: 18px;
@@ -537,6 +570,7 @@ export default {
     justify-content: space-between;
 
     .results {
+
       &__header {
         font-size: 16px;
         line-height: 130%;
@@ -553,6 +587,21 @@ export default {
             line-height: 130%;
             display: flex;
             justify-content: space-between;
+            margin-bottom: 7px;
+
+            .result {
+              @extend .bar__result;
+
+              &__name {
+                width: 100%;
+                color: #353C47;
+              }
+
+              &__percent {
+                width: 29px;
+                color: #7C838D;
+              }
+            }
           }
 
           &__line {
@@ -603,19 +652,20 @@ export default {
       }
     }
   }
-}
 
-.result {
-  margin-bottom: 7px;
+  &__history {
+    margin-top: 30px;
+    .history {
+      &__content {
+        margin-bottom: 15px;
+      }
+    }
 
-  &__name {
-    width: 100%;
-    color: #353C47;
-  }
-
-  &__percent {
-    width: 29px;
-    color: #7C838D;
+    .menu {
+      &__left {
+        display: flex;
+      }
+    }
   }
 }
 
@@ -639,7 +689,6 @@ export default {
   }
 
   &__votes {
-    border-radius: 6px;
 
     &_size {
       height: 43px;
@@ -647,6 +696,7 @@ export default {
 
     &_red {
       background: #DF3333;
+
       &:hover {
         background: #DF3333;
       }
@@ -654,6 +704,7 @@ export default {
 
     &_green {
       background: #00AA5B;
+
       &:hover {
         background: #00AA5B;
       }
@@ -662,6 +713,24 @@ export default {
 
   &__link {
     text-decoration: none;
+  }
+
+  &__sorting {
+    width: 152px;
+  }
+}
+
+.dd {
+  width: 100px;
+  border-radius: 6px;
+  margin-left: 15px;
+  color: #8D96A2;
+  &_light {
+    background: #FFFFFF;
+    color: $black800;
+    &:hover {
+      background: $black100;
+    }
   }
 }
 </style>

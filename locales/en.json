@@ -486,7 +486,11 @@
     "yes": "Yes",
     "no": "No",
     "voteForProposal": "Vote for Proposal",
-    "votes": "votes"
+    "votes": "votes",
+    "ui": {
+      "addTime": "Added time",
+      "allProposals": "All proposals"
+    }
   },
   "settings": {
     "description": "And you are beautiful",
