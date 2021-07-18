@@ -474,6 +474,24 @@
       }
     }
   },
+  "proposal": {
+    "title": "Proposal info",
+    "back": "Back",
+    "hashTitle": "Tx Hash",
+    "filesTitle": "Files",
+    "noFiles": "No files",
+    "description": "Description",
+    "toTheForum": "Go to the Forum",
+    "results": "Results",
+    "yes": "Yes",
+    "no": "No",
+    "voteForProposal": "Vote for Proposal",
+    "votes": "votes",
+    "ui": {
+      "addTime": "Added time",
+      "allProposals": "All proposals"
+    }
+  },
   "settings": {
     "description": "And you are beautiful",
     "imgLoaded": "Image loaded successful",
