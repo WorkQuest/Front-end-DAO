@@ -16,219 +16,224 @@
         {{ $t('proposal.title') }}
       </div>
       <div class="proposal__content content">
-        <div class="content__grid">
-          <div class="proposal__info info content__column">
-            <div class="info__top">
-              <div class="info__top_left">
-                <span>{{ `Voting #${voting}` }}</span>
-              </div>
-              <div class="info__top_right">
-                <div class="info__status">
-                  <span
-                    class="info__status"
-                    :class="cardsStatusColor(status)"
-                  >{{ getPriority(status) }}</span>
-                </div>
-              </div>
+        <div class="proposal__info info content__column">
+          <div class="info__top">
+            <div class="info__top_blue">
+              <span>{{ `Voting #${voting}` }}</span>
             </div>
-            <div class="info__header header">
-              <div class="header__title">
-                <span>{{ about }}</span>
-              </div>
-              <div class="header__subtitle">
-                <span>{{ date }}</span>
-              </div>
+            <div class="info__status">
+              <span
+                  class="info__status"
+                  :class="cardsStatusColor(status)"
+              >{{ getPriority(status) }}</span>
             </div>
-            <div class="info__components components">
-              <div class="components__hash hash">
-                <div class="hash__title">
-                  {{ $t('proposal.hashTitle') }}
-                </div>
-                <div
+          </div>
+          <div class="info__header header">
+            <div class="header__title">
+              <span>{{ about }}</span>
+            </div>
+            <div class="header__subtitle">
+              <span>{{ date }}</span>
+            </div>
+          </div>
+          <div class="info__transactions transactions">
+            <div class="transactions__hash hash">
+              <div class="hash__title">
+                {{ $t('proposal.hashTitle') }}
+              </div>
+              <nuxt-link
+                  to="/proposals/1"
                   class="hash__value"
-                  :class="{'hash__value_33height' : documents.length}"
-                >
-                  {{ hash.length ? modifyHash(hash) : '...' }}
-                </div>
+                  :class="{'hash__value_33height' : documents0.length}"
+              >
+                {{ hash.length ? modifyHash(hash) : '...' }}
+              </nuxt-link>
+            </div>
+            <div class="transactions__files files">
+              <div class="files__title">
+                {{ $t('proposal.filesTitle') }}
               </div>
-              <div class="components__files files">
-                <div class="files__title">
-                  {{ $t('proposal.filesTitle') }}
-                </div>
-                <div class="files__container">
-                  <template v-if="documents.length">
-                    <div
+              <div
+                  v-if="documents0.length"
+                  class="files__container"
+              >
+                <div
                       v-for="doc in documents"
                       :key="doc.id"
                       class="file"
-                    >
-                      <div class="file__icon">
-                        <img
+                  >
+                    <div class="file__icon">
+                      <img
                           src="~/assets/img/ui/pdf.svg"
                           alt=""
-                        >
-                      </div>
-                      <div class="file__name">
-                        {{ doc.name }}
-                      </div>
-                      <div class="file__size">
-                        {{ doc.size }}
-                      </div>
-                      <div class="file__close">
+                      >
+                    </div>
+                    <div class="file__name">
+                      {{ doc.name }}
+                    </div>
+                    <div class="file__size">
+                      {{ doc.size }}
+                    </div>
+                    <div class="file__close">
                         <span>
                           <img
-                            class="btn__delete"
-                            src="~/assets/img/ui/close.svg"
-                            alt=""
+                              class="btn__delete"
+                              src="~/assets/img/ui/close.svg"
+                              alt=""
                           >
                         </span>
-                      </div>
                     </div>
-                  </template>
-                  <template v-else>
-                    <div class="files__noFiles">
-                      {{ $t('proposal.noFiles') }}
-                      <span class="btn__download">
-                        <img
-                          src="~/assets/img/ui/download.svg"
-                          alt=""
-                        >
-                      </span>
-                    </div>
-                  </template>
-                </div>
+                  </div>
               </div>
-            </div>
-            <hr class="line">
-            <div class="info__description description">
-              <div class="description__title">
-                {{ $t('proposal.description') }}
-              </div>
-              <div class="description__value">
-                {{ descriptionValue }}
-              </div>
-            </div>
-            <div class="info__toForum">
-              <nuxt-link
-                class="btn__link"
-                to="proposals/1"
+              <div
+                  v-else
+                  class="files__noFiles"
               >
-                <base-btn
-                  mode="outline"
-                  class="btn__forum btn__forum_size"
-                >
-                  {{ $t('proposal.toTheForum') }}
-                </base-btn>
-              </nuxt-link>
+                {{ $t('proposal.noFiles') }}
+                <span class="btn__download">
+                  <img
+                      src="~/assets/img/ui/download.svg"
+                      alt=""
+                  >
+                </span>
+              </div>
             </div>
           </div>
-          <div class="proposal__results results content__column">
-            <div>
-              <div class="results__header">
-                {{ $t('proposal.results') }}
-              </div>
-              <div class="results__bar bar">
-                <div class="bar">
-                  <div class="bar__result result">
-                    <div class="result__name">
-                      {{ $t('proposal.yes') }}
-                    </div>
-                    <div class="result__percent">
-                      {{ `${results.percents.yes}%` }}
-                    </div>
+          <hr class="info__line">
+          <div class="info__description description">
+            <div class="description__title">
+              {{ $t('proposal.description') }}
+            </div>
+            <div class="description__value">
+              {{ descriptionValue }}
+            </div>
+          </div>
+          <div class="info__toForum">
+            <nuxt-link
+                class="btn__link"
+                to="proposals/1"
+            >
+              <base-btn
+                  mode="outline"
+                  class="btn__forum btn__forum_size"
+              >
+                {{ $t('proposal.toTheForum') }}
+              </base-btn>
+            </nuxt-link>
+          </div>
+        </div>
+        <div class="proposal__results results content__column">
+          <div>
+            <div class="results__header">
+              {{ $t('proposal.results') }}
+            </div>
+            <div class="results__bar bar">
+              <div class="bar">
+                <div class="bar__result result">
+                  <div class="result__name">
+                    {{ $t('proposal.yes') }}
                   </div>
-                  <div class="bar__line">
-                    <div class="bar__line_gray">
-                      <div
-                        class="bar__line_green"
-                        :style="`width: ${results.percents.yes}%`"
-                      />
-                    </div>
-                  </div>
-                  <div class="bar__votes">
-                    {{ results.votes.yes }} {{ $t('proposal.votes') }}
+                  <div class="result__percent">
+                    {{ `${results.percents.yes}%` }}
                   </div>
                 </div>
-                <div class="bar">
-                  <div class="bar__result result">
-                    <div class="result__name">
-                      {{ $t('proposal.no') }}
-                    </div>
-                    <div class="result__percent">
-                      {{ `${results.percents.no}%` }}
-                    </div>
+                <div class="bar__line">
+                  <div class="bar__line_gray">
+                    <div
+                        class="bar__line_green"
+                        :style="`width: ${results.percents.yes}%`"
+                    />
                   </div>
-                  <div class="bar__line">
-                    <div class="bar__line_gray">
-                      <div
+                </div>
+                <div class="bar__votes">
+                  {{ results.votes.yes }} {{ $t('proposal.votes') }}
+                </div>
+              </div>
+              <div class="bar">
+                <div class="bar__result result">
+                  <div class="result__name">
+                    {{ $t('proposal.no') }}
+                  </div>
+                  <div class="result__percent">
+                    {{ `${results.percents.no}%` }}
+                  </div>
+                </div>
+                <div class="bar__line">
+                  <div class="bar__line_gray">
+                    <div
                         class="bar__line_red"
                         :style="`width: ${results.percents.no}%`"
-                      />
-                    </div>
+                    />
                   </div>
-                  <div class="bar__votes">
-                    {{ results.votes.no }} {{ $t('proposal.votes') }}
-                  </div>
+                </div>
+                <div class="bar__votes">
+                  {{ results.votes.no }} {{ $t('proposal.votes') }}
                 </div>
               </div>
             </div>
-            <div class="results__buttons buttons">
-              <div class="buttons__header">
-                {{ $t('proposal.voteForProposal') }}
-              </div>
-              <div
-                  v-if="!results.isVoted"
-                  class="buttons__container"
-              >
-                <base-btn
-                    mode="delete"
+          </div>
+          <div class="results__buttons buttons">
+            <div class="buttons__header">
+              {{ $t('proposal.voteForProposal') }}
+            </div>
+            <div
+                v-if="!results.isVoted"
+                class="buttons__container"
+            >
+              <base-btn
+                  mode="delete"
                   class="btn__votes btn__votes_size"
-                    v-on:click="onVote('NO')"
-                >
-                  {{ $t('proposal.no') }}
-                </base-btn>
-                <base-btn
-                    mode="approve"
-                  class="btn__votes btn__votes_size btn__votes_green"
-                    v-on:click="onVote('YES')"
-                >
-                  {{ $t('proposal.yes') }}
-                </base-btn>
-              </div>
-              <div
-                v-else
+                  v-on:click="onVote('NO')"
               >
-                <base-btn
-                    mode="outline"
-                    class="btn__voted"
-                    :class="[
+                {{ $t('proposal.no') }}
+              </base-btn>
+              <base-btn
+                  mode="approve"
+                  class="btn__votes btn__votes_size btn__votes_green"
+                  v-on:click="onVote('YES')"
+              >
+                {{ $t('proposal.yes') }}
+              </base-btn>
+            </div>
+            <div
+                v-else
+            >
+              <base-btn
+                  mode="outline"
+                  class="btn__voted"
+                  :class="[
                         {'btn__voted_green': results.vote === 'YES' },
                         {'btn__voted_red': results.vote === 'NO' },
                          ]"
-                >
-                  {{ $t('proposal.youVoted') }} {{ results.vote === 'YES' ? $t('proposal.yes') :  $t('proposal.no')}}
-                </base-btn>
-              </div>
+              >
+                {{ $t('proposal.youVoted') }} {{ results.vote === 'YES' ? $t('proposal.yes') :  $t('proposal.no')}}
+              </base-btn>
             </div>
           </div>
         </div>
       </div>
       <div class="proposal__history history">
         <div class="history__menu menu">
-          <div class="menu__left">
+          <div class="menu">
             <base-btn
               mode="light"
               class="btn__sorting"
+              v-on:click="isDescending = !isDescending"
             >
               <template v-slot:right>
-                <span class="icon-Sorting_descending" />
+                <span
+                    :class="[
+                        {'icon-Sorting_descending': isDescending},
+                        {'icon-Sorting_ascending': !isDescending},
+                         ]"
+                />
               </template>
               {{ $t('proposal.ui.addTime') }}
             </base-btn>
             <baseDD
                 type="light"
               :items="ddValues"
-              :v-model="ddValue"
+                v-model="ddValue"
             />
           </div>
         </div>
@@ -313,7 +318,7 @@ export default {
         this.$t('proposal.ui.no'),
         this.$t('proposal.ui.allProposals'),
       ],
-      ddValue: '',
+      ddValue: 0,
       documents0: [],
       documents: [
         {
@@ -363,6 +368,7 @@ export default {
           about: 'Lorem ipsum dolor sit amet, consectetur',
         },
       ],
+      isDescending: true,
     };
   },
   mounted() {
@@ -407,6 +413,9 @@ export default {
       this.results.isVoted = true;
       this.results.vote = value;
     },
+    onSorting() {
+      console.log(event);
+    },
   },
 };
 </script>
@@ -423,27 +432,7 @@ export default {
   }
 
   &__back {
-    .back {
-      &__container {
-        width: 77px;
-        height: 24px;
-      }
 
-      &__link {
-        font-weight: 500;
-        font-size: 18px;
-        line-height: 130%;
-        color: #4C5767;
-      }
-
-      &__link:hover {
-        text-decoration: none;
-      }
-
-      &__icon {
-        color: #4C5767;
-      }
-    }
   }
 
   &__header {
@@ -455,309 +444,335 @@ export default {
   }
 
   &__content {
-    .content {
-      &__grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        grid-column-gap: 20px;
-      }
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-column-gap: 20px;
 
-      &__column {
-        padding: 20px;
-        background: #FFFFFF;
-        border-radius: 6px;
-      }
-    }
   }
 
   &__info {
-    .info {
-      &__top {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 15px;
 
-        &_left {
-          font-size: 14px;
-          line-height: 130%;
-          color: #0083C7;
-        }
-      }
-
-      &__status {
-        font-size: 12px;
-        justify-content: flex-start;
-        align-items: center;
-        height: 24px;
-        display: flex;
-        padding: 0 4px;
-        align-items: center;
-        border-radius: 3px;
-
-        &_pending {
-          background-color: #f6f8fa;
-          color: #AAB0B9;
-        }
-
-        &_rejected {
-          background-color: #fcebeb;
-          color: #DF3333;
-        }
-
-        &_accepted {
-          background-color: #f6f8fa;
-          color: #22CC14;
-        }
-
-        &_disabled {
-          display: none;
-        }
-      }
-
-      &__header {
-        .header {
-          &__title {
-            font-weight: 600;
-            font-size: 24px;
-            line-height: 32px;
-          }
-
-          &__subtitle {
-            font-weight: normal;
-            font-size: 14px;
-            line-height: 130%;
-            color: #AAB0B9;
-            margin-top: 10px;
-          }
-        }
-      }
-
-      &__components {
-        display: grid;
-        grid-template-columns: max-content auto;
-        grid-gap: 80px;
-        margin-top: 20px;
-
-        .components {
-          @extend .info__components;
-
-          &__hash {
-            display: grid;
-            grid-template-rows: max-content 1fr;
-            grid-row-gap: 10px;
-
-            .hash {
-              @extend .components__hash;
-
-              &__title {
-                font-weight: 600;
-                font-size: 18px;
-                line-height: 130%;
-                color: #1D2127;
-              }
-
-              &__value {
-                font-weight: normal;
-                font-size: 14px;
-                line-height: 130%;
-                color: #0083C7;
-                //margin-top: 10px;
-                &_33height {
-                  line-height: 33px;
-                }
-              }
-            }
-          }
-
-          &__files {
-            display: grid;
-            grid-template-rows: max-content 1fr;
-
-            .files {
-              @extend .components__files;
-
-              &__title {
-                font-weight: 600;
-                font-size: 18px;
-                line-height: 130%;
-                color: #1D2127;
-              }
-
-              &__container {
-                font-weight: normal;
-                font-size: 14px;
-                line-height: 130%;
-                color: #000000;
-                margin-top: 10px;
-              }
-
-              &__noFiles {
-                display: flex;
-              }
-            }
-
-            .file {
-              display: flex;
-              flex-direction: row;
-              align-items: center;
-              margin-bottom: 10px;
-
-              &__icon {
-                margin-right: 8px;
-              }
-
-              &__name {
-                font-size: 16px;
-                line-height: 145%;
-                color: #282F39;
-                margin-right: 8px;
-              }
-
-              &__size {
-                font-size: 13px;
-                line-height: 130%;
-                color: #A7AEB9;
-                margin-right: 8px;
-              }
-            }
-          }
-        }
-      }
-
-      .line {
-        background: #E9EDF2;
-      }
-
-      &__description {
-        .description {
-          &__title {
-            font-weight: 600;
-            font-size: 18px;
-            line-height: 130%;
-            color: #1D2127;
-            margin: 10px 0;
-          }
-
-          &__value {
-            font-weight: normal;
-            font-size: 16px;
-            line-height: 130%;
-            color: #7C838D;
-            margin: 10px 0;
-          }
-        }
-      }
-
-      &__toForum {
-        margin-top: 20px;
-      }
-    }
   }
 
   &__results {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-
-    .results {
-      &__header {
-        font-size: 16px;
-        line-height: 130%;
-        color: #1D2127;
-        margin-bottom: 15px;
-      }
-
-      &__bar {
-        .bar {
-          margin-bottom: 15px;
-
-          &__result {
-            font-size: 16px;
-            line-height: 130%;
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 7px;
-
-            .result {
-              @extend .bar__result;
-
-              &__name {
-                width: 100%;
-                color: #353C47;
-              }
-
-              &__percent {
-                width: 29px;
-                color: #7C838D;
-              }
-            }
-          }
-
-          &__line {
-            border-radius: 4px;
-            height: 6px;
-            width: 100%;
-            margin-bottom: 7px;
-
-            &_gray {
-              @extend .bar__line;
-              background: #E9EDF2;
-            }
-
-            &_green {
-              @extend .bar__line;
-              background: #00AA5B;
-            }
-
-            &_red {
-              @extend .bar__line;
-              background: #DF3333;
-            }
-          }
-
-          &__votes {
-            font-size: 14px;
-            line-height: 130%;
-            color: #AAB0B9;
-          }
-        }
-      }
-
-      &__buttons {
-        .buttons {
-          &__header {
-            font-size: 18px;
-            line-height: 130%;
-            color: #000000;
-            margin-bottom: 20px;
-          }
-
-          &__container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-gap: 20px;
-          }
-        }
-      }
-    }
   }
 
   &__history {
     margin-top: 30px;
+  }
+}
 
-    .history {
-      &__content {
-        margin-top: 15px;
-      }
+.back {
+  &__container {
+    width: 77px;
+    height: 24px;
+  }
 
-    }
+  &__link {
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 130%;
+    color: #4C5767;
+  }
 
-    .menu {
-      &__left {
-        display: flex;
-      }
+  &__link:hover {
+    text-decoration: none;
+  }
+
+  &__icon {
+    color: #4C5767;
+  }
+}
+
+.content {
+  &__column {
+    padding: 20px;
+    background: #FFFFFF;
+    border-radius: 6px;
+  }
+}
+
+.info {
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+
+    &_blue {
+      font-size: 14px;
+      line-height: 130%;
+      color: #0083C7;
     }
   }
+
+  &__status {
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    height: 24px;
+    font-size: 12px;
+    border-radius: 3px;
+
+    &_pending {
+      background-color: #f6f8fa;
+      color: #AAB0B9;
+    }
+
+    &_rejected {
+      background-color: #fcebeb;
+      color: #DF3333;
+    }
+
+    &_accepted {
+      background-color: #f6f8fa;
+      color: #22CC14;
+    }
+
+    &_disabled {
+      display: none;
+    }
+  }
+
+  &__header {
+
+  }
+
+  &__transactions {
+    display: grid;
+    grid-template-columns: max-content auto;
+    grid-gap: 80px;
+    margin-top: 20px;
+  }
+
+  &__line {
+    background: #E9EDF2;
+  }
+
+  &__description {
+
+  }
+
+  &__toForum {
+    margin-top: 20px;
+  }
+}
+
+.header {
+  &__title {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  &__subtitle {
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 130%;
+    color: #AAB0B9;
+    margin-top: 10px;
+  }
+}
+
+.transactions {
+
+  &__hash {
+    display: grid;
+    grid-template-rows: max-content 1fr;
+    grid-row-gap: 10px;
+  }
+
+  &__files {
+    display: grid;
+    grid-template-rows: max-content 1fr;
+  }
+}
+
+.hash {
+
+  &__title {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 130%;
+    color: #1D2127;
+  }
+
+  &__value {
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 130%;
+    color: #0083C7;
+    &_33height {
+      line-height: 33px;
+    }
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.files {
+
+  &__title {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 130%;
+    color: #1D2127;
+  }
+
+  &__container {
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 130%;
+    color: #000000;
+    margin-top: 10px;
+  }
+
+  &__noFiles {
+    display: flex;
+    margin-top: 10px;
+    line-height: 130%;
+  }
+}
+
+.file {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+
+  &__icon {
+    margin-right: 8px;
+  }
+
+  &__name {
+    font-size: 16px;
+    line-height: 145%;
+    color: #282F39;
+    margin-right: 8px;
+  }
+
+  &__size {
+    font-size: 13px;
+    line-height: 130%;
+    color: #A7AEB9;
+    margin-right: 8px;
+  }
+}
+
+.description {
+  &__title {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 130%;
+    color: #1D2127;
+    margin: 10px 0;
+  }
+
+  &__value {
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 130%;
+    color: #7C838D;
+    margin: 10px 0;
+  }
+}
+
+.results {
+  &__header {
+    font-size: 16px;
+    line-height: 130%;
+    color: #1D2127;
+    margin-bottom: 15px;
+  }
+
+  &__bar {
+
+  }
+
+  &__buttons {
+
+  }
+}
+
+.bar {
+  margin-bottom: 15px;
+
+  &__result {
+    font-size: 16px;
+    line-height: 130%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 7px;
+  }
+
+  &__line {
+    border-radius: 4px;
+    height: 6px;
+    width: 100%;
+    margin-bottom: 7px;
+
+    &_gray {
+      @extend .bar__line;
+      background: #E9EDF2;
+    }
+
+    &_green {
+      @extend .bar__line;
+      background: #00AA5B;
+    }
+
+    &_red {
+      @extend .bar__line;
+      background: #DF3333;
+    }
+  }
+
+  &__votes {
+    font-size: 14px;
+    line-height: 130%;
+    color: #AAB0B9;
+  }
+}
+
+.result {
+  &__name {
+    width: 100%;
+    color: #353C47;
+  }
+
+  &__percent {
+    width: 29px;
+    color: #7C838D;
+  }
+}
+
+.buttons {
+  &__header {
+    font-size: 18px;
+    line-height: 130%;
+    color: #000000;
+    margin-bottom: 20px;
+  }
+
+  &__container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+  }
+}
+
+.history {
+  &__content {
+    margin-top: 15px;
+  }
+}
+
+.menu {
+  display: flex;
 }
 
 .btn {
@@ -835,6 +850,6 @@ export default {
   margin-left: 15px;
   color: #8D96A2;
   border: 1px solid rgba(0, 0, 0, 0);
-  min-width: 100px;
+  min-width: 140px;
 }
 </style>
