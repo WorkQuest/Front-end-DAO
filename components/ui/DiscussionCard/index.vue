@@ -40,9 +40,9 @@
     <div class="bottom discussion__bottom">
       <div class="bottom__footer">
         <nuxt-link to="/discussions/_id"
-                   class="bottom__link link">
+                   class="footer__link link">
           <div class="link__text">{{ $t('discussions.read') }}</div>
-          <div class="link__arrow"><span class="icon-short_right" /></div>
+          <div class="link__arrow"><span class="icon-short_right link__arrow" /></div>
         </nuxt-link>
       </div>
       <div class="bottom__footer">
@@ -162,9 +162,6 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    &__link{
-      color: #0083C7;
-    }
     &__footer {
       display: flex;
       align-items: center;
@@ -174,6 +171,7 @@ export default {
       margin-left: auto;
       margin-top: 5px;
       color: #E9EDF2;
+      font-size: 22px;
       &_choosen{
         color: #0083C7;
       }
@@ -183,6 +181,8 @@ export default {
       margin-left: auto;
       margin-right: 7px;
       text-align: center;
+      font-size: 25px;
+      color: #0083C7;
     }
     &__comment {
       height: 18px;
@@ -200,7 +200,6 @@ export default {
       }
     }
   }
-
 .link {
   display: flex;
   justify-content: center;
@@ -213,15 +212,10 @@ export default {
   line-height: 130%;
   }
   &__arrow{
-    margin-top: 8px;
+    margin-top: 4px;
+    font-size: 25px;
+    color: #0083C7;
   }
-}
-.icon-short_right:before {
-  font-size: 25px;
-  color: #0083C7;
-}
-.icon-heart_fill:before {
-  font-size: 22px;
 }
 
 </style>

@@ -24,19 +24,19 @@
           />
         </div>
       </div>
-      <pagination />
+<!--      <pagination />-->
     </div>
   </div>
 </template>
 
 <script>
 
-import pagination from '~/components/app/Panels/Pagination';
+// import pagination from '~/components/app/Panels/Pagination';
 
 export default {
-  components: {
-    pagination,
-  },
+  // components: {
+  //   pagination,
+  // },
   data() {
     return {
       search: '',

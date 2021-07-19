@@ -1,11 +1,8 @@
 <template>
-  <div>
     <div class="info">
       <div class="info__header header">
             <nuxt-link to="/discussions" class="header__link link">
-                 <div class="link__arrow" >
-                   <span class ="icon-short_left" />
-                </div>
+                   <span class ="icon-short_left link__arrow" />
                 <div class="link__text">
                   {{ $t('discussions.back') }}
                 </div>
@@ -51,30 +48,36 @@
         <div class="discussion__subtitle">
           {{ $t('discussions.files') }}
         </div>
-        <div>
-          <div class=" discussion__content">
-        <div class="content"
+        <span class="discussion__block block"
              v-for="(file) in files"
              :key="file.id "
         >
-          <div class="discussion_column column">
-            <div class="column__icon" >
+            <div class="block__icon" >
               <img
                   src = "~/assets/img/ui/pdf.svg"
                   alt=""
               >
             </div>
-            <div class="column__name"> {{ file.name }} </div>
-            <div class="column__size"> {{ file.size }} </div>
-              <span class="column__close">
+            <div class="block__name"> {{ file.name }} </div>
+            <div class="block__size"> {{ file.size }} </div>
+              <span class="block__close">
                 <img
                   src = "~/assets/img/ui/close.svg"
                     alt=""
             >
           </span>
-          </div>
-        </div>
-          </div>
+        </span>
+        <div class="discussion__images image">
+          <img
+              src = "~/assets/img/ui/rectangle.svg"
+              alt=""
+              class="image__file"
+          >
+          <img
+              src = "~/assets/img/ui/close.svg"
+              alt=""
+              class="close"
+          >
         </div>
         <div class="discussion__description description">
           <hr class="discussion__line">
@@ -128,7 +131,7 @@
         :key="elem.id"
         :elem="elem">
           <div class="comment__field">
-            <div class="user">
+            <div class="comment__user user">
             <img
                 src="~assets/img/icons/userAvatar.svg"
                 alt=""
@@ -171,17 +174,14 @@
                 </div>
             </div>
           </div>
-          <div class="footer info__footer">
-            <button class="footer__chain"><span class="class= icon-link"></span>
-              </button>
+          <div class="info__footer footer">
+           <span class="class= icon-link footer__chain"></span>
               <input class="footer__input" :placeholder="$t('discussions.input')" />
-            <button class="footer__arrow"><span class="class= icon-send"></span>
-            </button>
+              <span class="class= icon-send footer__arrow"></span>
           </div>
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -279,11 +279,11 @@ export default {
     toggleLiked() {
       this.isLiked = !this.isLiked;
     },
-    toggleLikedComment(id) {
-      this.comments = this.comments.map(
-        (comment) => (comment.id !== id ? comment : { ...comment, isCommentLiked: !comment.isCommentLiked }),
-      );
-    },
+    // toggleLikedComment(id) {
+    //   this.comments = this.comments.map(
+    //     (comment) => (comment.id !== id ? comment : { ...comment, isCommentLiked: !comment.isCommentLiked }),
+    //   );
+    // },
   },
 };
 
@@ -298,6 +298,7 @@ export default {
   @include _1024;
   &__header{
     margin: 30px 0px 0px 0px;
+    justify-content: left;
   }
   &__title {
     font-weight: 600;
@@ -308,6 +309,13 @@ export default {
   }
   &__field {
     justify-content: space-between;
+  }
+  &__discussion{
+    width: 100%;
+    height: 100%;
+    background: #FFFFFF;
+    border-radius: 8px;
+    padding: 20px;
   }
   &__search {
     flex: 1 1 auto;
@@ -321,9 +329,6 @@ export default {
   }
   &__footer{
     margin-top: 20px;
-  }
-  &__heading{
-    margin: 30px 0px 20px 0px;
   }
 }
 .heading{
@@ -341,23 +346,21 @@ export default {
   }
 }
 .link{
-    display: flex;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  &__text {
+    font-size: 18px;
+    line-height: 130%;
+    font-weight: 500;
     align-items: center;
-    text-decoration: none;
-    &__text {
-      font-size: 18px;
-      line-height: 130%;
-      font-weight: 500;
-      align-items: center;
-      color: #4C5767;
+    color: #4C5767;
     }
-    &__arrow {
-      margin: 6px 6px 0px 0px;
+  &__arrow {
+    margin: 6px 10px 6px 0px;
+    color:  #4C5767;
+    font-size: 25px;
   }
-}
-.icon-short_left:before {
-  color:  #4C5767;
-  font-size: 25px;
 }
 .comment{
   &__field{
@@ -397,6 +400,11 @@ export default {
     line-height: 130%;
     color: #AAB0B9;
   }
+  &__star {
+      margin-left: auto;
+      width: 20px;
+      height: 20px;
+    }
 }
 .bottom {
   display: flex;
@@ -420,6 +428,7 @@ export default {
     margin-left: auto;
     margin-top: 5px;
     color: #E9EDF2;
+    font-size: 22px;
     &_choosen{
       color: #0083C7;
     }
@@ -438,9 +447,15 @@ export default {
       margin: 7px;
     }
   }
-}
-.icon-heart_fill:before{
-  font-size: 22px;
+  &__footer {
+    display: flex;
+    align-items: center;
+  }
+  &__arrow {
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: 7px;
+  }
 }
 .footer{
   display: flex;
@@ -462,6 +477,9 @@ export default {
     border-radius: 6px;
     align-items: center;
     justify-content: center;
+    color: #000000;
+    font-size: 25px;
+    cursor: pointer;
   }
   &__arrow{
     display: flex;
@@ -471,26 +489,11 @@ export default {
     border-radius: 6px;
     align-items: center;
     justify-content: center;
+      font-size: 25px;
+      color: #0083C7;
   }
 }
-.header{
-  display: flex;
-  justify-content: left;
-}
-.icon-send:before {
-  font-size: 25px;
-  color: #0083C7;
-}
-.icon-link:before {
-  color: #000000;
-  font-size: 25px;
-}
 .discussion {
-  width: 100%;
-  height: 100%;
-  background: #FFFFFF;
-  border-radius: 8px;
-  padding: 20px;
   &__title {
     font-weight: 600;
     font-size: 24px;
@@ -511,52 +514,54 @@ export default {
     font-size: 18px;
     line-height: 130%;
   }
+  &__heading{
+    margin: 30px 0px 20px 0px;
+  }
+  &__block{
+    margin: 10px 0px 20px 0px;
+  }
+  &__images{
+    :hover{
+      -webkit-filter: brightness(40%);
+      filter: brightness(40%);
+      }
+    :hover~.close{
+      display: block;
+    }
+  }
 }
-.content {
-  display: flex;
+.image{
+  &__close{
+    display: none;
+  }
 }
-.column{
-  display: flex;
+.block{
+  display: inline-flex;
+  align-items: center;
   &__icon{
     margin: 0px 16px 0px 0px;
   }
-  &__size{
+  &__name{
     font-size: 16px;
     line-height: 145%;
     color: #282F39;
+    margin-right: 8px;
+  }
+  &__size{
+    font-size: 13px;
+    line-height: 130%;
+    color: #A7AEB9;
   }
   &__file{
     margin: 0px 10px 0px 8px;
   }
-  &__download{
+  &__close{
     height: 33px;
     width: 33px;
-    background: #F7F8FA;;
-  }
-}
-.icon-file_pdf{
-  font-size: 28px;
-}
-.user {
-  display: flex;
-  align-items: center;
-  &__name {
-    @include text-usual;
-    color: #1D2127;
-    padding: 10px;
-  }
-  &__avatar {
-    flex: 0 0 0 32px;
-    width: 32px;
-    height: 32px;
-    left: 0px;
-    top: 0px;
-    border-radius: 50%;
-  }
-  &__star {
-    margin-left: auto;
-    width: 20px;
-    height: 20px;
+    margin-right: 13px;
+    display:flex;
+    justify-content: center; /*центрируем элемент по горизонтали */
+    align-items: center;
   }
 }
 .description {
@@ -573,44 +578,5 @@ export default {
     margin: 20px 0px 10px 0px;
   }
 }
-.bottom {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  &__footer {
-    display: flex;
-    align-items: center;
-  }
-  &__like {
-    margin-left: auto;
-  }
-  &__arrow {
-    margin-top: 10px;
-    margin-left: auto;
-    margin-right: 7px;
-  }
-  &__comment {
-    height: 18px;
-    width: 18px;
-  }
-  &__counter {
-    font-size: 14px;
-    line-height: 18px;
-    color: #1D2127;
-    margin: 0px 22px 0px 8px;
-    &_right {
-      margin: 7px;
-    }
-  }
-}
 
-.icon-heart_fill:before{
-  font-size: 22px;
-}
-
-.files{
-  padding: 0px;
-  margin-top: 12px;
-}
 </style>
