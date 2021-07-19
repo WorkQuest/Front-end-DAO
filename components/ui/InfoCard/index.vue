@@ -28,8 +28,27 @@
       {{ item.date }}
     </div>
     <div class="discussion__subtitle">{{ $t('discussions.files') }}</div>
-    <files-card class="files" :files= "files" />
-    <Uploader />
+    <div class="content"
+         v-for="(file, i) in files"
+         :key="i"
+    >
+      <div class="column">
+        <div class="column__icon" >
+          <img
+              src = "~/assets/img/ui/pdf.svg"
+              alt=""
+          >
+        </div>
+        <div class="column__name"> {{ file.name }} </div>
+        <div class="column__size"> {{ file.size }} </div>
+        <span class="column__close">
+            <img
+                src = "~/assets/img/ui/close.svg"
+                alt=""
+            >
+          </span>
+      </div>
+    </div>
     <hr class="discussion__line">
     <div class="description">
       <div class="description__title">
@@ -73,14 +92,9 @@
 </template>
 
 <script>
-import FilesCard from '~/components/ui/FilesCard';
-import Uploader from '~/components/ui/Uploader';
 
 export default {
-  components: {
-    Uploader,
-    FilesCard,
-  },
+
   data() {
     return {
       isChecked: false,

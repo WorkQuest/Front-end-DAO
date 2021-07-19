@@ -1,24 +1,25 @@
 <template>
   <div class="discussion">
-    <div class="user">
+    <div class="discussion__user user">
       <img
         src="~assets/img/icons/userAvatar.svg"
-        alt=""
+        alt="userAvatar"
         class="user__avatar"
       >
       <span class="user__name">
         {{ item.userName }}
       </span>
-      <button class="user__star"> <img
-            @click="isChecked = true"
-            v-if="!isChecked"
+      <button class="user__star" >
+            <img
+            @click='toggleFavorite'
+            v-if='!isFavorite'
             src="~assets/img/ui/star_simple.svg"
-            alt="">
-        <img
-            @click="isChecked = false"
-            v-if="isChecked"
+            alt="simpleStar">
+            <img
+            @click='toggleFavorite'
+            v-else
             src="~assets/img/ui/star_checked.svg"
-            alt="">
+            alt="checkedStar">
       </button>
     </div>
     <div class="discussion__title">
@@ -28,7 +29,7 @@
       {{ item.date }}
     </div>
     <hr class="discussion__line">
-    <div class="description">
+    <div class="description discussion__description">
     <div class="description__title">
       {{ $t('discussions.descriptionTitle') }}
     </div>
@@ -36,34 +37,33 @@
       {{ item.description }}
     </div>
     </div>
-    <div class="bottom">
+    <div class="bottom discussion__bottom">
       <div class="bottom__footer">
-        <nuxt-link to="/discussions/_id" class="link">
+        <nuxt-link to="/discussions/_id"
+                   class="bottom__link link">
           <div class="link__text">{{ $t('discussions.read') }}</div>
           <div class="link__arrow"><span class="icon-short_right" /></div>
         </nuxt-link>
       </div>
       <div class="bottom__footer">
-      <div class="bottom__comment">
-        <button>
+        <button class="bottom__comment">
           <img
             src="~assets/img/ui/comment.svg"
             alt=""
           >
         </button>
-      </div>
       <div class="bottom__counter">
         {{ item.commentCounter }}
       </div>
-      <button class= "bottom__like"
-              @click="isLiked = true"
-              v-if="!isLiked" >
-        <span class= "icon-heart_fill" />
-      </button>
-        <button class= "bottom__like"
-                @click="isLiked = false"
-                v-if="isLiked" >
-          <span class= "icon-heart_fill liked" />
+      <button class= "bottom__like">
+              <span  @click='toggleLiked'
+              v-if="!isLiked"
+              class= "icon-heart_fill bottom__like"
+              />
+              <span @click='toggleLiked'
+              v-else
+              class= "icon-heart_fill bottom__like bottom__like_choosen"
+              />
         </button>
       <div class="bottom__counter bottom__counter_right">
         {{ item.likeCounter }}
@@ -74,17 +74,24 @@
 </template>
 <script>
 export default {
-
-  data() {
-    return {
-      isChecked: false,
-      isLiked: false,
-    };
-  },
   props: {
     item: {
       type: Object,
       default: () => {},
+    },
+  },
+  data() {
+    return {
+      isFavorite: false,
+      isLiked: false,
+    };
+  },
+  methods: {
+    toggleFavorite() {
+      this.isFavorite = !this.isFavorite;
+    },
+    toggleLiked() {
+      this.isLiked = !this.isLiked;
     },
   },
 };
@@ -120,7 +127,6 @@ export default {
       line-height: 130%;
       color: #1D2127;
       padding: 10px;
-
     }
     &__avatar {
       flex: 0 0 0 32px;
@@ -156,6 +162,9 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    &__link{
+      color: #0083C7;
+    }
     &__footer {
       display: flex;
       align-items: center;
@@ -164,6 +173,10 @@ export default {
     &__like {
       margin-left: auto;
       margin-top: 5px;
+      color: #E9EDF2;
+      &_choosen{
+        color: #0083C7;
+      }
     }
     &__arrow {
       margin-top: 10px;
@@ -181,30 +194,19 @@ export default {
       line-height: 18px;
       color: #1D2127;
       margin: 0px 22px 0px 8px;
+      cursor: pointer;
       &_right {
         margin: 7px;
       }
     }
   }
-.icon-short_right:before {
-  color:  #0083C7;
-  font-size: 25px;
-}
-.icon-heart_fill:before {
-  font-size: 22px;
-  color: #E9EDF2;
-}
-.liked:before{
-  color: #0083C7;
 
-}
 .link {
   display: flex;
   justify-content: center;
   text-align: center;
   align-items: center;
   text-decoration: none;
-  color: #0083C7;
   &__text{
   margin: 7px 14px 7px 10px;
   font-size: 16px;
@@ -214,4 +216,12 @@ export default {
     margin-top: 8px;
   }
 }
+.icon-short_right:before {
+  font-size: 25px;
+  color: #0083C7;
+}
+.icon-heart_fill:before {
+  font-size: 22px;
+}
+
 </style>

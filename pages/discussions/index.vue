@@ -5,14 +5,12 @@
         {{ $t('discussions.title') }}
       </div>
       <div class="discussions__header">
-        <div>
           <base-field
             v-model="search"
             class="discussions__search"
             :is-search="true"
             :placeholder="$t('discussions.seacrhField')"
           />
-        </div>
         <base-btn class="discussions__btn">
           {{ $t('discussions.btn') }}
         </base-btn>
@@ -33,7 +31,7 @@
 
 <script>
 
-import pagination from '~/components/app/Panels/pagination';
+import pagination from '~/components/app/Panels/Pagination';
 
 export default {
   components: {
