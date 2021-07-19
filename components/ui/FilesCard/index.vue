@@ -3,7 +3,7 @@
       <div class="content"
            v-for="(file, i) in files"
            :key="i"
-           :file="file">
+           >
       <div class="column">
         <div class="column__icon" >
         <img
@@ -20,22 +20,22 @@
             >
           </span>
       </div>
-        <div class="column">
-          <div class="column__icon" >
-            <img
-                src = "~/assets/img/ui/pdf.svg"
-                alt=""
-            >
-          </div>
-          <div class="column__name"> {{ file.name }} </div>
-          <div class="column__size"> {{ file.size }} </div>
-            <span class="column__close">
-              <img
-                  src = "~/assets/img/ui/close.svg"
-                  alt=""
-              >
-            </span>
-        </div>
+<!--        <div class="column">-->
+<!--          <div class="column__icon" >-->
+<!--            <img-->
+<!--                src = "~/assets/img/ui/pdf.svg"-->
+<!--                alt=""-->
+<!--            >-->
+<!--          </div>-->
+<!--          <div class="column__name"> {{ file.name }} </div>-->
+<!--          <div class="column__size"> {{ file.size }} </div>-->
+<!--            <span class="column__close">-->
+<!--              <img-->
+<!--                  src = "~/assets/img/ui/close.svg"-->
+<!--                  alt=""-->
+<!--              >-->
+<!--            </span>-->
+<!--        </div>-->
       </div>
   </div>
 </template>
@@ -44,8 +44,11 @@
 export default {
   data() {
     return {
-
       files: [
+        {
+          size: '1.2 MB',
+          name: 'Some_document.pdf',
+        },
         {
           size: '1.2 MB',
           name: 'Some_document.pdf',
@@ -65,6 +68,8 @@ export default {
 .content {
   display: flex;
   align-items: center;
+  margin-bottom: 20px;
+  flex-direction: row;
 }
 .column{
   display: flex;

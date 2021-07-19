@@ -10,7 +10,7 @@
             v-model="search"
             class="discussions__search"
             :is-search="true"
-            :placeholder= "$t('discussions.seacrhField')"
+            :placeholder="$t('discussions.seacrhField')"
           />
         </div>
         <base-btn class="discussions__btn">

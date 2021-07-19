@@ -203,12 +203,12 @@ export default {
   justify-content: center;
   text-align: center;
   align-items: center;
-  font-size: 16px;
-  line-height: 130%;
   text-decoration: none;
   color: #0083C7;
   &__text{
   margin: 7px 14px 7px 10px;
+  font-size: 16px;
+  line-height: 130%;
   }
   &__arrow{
     margin-top: 8px;

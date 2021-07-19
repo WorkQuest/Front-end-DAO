@@ -28,8 +28,8 @@
       {{ item.date }}
     </div>
     <div class="discussion__subtitle">{{ $t('discussions.files') }}</div>
-    <filesCard class="files"/>
-    <div class="uploader"><Uploader /></div>
+    <files-card class="files" :files= "files" />
+    <Uploader />
     <hr class="discussion__line">
     <div class="description">
       <div class="description__title">
@@ -41,10 +41,6 @@
     </div>
     <div class="bottom">
       <div class="bottom__footer">
-        <nuxt-link to="/discussions/_id" class="link">
-          <div class="link__text">{{ $t('discussions.read') }}</div>
-          <div link_arrow><span class="icon-short_right" /></div>
-        </nuxt-link>
       </div>
       <div class="bottom__footer">
         <div class="bottom__comment">
@@ -77,13 +73,13 @@
 </template>
 
 <script>
-import filesCard from '~/components/ui/FilesCard';
+import FilesCard from '~/components/ui/FilesCard';
 import Uploader from '~/components/ui/Uploader';
 
 export default {
   components: {
     Uploader,
-    filesCard,
+    FilesCard,
   },
   data() {
     return {
@@ -91,16 +87,13 @@ export default {
       isLiked: false,
     };
   },
-  props: {
-    item: {
-      type: Object,
-      default: () => {},
-    },
-    file: {
-      type: Object,
-      default: () => {},
-    },
-  },
+  props:
+      {
+        item: {
+          type: Object,
+          default: () => {},
+        },
+      },
 };
 </script>
 <style lang="scss" scoped>
@@ -199,19 +192,9 @@ export default {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  a.nuxt-link-active {
-    text-decoration: none;
-  }
   &__footer {
     display: flex;
     align-items: center;
-  }
-  &__link {
-    font-size: 16px;
-    line-height: 130%;
-    color: #0083C7;
-    align-items: center;
-    margin: 7px 14px 7px 10px;
   }
   &__like {
     margin-left: auto;
@@ -246,25 +229,8 @@ export default {
 .liked:before{
   color: #0083C7;
 }
-.link {
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  align-items: center;
-  font-size: 16px;
-  line-height: 130%;
-  text-decoration: none;
-  color: #0083C7;
-  &__text{
-    margin: 7px 14px 7px 10px;
-  }
-}
 .files{
   padding: 0px;
   margin-top: 12px;
-}
-.uploader{
-  width: 530px;
-  height: 90px;
 }
 </style>

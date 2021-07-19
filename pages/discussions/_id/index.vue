@@ -1,20 +1,23 @@
 <template>
   <div>
     <div class="info">
-      <div class="header">
-        <div class="header__link">
-        <nuxt-link to="/discussions">
-          <button class="header__arrow" >  <span class ="icon-short_left" /> </button>
-          {{ $t('discussions.back') }}
-        </nuxt-link>
+      <div class="info__header">
+        <div>
+          <div class="header">
+          <nuxt-link to="/discussions" class="link">
+            <div class="link__arrow" >  <span class ="icon-short_left" /> </div>
+            <div class="link__text">{{ $t('discussions.back') }}</div>
+          </nuxt-link>
+          </div>
         </div>
       </div>
+      <div class="info__title">{{ $t('discussions.infoTitle') }}</div>
       <div class="info__field">
-          <infoCard
+          <info-card
               v-for="(item, i) in discussions"
               :key="i"
               :item="item"
-          />
+              />
       </div>
         <div class="heading info__heading">
           <div class="heading__title">{{ $t('discussions.commentTitle') }}</div>
@@ -77,11 +80,11 @@
 </template>
 
 <script>
-import infoCard from '~/components/ui/InfoCard';
+import InfoCard from '~/components/ui/InfoCard';
 
 export default {
   components: {
-    infoCard,
+    InfoCard,
   },
   data() {
     return {
@@ -151,7 +154,7 @@ export default {
   height: 100%;
   @include _1024;
   &__header{
-    margin: 30px 0px 1px 10px;
+    margin: 30px 0px 0px 0px;
   }
   &__title {
     font-weight: 600;
@@ -195,26 +198,24 @@ export default {
     color: #1D2127;
   }
 }
-.header{
+.link{
     display: flex;
     align-items: center;
-  a.nuxt-link-active {
     text-decoration: none;
-    color: #4C5767;
-  }
-    &__link {
+    &__text {
       font-size: 18px;
       line-height: 130%;
       font-weight: 500;
       align-items: center;
+      color: #4C5767;
     }
     &__arrow {
-      margin: 42px 0px 6px 4px;
+      margin: 6px 6px 0px 0px;
   }
 }
 .icon-short_left:before {
   color:  #4C5767;
-  font-size: 20px;
+  font-size: 25px;
 }
 .comment{
   &__field{
@@ -328,6 +329,10 @@ export default {
     align-items: center;
     justify-content: center;
   }
+}
+.header{
+  display: flex;
+  justify-content: left;
 }
 .icon-send:before {
   font-size: 25px;
