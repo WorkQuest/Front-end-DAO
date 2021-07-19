@@ -33,6 +33,15 @@
       <template #cell(transaction_fee)="el">
         <span class="table__grey">{{ el.item.transaction_fee }}</span>
       </template>
+      <template #cell(vote)="el">
+        <base-btn
+            class="btn__vote"
+            :class="[
+                {'btn__vote_green': el.item.vote === 'YES' },
+                {'btn__vote_red': el.item.vote === 'NO' },
+                ]"
+        >{{ el.item.vote }}</base-btn>
+      </template>
     </b-table>
   </div>
 </template>
@@ -120,6 +129,19 @@ export default {
     //  width: calc( 700px - 1em );
     //  min-width: calc( 540px - 1em );
     //}
+  }
+}
+.btn {
+  &__vote {
+    cursor: default !important;
+    width: 63px !important;
+    height: 31px !important;
+    &_green {
+      background: #22CC14 !important;
+    }
+    &_red {
+      background: #DF3333 !important;
+    }
   }
 }
 </style>

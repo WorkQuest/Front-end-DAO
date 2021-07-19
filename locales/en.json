@@ -487,9 +487,20 @@
     "no": "No",
     "voteForProposal": "Vote for Proposal",
     "votes": "votes",
+    "youVoted": "You voted:",
     "ui": {
       "addTime": "Added time",
-      "allProposals": "All proposals"
+      "allProposals": "All proposals",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "proposalHistory": "Proposal history",
+    "table": {
+      "number": "#",
+      "hash": "Hash",
+      "date": "Date",
+      "address": "Address",
+      "vote": "Vote"
     }
   },
   "settings": {

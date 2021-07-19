@@ -19,6 +19,7 @@
         >
         <span
           class="dd__title"
+          :class="titleClass"
         >
           {{ items[value].title }}
         </span>
@@ -26,6 +27,7 @@
       <span
         v-else
         class="dd__title"
+        :class="titleClass"
       >
         {{ items[value] }}
       </span>
@@ -36,6 +38,7 @@
       <span
         v-else
         class="dd__caret icon-caret_down"
+        :class="caretClass"
       />
     </button>
     <transition name="fade">
@@ -112,6 +115,19 @@ export default {
       return [
         { dd__btn_dark: type === 'dark' },
         { dd__btn_gray: type === 'gray' },
+        { dd__btn_light: type === 'light' },
+      ];
+    },
+    titleClass() {
+      const { type } = this;
+      return [
+        { dd__title_light: type === 'light' },
+      ];
+    },
+    caretClass() {
+      const { type } = this;
+      return [
+        { dd__caret_light: type === 'light' },
       ];
     },
   },
@@ -142,6 +158,9 @@ export default {
   text-align: left;
   &__title {
     color: $black500;
+    &_light {
+      color: $black800;
+    }
   }
   &__top {
     align-items: flex-start;
@@ -196,6 +215,11 @@ export default {
     &_dark::before {
       color: $black700;
     }
+    &_light {
+      &::before {
+        color: #8D96A2;
+      }
+    }
   }
   &__btn {
     height: 43px;
@@ -211,6 +235,16 @@ export default {
     }
     &_gray {
       background-color: $black0;
+    }
+    &_light {
+      background: #FFFFFF;
+      border: 1px solid rgba(0, 0, 0, 0);
+      &:hover {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        .dd__caret_light::before {
+          color: $blue;
+        }
+      }
     }
   }
 }
