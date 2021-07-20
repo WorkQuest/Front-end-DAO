@@ -35,12 +35,14 @@
       </template>
       <template #cell(vote)="el">
         <base-btn
-            class="btn__vote"
-            :class="[
-                {'btn__vote_green': el.item.vote === 'YES' },
-                {'btn__vote_red': el.item.vote === 'NO' },
-                ]"
-        >{{ el.item.vote }}</base-btn>
+          class="btn__vote"
+          :class="[
+            {'btn__vote_green': el.item.vote === 'YES' },
+            {'btn__vote_red': el.item.vote === 'NO' },
+          ]"
+        >
+          {{ el.item.vote }}
+        </base-btn>
       </template>
     </b-table>
   </div>

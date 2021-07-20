@@ -23,8 +23,8 @@
             </div>
             <div class="info__status">
               <span
-                  class="info__status"
-                  :class="cardsStatusColor(status)"
+                class="info__status"
+                :class="cardsStatusColor(status)"
               >{{ getPriority(status) }}</span>
             </div>
           </div>
@@ -42,9 +42,9 @@
                 {{ $t('proposal.hashTitle') }}
               </div>
               <nuxt-link
-                  to="/proposals/1"
-                  class="hash__value"
-                  :class="{'hash__value_33height' : documents0.length}"
+                to="/proposals/1"
+                class="hash__value"
+                :class="{'hash__value_33height' : documents0.length}"
               >
                 {{ hash.length ? modifyHash(hash) : '...' }}
               </nuxt-link>
@@ -54,46 +54,46 @@
                 {{ $t('proposal.filesTitle') }}
               </div>
               <div
-                  v-if="documents0.length"
-                  class="files__container"
+                v-if="documents0.length"
+                class="files__container"
               >
                 <div
-                      v-for="doc in documents"
-                      :key="doc.id"
-                      class="file"
-                  >
-                    <div class="file__icon">
-                      <img
-                          src="~/assets/img/ui/pdf.svg"
-                          alt=""
-                      >
-                    </div>
-                    <div class="file__name">
-                      {{ doc.name }}
-                    </div>
-                    <div class="file__size">
-                      {{ doc.size }}
-                    </div>
-                    <div class="file__close">
-                        <span>
-                          <img
-                              class="btn__delete"
-                              src="~/assets/img/ui/close.svg"
-                              alt=""
-                          >
-                        </span>
-                    </div>
+                  v-for="doc in documents"
+                  :key="doc.id"
+                  class="file"
+                >
+                  <div class="file__icon">
+                    <img
+                      src="~/assets/img/ui/pdf.svg"
+                      alt=""
+                    >
                   </div>
+                  <div class="file__name">
+                    {{ doc.name }}
+                  </div>
+                  <div class="file__size">
+                    {{ doc.size }}
+                  </div>
+                  <div class="file__close">
+                    <span>
+                      <img
+                        class="btn__delete"
+                        src="~/assets/img/ui/close.svg"
+                        alt=""
+                      >
+                    </span>
+                  </div>
+                </div>
               </div>
               <div
-                  v-else
-                  class="files__noFiles"
+                v-else
+                class="files__noFiles"
               >
                 {{ $t('proposal.noFiles') }}
                 <span class="btn__download">
                   <img
-                      src="~/assets/img/ui/download.svg"
-                      alt=""
+                    src="~/assets/img/ui/download.svg"
+                    alt=""
                   >
                 </span>
               </div>
@@ -110,12 +110,12 @@
           </div>
           <div class="info__toForum">
             <nuxt-link
-                class="btn__link"
-                to="proposals/1"
+              class="btn__link"
+              to="proposals/1"
             >
               <base-btn
-                  mode="outline"
-                  class="btn__forum btn__forum_size"
+                mode="outline"
+                class="btn__forum btn__forum_size"
               >
                 {{ $t('proposal.toTheForum') }}
               </base-btn>
@@ -140,8 +140,8 @@
                 <div class="bar__line">
                   <div class="bar__line_gray">
                     <div
-                        class="bar__line_green"
-                        :style="`width: ${results.percents.yes}%`"
+                      class="bar__line_green"
+                      :style="`width: ${results.percents.yes}%`"
                     />
                   </div>
                 </div>
@@ -161,8 +161,8 @@
                 <div class="bar__line">
                   <div class="bar__line_gray">
                     <div
-                        class="bar__line_red"
-                        :style="`width: ${results.percents.no}%`"
+                      class="bar__line_red"
+                      :style="`width: ${results.percents.no}%`"
                     />
                   </div>
                 </div>
@@ -177,36 +177,36 @@
               {{ $t('proposal.voteForProposal') }}
             </div>
             <div
-                v-if="!results.isVoted"
-                class="buttons__container"
+              v-if="!results.isVoted"
+              class="buttons__container"
             >
               <base-btn
-                  mode="delete"
-                  class="btn__votes btn__votes_size"
-                  v-on:click="onVote('NO')"
+                mode="delete"
+                class="btn__votes btn__votes_size"
+                @click="onVote('NO')"
               >
                 {{ $t('proposal.no') }}
               </base-btn>
               <base-btn
-                  mode="approve"
-                  class="btn__votes btn__votes_size btn__votes_green"
-                  v-on:click="onVote('YES')"
+                mode="approve"
+                class="btn__votes btn__votes_size btn__votes_green"
+                @click="onVote('YES')"
               >
                 {{ $t('proposal.yes') }}
               </base-btn>
             </div>
             <div
-                v-else
+              v-else
             >
               <base-btn
-                  mode="outline"
-                  class="btn__voted"
-                  :class="[
-                        {'btn__voted_green': results.vote === 'YES' },
-                        {'btn__voted_red': results.vote === 'NO' },
-                         ]"
+                mode="outline"
+                class="btn__voted"
+                :class="[
+                  {'btn__voted_green': results.vote === 'YES' },
+                  {'btn__voted_red': results.vote === 'NO' },
+                ]"
               >
-                {{ $t('proposal.youVoted') }} {{ results.vote === 'YES' ? $t('proposal.yes') :  $t('proposal.no')}}
+                {{ $t('proposal.youVoted') }} {{ results.vote === 'YES' ? $t('proposal.yes') : $t('proposal.no') }}
               </base-btn>
             </div>
           </div>
@@ -218,31 +218,31 @@
             <base-btn
               mode="light"
               class="btn__sorting"
-              v-on:click="isDescending = !isDescending"
+              @click="isDescending = !isDescending"
             >
               <template v-slot:right>
                 <span
-                    :class="[
-                        {'icon-Sorting_descending': isDescending},
-                        {'icon-Sorting_ascending': !isDescending},
-                         ]"
+                  :class="[
+                    {'icon-Sorting_descending': isDescending},
+                    {'icon-Sorting_ascending': !isDescending},
+                  ]"
                 />
               </template>
               {{ $t('proposal.ui.addTime') }}
             </base-btn>
             <baseDD
-                type="light"
+              v-model="ddValue"
+              type="light"
               :items="ddValues"
-                v-model="ddValue"
             />
           </div>
         </div>
         <div class="history__content">
           <history-table
-              class="table"
-              :title="$t('proposal.proposalHistory')"
-              :fields="historyTableFields"
-              :items="prepareTableData(historyTableData)"
+            class="table"
+            :title="$t('proposal.proposalHistory')"
+            :fields="historyTableFields"
+            :items="prepareTableData(historyTableData)"
           />
         </div>
       </div>
