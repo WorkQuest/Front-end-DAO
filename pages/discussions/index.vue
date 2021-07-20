@@ -24,19 +24,19 @@
           />
         </div>
       </div>
-<!--      <pagination />-->
+      <pagination />
     </div>
   </div>
 </template>
 
 <script>
 
-// import pagination from '~/components/app/Panels/Pagination';
+import pagination from '~/components/app/Panels/Pagination';
 
 export default {
-  // components: {
-  //   pagination,
-  // },
+  components: {
+    pagination,
+  },
   data() {
     return {
       search: '',
@@ -129,7 +129,6 @@ export default {
       margin: 0px 0px 30px 0px;
     }
     &__search {
-        flex: 1 1 auto;
         width: 680px;
         height: 43px;
         background: #FFFFFF;
@@ -139,6 +138,7 @@ export default {
         font-size: 16px;
         line-height: 130%;
     }
+
     &__btn {
         width: 220px;
         height: 43px;

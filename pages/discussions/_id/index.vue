@@ -64,20 +64,17 @@
                 <img
                   src = "~/assets/img/ui/close.svg"
                     alt=""
-            >
+              >
           </span>
         </span>
         <div class="discussion__images image">
-          <img
-              src = "~/assets/img/ui/rectangle.svg"
-              alt=""
-              class="image__file"
+          <div v-for="element in images"
+          :key="element.id"
           >
-          <img
-              src = "~/assets/img/ui/close.svg"
-              alt=""
-              class="close"
-          >
+            <img :src="element.image" class="image__file">
+            <div class="icon-off_close image__close" ></div>
+          </div>
+          <span class="icon-download image__download"></span>
         </div>
         <div class="discussion__description description">
           <hr class="discussion__line">
@@ -150,14 +147,11 @@
                 </div>
               </div>
               <div class="bottom__panel">
-                <div class="bottom__comment">
-                  <button>
                     <img
                         src="~assets/img/ui/comment.svg"
                         alt=""
+                        class="bottom__comment"
                     >
-                  </button>
-                </div>
                 <div class="bottom__counter">
                   {{ elem.commentCounter }}
                 </div>
@@ -181,13 +175,18 @@
           </div>
         </div>
       </div>
+      <pagination />
     </div>
 </template>
 
 <script>
 
-export default {
+import pagination from '~/components/app/Panels/Pagination';
 
+export default {
+  components: {
+    pagination,
+  },
   data() {
     return {
       isFavorite: false,
@@ -270,6 +269,29 @@ export default {
           name: 'Some_document.pdf',
         },
       ],
+      images: [
+        {
+          image: require('~/assets/img/ui/rectangle.svg'),
+          id: 1,
+        },
+        {
+          image: require('~/assets/img/ui/rectangle.svg'),
+          id: 2,
+
+        },
+        {
+          image: require('~/assets/img/ui/rectangle.svg'),
+          id: 3,
+        },
+        {
+          image: require('~/assets/img/ui/rectangle.svg'),
+          id: 4,
+        },
+        {
+          image: require('~/assets/img/ui/rectangle.svg'),
+          id: 5,
+        },
+      ],
     };
   },
   methods: {
@@ -279,11 +301,6 @@ export default {
     toggleLiked() {
       this.isLiked = !this.isLiked;
     },
-    // toggleLikedComment(id) {
-    //   this.comments = this.comments.map(
-    //     (comment) => (comment.id !== id ? comment : { ...comment, isCommentLiked: !comment.isCommentLiked }),
-    //   );
-    // },
   },
 };
 
@@ -360,6 +377,7 @@ export default {
     margin: 6px 10px 6px 0px;
     color:  #4C5767;
     font-size: 25px;
+    cursor: pointer;
   }
 }
 .comment{
@@ -436,6 +454,7 @@ export default {
   &__comment {
     height: 18px;
     width: 18px;
+    cursor: pointer;
   }
   &__counter {
     font-size: 14px;
@@ -489,8 +508,9 @@ export default {
     border-radius: 6px;
     align-items: center;
     justify-content: center;
-      font-size: 25px;
-      color: #0083C7;
+    font-size: 25px;
+    color: #0083C7;
+    cursor: pointer;
   }
 }
 .discussion {
@@ -520,24 +540,12 @@ export default {
   &__block{
     margin: 10px 0px 20px 0px;
   }
-  &__images{
-    :hover{
-      -webkit-filter: brightness(40%);
-      filter: brightness(40%);
-      }
-    :hover~.close{
-      display: block;
-    }
-  }
 }
-.image{
-  &__close{
-    display: none;
-  }
-}
+
 .block{
   display: inline-flex;
   align-items: center;
+  cursor: pointer;
   &__icon{
     margin: 0px 16px 0px 0px;
   }
@@ -577,6 +585,40 @@ export default {
     font-weight: 600;
     margin: 20px 0px 10px 0px;
   }
+}
+.image {
+  display:flex;
+  align-items: center;
+  margin-left: auto;
+  position: relative;
+  &__download {
+    color: black;
+    font-size: 30px;
+    align-items: center;
+    cursor: pointer;
+  }
+  &__close{
+    position: absolute;
+    top: 33px;
+    left: 33px;
+    display: none;
+    font-size: 25px;
+    color: red;
+    cursor: pointer;
+  }
+  &__file{
+    align-items: center;
+    margin-right: 20px;
+  }:hover {
+    -webkit-filter: brightness(40%);
+    filter: brightness(40%);
+ }
+  &__file{
+    align-items: center;
+    margin-right: 20px;
+  }:hover .image__close{
+      display: block;
+   }
 }
 
 </style>
