@@ -3,8 +3,6 @@ npm-debug.log
 .nuxt
 dist
 backup
-/.directory
-/.env
-/assets/img/.directory
-/.idea
+.idea
+.env
 /package-lock.json

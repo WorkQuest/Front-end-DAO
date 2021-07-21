@@ -123,6 +123,7 @@
   },
   "meta": {
     "back": "Back",
+    "open": "Open",
     "ok": "Ok",
     "send": "Send",
     "save": "Save",
@@ -459,7 +460,19 @@
   "proposals": {
     "addProposals": "Add proposals",
     "title": "Proposals",
-    "textBanner": "Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus dolor purus non enim"
+    "textBanner": "Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus dolor purus non enim",
+    "ui": {
+      "search": "Search proposal",
+      "addTime": "Added time",
+      "allProposals": "All proposals"
+    },
+    "cards": {
+      "status": {
+        "pending": "Pending",
+        "rejected": "Rejected",
+        "accepted": "Accepted"
+      }
+    }
   },
   "settings": {
     "description": "And you are beautiful",
