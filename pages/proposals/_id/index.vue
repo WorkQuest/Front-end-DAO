@@ -44,7 +44,6 @@
               <nuxt-link
                 to="/proposals/1"
                 class="hash__value"
-                :class="{'hash__value_33height' : documents0.length}"
               >
                 {{ hash.length ? modifyHash(hash) : '...' }}
               </nuxt-link>
@@ -53,50 +52,13 @@
               <div class="files__title">
                 {{ $t('proposal.filesTitle') }}
               </div>
-              <div
-                v-if="documents0.length"
-                class="files__container"
-              >
-                <div
-                  v-for="doc in documents"
-                  :key="doc.id"
-                  class="file"
-                >
-                  <div class="file__icon">
-                    <img
-                      src="~/assets/img/ui/pdf.svg"
-                      alt=""
-                    >
-                  </div>
-                  <div class="file__name">
-                    {{ doc.name }}
-                  </div>
-                  <div class="file__size">
-                    {{ doc.size }}
-                  </div>
-                  <div class="file__close">
-                    <span>
-                      <img
-                        class="btn__delete"
-                        src="~/assets/img/ui/close.svg"
-                        alt=""
-                      >
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div
-                v-else
-                class="files__noFiles"
-              >
-                {{ $t('proposal.noFiles') }}
-                <span class="btn__download">
-                  <img
-                    src="~/assets/img/ui/download.svg"
-                    alt=""
-                  >
-                </span>
-              </div>
+              <Uploader
+                class="uploader"
+                type="files"
+                :items="{
+                  files: documents,
+                }"
+              />
             </div>
           </div>
           <hr class="info__line">
@@ -111,7 +73,7 @@
           <div class="info__toForum">
             <nuxt-link
               class="btn__link"
-              to="proposals/1"
+              to="/discussions"
             >
               <base-btn
                 mode="outline"
@@ -222,6 +184,7 @@
             >
               <template v-slot:right>
                 <span
+                  class="icon icon__sorting"
                   :class="[
                     {'icon-Sorting_descending': isDescending},
                     {'icon-Sorting_ascending': !isDescending},
@@ -251,11 +214,14 @@
 </template>
 
 <script>
+import moment from 'moment';
 import baseDD from '~/components/ui/BaseDD';
 import historyTable from '~/components/ui/BaseTable';
+import Uploader from '~/components/ui/BaseUploader';
 
 export default {
   components: {
+    Uploader,
     baseDD,
     historyTable,
   },
@@ -282,28 +248,28 @@ export default {
         {
           number: '1',
           hash: '11400714819323198485',
-          date: 'Jan 01, 2021',
+          date: moment('20210615', 'YYYYMMDD').format('ll'),
           address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
           vote: 'YES',
         },
         {
           number: '2',
           hash: '11400714819323198485',
-          date: 'Jan 01, 2021',
+          date: moment('20210720', 'YYYYMMDD').format('ll'),
           address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
           vote: 'YES',
         },
         {
           number: '3',
           hash: '11400714819323198485',
-          date: 'Jan 01, 2021',
+          date: moment('20210617', 'YYYYMMDD').format('ll'),
           address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
           vote: 'NO',
         },
         {
           number: '4',
           hash: '11400714819323198485',
-          date: 'Jan 01, 2021',
+          date: moment('20210520', 'YYYYMMDD').format('ll'),
           address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
           vote: 'NO',
         },
@@ -352,19 +318,19 @@ export default {
         {
           voting: 1,
           status: 0,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
+          date: `${moment('20210520', 'YYYYMMDD').format('ll')} - ${moment().format('ll')}`,
           about: 'Lorem ipsum dolor sit amet, consectetur',
         },
         {
           voting: 1,
           status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
+          date: `${moment('20210520', 'YYYYMMDD').format('ll')} - ${moment().format('ll')}`,
           about: 'Lorem ipsum dolor sit amet, consectetur',
         },
         {
           voting: 1,
           status: 2,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
+          date: `${moment('20210520', 'YYYYMMDD').format('ll')} - ${moment().format('ll')}`,
           about: 'Lorem ipsum dolor sit amet, consectetur',
         },
       ],
@@ -407,14 +373,18 @@ export default {
         itemModel.hash = this.modifyHash(item.hash);
         newData.push(itemModel);
       });
-      return newData;
+      switch (this.ddValue) {
+        case 0:
+          return newData.filter((item) => item.vote === 'YES');
+        case 1:
+          return newData.filter((item) => item.vote === 'NO');
+        default:
+          return newData;
+      }
     },
     onVote(value) {
       this.results.isVoted = true;
       this.results.vote = value;
-    },
-    onSorting() {
-      console.log(event);
     },
   },
 };
@@ -549,6 +519,7 @@ export default {
 
   &__line {
     background: #E9EDF2;
+    margin: 20px 0;
   }
 
   &__description {
@@ -602,11 +573,8 @@ export default {
   &__value {
     font-weight: normal;
     font-size: 14px;
-    line-height: 130%;
     color: #0083C7;
-    &_33height {
-      line-height: 33px;
-    }
+    line-height: 33px;
 
     &:hover {
       text-decoration: none;
@@ -842,6 +810,12 @@ export default {
       background: #FFFFFF;
       border: 1px solid rgba(0, 0, 0, 0.1);
     }
+  }
+}
+
+.icon {
+  &__sorting {
+    color: #000000;
   }
 }
 

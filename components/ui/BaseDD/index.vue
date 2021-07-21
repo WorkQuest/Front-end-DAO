@@ -8,6 +8,8 @@
       class="dd__btn"
       :class="ddClass"
       @click="isShown = !isShown"
+      @mouseover="onMouseOver"
+      @mouseleave="onMouseLeave"
     >
       <div
         v-if="isIcon"
@@ -139,6 +141,23 @@ export default {
       this.isShown = false;
       this.$emit('input', i);
     },
+    onMouseLeave() {
+      this.caretHover(false);
+    },
+    onMouseOver() {
+      this.caretHover(true);
+    },
+    caretHover(isHover) {
+      const el = event.target;
+      if (el.tagName !== 'BUTTON') return;
+      if (!el.childNodes && !el.childNodes.length) return;
+      const caret = el.childNodes[2];
+      if (isHover) {
+        caret.classList.add('dd__caret_blue');
+      } else {
+        caret.classList.remove('dd__caret_blue');
+      }
+    },
   },
 };
 </script>
@@ -206,19 +225,18 @@ export default {
     }
   }
   &__caret {
-    &::before {
-      padding-left: 10px;
-      color: $blue;
-      font-size: 24px;
+    padding-left: 10px;
+    color: $blue;
+    font-size: 24px;
 
-    }
-    &_dark::before {
+    &_dark {
       color: $black700;
     }
     &_light {
-      &::before {
-        color: #8D96A2;
-      }
+      color: #8D96A2;
+    }
+    &_blue {
+      color: $blue;
     }
   }
   &__btn {
@@ -241,9 +259,6 @@ export default {
       border: 1px solid rgba(0, 0, 0, 0);
       &:hover {
         border: 1px solid rgba(0, 0, 0, 0.1);
-        .dd__caret_light::before {
-          color: $blue;
-        }
       }
     }
   }
