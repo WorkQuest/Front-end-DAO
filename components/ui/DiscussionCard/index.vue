@@ -9,40 +9,48 @@
       <span class="user__name">
         {{ item.userName }}
       </span>
-      <button class="user__star" >
-            <img
-            @click='toggleFavorite'
-            v-if='!isFavorite'
-            src="~assets/img/ui/star_simple.svg"
-            alt="simpleStar">
-            <img
-            @click='toggleFavorite'
-            v-else
-            src="~assets/img/ui/star_checked.svg"
-            alt="checkedStar">
+      <button class="user__star">
+        <img
+          v-if="!isFavorite"
+          src="~assets/img/ui/star_simple.svg"
+          alt="simpleStar"
+          @click="toggleFavorite"
+        >
+        <img
+          v-else
+          src="~assets/img/ui/star_checked.svg"
+          alt="checkedStar"
+          @click="toggleFavorite"
+        >
       </button>
     </div>
     <div class="discussion__title">
-        {{ item.title }}
+      {{ item.title }}
     </div>
     <div class="discussion__date">
       {{ item.date }}
     </div>
     <hr class="discussion__line">
     <div class="description discussion__description">
-    <div class="description__title">
-      {{ $t('discussions.descriptionTitle') }}
-    </div>
-    <div class="description__item">
-      {{ item.description }}
-    </div>
+      <div class="description__title">
+        {{ $t('discussions.descriptionTitle') }}
+      </div>
+      <div class="description__item">
+        {{ item.description }}
+      </div>
     </div>
     <div class="bottom discussion__bottom">
       <div class="bottom__footer">
-        <nuxt-link to="/discussions/_id"
-                   class="footer__link link">
-          <div class="link__text">{{ $t('discussions.read') }}</div>
-          <div class="link__arrow"><span class="icon-short_right link__arrow" /></div>
+        <nuxt-link
+          :to="`/discussions/${item.id}`"
+          class="footer__link link"
+        >
+          <div class="link__text">
+            {{ $t('discussions.read') }}
+          </div>
+          <div class="link__arrow">
+            <span class="icon-short_right link__arrow" />
+          </div>
         </nuxt-link>
       </div>
       <div class="bottom__footer">
@@ -52,22 +60,24 @@
             alt=""
           >
         </button>
-      <div class="bottom__counter">
-        {{ item.commentCounter }}
-      </div>
-      <button class= "bottom__like">
-              <span  @click='toggleLiked'
-              v-if="!isLiked"
-              class= "icon-heart_fill bottom__like"
-              />
-              <span @click='toggleLiked'
-              v-else
-              class= "icon-heart_fill bottom__like bottom__like_choosen"
-              />
+        <div class="bottom__counter">
+          {{ item.commentCounter }}
+        </div>
+        <button class="bottom__like">
+          <span
+            v-if="!isLiked"
+            class="icon-heart_fill bottom__like"
+            @click="toggleLiked"
+          />
+          <span
+            v-else
+            class="icon-heart_fill bottom__like bottom__like_choosen"
+            @click="toggleLiked"
+          />
         </button>
-      <div class="bottom__counter bottom__counter_right">
-        {{ item.likeCounter }}
-      </div>
+        <div class="bottom__counter bottom__counter_right">
+          {{ item.likeCounter }}
+        </div>
       </div>
     </div>
   </div>

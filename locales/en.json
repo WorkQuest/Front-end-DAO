@@ -837,6 +837,8 @@
   "show": "Show comments",
   "input": "Write you response",
   "commentTitle": "Comments",
-  "files": "Files"
+  "files": "Files",
+  "reply": "Reply",
+  "moreComments": "Show more comments"
   }
  }

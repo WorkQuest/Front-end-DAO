@@ -12,7 +12,7 @@
               :disabled="tab === 1"
               :class="tab === 1 ? 'nav-arrow_disabled' : 'nav-arrow_active'"
             />
-          </button>dsds
+          </button>
         </li>
         <li class="nav-item">
           <button
@@ -78,7 +78,7 @@
 
 <script>
 export default {
-  name: 'pagination',
+  name: 'Pagination',
   data() {
     return {
       tab: 1,

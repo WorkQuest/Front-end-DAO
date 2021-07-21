@@ -5,12 +5,12 @@
         {{ $t('discussions.title') }}
       </div>
       <div class="discussions__header">
-          <base-field
-            v-model="search"
-            class="discussions__search"
-            :is-search="true"
-            :placeholder="$t('discussions.seacrhField')"
-          />
+        <base-field
+          v-model="search"
+          class="discussions__search"
+          :is-search="true"
+          :placeholder="$t('discussions.seacrhField')"
+        />
         <base-btn class="discussions__btn">
           {{ $t('discussions.btn') }}
         </base-btn>
@@ -42,6 +42,7 @@ export default {
       search: '',
       discussions: [
         {
+          id: 1,
           avatar: '~assets/img/icons/userAvatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
@@ -51,6 +52,7 @@ export default {
           commentCounter: 50,
         },
         {
+          id: 2,
           avatar: '~assets/img/icons/userAvatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
@@ -60,6 +62,7 @@ export default {
           commentCounter: 50,
         },
         {
+          id: 3,
           avatar: '~assets/img/icons/userAvatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
@@ -69,6 +72,7 @@ export default {
           commentCounter: 50,
         },
         {
+          id: 4,
           avatar: '~assets/img/icons/userAvatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
@@ -78,6 +82,7 @@ export default {
           commentCounter: 50,
         },
         {
+          id: 5,
           avatar: '~assets/img/icons/userAvatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
@@ -87,6 +92,7 @@ export default {
           commentCounter: 50,
         },
         {
+          id: 6,
           avatar: '~assets/img/icons/userAvatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',

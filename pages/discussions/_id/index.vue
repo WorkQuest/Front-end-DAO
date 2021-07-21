@@ -1,43 +1,48 @@
 <template>
-    <div class="info">
-      <div class="info__header header">
-            <nuxt-link to="/discussions" class="header__link link">
-                   <span class ="icon-short_left link__arrow" />
-                <div class="link__text">
-                  {{ $t('discussions.back') }}
-                </div>
-          </nuxt-link>
-      </div>
-      <div class="info__title">
-        {{ $t('discussions.infoTitle') }}
-      </div>
-      <div class="info__field"
-              v-for="(item) in discussions"
-              :key="item.id"
-              :item="item"
-              >
+  <div class="info">
+    <div class="info__header header">
+      <nuxt-link
+        to="/discussions"
+        class="header__link link"
+      >
+        <span class="icon-short_left link__arrow" />
+        <div class="link__text">
+          {{ $t('discussions.back') }}
+        </div>
+      </nuxt-link>
+    </div>
+    <div class="info__title">
+      {{ $t('discussions.infoTitle') }}
+    </div>
+    <div
+      v-for="(item) in discussions"
+      :key="item.id"
+      class="info__field"
+    >
       <div class="info__discussion discussion">
         <div class=" discussion__user user">
+          <img
+            src="~assets/img/icons/userAvatar.svg"
+            alt=""
+            class="user__avatar"
+          >
+          <span class="user__name">
+            {{ item.userName }}
+          </span>
+          <button class="user__star">
             <img
-              src="~assets/img/icons/userAvatar.svg"
-              alt=""
-              class="user__avatar"
+              v-if="!isFavorite"
+              src="~assets/img/ui/star_simple.svg"
+              alt="simpleStar"
+              @click="toggleFavorite"
             >
-               <span class="user__name">
-              {{ item.userName }}
-              </span>
-              <button class="user__star">
-              <img
-                @click='toggleFavorite'
-                v-if='!isFavorite'
-                src="~assets/img/ui/star_simple.svg"
-                alt="simpleStar">
-              <img
-                @click='toggleFavorite'
-                v-else
-                src="~assets/img/ui/star_checked.svg"
-                alt="checkedStar">
-                </button>
+            <img
+              v-else
+              src="~assets/img/ui/star_checked.svg"
+              alt="checkedStar"
+              @click="toggleFavorite"
+            >
+          </button>
         </div>
         <div class="discussion__title">
           {{ item.title }}
@@ -48,33 +53,42 @@
         <div class="discussion__subtitle">
           {{ $t('discussions.files') }}
         </div>
-        <span class="discussion__block block"
-             v-for="(file) in files"
-             :key="file.id "
+        <span
+          v-for="(file) in files"
+          :key="file.id "
+          class="discussion__block block"
         >
-            <div class="block__icon" >
-              <img
-                  src = "~/assets/img/ui/pdf.svg"
-                  alt=""
-              >
-            </div>
-            <div class="block__name"> {{ file.name }} </div>
-            <div class="block__size"> {{ file.size }} </div>
-              <span class="block__close">
-                <img
-                  src = "~/assets/img/ui/close.svg"
-                    alt=""
-              >
+          <div class="block__icon">
+            <img
+              src="~/assets/img/ui/pdf.svg"
+              alt=""
+            >
+          </div>
+          <div class="block__name">
+            {{ file.name }}
+          </div>
+          <div class="block__size">
+            {{ file.size }}
+          </div>
+          <span class="block__close">
+            <img
+              src="~/assets/img/ui/close.svg"
+              alt=""
+            >
           </span>
         </span>
         <div class="discussion__images image">
-          <div v-for="element in images"
-          :key="element.id"
+          <div
+            v-for="element in images"
+            :key="element.id"
           >
-            <img :src="element.image" class="image__file">
-            <div class="icon-off_close image__close" ></div>
+            <img
+              :src="element.image"
+              class="image__file"
+            >
+            <div class="icon-off_close image__close" />
           </div>
-          <span class="icon-download image__download"></span>
+          <span class="icon-download image__download" />
         </div>
         <div class="discussion__description description">
           <hr class="discussion__line">
@@ -86,28 +100,27 @@
           </div>
         </div>
         <div class="discussion__bottom bottom">
-          <div class="bottom__footer">
-          </div>
+          <div class="bottom__footer" />
           <div class="bottom__footer">
             <div class="bottom__comment">
-              <button>
-                <img
-                    src="~assets/img/ui/comment.svg"
-                    alt=""
-                >
-              </button>
+              <img
+                src="~assets/img/ui/comment.svg"
+                alt=""
+              >
             </div>
             <div class="bottom__counter">
               {{ item.commentCounter }}
             </div>
-            <button class= "bottom__like">
-              <span  @click='toggleLiked'
-                     v-if="!isLiked"
-                     class= "icon-heart_fill bottom__like"
+            <button class="bottom__like">
+              <span
+                v-if="!isLiked"
+                class="icon-heart_fill bottom__like"
+                @click="toggleLiked"
               />
-              <span @click='toggleLiked'
-                    v-else
-                    class= "icon-heart_fill bottom__like bottom__like_choosen"
+              <span
+                v-else
+                class="icon-heart_fill bottom__like bottom__like_choosen"
+                @click="toggleLiked"
               />
             </button>
             <div class="bottom__counter bottom__counter_right">
@@ -116,79 +129,96 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="discussion__heading heading">
+      <div class="heading__title">
+        {{ $t('discussions.commentTitle') }}
       </div>
-        <div class="discussion__heading heading">
-          <div class="heading__title">{{ $t('discussions.commentTitle') }}</div>
-        <base-btn class="heading__btn">
-          {{ $t('discussions.add') }}
-        </base-btn>
-        </div>
-        <div class="info__comment comment"
-        v-for="(elem) in comments"
-        :key="elem.id"
-        :elem="elem">
-          <div class="comment__field">
-            <div class="comment__user user">
-            <img
-                src="~assets/img/icons/userAvatar.svg"
-                alt=""
-                class="user__image"
-            >
-            <div class="user__name">{{ elem.userName}}</div>
-            <div class="user__date">{{ elem.date}}</div>
+      <base-btn class="heading__btn">
+        {{ $t('discussions.add') }}
+      </base-btn>
+    </div>
+    <div
+      v-for="(elem) in comments"
+      :key="elem.id"
+      class="info__comment comment"
+    >
+      <div class="comment__field">
+        <div class="comment__user user">
+          <img
+            src="~assets/img/icons/userAvatar.svg"
+            alt=""
+            class="user__image"
+          >
+          <div class="user__name">
+            {{ elem.userName }}
           </div>
-          <div class="comment__description">{{ elem.description}}</div>
-            <div class="comment__bottom bottom">
-              <div class="bottom__panel">
-                <div class="bottom__link">
-                  <nuxt-link to="/">
-                    {{ $t('discussions.show') }}
-                  </nuxt-link>
-                </div>
-              </div>
-              <div class="bottom__panel">
-                    <img
-                        src="~assets/img/ui/comment.svg"
-                        alt=""
-                        class="bottom__comment"
-                    >
-                <div class="bottom__counter">
-                  {{ elem.commentCounter }}
-                </div>
-                <button class= "bottom__like">
-                  <span @click='toggleLikedComment(elem.id)'
-                        v-if="!elem.isCommentLiked"
-                        class= "icon-heart_fill bottom__like" />
-                  <span @click='toggleLikedComment(elem.id)'
-                        v-else
-                        class= "icon-heart_fill bottom__like bottom__like_choosen" />
-                </button>
-                <div class="bottom__counter bottom__counter_right">
-                  {{ elem.likeCounter }}
-                </div>
+          <div class="user__date">
+            {{ elem.date }}
+          </div>
+        </div>
+        <div class="comment__description">
+          {{ elem.description }}
+        </div>
+        <div class="comment__bottom bottom">
+          <button
+            class="bottom__btn"
+            @click="show = !show"
+          >
+            {{ $t('discussions.show') }}
+          </button>
+          <div class="bottom__panel">
+            <img
+              src="~assets/img/ui/comment.svg"
+              alt=""
+              class="bottom__comment"
+            >
+            <div class="bottom__counter">
+              {{ elem.commentCounter }}
+            </div>
+            <button class="bottom__like">
+              <span class="icon-heart_fill bottom__like" />
+              <!--              <span class="icon-heart_fill bottom__like bottom__like_choosen" />-->
+            </button>
+            <div class="bottom__counter bottom__counter_right">
+              {{ elem.likeCounter }}
             </div>
           </div>
-          <div class="info__footer footer">
-           <span class="class= icon-link footer__chain"></span>
-              <input class="footer__input" :placeholder="$t('discussions.input')" />
-              <span class="class= icon-send footer__arrow"></span>
-          </div>
+        </div>
+        <div v-if="show">
+          <answers-card
+            v-for="(item) in answers"
+            :key="item.id"
+            :item="item"
+          />
+        </div>
+        <div class="info__footer footer">
+          <span class="class= icon-link footer__chain" />
+          <input
+            class="footer__input"
+            :placeholder="$t('discussions.input')"
+          >
+          <span class="class= icon-send footer__arrow" />
         </div>
       </div>
-      <pagination />
     </div>
+    <pagination />
+  </div>
 </template>
 
 <script>
 
 import pagination from '~/components/app/Panels/Pagination';
+import answersCard from '~/components/ui/AnswersCard';
 
 export default {
   components: {
     pagination,
+    answersCard,
   },
   data() {
     return {
+      show: false,
       isFavorite: false,
       isLiked: false,
       discussions: [
@@ -290,6 +320,32 @@ export default {
         {
           image: require('~/assets/img/ui/rectangle.svg'),
           id: 5,
+        },
+      ],
+      answers: [
+        {
+          id: 1,
+          avatar: '~assets/img/icons/userAvatar.svg',
+          userName: 'Rosalia Vans',
+          date: '10 days ago',
+          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
+          likeCounter: 50,
+        },
+        {
+          id: 2,
+          avatar: '~assets/img/icons/userAvatar.svg',
+          userName: 'Rosalia Vans',
+          date: '10 days ago',
+          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
+          likeCounter: 50,
+        },
+        {
+          id: 3,
+          avatar: '~assets/img/icons/userAvatar.svg',
+          userName: 'Rosalia Vans',
+          date: '10 days ago',
+          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
+          likeCounter: 50,
         },
       ],
     };
@@ -436,12 +492,17 @@ export default {
     display: flex;
     align-items: center;
   }
-  &__link {
+  &__btn {
     @include text-usual;
     color: #0083C7;
     align-items: center;
-    margin: 7px 14px 7px 10px;
-  }
+    width: 150px;
+    height: 33px;
+    border-radius: 6px;
+  }:hover{
+    background: #0A7EEA;
+    color: white;
+     }
   &__like {
     margin-left: auto;
     margin-top: 5px;
