@@ -149,39 +149,6 @@
           </div>
         </div>
         <div
-          v-if="userRole === 'employer'"
-          class="company__inputs"
-        >
-          <base-field
-            v-model="localUserData.additionalInfo.company"
-            :placeholder="company || $t('settings.amazon')"
-            mode="icon"
-          >
-            <template v-slot:left>
-              <span class="icon-Case" />
-            </template>
-          </base-field>
-          <base-field
-            v-model="localUserData.additionalInfo.CEO"
-            :placeholder="userCEO || $t('settings.ceo')"
-            mode="icon"
-          >
-            <template v-slot:left>
-              <span class="icon-id_card" />
-            </template>
-          </base-field>
-          <base-field
-            v-model="localUserData.additionalInfo.website"
-            :placeholder="userWebsite || $t('settings.amazon_com')"
-            mode="icon"
-          >
-            <template v-slot:left>
-              <span class="icon-Earth" />
-            </template>
-          </base-field>
-        </div>
-        <div
-          v-if="userRole === 'worker'"
           class="profile__row-1col"
         >
           <textarea
@@ -190,140 +157,6 @@
             class="profile__textarea"
             :placeholder="userDesc || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus dolor purus non enim praesent elementum facilisis leo, vel'"
           />
-        </div>
-        <div
-          v-if="userRole === 'worker'"
-        >
-          <label
-            class="knowledge__label"
-            for="knowledge"
-          >{{ $t('settings.educations') }}</label>
-          <div
-            v-if="localUserData.additionalInfo.educations.length !==0"
-          >
-            <div
-              v-for="(k, i) in localUserData.additionalInfo.educations"
-              :key="k.id"
-              class="knowledge__container"
-            >
-              <base-field
-                id="knowledge"
-                v-model="localUserData.additionalInfo.educations[i].from"
-                type="grey"
-                :placeholder="$t('settings.term')"
-              />
-              <div class="knowledge__dash">
-                -
-              </div>
-              <base-field
-                v-model="localUserData.additionalInfo.educations[i].to"
-                type="grey"
-                :placeholder="$t('settings.term')"
-              />
-              <div />
-              <base-field
-                v-model="localUserData.additionalInfo.educations[i].place"
-                type="grey"
-                :placeholder="$t('settings.placeOfStudying')"
-              />
-              <div />
-              <base-btn @click="deleteKnowledge(i)">
-                {{ $t('settings.delete') }}
-              </base-btn>
-            </div>
-          </div>
-          <div
-            class="knowledge__container"
-          >
-            <base-field
-              v-model="newKnowledge.from"
-              type="grey"
-              :placeholder="$t('settings.term')"
-            />
-            <div class="knowledge__dash">
-              -
-            </div>
-            <base-field
-              v-model="newKnowledge.to"
-              type="grey"
-              :placeholder="$t('settings.term')"
-            />
-            <div />
-            <base-field
-              v-model="newKnowledge.place"
-              type="grey"
-              :placeholder="$t('settings.placeOfStudying')"
-            />
-            <div />
-            <base-btn @click="addNewKnowledge()">
-              {{ $t('settings.add') }}
-            </base-btn>
-          </div>
-
-          <label
-            v-if="userRole === 'worker'"
-            class="knowledge__label"
-            for="workExp"
-          >{{ $t('settings.workExp') }}</label>
-          <div
-            v-if="localUserData.additionalInfo.workExperiences.length !==0"
-          >
-            <div
-              v-for="(k, i) in localUserData.additionalInfo.workExperiences"
-              :key="k.id"
-              class="knowledge__container"
-            >
-              <base-field
-                id="workExp"
-                v-model="localUserData.additionalInfo.workExperiences[i].from"
-                type="grey"
-                :placeholder="$t('settings.term')"
-              />
-              <div class="knowledge__dash">
-                -
-              </div>
-              <base-field
-                v-model="localUserData.additionalInfo.workExperiences[i].to"
-                type="grey"
-                :placeholder="$t('settings.term')"
-              />
-              <div />
-              <base-field
-                v-model="localUserData.additionalInfo.workExperiences[i].place"
-                type="grey"
-                :placeholder="$t('settings.placeOfStudying')"
-              />
-              <div />
-              <base-btn @click="deleteWorkExp(i)">
-                {{ $t('settings.delete') }}
-              </base-btn>
-            </div>
-          </div>
-          <div class="knowledge__container">
-            <base-field
-              v-model="newWorkExp.from"
-              type="grey"
-              :placeholder="$t('settings.term')"
-            />
-            <div class="knowledge__dash">
-              -
-            </div>
-            <base-field
-              v-model="newWorkExp.to"
-              type="grey"
-              :placeholder="$t('settings.term')"
-            />
-            <div />
-            <base-field
-              v-model="newWorkExp.place"
-              type="grey"
-              :placeholder="$t('settings.placeOfStudying')"
-            />
-            <div />
-            <base-btn @click="addNewWorkExp()">
-              {{ $t('settings.add') }}
-            </base-btn>
-          </div>
         </div>
         <div class="profile__row-4col">
           <base-field
@@ -373,10 +206,7 @@
         </div>
       </div>
       <div class="main-white">
-        <div
-          v-if="userRole === 'worker'"
-          class="page__skills"
-        >
+        <div class="page__skills">
           <div class="page__badge-skills">
             {{ $t('settings.skills') }}
           </div>
@@ -631,38 +461,25 @@ export default {
   async mounted() {
     this.SetLoader(true);
     this.localUserData = {
-      avatarId: this.userData.avatarId,
-      firstName: this.userData.firstName,
-      lastName: this.userData.lastName,
-      additionalInfo: JSON.parse(JSON.stringify(this.userData.additionalInfo)),
+      avatarId: null,
+      firstName: 'Alex',
+      lastName: 'Testovich',
+      additionalInfo: {
+        firstMobileNumber: 89997776655,
+        secondMobileNumber: 89997776655,
+        address: 'Moscow 3',
+        socialNetwork: {
+          instagram: 'test',
+          twitter: 'test2',
+          linkedin: 'test3',
+          facebook: null,
+        },
+        description: 'desd desc desc desc desc desc desc',
+      },
     };
     this.SetLoader(false);
   },
   methods: {
-    addNewKnowledge() {
-      this.localUserData.additionalInfo.educations.push({ ...this.newKnowledge });
-      this.newKnowledge = {
-        from: null,
-        to: null,
-        place: null,
-      };
-      this.showModalAddEducationOk();
-    },
-    deleteKnowledge(i) {
-      this.localUserData.additionalInfo.educations.splice(i, 1);
-    },
-    addNewWorkExp() {
-      this.localUserData.additionalInfo.workExperiences.push({ ...this.newWorkExp });
-      this.newWorkExp = {
-        from: null,
-        to: null,
-        place: null,
-      };
-      this.showModalAddWorkExpOk();
-    },
-    deleteWorkExp(i) {
-      this.localUserData.additionalInfo.workExperiences.splice(i, 1);
-    },
     // eslint-disable-next-line consistent-return
     async processFile(e, validate) {
       const isValid = await validate(e);
