@@ -17,22 +17,51 @@
       {{ item.description }}
     </div>
     <div class="answers__bottom bottom">
-      <button class="bottom__btn ">
+      <base-btn
+        v-if="!isReplay"
+        class="bottom__btn"
+        mode="blue"
+        @click="toggleReplay"
+      >
         {{ $t('discussions.reply') }}
-      </button>
+      </base-btn>
+      <base-btn
+        v-else
+        class="bottom__btn"
+        mode="blue"
+        @click="toggleReplay"
+      >
+        {{ $t('discussions.cancel') }}
+      </base-btn>
       <div class="bottom__panel">
         <button class="bottom__like">
-          <span class="icon-heart_fill bottom__like" />
-          <!--              <span class="icon-heart_fill bottom__like bottom__like_choosen" />-->
+        <span
+            v-if="!isVote"
+            class="icon-heart_fill bottom__like"
+            @click="toggleVote"
+        />
+          <span
+              v-else
+              class="icon-heart_fill bottom__like bottom__like_choosen"
+              @click="toggleVote"
+          />
         </button>
         <div class="bottom__counter bottom__counter_right">
           {{ item.likeCounter }}
         </div>
       </div>
     </div>
-    <button class="answers__btn ">
-      {{ $t('discussions.moreComments') }}
-    </button>
+    <div
+      v-if="isReplay"
+      class="answers__footer footer"
+    >
+      <span class="icon-link footer__chain" />
+      <input
+        class="footer__input"
+        :placeholder="$t('discussions.input')"
+      >
+      <span class="icon-send footer__arrow" />
+    </div>
   </div>
 </template>
 <script>
@@ -40,17 +69,32 @@ export default {
   props: {
     item: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
+    },
+  },
+  data() {
+    return {
+      isReplay: false,
+      isVote: false,
+    };
+  },
+  methods: {
+    toggleReplay() {
+      this.isReplay = !this.isReplay;
+    },
+    toggleVote() {
+      this.isVote = !this.isVote;
     },
   },
 };
+
 </script>
 <style lang="scss" scoped>
 
 .answers{
   &__field{
     width: 1080px;
-    height: 206px;
     background: #FFFFFF;
     border-radius: 8px;
     padding-right: 40px;
@@ -62,17 +106,10 @@ export default {
     align-self: stretch;
     margin: 20px 0px 25px 0px;
   }
-  &__btn {
-    @include text-usual;
-    color: #0083C7;
-    align-items: center;
-    width: 150px;
-    height: 33px;
-    border-radius: 6px;
-     }:hover{
-     background: #0A7EEA;
-     color: white;
-    }
+  &__footer{
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
 }
 .user{
   display: flex;
@@ -96,11 +133,6 @@ export default {
     line-height: 130%;
     color: #AAB0B9;
   }
-  &__star {
-    margin-left: auto;
-    width: 20px;
-    height: 20px;
-  }
 }
 .bottom {
   display: flex;
@@ -116,15 +148,12 @@ export default {
   }
   &__btn {
     @include text-usual;
-    color: #0083C7;
-    align-items: center;
-    width: 150px;
+    width: 80px;
     height: 33px;
     border-radius: 6px;
-  }:hover{
-     background: #0A7EEA;
-     color: white;
-   }
+    border: none;
+    outline: none;
+  }
   &__like {
     margin-left: auto;
     margin-top: 5px;
@@ -133,11 +162,6 @@ export default {
     &_choosen{
       color: #0083C7;
     }
-  }
-  &__comment {
-    height: 18px;
-    width: 18px;
-    cursor: pointer;
   }
   &__counter {
     font-size: 14px;
@@ -148,15 +172,6 @@ export default {
     &_right {
       margin: 7px;
     }
-  }
-  &__footer {
-    display: flex;
-    align-items: center;
-  }
-  &__arrow {
-    margin-top: 10px;
-    margin-left: auto;
-    margin-right: 7px;
   }
 }
 .footer{

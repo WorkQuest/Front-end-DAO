@@ -92,6 +92,7 @@ export default {
   },
   data() {
     return {
+      isHovering: false,
       isFavorite: false,
       isLiked: false,
     };
@@ -227,5 +228,4 @@ export default {
     color: #0083C7;
   }
 }
-
 </style>

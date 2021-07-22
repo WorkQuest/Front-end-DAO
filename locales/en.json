@@ -839,6 +839,9 @@
   "commentTitle": "Comments",
   "files": "Files",
   "reply": "Reply",
-  "moreComments": "Show more comments"
+  "more": "Show more comments",
+  "hide": "Hide comments",
+  "cancel": "Cancel",
+  "responseTitle": "Add your comment"
   }
  }

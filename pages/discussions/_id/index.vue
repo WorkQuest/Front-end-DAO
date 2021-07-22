@@ -1,5 +1,5 @@
 <template>
-  <div class="info">
+  <div class="info info__body">
     <div class="info__header header">
       <nuxt-link
         to="/discussions"
@@ -100,7 +100,6 @@
           </div>
         </div>
         <div class="discussion__bottom bottom">
-          <div class="bottom__footer" />
           <div class="bottom__footer">
             <div class="bottom__comment">
               <img
@@ -130,13 +129,46 @@
         </div>
       </div>
     </div>
-    <div class="discussion__heading heading">
+    <div class="info__heading heading">
       <div class="heading__title">
         {{ $t('discussions.commentTitle') }}
       </div>
-      <base-btn class="heading__btn">
+      <base-btn
+        v-if="!isAddComment"
+        class="heading__btn"
+        @click="addComment"
+      >
         {{ $t('discussions.add') }}
       </base-btn>
+    </div>
+    <div
+      v-if="isAddComment"
+      class="info__response response"
+    >
+      <div class="response__field">
+        <div class="response__title">
+          {{ $t('discussions.responseTitle') }}
+        </div>
+        <div class="response__footer footer">
+          <span class="icon-link footer__chain" />
+          <input
+            class="footer__comment"
+            :placeholder="$t('discussions.input')"
+          >
+        </div>
+        <div class="response__footer">
+          <base-btn
+            class="response__btn"
+            mode="blue"
+            @click="addComment"
+          >
+            {{ $t('discussions.cancel') }}
+          </base-btn>
+          <base-btn class="response__btn">
+            {{ $t('discussions.add') }}
+          </base-btn>
+        </div>
+      </div>
     </div>
     <div
       v-for="(elem) in comments"
@@ -161,12 +193,18 @@
           {{ elem.description }}
         </div>
         <div class="comment__bottom bottom">
-          <button
+          <base-btn
             class="bottom__btn"
-            @click="show = !show"
+            mode="blue"
+            @click="toggleShow"
           >
-            {{ $t('discussions.show') }}
-          </button>
+            <p v-if="!isShow">
+              {{ $t('discussions.show') }}
+            </p>
+            <p v-if="isShow">
+              {{ $t('discussions.hide') }}
+            </p>
+          </base-btn>
           <div class="bottom__panel">
             <img
               src="~assets/img/ui/comment.svg"
@@ -177,22 +215,38 @@
               {{ elem.commentCounter }}
             </div>
             <button class="bottom__like">
-              <span class="icon-heart_fill bottom__like" />
-              <!--              <span class="icon-heart_fill bottom__like bottom__like_choosen" />-->
+              <span
+                  v-if="!isVote"
+                  class="icon-heart_fill bottom__like"
+                  @click="toggleVote"
+              />
+              <span
+                  v-else
+                  class="icon-heart_fill bottom__like bottom__like_choosen"
+                  @click="toggleVote"
+              />
             </button>
             <div class="bottom__counter bottom__counter_right">
               {{ elem.likeCounter }}
             </div>
           </div>
         </div>
-        <div v-if="show">
+        <div v-if="isShow">
           <answers-card
             v-for="(item) in answers"
             :key="item.id"
             :item="item"
+            class="comment__replays"
           />
         </div>
-        <div class="info__footer footer">
+        <base-btn
+          v-if="isShow"
+          mode="blue"
+          class="comment__btn"
+        >
+          {{ $t('discussions.more') }}
+        </base-btn>
+        <div class="comment__footer footer">
           <span class="class= icon-link footer__chain" />
           <input
             class="footer__input"
@@ -221,6 +275,10 @@ export default {
       show: false,
       isFavorite: false,
       isLiked: false,
+      isAddComment: false,
+      isShow: false,
+      isChoosen: false,
+      isVote: false,
       discussions: [
         {
           id: 1,
@@ -357,21 +415,35 @@ export default {
     toggleLiked() {
       this.isLiked = !this.isLiked;
     },
+    addComment() {
+      this.isAddComment = !this.isAddComment;
+    },
+    toggleShow() {
+      this.isShow = !this.isShow;
+    },
+    toggleVote() {
+      this.isVote = !this.isVote;
+    },
   },
 };
 
 </script>
 <style lang="scss" scoped>
 .info {
+  &__body{
   justify-content: center;
   max-width: 1180px;
   margin: 0 auto;
   width: 100%;
   height: 100%;
   @include _1024;
+  }
   &__header{
     margin: 30px 0px 0px 0px;
     justify-content: left;
+  }
+  &__heading{
+    margin: 30px 0px 20px 0px;
   }
   &__title {
     font-weight: 600;
@@ -390,16 +462,6 @@ export default {
     border-radius: 8px;
     padding: 20px;
   }
-  &__search {
-    flex: 1 1 auto;
-    width: 680px;
-    height: 43px;
-    background: #FFFFFF;
-    border-radius: 6px;
-    align-items: end;
-    color: #D8DFE3;
-    @include text-usual;
-  }
   &__footer{
     margin-top: 20px;
   }
@@ -410,6 +472,8 @@ export default {
   &__btn {
     width: 220px;
     height: 43px;
+    border: none;
+    outline: none;
   }
   &__title{
     font-weight: 500;
@@ -450,6 +514,21 @@ export default {
     color: #7C838D;
     align-self: stretch;
     margin: 20px 0px 25px 0px;
+  }
+  &__btn {
+    border: none;
+    outline: none;
+    align-items: center;
+    width: 190px;
+    height: 33px;
+    border-radius: 6px;
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  &__footer{
+    margin-top: 20px;
   }
 }
 .user{
@@ -493,16 +572,13 @@ export default {
     align-items: center;
   }
   &__btn {
-    @include text-usual;
-    color: #0083C7;
     align-items: center;
-    width: 150px;
+    width: 130px;
     height: 33px;
-    border-radius: 6px;
-  }:hover{
-    background: #0A7EEA;
-    color: white;
-     }
+    border: none;
+    padding: 0;
+    outline: none;
+  }
   &__like {
     margin-left: auto;
     margin-top: 5px;
@@ -530,6 +606,7 @@ export default {
   &__footer {
     display: flex;
     align-items: center;
+    margin-left: auto;
   }
   &__arrow {
     margin-top: 10px;
@@ -548,6 +625,16 @@ export default {
     border: none;
     padding: 10px 20px 10px 15px;
     margin: 0px 10px 0px 10px;
+  }
+  &__comment{
+    @include text-usual;
+    width: 1090px;
+    height: 40px;
+    background: #F7F8FA;
+    border-radius: 6px;
+    border: none;
+    padding: 10px 20px 10px 15px;
+    margin: 0px 0px 0px 10px;
   }
   &__chain{
     display: flex;
@@ -594,9 +681,6 @@ export default {
     font-weight: 600;
     font-size: 18px;
     line-height: 130%;
-  }
-  &__heading{
-    margin: 30px 0px 20px 0px;
   }
   &__block{
     margin: 10px 0px 20px 0px;
@@ -681,5 +765,29 @@ export default {
       display: block;
    }
 }
-
+.response{
+  &__field{
+      background: #FFFFFF;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0 20px 0;
+  }
+  &__title{
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 130%;
+  }
+  &__footer{
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  &__btn{
+    width: 220px;
+    height: 43px;
+    margin-left: 20px;
+    border: none;
+    outline: none;
+  }
+}
 </style>

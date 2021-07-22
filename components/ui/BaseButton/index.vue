@@ -72,6 +72,7 @@ export default {
         { 'base-btn_grey': mode === 'grey' },
         { 'base-btn_verification': mode === 'ver' },
         { 'base-btn_black': mode === 'black' },
+        { 'base-btn_blue': mode === 'blue' },
       ];
     },
   },
@@ -167,6 +168,15 @@ export default {
   &_show-messages {
     background-color: transparent;
     color: $blue;
+  }
+  &_blue{
+    background-color: transparent;
+    color: $blue;
+    &:hover {
+      color: #ffffff;
+      background-color: $blue;
+      transition: .3s;
+    }
   }
   &_messages {
     background-color: $white;
