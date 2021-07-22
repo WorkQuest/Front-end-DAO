@@ -20,7 +20,7 @@
     </div>
     <div
       v-else-if="type === 'all'"
-      class="uploader__all"
+      class="uploader__all all"
     >
       <files
         :items="files"
@@ -28,7 +28,7 @@
         :is-show-download="true"
       />
       <images
-        class="uploader__images"
+        class="all__images"
         :items="images"
         :is-show-download="true"
       />
@@ -66,15 +66,25 @@ export default {
 
 <style lang="scss" scoped>
 .uploader {
+
   &__files {
-    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
   &__images {
-    height: 100%;
+    display: flex;
+    flex-direction: column;
     margin-top: 10px;
   }
   &__all{
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.all {
+  &__images {
+    margin-top: 10px;
   }
 }
 </style>
