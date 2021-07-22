@@ -517,7 +517,7 @@
     "amazon_com": "amazon.com",
     "filterAllWorkProposals": "Filter all work proposals",
     "changeRole": "Change role",
-    "2FA": "2FA",
+    "2FA": "2FA Authentication",
     "smsVerification2": "SMS verification",
     "instruments": "Instruments",
     "pensionProgram": "Pension program",
@@ -525,7 +525,8 @@
     "p2pInsurance": "P2P insurance",
     "savingProduct": "Savings product",
     "crediting": "Crediting",
-    "liquidityMining": "Liquidity mining"
+    "liquidityMining": "Liquidity mining",
+    "aboutMe": "About Me"
   },
   "disputes": {
     "disputes": "Disputes",

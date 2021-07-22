@@ -1,11 +1,8 @@
 <template>
   <div class="main">
     <div class="main__body">
-      <h2 class="page__title">
-        {{ $t('settings.settings') }}
-      </h2>
       <div
-        class="quests__top"
+        class="banner__top"
         :class="[{'top-disabled': isShowInfo === false}]"
       >
         <transition name="fade-fast">
@@ -44,603 +41,65 @@
           </div>
         </transition>
       </div>
-      <div class="page__profile">
-        <div class="profile__title">
-          {{ $t('settings.profileInfo') }}
-        </div>
-        <div class="avatar__row">
-          <div class="avatar__container">
-            <img
-              v-if="imageData"
-              id="userAvatar"
-              class="profile__img"
-              :src="imageData"
-              alt=""
-            >
-            <img
-              v-if="!imageData"
-              id="userAvatarTwo"
-              class="profile__img"
-              src="~/assets/img/app/avatar_empty.png"
-              alt=""
-            >
-            <label class="user_edit_avatar">
-              <div class="icon-edit" />
-              <ValidationProvider
-                v-slot="{ validate }"
-                rules="required|ext:png,jpeg,jpg,gif,mp3,mp4,ai"
-                tag="div"
-              >
-                <input
-                  id="coverUpload"
-                  class="edit_avatar"
-                  type="file"
-                  accept="image/*"
-                  @change="processFile($event, validate)"
-                >
-              </ValidationProvider>
-            </label>
-          </div>
-          <div>
-            <span
-              class="profile__status"
-            >
-              {{ $t('settings.notVerified') }}
-              <span class="icon-check_all_big" />
-            </span>
-            <div class="profile__row-3col">
-              <base-field
-                v-if="firstName"
-                v-model="localUserData.firstName"
-                :placeholder="firstName || $t('settings.nameInput')"
-                mode="icon"
-              >
-                <template v-slot:left>
-                  <span class="icon-user" />
-                </template>
-              </base-field>
-              <base-field
-                v-model="localUserData.additionalInfo.address"
-                :placeholder="address || $t('settings.addressInput')"
-                mode="icon"
-              >
-                <template v-slot:left>
-                  <span class="icon-location" />
-                </template>
-              </base-field>
-              <!--              <base-field-->
-              <!--                v-model="localUserData.additionalInfo.address"-->
-              <!--                :placeholder="address || $t('settings.addressInput')"-->
-              <!--                mode="icon"-->
-              <!--              >-->
-              <!--                <template v-slot:left>-->
-              <!--                  <span class="icon-location" />-->
-              <!--                </template>-->
-              <!--              </base-field>-->
-              <base-field
-                v-if="lastName"
-                v-model="localUserData.lastName"
-                :placeholder="$t('settings.lastNameInput')"
-                mode="icon"
-              >
-                <template v-slot:left>
-                  <span class="icon-user" />
-                </template>
-              </base-field>
-              <base-field
-                v-model="localUserData.additionalInfo.firstMobileNumber"
-                :placeholder="firstMobileNumber || $t('settings.telInput')"
-                mode="icon"
-              >
-                <template v-slot:left>
-                  <span class="icon-phone" />
-                </template>
-              </base-field>
-              <base-field
-                v-model="localUserData.additionalInfo.secondMobileNumber"
-                :placeholder="secondMobileNumder || $t('settings.telInput')"
-                mode="icon"
-              >
-                <template v-slot:left>
-                  <span class="icon-phone" />
-                </template>
-              </base-field>
-            </div>
-          </div>
-        </div>
-        <div
-          class="profile__row-1col"
-        >
-          <textarea
-            id="textarea"
-            v-model="localUserData.additionalInfo.description"
-            class="profile__textarea"
-            :placeholder="userDesc || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus dolor purus non enim praesent elementum facilisis leo, vel'"
-          />
-        </div>
-        <div class="profile__row-4col">
-          <base-field
-            v-model="localUserData.additionalInfo.socialNetwork.instagram"
-            :placeholder="userInstagram || $t('settings.socialInput')"
-            mode="icon"
-          >
-            <template v-slot:left>
-              <span class="icon-instagram" />
-            </template>
-          </base-field>
-          <base-field
-            v-model="localUserData.additionalInfo.socialNetwork.twitter"
-            :placeholder="userTwitter || $t('settings.socialInput')"
-            mode="icon"
-          >
-            <template v-slot:left>
-              <span class="icon-twitter" />
-            </template>
-          </base-field>
-          <base-field
-            v-model="localUserData.additionalInfo.socialNetwork.linkedin"
-            :placeholder="userLinkedin || $t('settings.socialInput')"
-            mode="icon"
-          >
-            <template v-slot:left>
-              <span class="icon-LinkedIn" />
-            </template>
-          </base-field>
-          <base-field
-            v-model="localUserData.additionalInfo.socialNetwork.facebook"
-            :placeholder="userFacebook || $t('settings.socialInput')"
-            mode="icon"
-          >
-            <template v-slot:left>
-              <span class="icon-facebook" />
-            </template>
-          </base-field>
-        </div>
-        <div class="profile__row-4col">
-          <base-btn
-            class="btn__save"
-            @click="editUserData()"
-          >
-            {{ $t('settings.save') }}
-          </base-btn>
-        </div>
-      </div>
-      <div class="main-white">
-        <div class="page__skills">
-          <div class="page__badge-skills">
-            {{ $t('settings.skills') }}
-          </div>
-          <div
-            v-for="(item, i) in userSkills"
-            :key="i"
-          >
-            <div class="page__badge">
-              {{ item.title }}
-            </div>
-          </div>
-          <div class="btn__container">
-            <div class="btn__plus">
-              <span class="icon-plus_circle" />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="settings">
-        <div class="settings__left">
-          <div>{{ $t('settings.settings') }}</div>
-          <div>
-            <div class="settings__subtitle">
-              {{ $t('settings.whoCanSee') }}
-            </div>
-            <div class="settings__option">
-              <input
-                id="allUsers"
-                name="whoCanSee"
-                type="radio"
-                class="radio__input"
-                value="allUsers"
-                checked
-              >
-              <label
-                class="label__black"
-                for="allUsers"
-              >{{ $t('settings.allUsers') }}</label>
-            </div>
-            <div class="settings__option">
-              <input
-                id="allInternet"
-                name="whoCanSee"
-                type="radio"
-                class="radio__input"
-                value="allInternet"
-              >
-              <label
-                class="label__black"
-                for="allInternet"
-              >{{ $t('settings.allInternet') }}</label>
-            </div>
-            <div class="settings__option">
-              <input
-                id="onlyWhenSubmittedWork"
-                name="whoCanSee"
-                type="radio"
-                class="radio__input"
-                value="onlyWhenSubmittedWork"
-              >
-              <label
-                class="label__black"
-                for="onlyWhenSubmittedWork"
-              >{{ $t('settings.onlyWhenSubmittedWork') }}</label>
-            </div>
-          </div>
-          <div>
-            <div class="settings__subtitle">
-              {{ $t('settings.filterAllWorkProposals') }}
-            </div>
-            <div class="settings__option">
-              <input
-                id="urgentProposals"
-                name="filterAllWorkProposals"
-                type="radio"
-                class="radio__input"
-                value="urgentProposals"
-              >
-              <label
-                class="label__black"
-                for="urgentProposals"
-              >{{ $t('settings.urgentProposals') }}</label>
-            </div>
-            <div class="settings__option">
-              <input
-                id="onlyImplementation"
-                name="filterAllWorkProposals"
-                type="radio"
-                class="radio__input"
-                value="onlyImplementation"
-                checked
-              >
-              <label
-                class="label__black"
-                for="onlyImplementation"
-              >{{ $t('settings.onlyImplementation') }}</label>
-            </div>
-            <div class="settings__option">
-              <input
-                id="onlyReady"
-                name="filterAllWorkProposals"
-                type="radio"
-                class="radio__input"
-                value="onlyReady"
-              >
-              <label
-                class="label__black"
-                for="onlyReady"
-              >{{ $t('settings.onlyReady') }}</label>
-            </div>
-            <div class="settings__option">
-              <input
-                id="allRegistered"
-                name="filterAllWorkProposals"
-                type="radio"
-                class="radio__input"
-                value="allRegistered"
-              >
-              <label
-                class="label__black"
-                for="allRegistered"
-              >{{ $t('settings.allRegistered') }}</label>
-            </div>
-          </div>
-        </div>
-        <div class="settings__right">
-          <div>{{ $t('settings.settings') }}</div>
-          <div>
-            <div class="settings_blue">
-              <div>{{ $t('settings.changePass') }}</div>
-              <div>
-                <base-btn @click="modalChangePassword()">
-                  {{ $t('settings.change') }}
-                </base-btn>
-              </div>
-            </div>
-            <div class="settings_blue">
-              <div>
-                {{ $t('settings.enableTwoStepAuth') }}
-              </div>
-              <div>
-                <base-btn @click="modalTwoFAAuth()">
-                  {{ $t('settings.enable') }}
-                </base-btn>
-              </div>
-            </div>
-            <div class="settings_blue">
-              <div>{{ $t('settings.smsVerification') }}</div>
-              <div>
-                <base-btn>
-                  {{ $t('settings.enable') }}
-                </base-btn>
-              </div>
-            </div>
-            <div class="settings_blue">
-              <div>{{ $t('settings.changeRole') }}</div>
-              <div>
-                <base-btn @click="changeRole()">
-                  {{ $t('settings.change') }}
-                </base-btn>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <h2 class="page__title">
+        {{ $t('settings.settings') }}
+      </h2>
+      <profileData />
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import modals from '~/store/modals/modals';
+import profileData from '~/components/app/Panels/SettingsProfile';
 
 export default {
   name: 'Settings',
+  components: {
+    profileData,
+  },
   data() {
     return {
-      sms: false,
-      allRegisterUser: false,
-      allPeopleInInternet: false,
-      onlyWhenSubmitedWork: false,
-      onlyUrgentProposals: false,
-      onlyInplemention: false,
-      onlyReadyForExecution: false,
-      allRegisteredUsers: false,
       isShowInfo: true,
-      localUserData: {
-        avatarId: null,
-        firstName: null,
-        lastName: null,
-        additionalInfo: {
-          firstMobileNumber: null,
-          secondMobileNumber: null,
-          address: null,
-          socialNetwork: {
-            instagram: null,
-            twitter: null,
-            linkedin: null,
-            facebook: null,
-          },
-          description: null,
-          skills: [],
-          educations: [],
-          workExperiences: [],
-          CEO: null,
-          company: null,
-          website: null,
-        },
-      },
-      avatar_change: {
-        data: {},
-        file: {},
-      },
-      newKnowledge: {
-        from: null,
-        to: null,
-        place: null,
-      },
-      newWorkExp: {
-        from: null,
-        to: null,
-        place: null,
-      },
     };
-  },
-  computed: {
-    ...mapGetters({
-      tags: 'ui/getTags',
-      userRole: 'user/getUserRole',
-      userData: 'user/getUserData',
-      firstName: 'user/getFirstName',
-      lastName: 'user/getLastName',
-      address: 'user/getUserAddress',
-      company: 'user/getUserCompany',
-      userCEO: 'user/getUserCEO',
-      userDesc: 'user/getUserDesc',
-      userWorkExp: 'user/getUserWorkExp',
-      userEducations: 'user/getUserEducations',
-      userWebsite: 'user/getUserWebsite',
-      userInstagram: 'user/getUserInstagram',
-      userTwitter: 'user/getUserTwitter',
-      userLinkedin: 'user/getUserLinkedin',
-      userFacebook: 'user/getUserFacebook',
-      firstMobileNumder: 'user/getUserFirstMobileNumber',
-      secondMobileNumder: 'user/getUserSecondMobileNumber',
-      userSkills: 'data/getSkills',
-      userInfo: 'data/getUserInfo',
-      imageData: 'user/getImageData',
-      additionalInfo: 'user/getAdditionalInfo',
-    }),
   },
   async mounted() {
     this.SetLoader(true);
-    this.localUserData = {
-      avatarId: null,
-      firstName: 'Alex',
-      lastName: 'Testovich',
-      additionalInfo: {
-        firstMobileNumber: 89997776655,
-        secondMobileNumber: 89997776655,
-        address: 'Moscow 3',
-        socialNetwork: {
-          instagram: 'test',
-          twitter: 'test2',
-          linkedin: 'test3',
-          facebook: null,
-        },
-        description: 'desd desc desc desc desc desc desc',
-      },
-    };
     this.SetLoader(false);
   },
   methods: {
-    // eslint-disable-next-line consistent-return
-    async processFile(e, validate) {
-      const isValid = await validate(e);
-      const file = e.target.files[0];
-      if (isValid.valid) {
-        const MAX_SIZE = 20e6; // макс размер - тут 2мб
-        if (!file) {
-          return false;
-        }
-
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-
-        this.avatar_change.data = await this.$store.dispatch('user/imageType', { contentType: file.type });
-        this.avatar_change.file = file;
-        let output = document.getElementById('userAvatar');
-        if (!output) {
-          output = document.getElementById('userAvatarTwo');
-        }
-        output.src = URL.createObjectURL(file);
-        // eslint-disable-next-line func-names
-        output.onload = function () {
-          URL.revokeObjectURL(output.src);
-        };
-        this.showModalImageOk();
-        reader.onerror = (evt) => {
-          console.error(evt);
-        };
-      }
-    },
-    showModalImageOk() {
-      this.ShowModal({
-        key: modals.status,
-        img: require('~/assets/img/ui/questAgreed.svg'),
-        title: 'Image loaded successful',
-        subtitle: 'Please press save button',
-        path: '/settings',
-      });
-    },
-    showModalAddEducationOk() {
-      this.ShowModal({
-        key: modals.status,
-        img: require('~/assets/img/ui/questAgreed.svg'),
-        title: 'Education add successful',
-        subtitle: 'Please press save button',
-        path: '/settings',
-      });
-    },
-    showModalAddWorkExpOk() {
-      this.ShowModal({
-        key: modals.status,
-        img: require('~/assets/img/ui/questAgreed.svg'),
-        title: 'Work experience add successful',
-        subtitle: 'Please press save button',
-        path: '/settings',
-      });
-    },
-    showModalSave() {
-      this.ShowModal({
-        key: modals.status,
-        img: require('~/assets/img/ui/questAgreed.svg'),
-        title: 'Saved',
-        subtitle: 'User data has been saved',
-        path: '/settings',
-      });
-    },
-    modalChangePassword() {
-      this.ShowModal({
-        key: modals.changePassInSettings,
-      });
-    },
-    modalTwoFAAuth() {
-      this.ShowModal({
-        key: modals.twoFAAuth,
-      });
-    },
     isCloseInfo() {
       this.isShowInfo = !this.isShowInfo;
-    },
-    switch2Fa() {
-      this.twoFa = !this.twoFa;
-    },
-    switchSms() {
-      this.sms = !this.sms;
-      this.$router.push('/sms-verification');
-    },
-    async changeRole() {
-      try {
-        const response = await this.$store.dispatch('user/setUserRole');
-        if (response?.ok) {
-          console.log('good response');
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    },
-    async changePassword() {
-      try {
-        this.ShowModal({
-          key: modals.changePassword,
-        });
-      } catch (e) {
-        console.log(e);
-      }
-    },
-    async editUserData() {
-      const formData = new FormData();
-      formData.append('image', this.avatar_change.file);
-      try {
-        if (this.avatar_change.data.ok) {
-          const data = {
-            url: this.avatar_change.data.result.url,
-            formData: this.avatar_change.file,
-            type: this.avatar_change.file.type,
-          };
-          await this.$store.dispatch('user/setImage', data);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-      let payload = {};
-      const checkAvatarID = this.avatar_change.data.ok ? this.avatar_change.data.result.mediaId : this.userData.avatarId;
-      if (this.userRole === 'employer') {
-        payload = {
-          ...this.localUserData,
-          avatarId: checkAvatarID,
-          additionalInfo: {
-            ...this.localUserData.additionalInfo,
-            ...{
-              educations: undefined,
-              workExperiences: undefined,
-              skills: undefined,
-            },
-          },
-        };
-      } else {
-        payload = {
-          ...this.localUserData,
-          avatarId: checkAvatarID,
-          additionalInfo: {
-            ...this.localUserData.additionalInfo,
-            ...{
-              company: undefined,
-              CEO: undefined,
-              website: undefined,
-            },
-          },
-        };
-      }
-      try {
-        await this.$store.dispatch('user/editUserData', payload);
-        this.showModalSave();
-      } catch (e) {
-        console.log(e);
-      }
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+
+.selector {
+  @include box;
+  width: 100%;
+  z-index: 140;
+  &__items {
+    background: #FFFFFF;
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+  &__item {
+    @include text-simple;
+    padding: 15px 20px;
+    background: #FFFFFF;
+    font-weight: 500;
+    font-size: 16px;
+    color: $black800;
+    cursor: pointer;
+    transition: .3s;
+    &:hover {
+      background: #F3F7FA;
+    }
+  }
+}
 
 .knowledge {
   &__container {
@@ -967,7 +426,8 @@ export default {
     display: grid;
     grid-template-columns: 151px 1fr;
     grid-gap: 20px;
-    margin: 20px;
+    margin: 20px 20px 0px 20px;
+    padding-top: 20px;
   }
   &__container {
     height: 151px;
@@ -986,60 +446,14 @@ export default {
     @extend .btn;
     margin-bottom: 20px;
     grid-column: 5/17;
+    max-width: 220px;
   }
 }
-.quests {
-  &__cards {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 20px;
-    padding-top: 20px;
-  }
+.banner {
   &__top {
     position: relative;
     min-height: 160px;
-  }
-  &__search {
-    position: absolute;
-    max-width: 1180px;
-    height: 83px;
-    bottom: 30px;
-    left: 0;
-    right: 0;
-    margin: auto;
-    z-index: 1200;
-    @include box;
-  }
-  &__content {
-    display: flex;
-    justify-content: center;
-  }
-  &__body {
-    padding-top: 30px;
-    max-width: 1180px;
-    width: 100%;
-    height: 100%;
-    &_wrap {
-      padding-top: 10px;
-    }
-  }
-  &__text {
-    @include text-simple;
-    font-style: normal;
-    &_title  {
-      @extend .quests__text;
-      font-weight: 500;
-      font-size: 25px;
-      line-height: 130%;
-      color: $black800;
-    }
-  }
-  &__tags {
-    padding-top: 30px;
-    max-width: 1180px;
-  }
-  &__tools {
-    padding-top:  20px;
+    margin-top: 30px;
   }
 }
 
@@ -1087,35 +501,42 @@ export default {
     border-radius: 36px;
   }
   &__img {
-    width: 100%;
-    height: 100%;
-    max-height: 151px;
-    max-width: 151px;
+    height: 151px;
+    width: 151px;
     border-radius: 6px;
+    object-fit: cover;
   }
-  &__row-1col {
+  &__additional-data {
     @extend .profile;
-    grid-template-columns: 1fr;
-    margin: 0 20px 0 20px;
+    grid-template-columns: repeat(2, 1fr);
     width: 100%;
+    grid-gap: 0 20px;
+    padding: 0 20px;
   }
-  &__row-3col {
+  &__social {
+    @extend .profile;
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
+    grid-gap: 0 20px;
+    margin-top: 30px;
+  }
+  &__about {
+    display: flex;
+    flex-direction: column;
+  }
+  &__main-data {
     @extend .profile;
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 0 20px;
     width: 100%;
   }
-  &__row-4col {
-    @extend .profile;
-    grid-template-columns: repeat(4, 1fr);
-    grid-gap: 10px 20px;
-    margin: 31px 20px 0 20px;
+  &__button {
+    display: flex;
     max-height: 63px;
   }
   &__textarea {
     padding: 10px 10px 0 10px;
     border-radius: 6px;
-    margin: 11px 40px 20px 0;
     height: 114px;
     border: 0;
     background-color: #F7F8FA;
@@ -1238,9 +659,10 @@ export default {
     flex-direction: row;
     flex-wrap: wrap;
     display: flex;
+    max-width: 1180px;
     width: 100%;
     justify-content: flex-start;
-    padding: 0 20px 0 0;
+    //padding: 0 20px 0 0;
   }
 }
 .option {
@@ -1329,7 +751,7 @@ export default {
   .main-white {
     margin: 0 20px;
   }
-  .quests {
+  .banner {
     &__top {
       margin: 0 20px;
     }
@@ -1339,7 +761,7 @@ export default {
       margin: 20px 0 20px 20px;
     }
     &__skills {
-      margin: 0 20px 10px 20px;
+      margin: 0 0 10px 20px;
     }
     &__badge {
       text-align: center;
@@ -1375,10 +797,10 @@ export default {
     }
   }
   .profile {
-    &__row-3col {
+    &__main-data {
       grid-template-columns: repeat(2, 1fr);
     }
-    &__row-4col {
+    &__button {
       grid-template-rows: auto auto;
       grid-template-columns: 1fr;
       max-height: 100%;
@@ -1424,10 +846,10 @@ export default {
     }
   }
   .profile {
-    &__row-3col {
+    &__main-data {
       grid-template-columns: 1fr;
     }
-    &__row-4col {
+    &__button {
       grid-template-columns: 1fr;
     }
   }
@@ -1441,6 +863,12 @@ export default {
 }
 
 @include _575 {
+  .profile {
+    &__additional-data{
+      grid-template-columns: 1fr;
+      grid-gap: 20px;
+    }
+  }
   .avatar {
     &__row {
       grid-template-columns: 1fr;
