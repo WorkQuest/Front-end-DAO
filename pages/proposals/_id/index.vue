@@ -17,16 +17,12 @@
       </div>
       <div class="proposal__content content">
         <div class="proposal__info info content__column">
-          <div class="info__top">
-            <div class="info__top_blue">
-              <span>{{ `Voting #${voting}` }}</span>
-            </div>
-            <div class="info__status">
-              <span
-                class="info__status"
-                :class="cardsStatusColor(status)"
-              >{{ getPriority(status) }}</span>
-            </div>
+          <div class="info__top info__top_blue">
+            <span>{{ `Voting #${voting}` }}</span>
+            <span
+              class="info__status"
+              :class="cardsStatusColor(status)"
+            >{{ getPriority(status) }}</span>
           </div>
           <div class="info__header header">
             <div class="header__title">
@@ -52,7 +48,7 @@
               <div class="files__title">
                 {{ $t('proposal.filesTitle') }}
               </div>
-              <Uploader
+              <base-uploader
                 class="uploader"
                 type="files"
                 :items="{
@@ -70,9 +66,9 @@
               {{ descriptionValue }}
             </div>
           </div>
-          <div class="info__toForum">
+          <div class="info__forum forum">
             <nuxt-link
-              class="btn__link"
+              class="forum__link btn"
               to="/discussions"
             >
               <base-btn
@@ -185,29 +181,25 @@
               <template v-slot:right>
                 <span
                   class="icon icon__sorting"
-                  :class="[
-                    {'icon-Sorting_descending': isDescending},
-                    {'icon-Sorting_ascending': !isDescending},
-                  ]"
+                  :class="sortingClass"
                 />
               </template>
               {{ $t('proposal.ui.addTime') }}
             </base-btn>
-            <baseDD
+            <base-dd
               v-model="ddValue"
+              class="btn__dd"
               type="light"
               :items="ddValues"
             />
           </div>
         </div>
-        <div class="history__content">
-          <history-table
-            class="table"
-            :title="$t('proposal.proposalHistory')"
-            :fields="historyTableFields"
-            :items="prepareTableData(historyTableData)"
-          />
-        </div>
+        <base-table
+          class="history__table"
+          :title="$t('proposal.proposalHistory')"
+          :fields="historyTableFields"
+          :items="prepareTableData(historyTableData)"
+        />
       </div>
     </div>
   </div>
@@ -215,16 +207,8 @@
 
 <script>
 import moment from 'moment';
-import baseDD from '~/components/ui/BaseDD';
-import historyTable from '~/components/ui/BaseTable';
-import Uploader from '~/components/ui/BaseUploader';
 
 export default {
-  components: {
-    Uploader,
-    baseDD,
-    historyTable,
-  },
   data() {
     return {
       historyTableFields: [
@@ -284,7 +268,7 @@ export default {
         this.$t('proposal.ui.no'),
         this.$t('proposal.ui.allProposals'),
       ],
-      ddValue: 0,
+      ddValue: 2,
       documents0: [],
       documents: [
         {
@@ -336,6 +320,14 @@ export default {
       ],
       isDescending: true,
     };
+  },
+  computed: {
+    sortingClass() {
+      return [
+        { 'icon-Sorting_descending': this.isDescending },
+        { 'icon-Sorting_ascending': !this.isDescending },
+      ];
+    },
   },
   mounted() {
     const URLString = document.URL;
@@ -526,8 +518,14 @@ export default {
 
   }
 
-  &__toForum {
+  &__forum {
     margin-top: 20px;
+  }
+}
+
+.forum {
+  &__link {
+    text-decoration: none;
   }
 }
 
@@ -734,7 +732,7 @@ export default {
 }
 
 .history {
-  &__content {
+  &__table {
     margin-top: 15px;
   }
 }
@@ -799,10 +797,6 @@ export default {
     }
   }
 
-  &__link {
-    text-decoration: none;
-  }
-
   &__sorting {
     width: 152px;
     border: 1px solid rgba(0, 0, 0, 0);
@@ -820,7 +814,6 @@ export default {
 }
 
 .dd {
-  border-radius: 6px;
   margin-left: 15px;
   color: #8D96A2;
   border: 1px solid rgba(0, 0, 0, 0);

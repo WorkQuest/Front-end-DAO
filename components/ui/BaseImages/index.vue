@@ -3,20 +3,21 @@
     class="images"
   >
     <div
-      v-for="img in images"
-      :key="img.id"
+      v-for="(item, i) in images"
+      :id="i"
+      :key="i"
       class="image"
     >
       <img
-        :src="img.img"
+        :src="item.img"
         alt=""
         class="image__img"
-        @mouseover="showClose"
-        @mouseleave="showClose"
+        @mouseover="onMouseOver(i)"
+        @mouseleave="onMouseLeave(i)"
       >
       <span
         class="image__close icon__close icon-close_big"
-        @click="deleteImage(img.id)"
+        @click="deleteImage(item.id)"
       />
     </div>
     <div
@@ -26,7 +27,7 @@
     >
       <span class="download__icon icon-download" />
     </div>
-    <Uploader
+    <uploader
       ref="uploader"
       class="uploader_none"
     />
@@ -34,11 +35,11 @@
 </template>
 
 <script>
-import Uploader from '~/components/ui/Uploader';
+import uploader from '~/components/ui/Uploader';
 
 export default {
   components: {
-    Uploader,
+    uploader,
   },
   props: {
     items: {
@@ -56,24 +57,24 @@ export default {
     };
   },
   methods: {
-    showClose() {
-      const el = event.target;
-      const iconClose = el.nextElementSibling;
-      const { type, toElement, fromElement } = event;
-      if (!toElement || !fromElement) return;
-      if (type === 'mouseleave' && toElement.classList.contains('icon__close')) return;
-      if (type === 'mouseover' && fromElement.classList.contains('icon__close')) return;
-      if (type === 'mouseleave') {
-        el.classList.remove('image__img_brightness');
-        iconClose.classList.remove('image__close_visible');
-      }
-      if (type === 'mouseover') {
-        el.classList.add('image__img_brightness');
-        iconClose.classList.add('image__close_visible');
-      }
+    onMouseOver(i) {
+      const { toElement, fromElement } = event;
+      if (toElement.classList.contains('icon__close')) return;
+      if (fromElement.classList.contains('icon__close')) return;
+      const image = document.getElementById(i);
+      image.childNodes[0].classList.add('image__img_brightness');
+      image.childNodes[2].classList.add('image__close_visible');
+    },
+    onMouseLeave(i) {
+      const { toElement, fromElement } = event;
+      if (toElement.classList.contains('icon__close')) return;
+      if (fromElement.classList.contains('icon__close')) return;
+      const image = document.getElementById(i);
+      image.childNodes[0].classList.remove('image__img_brightness');
+      image.childNodes[2].classList.remove('image__close_visible');
     },
     deleteImage(id) {
-      this.images = this.images.filter((img) => img.id !== id);
+      this.images = this.images.filter((item) => item.id !== id);
     },
     callUploader() {
       this.$refs.uploader.$children[0].$el.click();

@@ -36,10 +36,7 @@
       <template #cell(vote)="el">
         <base-btn
           class="btn__vote"
-          :class="[
-            {'btn__vote_green': el.item.vote === 'YES' },
-            {'btn__vote_red': el.item.vote === 'NO' },
-          ]"
+          :class="voteClass(el)"
         >
           {{ el.item.vote }}
         </base-btn>
@@ -62,6 +59,14 @@ export default {
     fields: {
       type: Array,
       default: () => [],
+    },
+  },
+  methods: {
+    voteClass(el) {
+      return [
+        { btn__vote_green: el.item.vote === 'YES' },
+        { btn__vote_red: el.item.vote === 'NO' },
+      ];
     },
   },
 };

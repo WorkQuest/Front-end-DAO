@@ -4,7 +4,7 @@
       v-if="type === 'files'"
       class="uploader__files"
     >
-      <Files
+      <files
         :items="files"
         :is-show-download="true"
       />
@@ -13,7 +13,7 @@
       v-else-if="type === 'images'"
       class="uploader__images"
     >
-      <Images
+      <images
         :items="images"
         :is-show-download="true"
       />
@@ -22,12 +22,12 @@
       v-else-if="type === 'all'"
       class="uploader__all"
     >
-      <Files
+      <files
         :items="files"
         :is-files-inline="true"
         :is-show-download="true"
       />
-      <Images
+      <images
         class="uploader__images"
         :items="images"
         :is-show-download="true"
@@ -37,13 +37,13 @@
 </template>
 
 <script>
-import Files from '~/components/ui/BaseFiles';
-import Images from '~/components/ui/BaseImages';
+import files from '~/components/ui/BaseFiles';
+import images from '~/components/ui/BaseImages';
 
 export default {
   components: {
-    Files,
-    Images,
+    files,
+    images,
   },
   props: {
     items: {

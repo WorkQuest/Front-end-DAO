@@ -4,8 +4,8 @@
     :class="[{'files_inline': isInLine}]"
   >
     <div
-      v-for="(file, i) in files"
-      :key="file.id"
+      v-for="(item, i) in files"
+      :key="i"
       class="file"
     >
       <div class="file__icon">
@@ -15,14 +15,14 @@
         >
       </div>
       <div class="file__name">
-        {{ file.name }}
+        {{ item.name }}
       </div>
       <div class="file__size">
-        {{ file.size }}
+        {{ item.size }}
       </div>
       <div
         class="file__close icon"
-        @click="deleteFile(file.id)"
+        @click="deleteFile(item.id)"
       >
         <span class="icon__close icon-close_big" />
       </div>
@@ -46,7 +46,7 @@
         <span class="icon__download icon-download" />
       </div>
     </div>
-    <Uploader
+    <uploader
       ref="uploader"
       class="uploader_none"
     />
@@ -54,11 +54,11 @@
 </template>
 
 <script>
-import Uploader from '~/components/ui/Uploader';
+import uploader from '~/components/ui/Uploader';
 
 export default {
   components: {
-    Uploader,
+    uploader,
   },
   props: {
     items: {
@@ -146,7 +146,7 @@ export default {
   }
 
   &__close {
-    margin-top: 5px;
+    margin: 3px 0 0 5px;
   }
 
   &__download {
@@ -159,7 +159,7 @@ export default {
   cursor: pointer;
   &__close {
     font-size: 16px;
-    color: black;
+    color: #DF3333;
   }
 
   &__download {

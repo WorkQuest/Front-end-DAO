@@ -464,7 +464,9 @@
     "ui": {
       "search": "Search proposal",
       "addTime": "Added time",
-      "allProposals": "All proposals"
+      "allProposals": "All proposals",
+      "yes": "Yes",
+      "no": "no"
     },
     "cards": {
       "status": {

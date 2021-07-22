@@ -8,8 +8,8 @@
       class="dd__btn"
       :class="ddClass"
       @click="isShown = !isShown"
-      @mouseover="onMouseOver"
-      @mouseleave="onMouseLeave"
+      @mouseover="isHovered = true"
+      @mouseleave="isHovered = false"
     >
       <div
         v-if="isIcon"
@@ -108,9 +108,12 @@ export default {
       default: '',
     },
   },
-  data: () => ({
-    isShown: false,
-  }),
+  data() {
+    return {
+      isShown: false,
+      isHovered: false,
+    };
+  },
   computed: {
     ddClass() {
       const { type } = this;
@@ -130,6 +133,7 @@ export default {
       const { type } = this;
       return [
         { dd__caret_light: type === 'light' },
+        { dd__caret_blue: this.isHovered },
       ];
     },
   },
@@ -140,23 +144,6 @@ export default {
     selectItem(i) {
       this.isShown = false;
       this.$emit('input', i);
-    },
-    onMouseLeave() {
-      this.caretHover(false);
-    },
-    onMouseOver() {
-      this.caretHover(true);
-    },
-    caretHover(isHover) {
-      const el = event.target;
-      if (el.tagName !== 'BUTTON') return;
-      if (!el.childNodes && !el.childNodes.length) return;
-      const caret = el.childNodes[2];
-      if (isHover) {
-        caret.classList.add('dd__caret_blue');
-      } else {
-        caret.classList.remove('dd__caret_blue');
-      }
     },
   },
 };
