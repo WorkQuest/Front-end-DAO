@@ -48,12 +48,11 @@
               <div class="files__title">
                 {{ $t('proposal.filesTitle') }}
               </div>
-              <base-uploader
-                class="uploader"
-                type="files"
-                :items="{
-                  files: documents,
-                }"
+              <base-files
+                :items="documents"
+                :is-show-close="false"
+                :is-show-empty="true"
+                :is-show-download="true"
               />
             </div>
           </div>

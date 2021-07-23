@@ -29,7 +29,7 @@
     </div>
     <uploader
       ref="uploader"
-      class="uploader_none"
+      class="uploader_hidden"
     />
   </div>
 </template>
@@ -147,7 +147,7 @@ export default {
 }
 
 .uploader {
-  &_none{
+  &_hidden{
     display: none;
   }
 }

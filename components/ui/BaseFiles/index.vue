@@ -21,15 +21,16 @@
         {{ item.size }}
       </div>
       <div
+        v-if="isShowClose"
         class="file__close icon"
         @click="deleteFile(item.id)"
       >
         <span class="icon__close icon-close_big" />
       </div>
       <div
-        v-if="isShowDownload && i === files.length - 1"
+        v-if="isShowDownload"
         class="file__download download"
-        @click="callUploader"
+        @click="download(item.id)"
       >
         <div class="download__icon icon">
           <span class="icon__download icon-download" />
@@ -37,35 +38,31 @@
       </div>
     </div>
     <div
-      v-if="!files.length"
-      class="files__download download files_empty"
-      @click="callUploader"
+      v-if="!files.length && isShowEmpty"
+      class="files__empty"
     >
-      <span>{{ $t('proposal.noFiles') }}</span>
-      <div class="download__icon icon">
-        <span class="icon__download icon-download" />
-      </div>
+      {{ $t('proposal.noFiles') }}
     </div>
-    <uploader
-      ref="uploader"
-      class="uploader_none"
-    />
   </div>
 </template>
 
 <script>
-import uploader from '~/components/ui/Uploader';
 
 export default {
-  components: {
-    uploader,
-  },
   props: {
     items: {
       type: Array,
       default: () => [],
     },
     isShowDownload: {
+      type: Boolean,
+      default: true,
+    },
+    isShowClose: {
+      type: Boolean,
+      default: true,
+    },
+    isShowEmpty: {
       type: Boolean,
       default: true,
     },
@@ -85,8 +82,8 @@ export default {
       this.files = this.files.filter((file) => file.id !== id);
       if (!this.files.length) this.isInLine = false;
     },
-    callUploader() {
-      this.$refs.uploader.$children[0].$el.click();
+    download(id) {
+      console.log('download', id);
     },
   },
 };
@@ -99,16 +96,10 @@ export default {
   &_inline {
     display: inline-flex;
   }
-  &_empty {
-    display: flex;
+  &__empty {
     height: 33px;
-    cursor: pointer;
-    width: max-content;
+    line-height: 33px;
     margin-top: 10px;
-
-    & > span {
-      line-height: 33px;
-    }
   }
   &__download {
 
@@ -165,12 +156,6 @@ export default {
   &__download {
     color: #0083C7;
     font-size: 21px;
-  }
-}
-
-.uploader {
-  &_none{
-    display: none;
   }
 }
 

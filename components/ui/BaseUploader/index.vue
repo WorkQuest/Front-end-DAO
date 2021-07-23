@@ -6,7 +6,7 @@
     >
       <files
         :items="files"
-        :is-show-download="true"
+        :is-show-download="isShowFilesDownload"
       />
     </div>
     <div
@@ -15,7 +15,7 @@
     >
       <images
         :items="images"
-        :is-show-download="true"
+        :is-show-download="isShowImagesDownload"
       />
     </div>
     <div
@@ -24,13 +24,13 @@
     >
       <files
         :items="files"
-        :is-files-inline="true"
-        :is-show-download="true"
+        :is-files-inline="isFilesInline"
+        :is-show-download="isShowFilesDownload"
       />
       <images
         class="all__images"
         :items="images"
-        :is-show-download="true"
+        :is-show-download="isShowImagesDownload"
       />
     </div>
   </div>
@@ -53,6 +53,18 @@ export default {
     type: {
       type: String,
       default: '',
+    },
+    isShowFilesDownload: {
+      type: Boolean,
+      default: true,
+    },
+    isShowImagesDownload: {
+      type: Boolean,
+      default: true,
+    },
+    isFilesInline: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {

@@ -135,7 +135,10 @@
     "showAllReviews": "Show all reviews",
     "later": "Later",
     "iAgree": "I agree",
-    "next": "Next"
+    "next": "Next",
+    "addProposal": "Add proposal",
+    "delete": "delete",
+    "addFile": "Add File"
   },
   "priority": {
     "title": "Priority",
@@ -381,7 +384,12 @@
     "saveCardForNextPayment": "Save card for next payment",
     "insureCase": "Insure case",
     "connectWallet": "Connect wallet",
-    "howMuchWusdWouldYouLikeToGenerate": "How much WUSD would you like to generate?"
+    "howMuchWusdWouldYouLikeToGenerate": "How much WUSD would you like to generate?",
+    "addProposal": "Add Proposal",
+    "votingTopic": "Voting topic",
+    "numberOfVotes": "Number of Votes",
+    "votingStart": "Voting Start",
+    "votingEnd": "Voting End"
   },
   "ui": {
     "workers": "Workers",
