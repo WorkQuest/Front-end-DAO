@@ -6,41 +6,26 @@
       v-for="(item, i) in images"
       :id="i"
       :key="i"
-      class="image"
+      class="images__image image"
     >
       <img
         :src="item.img"
         alt=""
         class="image__img"
-        @mouseover="onMouseOver(i)"
+        @mouseover="onMouseOver(i) this.hoverId = i"
         @mouseleave="onMouseLeave(i)"
       >
       <span
-        class="image__close icon__close icon-close_big"
-        @click="deleteImage(item.id)"
+        class="image__icon icon"
+        :class="classIcon"
+        @click="onIconClick(item.id)"
       />
     </div>
-    <div
-      v-if="isShowDownload"
-      class="download"
-      @click="callUploader"
-    >
-      <span class="download__icon icon-download" />
-    </div>
-    <uploader
-      ref="uploader"
-      class="uploader_hidden"
-    />
   </div>
 </template>
 
 <script>
-import uploader from '~/components/ui/Uploader';
-
 export default {
-  components: {
-    uploader,
-  },
   props: {
     items: {
       type: Array,
@@ -54,30 +39,41 @@ export default {
   data() {
     return {
       images: this.items,
+      hoverId: -1,
     };
   },
   methods: {
     onMouseOver(i) {
       const { toElement, fromElement } = event;
-      if (toElement.classList.contains('icon__close')) return;
-      if (fromElement.classList.contains('icon__close')) return;
+      if (toElement.classList.contains('icon')) return;
+      if (fromElement.classList.contains('icon')) return;
       const image = document.getElementById(i);
       image.childNodes[0].classList.add('image__img_brightness');
-      image.childNodes[2].classList.add('image__close_visible');
+      image.childNodes[2].classList.add('icon_visible');
     },
     onMouseLeave(i) {
       const { toElement, fromElement } = event;
-      if (toElement.classList.contains('icon__close')) return;
-      if (fromElement.classList.contains('icon__close')) return;
+      if (toElement.classList.contains('icon')) return;
+      if (fromElement.classList.contains('icon')) return;
       const image = document.getElementById(i);
       image.childNodes[0].classList.remove('image__img_brightness');
-      image.childNodes[2].classList.remove('image__close_visible');
+      image.childNodes[2].classList.remove('icon_visible');
+    },
+    onIconClick(id) {
+      if (this.isShowDownload) this.downloadImage(id);
+      else this.deleteImage(id);
     },
     deleteImage(id) {
       this.images = this.images.filter((item) => item.id !== id);
     },
-    callUploader() {
-      this.$refs.uploader.$children[0].$el.click();
+    downloadImage(id) {
+      console.log(`download Image ${id}`);
+    },
+    classIcon() {
+      return [
+        { 'icon__download icon-download': this.isShowDownload },
+        { 'icon-close_big': !this.isShowDownload },
+      ];
     },
   },
 };
@@ -103,52 +99,32 @@ export default {
       filter: brightness(70%);
     }
   }
-
-  &__close {
-    display: none;
-    cursor: pointer;
-
-    height: 45px;
-    width: 45px;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.5);
-
-    font-weight: 800;
-    font-size: 25px;
-
-    padding: 10px 0 0 10px;
-
-    &_visible {
-      display: block;
-      position: absolute;
-      left: 23px;
-      bottom: 20px;
-      color: #FFFFFF;
-    }
-  }
 }
 
-.download {
-  @extend .image;
+.icon {
+  display: none;
   cursor: pointer;
-  padding-top: 30px;
-  background: rgba(0, 0, 0, 0.05);
 
-  &:hover {
-    background: rgba(0, 0, 0, 0.1);
-  }
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
 
-  &__icon {
-    margin-left: 35px;
-    font-size: 20px;
-    color: #0083C7;
+  font-weight: 800;
+  font-size: 25px;
+
+  padding: 10px 0 0 10px;
+
+  &__download {
     vertical-align: middle;
   }
-}
 
-.uploader {
-  &_hidden{
-    display: none;
+  &_visible {
+    display: block;
+    position: absolute;
+    left: 23px;
+    bottom: 20px;
+    color: #FFFFFF;
   }
 }
 </style>

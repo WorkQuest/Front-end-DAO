@@ -3,18 +3,18 @@
     class="addProposal"
     :title="$t('modals.addProposal')"
   >
-    <div class="ctm-modal__content">
-      <div class="grid__2col grid__2col_3to1">
-        <div class="ctm-modal__content-field">
+    <div class="addProposal__content content">
+      <div class="content__grid content__grid_three-to-one">
+        <div class="content__field">
           <base-field
-            id="votingTopic_input"
-            v-model="votingTopic_input"
+            id="votingTopicInput"
+            v-model="votingTopicInput"
             :placeholder="$t('modals.votingTopic')"
             :label="$t('modals.votingTopic')"
           />
         </div>
-        <div class="ctm-modal__content-field content-field">
-          <div class="content-field__picker picker">
+        <div class="content__field field">
+          <div class="field__picker picker">
             <label
               for="runtime__picker"
               class="picker__header"
@@ -33,8 +33,8 @@
                   @mouseleave="isCaretLeftHovered = false"
                 >
                   <span
-                    class="icon-caret_left"
-                    :class="[{'icon-caret_left_blue': isCaretLeftHovered}]"
+                    class="icon icon__caret icon-caret_left"
+                    :class="[{'icon__caret_blue': isCaretLeftHovered}]"
                   />
                 </button>
               </div>
@@ -51,8 +51,8 @@
                   @mouseleave="isCaretRightHovered = false"
                 >
                   <span
-                    class="icon-caret_right"
-                    :class="[{'icon-caret_right_blue': isCaretRightHovered}]"
+                    class="icon icon__caret icon-caret_right"
+                    :class="[{'icon__caret_blue': isCaretRightHovered}]"
                   />
                 </button>
               </div>
@@ -60,41 +60,41 @@
           </div>
         </div>
       </div>
-      <div class="grid__2col">
-        <div class="ctm-modal__content-field">
+      <div class="content__grid">
+        <div class="content__field">
           <base-field
-            id="votingStart_input"
-            v-model="votingStart_input"
+            id="votingStartInput"
+            v-model="votingStartInput"
             :placeholder="'DD/MM/YYYY'"
             :label="$t('modals.votingStart')"
           />
         </div>
-        <div class="ctm-modal__content-field">
+        <div class="content__field">
           <base-field
-            id="votingEnd_input"
-            v-model="votingEnd_input"
+            id="votingEndInput"
+            v-model="votingEndInput"
             :placeholder="'DD/MM/YYYY'"
             :label="$t('modals.votingEnd')"
           />
         </div>
       </div>
-      <div class="ctm-modal__content-field content-field">
+      <div class="content__field field">
         <div class="content-field__description description">
           <label
-            for="description_input"
+            for="descriptionInput"
             class="description__header"
           >
             {{ $t('modals.description') }}
           </label>
           <textarea
-            id="description_input"
-            v-model="description_input"
+            id="descriptionInput"
+            v-model="descriptionInput"
             class="description__textarea"
           />
         </div>
       </div>
-      <div class="ctm-modal__content-field content-field">
-        <div class="content-field__documents">
+      <div class="content__field field">
+        <div class="field__documents">
           <base-files
             class="uploader"
             :items="files"
@@ -103,7 +103,7 @@
             :is-show-download="false"
           />
         </div>
-        <div class="content-field__uploader uploader">
+        <div class="field__uploader uploader">
           <base-btn
             mode="outline"
             class="uploader__btn"
@@ -111,7 +111,7 @@
           >
             {{ $t('meta.addFile') }}
             <template v-slot:right>
-              <span class="icon icon-plus_circle_outline" />
+              <span class="icon icon__plus icon-plus_circle_outline" />
             </template>
           </base-btn>
           <uploader
@@ -120,7 +120,7 @@
           />
         </div>
       </div>
-      <div class="content-field__action action">
+      <div class="field__action action">
         <base-btn
           :mode="'outline'"
           class="action__cancel"
@@ -128,7 +128,7 @@
         >
           {{ $t('meta.cancel') }}
         </base-btn>
-        <base-btn class="action__add-proposal">
+        <base-btn class="action__add">
           {{ $t('meta.addProposal') }}
         </base-btn>
       </div>
@@ -144,11 +144,11 @@ export default {
   components: { uploader },
   data() {
     return {
-      votingTopic_input: '',
+      votingTopicInput: '',
       pickerValue: 0,
-      votingStart_input: '',
-      votingEnd_input: '',
-      description_input: '',
+      votingStartInput: '',
+      votingEndInput: '',
+      descriptionInput: '',
       isCaretLeftHovered: false,
       isCaretRightHovered: false,
       files0: [],
@@ -184,21 +184,24 @@ export default {
 .addProposal {
   min-width: 630px !important;
   &__content {
+    padding: 0 28px 30px;
+    margin-top: 25px;
+  }
+}
+
+.content {
+  &__grid {
     display: grid;
-    grid-template-columns: 1fr;
-    justify-items: center;
-    grid-gap: 20px;
-  }
-  &__action {
-    margin-top: 10px;
+    grid-template-columns: 1fr 1fr;
+    align-items: flex-end;
+    grid-gap: 25px;
+    &_three-to-one {
+      grid-template-columns: 3fr 1fr;
+    }
   }
 }
 
-.ctm-modal {
-  @include modalKit;
-}
-
-.content-field {
+.field {
   &__description {
     min-height: 200px;
   }
@@ -211,34 +214,15 @@ export default {
   }
 }
 
-.grid {
-  &__2col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: flex-end;
-    grid-gap: 25px;
-    &_3to1 {
-      grid-template-columns: 3fr 1fr;
-    }
-  }
-}
-
 .icon {
-  &-plus_circle_outline {
+  &__plus {
     color: $blue;
     font-size: 20px;
     margin-left: 7px;
   }
-  &-caret_left {
+  &__caret {
     font-size: 25px;
     color: #AAB0B9;
-    &_blue {
-      color: $blue;
-    }
-  }
-  &-caret_right {
-    color: #AAB0B9;
-    font-size: 25px;
     &_blue {
       color: $blue;
     }
@@ -296,6 +280,11 @@ export default {
     border-radius: 6px;
     min-height: 174px;
     width: 100%;
+    padding: 10px 20px;
+    &:focus {
+      background: #FFFFFF;
+      border: 1px solid #0083C7;
+    }
   }
 }
 

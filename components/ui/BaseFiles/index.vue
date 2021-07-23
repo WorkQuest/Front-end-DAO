@@ -6,7 +6,7 @@
     <div
       v-for="(item, i) in files"
       :key="i"
-      class="file"
+      class="files__file file"
     >
       <div class="file__icon">
         <img

@@ -50,9 +50,8 @@
               </div>
               <base-files
                 :items="documents"
-                :is-show-close="false"
-                :is-show-empty="true"
                 :is-show-download="true"
+                :is-show-close="false"
               />
             </div>
           </div>
@@ -275,12 +274,14 @@ export default {
           type: 'pdf',
           name: 'some_document1.pdf',
           size: '1.2mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
         },
         {
           id: '2',
           type: 'pdf',
           name: 'some_document2.pdf',
           size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
         },
       ],
       hash: '11400714819323198485',

@@ -11,6 +11,7 @@ import BaseCheckbox from '~/components/ui/BaseCheckbox';
 import BaseTable from '~/components/ui/BaseTable';
 import BaseUploader from '~/components/ui/BaseUploader';
 import BaseFiles from '~/components/ui/BaseFiles';
+import BaseImages from '~/components/ui/BaseImages';
 
 Vue.component('ctm-modal', CtmModal);
 Vue.component('ctm-modal-box', CtmModalBox);
@@ -23,3 +24,4 @@ Vue.component('loader', Loader);
 Vue.component('base-table', BaseTable);
 Vue.component('base-uploader', BaseUploader);
 Vue.component('base-files', BaseFiles);
+Vue.component('base-images', BaseImages);
