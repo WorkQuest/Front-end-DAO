@@ -85,8 +85,8 @@
               </template>
             </base-field>
             <base-field
-              v-model="localUserData.additionalInfo.firstMobileNumber"
-              :placeholder="firstMobileNumber || $t('settings.telInput')"
+              v-model="localUserData.additionalInfo.secondMobileNumber"
+              :placeholder="secondMobileNumber || $t('settings.telInput')"
               :disabled="!this.$route.query.v"
               mode="icon"
             >
@@ -111,7 +111,7 @@
         class="profile__additional-data"
       >
         <div class="profile__about">
-          <label>{{ $t('settings.aboutMe') }}</label>
+          <label>{{ $t('profile.aboutMe') }}</label>
           <textarea
             id="textarea"
             v-model="localUserData.additionalInfo.description"
@@ -171,14 +171,14 @@
           class="btn__save"
           @click="editUserData()"
         >
-          {{ $t('settings.save') }}
+          {{ $t('profile.save') }}
         </base-btn>
         <base-btn
           v-else
           class="btn__save"
           @click="transitionToChange()"
         >
-          {{ $t('settings.change') }}
+          {{ $t('profile.change') }}
         </base-btn>
       </div>
     </div>
@@ -186,28 +186,28 @@
       v-if="this.$route.query.v"
       class="page__title"
     >
-      {{ $t('settings.settings') }}
+      {{ $t('profile.security') }}
     </h2>
     <div
       v-if="this.$route.query.v"
       class="page__security security"
     >
       <div class="security__action">
-        <label>{{ $t('settings.2FA') }}</label>
+        <label class="security__title">{{ $t('profile.changePass') }}</label>
         <base-btn
-          class="btn__save"
-          @click="transitionToChange()"
+          class="security__btn"
+          @click="modalChangePassword()"
         >
-          {{ $t('settings.change') }}
+          {{ $t('profile.change') }}
         </base-btn>
       </div>
       <div class="security__action">
-        <label> {{ $t('settings.changePass') }}</label>
+        <label class="security__title"> {{ $t('profile.2FA') }}</label>
         <base-btn
-          class="btn__save"
-          @click="transitionToChange()"
+          class="security__btn"
+          @click="modalTwoFAAuth()"
         >
-          {{ $t('settings.change') }}
+          {{ $t('profile.switchOn') }}
         </base-btn>
       </div>
     </div>
@@ -235,9 +235,7 @@ export default {
         avatarId: null,
         firstName: null,
         lastName: null,
-        userEmail: null,
         additionalInfo: {
-          firstMobileNumber: null,
           secondMobileNumber: null,
           address: null,
           socialNetwork: {
@@ -282,8 +280,6 @@ export default {
       userEmail: 'user/getUserEmail',
       firstMobileNumber: 'user/getUserFirstMobileNumber',
       secondMobileNumber: 'user/getUserSecondMobileNumber',
-      userSkills: 'data/getSkills',
-      userInfo: 'data/getUserInfo',
       imageData: 'user/getImageData',
       additionalInfo: 'user/getAdditionalInfo',
     }),
@@ -294,7 +290,6 @@ export default {
       avatarId: this.userData.avatarId,
       firstName: this.userData.firstName,
       lastName: this.userData.lastName,
-      userEmail: this.userEmail,
       additionalInfo: JSON.parse(JSON.stringify(this.userData.additionalInfo)),
     };
     this.SetLoader(false);
@@ -339,24 +334,6 @@ export default {
         path: '/settings',
       });
     },
-    showModalAddEducationOk() {
-      this.ShowModal({
-        key: modals.status,
-        img: require('~/assets/img/ui/questAgreed.svg'),
-        title: 'Education add successful',
-        subtitle: 'Please press save button',
-        path: '/settings',
-      });
-    },
-    showModalAddWorkExpOk() {
-      this.ShowModal({
-        key: modals.status,
-        img: require('~/assets/img/ui/questAgreed.svg'),
-        title: 'Work experience add successful',
-        subtitle: 'Please press save button',
-        path: '/settings',
-      });
-    },
     showModalSave() {
       this.ShowModal({
         key: modals.status,
@@ -387,7 +364,7 @@ export default {
       this.$router.push('/sms-verification');
     },
     transitionToChange() {
-      this.$router.push('/settings?v=change');
+      this.$router.push('/profile?v=change');
     },
     async editUserData() {
       const formData = new FormData();
@@ -446,66 +423,6 @@ export default {
 
 <style lang="scss" scoped>
 
-.selector {
-  @include box;
-  width: 100%;
-  z-index: 140;
-  &__items {
-    background: #FFFFFF;
-    display: grid;
-    grid-template-columns: 1fr;
-    width: 100%;
-  }
-  &__item {
-    @include text-simple;
-    padding: 15px 20px;
-    background: #FFFFFF;
-    font-weight: 500;
-    font-size: 16px;
-    color: $black800;
-    cursor: pointer;
-    transition: .3s;
-    &:hover {
-      background: #F3F7FA;
-    }
-  }
-}
-
-.ver-btn {
-  &__container {
-    display: flex;
-    margin: 20px;
-    width: 250px;
-  }
-}
-
-.top-disabled {
-  display: none;
-}
-
-.label {
-  padding: 0 0 0 10px;
-  font-weight: 500;
-  font-size: 16px;
-  color: $white;
-  &__black {
-    @extend .label;
-    color: $black800;
-  }
-}
-
-.btn {
-  &__container {
-    justify-content: center;
-    align-content: center;
-    display: flex;
-  }
-  &__plus {
-    justify-content: flex-end;
-    align-items: center;
-    display: flex;
-  }
-}
 .icon {
   font-size: 25px;
   color: $blue;
@@ -667,24 +584,6 @@ export default {
 .avatar__container:hover .user_edit_avatar{
   opacity: 1;
 }
-.icons {
-  padding: 16px 0 16px 16px;
-}
-.checkbox {
-  &__label::before {
-    color: $white;
-  }
-}
-
-.higher-level {
-  &__img {
-    z-index: 1;
-    height: 100%;
-    width: 100%;
-    max-height: 207px;
-    padding: 0 0 0 30px;
-  }
-}
 
 .avatar {
   &__row {
@@ -700,17 +599,9 @@ export default {
 }
 .btn {
   width: 100%;
-  &__container-right {
-    @extend .btn;
-    display: flex;
-    justify-content: flex-end;
-    margin: 0 20px 0 -20px;
-    padding: 0 0 20px 0;
-  }
   &__save {
     @extend .btn;
     margin-bottom: 20px;
-    grid-column: 5/17;
     max-width: 220px;
   }
 }
@@ -719,97 +610,24 @@ export default {
   &__action {
     background-color: #fff;
     border-radius: 6px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
     padding: 20px;
-  }
-}
-
-.quests {
-  &__cards {
-    display: grid;
-    grid-template-columns: 1fr;
     grid-gap: 20px;
-    padding-top: 20px;
-  }
-  &__top {
-    position: relative;
-    min-height: 160px;
-  }
-  &__search {
-    position: absolute;
-    max-width: 1180px;
-    height: 83px;
-    bottom: 30px;
-    left: 0;
-    right: 0;
-    margin: auto;
-    z-index: 1200;
-    @include box;
-  }
-  &__content {
-    display: flex;
-    justify-content: center;
-  }
-  &__body {
-    padding-top: 30px;
-    max-width: 1180px;
-    width: 100%;
-    height: 100%;
-    &_wrap {
-      padding-top: 10px;
-    }
-  }
-  &__text {
-    @include text-simple;
-    font-style: normal;
-    &_title  {
-      @extend .quests__text;
-      font-weight: 500;
-      font-size: 25px;
-      line-height: 130%;
-      color: $black800;
-    }
-  }
-  &__tags {
-    padding-top: 30px;
-    max-width: 1180px;
-  }
-  &__tools {
-    padding-top:  20px;
-  }
-}
-
-.info {
-  &__toggle {
+    width: 49%;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    margin: 50px 0 21px 9px;
+    justify-content: space-between;
+  }
+  &__title {
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 130%;
+  }
+  &__btn {
+    @extend .btn;
+    max-width: 220px;
   }
 }
 
-.checkbox {
-  &__label {
-    color: $white;
-  }
-}
-
-.main {
-  @include main;
-  &-white {
-    @include main;
-    background: $white;
-    background: #FFFFFF;
-    margin: 0 0 20px 0;
-    border-radius: 6px;
-    justify-content: center;
-  }
-  &__body {
-    max-width: 1180px;
-    height: 100%;
-  }
-}
 .profile {
   display: grid;
   justify-content: space-between;
@@ -880,54 +698,7 @@ export default {
     padding: 20px 0 0 0;
   }
 }
-.settings {
-  display: grid;
-  grid-template-columns: 5fr 7fr;
-  grid-gap: 20px;
-  &_blue {
-    padding: 10px 20px 10px 20px;
-    margin: 20px 0 20px 0;
-    background: rgba(0, 131, 199, 0.1);
-    border-radius: 6px;
-    display: grid;
-    grid-template-columns: 3fr 2fr;
-    align-items: center;
-  }
-  &__option {
-    padding: 5px 0 0 0;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-  }
-  &__subtitle {
-    margin: 7px 0;
-    color: $black500;
-    font-size: 16px;
-  }
-  &__left {
-    @include main-white;
-    display: flex;
-    justify-content: center;
-    background-color: #fff;
-    border-radius: 6px;
-    padding: 0 0 20px 20px;
-    flex-direction: column;
-  }
-  &__right {
-    @include main-white;
-    justify-content: flex-start;
-    border-radius: 6px;
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-  }
-}
 .page {
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-  }
   &__title {
     margin: 20px 0 20px 0;
     font-weight: 500;
@@ -945,90 +716,12 @@ export default {
     display: flex;
     justify-content: space-between;
   }
-  &__checkbox {
-    margin: 50px 0 20px 20px;
-    display: flex;
-    flex-direction: row;
-  }
-  &__part {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    &_left {
-      display: grid;
-    }
-    &_right {
-      display: grid;
-    }
-  }
-  &__info {
-    background-color: #0083C7;
-    border-radius: 6px;
-    color: $white;
-    max-height: 207px;
-    &-title {
-      margin: 20px 0 0 20px;
-      font-size: 25px;
-      font-weight: 500;
-    }
-    &-subtitle {
-      margin: 10px 0 0 20px;
-      font-size: 16px;
-      font-weight: 400;
-    }
-  }
-  &__badge {
-    background: rgba(0, 131, 199, 0.1);
-    border-radius: 44px;
-    margin: 10px;
-    color: $blue;
-    padding: 5px 6px;
-    display: flex;
-    text-align: center;
-    &-skills {
-      padding: 15px;
-    }
-  }
-  &__skills {
-    flex-direction: row;
-    flex-wrap: wrap;
-    display: flex;
-    max-width: 1180px;
-    width: 100%;
-    justify-content: flex-start;
-    //padding: 0 20px 0 0;
-  }
-}
-.option {
-  &__title {
-    padding: 0 0 0 16px;
-  }
-  &__arrow {
-    display: flex;
-    align-content: center;
-    justify-content: flex-end;
-    padding: 0 16px 23px 0;
-  }
 }
 
-.instruments {
-  &__title {
-    @include text-simple;
-    font-size: 16px;
-    color: $black800;
-    margin: 15px 0 15px 0;
-  }
-}
 .user {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   margin: 0 16px;
-  &__name {
-    padding: 10px 0 0 0;
-    @include text-simple;
-    font-size: 16px;
-    font-weight: 600;
-    color: $white;
-  }
   &__icon {
     padding: 10px 0 0 0;
     display: flex;
@@ -1037,41 +730,7 @@ export default {
     align-items: center;
   }
 }
-.arrow {
-  &-left {
-    display: flex;
-    justify-content: flex-end;
-  }
-}
-.card {
-  &__level {
-    padding: 60px 0 0 16px;
-    &_higher {
-      border-radius: 3px;
-      text-align: center;
-      width: 100%;
-      max-width: 115px;
-      background: #F6CF00;
-      color: $white;
-    }
-  }
-}
-.instrument {
-  display: grid;
-  grid-template-columns: 1fr 6fr 1fr;
-  background-color: $black100;
-  border-radius: 6px;
-  height: 100%;
-  padding: 10px;
-  margin: 15px 0 0 0;
-  align-items: center;
-  &__title {
-    @include text-simple;
-    color:$black600;
-    font-weight: 400;
-    font-size: 16px;
-  }
-}
+
 .edit_avatar {
   width: 100%;
   height: 100%;
@@ -1081,20 +740,9 @@ export default {
   z-index: -1;
 }
 @include _1199 {
-  .main-white {
-    margin: 0 20px;
-  }
-  .quests {
-    &__top {
-      margin: 0 20px;
-    }
-  }
   .page {
     &__title {
       margin: 20px 0 20px 20px;
-    }
-    &__skills {
-      margin: 0 0 10px 20px;
     }
     &__badge {
       text-align: center;
@@ -1106,14 +754,11 @@ export default {
   .settings {
     margin: 20px;
   }
+  .page__security {
+    margin: 20px;
+  }
 }
 @include _991 {
-  .knowledge {
-    &__container {
-      grid-template-columns: 5fr 28px 5fr 0;
-      max-height: 100%;
-    }
-  }
   .settings {
     grid-auto-rows: auto auto;
     grid-template-columns: 5fr;
@@ -1124,24 +769,12 @@ export default {
       right: 10px;
     }
   }
-  .page {
-    &__grid {
-      grid-template-columns: 11fr 1fr;
-    }
-  }
   .profile {
     &__main-data {
       grid-template-columns: repeat(2, 1fr);
     }
     &__button {
       max-height: 100%;
-    }
-  }
-  .higher {
-    &-level {
-      &__img {
-        display: none;
-      }
     }
   }
 }
@@ -1161,11 +794,6 @@ export default {
   .icon {
     &__close {
       bottom: 154px;
-    }
-  }
-  .page {
-    &__info {
-      max-height: 100%;
     }
   }
   .avatar {
@@ -1194,10 +822,26 @@ export default {
 }
 
 @include _575 {
+  .page__security {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    grid-gap: 20px;
+  }
+  .security {
+    &__action {
+      flex-direction: column;
+      grid-gap: 20px;
+      width: 100%;
+    }
+  }
   .profile {
     &__additional-data{
       grid-template-columns: 1fr;
       grid-gap: 20px;
+    }
+    &__button {
+      justify-content: center;
     }
   }
   .avatar {
@@ -1205,31 +849,9 @@ export default {
       grid-template-columns: 1fr;
     }
   }
-  .main-white {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-  .btn {
-    &__container {
-      width: initial;
-      justify-content: center;
-      margin: 0 0 10px;
-    }
-    &__container-right {
-      margin: 0 20px;
-      justify-content: center;
-    }
-  }
   .page {
     &__info-title {
       font-size: 18px;
-    }
-  }
-  .settings {
-    &_blue {
-      grid-template-columns: 1fr;
-      padding: 10px;
-      grid-gap: 10px;
     }
   }
   .icon {
@@ -1246,7 +868,7 @@ export default {
   .btn {
     &__save {
       margin-bottom: 20px;
-      grid-column: 5/14;
+      max-width: 100% !important;
     }
   }
   .icon {
@@ -1258,22 +880,10 @@ export default {
 }
 
 @include _380 {
-  .btn {
-    &__save {
-      margin-bottom: 20px;
-      grid-column: 5/14;
-    }
-  }
   .icon {
     &__close {
       bottom: 195px;
       right: 5px;
-    }
-  }
-  .option {
-    &__title {
-      padding: 0 10px 0 16px;
-      font-size: 14px;
     }
   }
   .user {

@@ -93,6 +93,14 @@
     "create": "Create account"
   },
   "profile": {
+    "title": "Profile",
+    "security": "Security",
+    "aboutMe": "About Me",
+    "2FA": "2FA Authentication",
+    "changePass": "Change password",
+    "switchOn": "Switch On",
+    "change": "Change",
+    "save": "Save",
     "raiseViews": "Raise views",
     "educations": "Educations",
     "prevWorkExp": "Previous work experience",

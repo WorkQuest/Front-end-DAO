@@ -1,135 +1,74 @@
 <template>
-  <div>
-    <div
-      class="main-section main-section_white"
-    >
-      <div class="main-container">
-        <UserInfo :selected="selected" />
-
-        <!-- tabs -->
-        <button
-          class="tab__btn"
-          :class="{tab__btn_active: selected === 1}"
-          @click="selected = 1"
-        >
-          {{ $t('profile.quests') }}
-        </button>
-        <button
-          class="tab__btn"
-          :class="{tab__btn_active: selected === 2}"
-          @click="selected = 2"
-        >
-          {{ $t('profile.reviews') }}
-        </button>
-        <button
-          v-if="userRole === 'worker'"
-          class="tab__btn"
-          :class="{tab__btn_active: selected === 3}"
-          @click="selected = 3"
-        >
-          {{ $t('profile.portfolio') }}
-        </button>
-      </div>
-    </div>
-
-    <div class="information-section">
-      <div class="main-container">
-        <!-- REVIEWS -->
-        <div
-          v-if="selected === 1"
-          class="tab__container"
-        >
-          <QuestsTab />
-        </div>
-
-        <div
-          v-if="selected === 2"
-          class="tab__container"
-        >
-          <ReviewsTab />
-        </div>
-
-        <div
-          v-if="selected === 3"
-          class="tab__container"
-        >
-          <div class="add-btn__container">
-            <base-btn
-              @click="showAddCaseModal()"
-            >
-              {{ $t('ui.profile.addCase') }}
-              <template v-slot:right>
-                <span class="icon-plus" />
-              </template>
-            </base-btn>
+  <div class="main">
+    <div class="main__body">
+      <div
+        class="banner__top"
+        :class="[{'top-disabled': isShowInfo === false}]"
+      >
+        <transition name="fade-fast">
+          <div class="page__info">
+            <div class="page__grid">
+              <div
+                class="page__info"
+              >
+                <div class="page__info">
+                  <h2 class="page__info page__info-title">
+                    {{ $t('settings.addInfo') }}
+                  </h2>
+                  <div class="page__info page__info-subtitle">
+                    {{ $t('settings.alsoRating') }}
+                  </div>
+                  <div class="ver-btn__container">
+                    <base-btn mode="ver">
+                      {{ $t('settings.getVerification') }}
+                    </base-btn>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <img
+                  class="higher-level__img"
+                  src="~/assets/img/ui/settingsHigherLevel.svg"
+                >
+                <button @click="isCloseInfo()">
+                  <span
+                    class="icon-close_big icon__close"
+                    :class="{'icon_close_closed' : isShowInfo }"
+                  />
+                </button>
+              </div>
+            </div>
           </div>
-          <PortfolioTab />
-        </div>
-
-        <div
-          v-if="userData.role === 'worker'"
-          class="button"
-        >
-          <nuxt-link
-            v-if="selected === 1"
-            class="button__more"
-            to="/profile"
-          >
-            {{ $t('meta.showAllReviews') }}
-          </nuxt-link>
-        </div>
+        </transition>
       </div>
+      <h2 class="page__title">
+        {{ $t('profile.title') }}
+      </h2>
+      <profileData />
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import PortfolioTab from '~/components/app/Pages/Profile/Tabs/Portfolio';
-import ReviewsTab from '~/components/app/Pages/Profile/Tabs/Reviews';
-import QuestsTab from '~/components/app/Pages/Common/Quests';
-import UserInfo from '~/components/app/Pages/Common/UserInfo';
-import modals from '~/store/modals/modals';
+import profileData from '~/components/app/Panels/SettingsProfile';
 
 export default {
-  name: 'Index',
+  name: 'Settings',
   components: {
-    ReviewsTab,
-    PortfolioTab,
-    QuestsTab,
-    UserInfo,
+    profileData,
   },
   data() {
     return {
-      selected: 1,
+      isShowInfo: true,
     };
-  },
-  computed: {
-    ...mapGetters({
-      tags: 'ui/getTags',
-      userRole: 'user/getUserRole',
-      userData: 'user/getUserData',
-    }),
-    cardLevelClass(idx) {
-      const { cards } = this;
-      return [
-        { card__level_reliable: cards[idx].level.code === 2 },
-        { card__level_checked: cards[idx].level.code === 3 },
-      ];
-    },
   },
   async mounted() {
     this.SetLoader(true);
     this.SetLoader(false);
   },
   methods: {
-    isRating(type) {
-      return (type === 3);
-    },
-    showAddCaseModal() {
-      this.ShowModal({
-        key: modals.addCase,
-      });
+    isCloseInfo() {
+      this.isShowInfo = !this.isShowInfo;
     },
   },
 };
@@ -137,297 +76,554 @@ export default {
 
 <style lang="scss" scoped>
 
-//TODO: Почистить стили
-
-.add-btn {
-  &__container {
-    width: 154px;
-    margin: 20px 0 20px 0;
+.selector {
+  @include box;
+  width: 100%;
+  z-index: 140;
+  &__items {
+    background: #FFFFFF;
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
   }
-}
-
-.tab {
-  &__container {
-    margin: 20px 0 20px 0;
-  }
-  &__btn {
-    color: $black500;
+  &__item {
+    @include text-simple;
+    padding: 15px 20px;
+    background: #FFFFFF;
+    font-weight: 500;
     font-size: 16px;
-    padding: 10px;
-    &_active {
-      color: $black800;
-      font-size: 16px;
-      border-bottom: 1px solid $blue;
-      padding: 10px;
+    color: $black800;
+    cursor: pointer;
+    transition: .3s;
+    &:hover {
+      background: #F3F7FA;
     }
   }
 }
-.contacts {
-  &__grid {
-    height: 100%;
-    max-height: 43px;
-    display: grid;
-    grid-template-columns: 5fr 2fr;
-    margin: 0 0 15px 0;
-  }
-}
-.message {
-  &__container-btn {
-    @extend .styles__full;
+
+.ver-btn {
+  &__container {
     display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    width: 100%;
-  }
-  &__btn {
-    max-width: 250px;
-    cursor: pointer;
-  }
-}
-.container {
-  &__title {
-    font-weight: 400;
-    font-size: 12px;
-    color: $black500;
+    margin: 20px;
+    width: 250px;
   }
 }
 
-.subtitle {
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 130%;
-  color: $black500;
-  margin: -20px 0 -5px 0;
+.top-disabled {
+  display: none;
 }
 
-.button {
-  @extend .styles__flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  &__more {
-    @extend .button;
-    display: inline-block;
-    text-decoration: none;
-    font-size: 16px;
-    line-height: 130%;
-    color: #0083C7;
-    border: 1px solid rgba(0, 131, 199, 0.1);
-    border-radius: 6px;
-    padding: 13px 67px 13px 28px;
-    background-image: url("data:image/svg+xml,%3Csvg width='11' height='6' viewBox='0 0 11 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E\a           %3Cpath d='M5.5 5.5L10.5 0.5L0.5 0.5L5.5 5.5Z' fill='%230083C7'/%3E\a           %3C/svg%3E                                                          \a           ");
-    background-position: 82% 21px;
-    background-repeat: no-repeat;
-  }
-}
-
-.quest {
-  &__spec {
-    @include text-simple;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 25px;
-    color: $black800;
-    margin: 0 0 0 0;
-  }
-  &__title {
-    @include text-simple;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 30px;
-    color: $black800;
-    margin: 0 0 10px 0;
-  }
-  &__description {
-    @include text-simple;
-    font-style: normal;
-    color: $black700;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 130%;
-    /* or 21px */
-  }
-  &__location {
-    @include text-simple;
-    color: $black700;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-  }
-  &__count {
-    @include text-simple;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 16px;
-    color: $black400;
-  }
-  &__group {
-    color:$black800;
-    display: flex;
-    flex-direction: row;
-  }
-  &__card {
-    color:$black800;
-  }
-}
-
-.contact {
-  &__link {
-    text-decoration: none;
-    font-size: 14px;
-    line-height: 130%;
-    color: #7C838D;
-    margin-right: 30px;
+.btn {
+  &__container {
     justify-content: center;
+    align-content: center;
+    display: flex;
+  }
+  &__plus {
+    justify-content: flex-end;
     align-items: center;
+    display: flex;
   }
 }
-
 .icon {
-  font-size: 20px;
-  cursor: pointer;
-  &-plus:before {
+  font-size: 25px;
+  color: $blue;
+  align-items: center;
+  &__gradient {
+    color: transparent;
+    -webkit-background-clip: text;
+    background-image: linear-gradient(135deg, #0083C7 0%, #00AA5B 100%);
+  }
+  &-check_all_big:before {
     @extend .icon;
-    content: "\e9a8";
+    content: "\ea00";
     color: $white;
-    font-size: 16px;
+    padding: 0 0 0 10px;
   }
-  &-chat:before {
+  &-Lock:before {
     @extend .icon;
-    content: "\e9ba";
-    color: $green;
-    font-size: 25px;
+    @extend .icon__gradient;
+    content: "\ea24";
   }
-  &-Earth::before {
+  &-user_pin:before {
     @extend .icon;
-    color: #7C838D;
-    font-size: 16px;
-    padding-right: 5px;
+    @extend .icon__gradient;
+    content: "\e908";
   }
-  &-location::before {
+  &-caret_right:before {
     @extend .icon;
-    color: #7C838D;
-    font-size: 16px;
-    padding-right: 5px;
+    @extend .icon__gradient;
+    content: "\ea4a";
+    color: $black200;
+  }
+  &-data:before {
+    @extend .icon;
+    @extend .icon__gradient;
+    content: "\e914";
+  }
+  &-group_alt:before {
+    @extend .icon;
+    @extend .icon__gradient;
+    content: "\e900";
+  }
+  &-home_alt_check:before {
+    @extend .icon;
+    @extend .icon__gradient;
+    content: "\e961";
+  }
+  &-credit_card:before {
+    @extend .icon;
+    @extend .icon__gradient;
+    content: "\ea0e";
+  }
+  &-Case:before {
+    @extend .icon;
+    @extend .icon__gradient;
+    content: "\e9ff";
+  }
+  &-line_chart_up:before {
+    @extend .icon;
+    @extend .icon__gradient;
+    content: "\e9cb";
+  }
+  &-settings:before {
+    @extend .icon;
+    content: "\ea34";
+  }
+  &-chevron_big_right:before {
+    @extend .icon;
+    content: "\ea4e";
+    color: $black200;
+  }
+  &-plus_circle:before {
+    @extend .icon;
+    content: "\e9a6";
+  }
+  &-Case:before {
+    @extend .icon;
+    content: "\e9ff";
+  }
+  &-id_card:before {
+    @extend .icon;
+    content: "\e902";
+  }
+  &-Earth:before {
+    @extend .icon;
+    content: "\ea11";
+  }
+  &-facebook:before {
+    @extend .icon;
+    content: "\e9e5";
+  }
+  &-LinkedIn::before {
+    @extend .icon;
+    content: "\e9ed";
+  }
+  &-twitter::before {
+    @extend .icon;
+    content: "\e9fa";
+  }
+  &-instagram::before {
+    @extend .icon;
+    content: "\e9ea";
   }
   &-phone::before {
     @extend .icon;
-    color: #7C838D;
-    font-size: 16px;
-    padding-right: 5px;
+    content: "\ea2d";
   }
   &-mail::before {
     @extend .icon;
-    color: #7C838D;
-    font-size: 16px;
-    padding-right: 5px;
+    content: "\ea27";
+  }
+  &-location::before {
+    @extend .icon;
+    content: "\ea23";
+  }
+  &-user::before {
+    @extend .icon;
+    content: "\e90c";
+  }
+  &-close_big::before {
+    content: "\e948";
+    color: #2e3a59;
+    font-size: 26px;
+  }
+  &__close {
+    position: absolute;
+    bottom: 155px;
+    right: 25px;
+    z-index: 2;
+    &_closed {
+      display: none;
+    }
+  }
+  &-edit {
+    position: absolute;
+    top: 50%;
+    margin-right: -50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  &-edit::before {
+    @extend .icon;
+    content: "\e997"
   }
 }
 
-.main-section {
-  &_white {
-    background-color: $white;
-  }
-}
-.main-container {
-  width: 1180px;
-  margin: 0 auto;
-}
-
-.rating {
-  padding: 0 15px 0 0;
-}
-
-.col {
-  &__header {
-    @extend .styles__flex;
-    @extend .styles__center;
-  }
-  &__main-header {
-    @extend .styles__flex;
-    @extend .styles__center;
-  }
-}
-
-.styles {
-  &__full {
+.higher-level {
+  &__img {
+    z-index: 1;
+    height: 100%;
     width: 100%;
+    max-height: 207px;
+    padding: 0 0 0 30px;
+  }
+}
+
+.btn {
+  width: 100%;
+  &__container-right {
+    @extend .btn;
+    display: flex;
+    justify-content: flex-end;
+    margin: 0 20px 0 -20px;
+    padding: 0 0 20px 0;
+  }
+  &__save {
+    @extend .btn;
+    margin-bottom: 20px;
+    grid-column: 5/17;
+    max-width: 220px;
+  }
+}
+.banner {
+  &__top {
+    position: relative;
+    min-height: 160px;
+    margin-top: 30px;
+  }
+}
+
+.info {
+  &__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 50px 0 21px 9px;
+  }
+}
+
+.main {
+  @include main;
+  &-white {
+    @include main;
+    background: $white;
+    background: #FFFFFF;
+    margin: 0 0 20px 0;
+    border-radius: 6px;
+    justify-content: center;
+  }
+  &__body {
+    max-width: 1180px;
     height: 100%;
   }
-  &__between {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  &__flex {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-  }
-  &__center {
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-  }
 }
-.background {
-  &__common {
-    background-repeat: no-repeat;
-    background-position: 0 -1px;
-    padding-left: 25px;
+
+.page {
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  &__title {
+    margin: 20px 0 20px 0;
+    font-weight: 500;
+    font-size: 25px;
+    color: $black800;
+  }
+  &__profile {
+    @include main-white;
+    justify-content: flex-start;
+    border-radius: 6px;
+    margin: 20px 0 20px 0;
+    display: inherit;
+  }
+  &__checkbox {
+    margin: 50px 0 20px 20px;
+    display: flex;
+    flex-direction: row;
+  }
+  &__part {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    &_left {
+      display: grid;
+    }
+    &_right {
+      display: grid;
+    }
+  }
+  &__info {
+    background-color: #0083C7;
+    border-radius: 6px;
+    color: $white;
+    max-height: 207px;
+    &-title {
+      margin: 20px 0 0 20px;
+      font-size: 25px;
+      font-weight: 500;
+    }
+    &-subtitle {
+      margin: 10px 0 0 20px;
+      font-size: 16px;
+      font-weight: 400;
+    }
+  }
+  &__badge {
+    background: rgba(0, 131, 199, 0.1);
+    border-radius: 44px;
+    margin: 10px;
+    color: $blue;
+    padding: 5px 6px;
+    display: flex;
+    text-align: center;
+    &-skills {
+      padding: 15px;
+    }
+  }
+  &__skills {
+    flex-direction: row;
+    flex-wrap: wrap;
+    display: flex;
+    max-width: 1180px;
+    width: 100%;
+    justify-content: flex-start;
+    //padding: 0 20px 0 0;
   }
 }
 
-.title {
-  font-style: normal;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 130%;
-  color: #1D2127;
-  margin: 0 0 20px 0;
+.user {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin: 0 16px;
+  &__name {
+    padding: 10px 0 0 0;
+    @include text-simple;
+    font-size: 16px;
+    font-weight: 600;
+    color: $white;
+  }
+  &__icon {
+    padding: 10px 0 0 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+  }
 }
 
 @include _1199 {
-  .template {
-    &__main {
-      padding-left: 20px;
-      padding-right: 20px;
+  .main-white {
+    margin: 0 20px;
+  }
+  .banner {
+    &__top {
+      margin: 0 20px;
     }
   }
-  .main-container {
-    width: 100%;
-    padding-left: 20px;
-    padding-right: 20px;
+  .page {
+    &__title {
+      margin: 20px 0 20px 20px;
+    }
+    &__skills {
+      margin: 0 0 10px 20px;
+    }
+    &__badge {
+      text-align: center;
+    }
+    &__profile {
+      margin: 20px;
+    }
   }
-  .box__skills {
-    grid-template-columns: repeat(4, auto);
-    grid-gap: 20px;
+  .settings {
+    margin: 20px;
   }
 }
 @include _991 {
-  .box {
+  .knowledge {
+    &__container {
+      grid-template-columns: 5fr 28px 5fr 0;
+      max-height: 100%;
+    }
+  }
+  .settings {
+    grid-auto-rows: auto auto;
+    grid-template-columns: 5fr;
+  }
+  .icon {
+    &__close {
+      bottom: 154px;
+      right: 10px;
+    }
+  }
+  .page {
+    &__grid {
+      grid-template-columns: 11fr 1fr;
+    }
+  }
+  .profile {
+    &__main-data {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    &__button {
+      grid-template-rows: auto auto;
+      grid-template-columns: 1fr;
+      max-height: 100%;
+    }
+  }
+  .higher {
+    &-level {
+      &__img {
+        display: none;
+      }
+    }
+  }
+}
+
+@include _767 {
+  .avatar {
+    &__row {
+      margin: 20px 20px 0 20px;
+    }
+  }
+  .company {
+    &__inputs {
+      grid-template-columns: 1fr;
+      grid-gap: 0;
+    }
+  }
+  .icon {
+    &__close {
+      bottom: 154px;
+    }
+  }
+  .page {
+    &__info {
+      max-height: 100%;
+    }
+  }
+  .avatar {
+    &__row {
+      flex-direction: column;
+    }
+    &__container {
+      justify-self: center;
+    }
+  }
+  .profile {
+    &__main-data {
+      grid-template-columns: 1fr;
+    }
+    &__button {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .settings {
     grid-template-columns: 1fr;
+    &__left {
+      padding: 20px 0 20px 20px;
+    }
   }
 }
 
 @include _575 {
-  .footer {
-    &__quest {
-      display: grid !important;
+  .profile {
+    &__additional-data{
       grid-template-columns: 1fr;
+      grid-gap: 20px;
+    }
+  }
+  .avatar {
+    &__row {
+      grid-template-columns: 1fr;
+    }
+  }
+  .main-white {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .btn {
+    &__container {
+      width: initial;
+      justify-content: center;
+      margin: 0 0 10px;
+    }
+    &__container-right {
+      margin: 0 20px;
+      justify-content: center;
+    }
+  }
+  .page {
+    &__info-title {
+      font-size: 18px;
+    }
+  }
+  .settings {
+    &_blue {
+      grid-template-columns: 1fr;
+      padding: 10px;
       grid-gap: 10px;
     }
   }
-  .simple-button {
-    padding: 0;
+  .icon {
+    &__close {
+      bottom: 137px;
+      right: 10px;
+    }
   }
-  .box__profile {
-    flex-direction: column;
-    align-items: center;
+}
+@include _480 {
+  .main-white {
+    width: calc(98vw - 71px);
+  }
+  .btn {
+    &__save {
+      margin-bottom: 20px;
+      grid-column: 5/14;
+    }
+  }
+  .icon {
+    &__close {
+      bottom: 157px;
+      right: 6px;
+    }
+  }
+}
+
+@include _380 {
+  .btn {
+    &__save {
+      margin-bottom: 20px;
+      grid-column: 5/14;
+    }
+  }
+  .icon {
+    &__close {
+      bottom: 195px;
+      right: 5px;
+    }
+  }
+  .option {
+    &__title {
+      padding: 0 10px 0 16px;
+      font-size: 14px;
+    }
+  }
+  .user {
+    grid-template-columns: 11fr 1fr;
+  }
+  .icons {
+    padding: 16px 0 0 16px;
   }
 }
 </style>
