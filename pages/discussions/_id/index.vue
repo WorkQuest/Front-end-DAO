@@ -1,262 +1,254 @@
 <template>
-  <div class="info info__body">
-    <div class="info__header header">
-      <nuxt-link
-        to="/discussions"
-        class="header__link link"
-      >
-        <span class="icon-short_left link__arrow" />
-        <div class="link__text">
-          {{ $t('discussions.back') }}
-        </div>
-      </nuxt-link>
-    </div>
-    <div class="info__title">
-      {{ $t('discussions.infoTitle') }}
-    </div>
-    <div
-      v-for="(item) in discussions"
-      :key="item.id"
-      class="info__field"
-    >
-      <div class="info__discussion discussion">
-        <div class=" discussion__user user">
-          <img
-            src="~assets/img/icons/userAvatar.svg"
-            alt=""
-            class="user__avatar"
-          >
-          <span class="user__name">
-            {{ item.userName }}
-          </span>
-          <button class="user__star">
-            <img
-              v-if="!isFavorite"
-              src="~assets/img/ui/star_simple.svg"
-              alt="simpleStar"
-              @click="toggleFavorite"
-            >
-            <img
-              v-else
-              src="~assets/img/ui/star_checked.svg"
-              alt="checkedStar"
-              @click="toggleFavorite"
-            >
-          </button>
-        </div>
-        <div class="discussion__title">
-          {{ item.title }}
-        </div>
-        <div class="discussion__date">
-          {{ item.date }}
-        </div>
-        <div class="discussion__subtitle">
-          {{ $t('discussions.files') }}
-        </div>
-        <span
-          v-for="(file) in files"
-          :key="file.id "
-          class="discussion__block block"
+  <div class="info">
+    <div class="info__body">
+      <div class="info__header header">
+        <nuxt-link
+          to="/discussions"
+          class="header__link link"
         >
-          <div class="block__icon">
+          <span class="icon-short_left link__arrow" />
+          <div class="link__text">
+            {{ $t('discussions.back') }}
+          </div>
+        </nuxt-link>
+      </div>
+      <div class="info__title">
+        {{ $t('discussions.infoTitle') }}
+      </div>
+      <div
+        v-for="(item) in discussions"
+        :key="item.id"
+        class="info__field"
+      >
+        <div class="info__discussion discussion">
+          <div class=" discussion__user user">
             <img
-              src="~/assets/img/ui/pdf.svg"
+              src="~assets/img/icons/userAvatar.svg"
               alt=""
+              class="user__avatar"
+            >
+            <span class="user__name">
+              {{ item.userName }}
+            </span>
+            <button class="user__star">
+              <img
+                v-if="!isFavorite"
+                src="~assets/img/ui/star_simple.svg"
+                alt="simpleStar"
+                @click="toggleFavorite"
+              >
+              <img
+                v-else
+                src="~assets/img/ui/star_checked.svg"
+                alt="checkedStar"
+                @click="toggleFavorite"
+              >
+            </button>
+          </div>
+          <div class="discussion__title">
+            {{ item.title }}
+          </div>
+          <div class="discussion__date">
+            {{ item.date }}
+          </div>
+          <div class="discussion__subtitle">
+            {{ $t('discussions.files') }}
+          </div>
+          <div class="discussion__filesUploader filesUploader">
+            <base-files
+              :is-show-download="true"
+              :is-show-close="false"
+              class="filesUploader__files"
+              :items="[
+                {name: 'Some_document', size:'1.2Mb', id:'1'},
+                {name: 'Some_document', size:'1.2Mb', id:'2'},
+              ]"
+            />
+          </div>
+          <base-images
+            :is-show-download="true"
+            :is-show-delete="false"
+            class="discussion__imagesUploader"
+            :items="[
+              {img: require('~/assets/img/ui/rectangle.svg'), id:'1'},
+              {img: require('~/assets/img/ui/rectangle.svg'), id:'2'},
+              {img: require('~/assets/img/ui/rectangle.svg'), id:'3'},
+              {img: require('~/assets/img/ui/rectangle.svg'), id:'4'},
+              {img: require('~/assets/img/ui/rectangle.svg'), id:'5'}
+            ]"
+          />
+          <div class="discussion__description description">
+            <hr class="discussion__line">
+            <div class="description__title">
+              {{ $t('discussions.descriptionTitle') }}
+            </div>
+            <div class="description__item">
+              {{ item.description }}
+            </div>
+          </div>
+          <div class="discussion__bottom bottom">
+            <div class="bottom__footer">
+              <div class="bottom__comment">
+                <img
+                  src="~assets/img/ui/comment.svg"
+                  alt=""
+                >
+              </div>
+              <div class="bottom__counter">
+                {{ item.commentCounter }}
+              </div>
+              <button class="bottom__like">
+                <span
+                  v-if="!isLiked"
+                  class="icon-heart_fill bottom__like"
+                  @click="toggleLiked"
+                />
+                <span
+                  v-else
+                  class="icon-heart_fill bottom__like bottom__like_choosen"
+                  @click="toggleLiked"
+                />
+              </button>
+              <div class="bottom__counter bottom__counter_right">
+                {{ item.likeCounter }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="info__heading heading">
+        <div class="heading__title">
+          {{ $t('discussions.commentTitle') }}
+        </div>
+        <base-btn
+          v-if="!isAddComment"
+          class="heading__btn"
+          @click="addComment"
+        >
+          {{ $t('discussions.add') }}
+        </base-btn>
+      </div>
+      <div
+        v-if="isAddComment"
+        class="info__response response"
+      >
+        <div class="response__field">
+          <div class="response__title">
+            {{ $t('discussions.responseTitle') }}
+          </div>
+          <div class="response__footer footer">
+            <span class="icon-link footer__chain" />
+            <input
+              v-model="opinion"
+              class="footer__comment"
+              :placeholder="$t('discussions.input')"
             >
           </div>
-          <div class="block__name">
-            {{ file.name }}
+          <div class="response__footer">
+            <base-btn
+              class="response__btn"
+              mode="lightBlue"
+              @click="addComment"
+            >
+              {{ $t('discussions.cancel') }}
+            </base-btn>
+            <base-btn
+              class="response__btn"
+              @click="writeOpinion"
+            >
+              {{ $t('discussions.add') }}
+            </base-btn>
           </div>
-          <div class="block__size">
-            {{ file.size }}
-          </div>
-          <span class="block__close">
+        </div>
+      </div>
+      <div
+        v-for="(elem) in comments"
+        :key="elem.id"
+        class="info__comment comment"
+      >
+        <div class="comment__field">
+          <div class="comment__user user">
             <img
-              src="~/assets/img/ui/close.svg"
+              src="~assets/img/icons/userAvatar.svg"
               alt=""
+              class="user__image"
             >
-          </span>
-        </span>
-        <div class="discussion__images image">
-          <div
-            v-for="element in images"
-            :key="element.id"
-          >
-            <img
-              :src="element.image"
-              class="image__file"
+            <div class="user__name">
+              {{ elem.userName }}
+            </div>
+            <div class="user__date">
+              {{ elem.date }}
+            </div>
+          </div>
+          <div class="comment__description">
+            {{ elem.description }}
+          </div>
+          <div class="comment__bottom bottom">
+            <base-btn
+              class="bottom__btn"
+              mode="blue"
+              @click="toggleShow"
             >
-            <div class="icon-off_close image__close" />
-          </div>
-          <span class="icon-download image__download" />
-        </div>
-        <div class="discussion__description description">
-          <hr class="discussion__line">
-          <div class="description__title">
-            {{ $t('discussions.descriptionTitle') }}
-          </div>
-          <div class="description__item">
-            {{ item.description }}
-          </div>
-        </div>
-        <div class="discussion__bottom bottom">
-          <div class="bottom__footer">
-            <div class="bottom__comment">
+              <p v-if="!isShow">
+                {{ $t('discussions.show') }}
+              </p>
+              <p v-if="isShow">
+                {{ $t('discussions.hide') }}
+              </p>
+            </base-btn>
+            <div class="bottom__panel">
               <img
                 src="~assets/img/ui/comment.svg"
                 alt=""
+                class="bottom__comment"
               >
-            </div>
-            <div class="bottom__counter">
-              {{ item.commentCounter }}
-            </div>
-            <button class="bottom__like">
-              <span
-                v-if="!isLiked"
-                class="icon-heart_fill bottom__like"
-                @click="toggleLiked"
-              />
-              <span
-                v-else
-                class="icon-heart_fill bottom__like bottom__like_choosen"
-                @click="toggleLiked"
-              />
-            </button>
-            <div class="bottom__counter bottom__counter_right">
-              {{ item.likeCounter }}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="info__heading heading">
-      <div class="heading__title">
-        {{ $t('discussions.commentTitle') }}
-      </div>
-      <base-btn
-        v-if="!isAddComment"
-        class="heading__btn"
-        @click="addComment"
-      >
-        {{ $t('discussions.add') }}
-      </base-btn>
-    </div>
-    <div
-      v-if="isAddComment"
-      class="info__response response"
-    >
-      <div class="response__field">
-        <div class="response__title">
-          {{ $t('discussions.responseTitle') }}
-        </div>
-        <div class="response__footer footer">
-          <span class="icon-link footer__chain" />
-          <input
-            class="footer__comment"
-            :placeholder="$t('discussions.input')"
-          >
-        </div>
-        <div class="response__footer">
-          <base-btn
-            class="response__btn"
-            mode="blue"
-            @click="addComment"
-          >
-            {{ $t('discussions.cancel') }}
-          </base-btn>
-          <base-btn class="response__btn">
-            {{ $t('discussions.add') }}
-          </base-btn>
-        </div>
-      </div>
-    </div>
-    <div
-      v-for="(elem) in comments"
-      :key="elem.id"
-      class="info__comment comment"
-    >
-      <div class="comment__field">
-        <div class="comment__user user">
-          <img
-            src="~assets/img/icons/userAvatar.svg"
-            alt=""
-            class="user__image"
-          >
-          <div class="user__name">
-            {{ elem.userName }}
-          </div>
-          <div class="user__date">
-            {{ elem.date }}
-          </div>
-        </div>
-        <div class="comment__description">
-          {{ elem.description }}
-        </div>
-        <div class="comment__bottom bottom">
-          <base-btn
-            class="bottom__btn"
-            mode="blue"
-            @click="toggleShow"
-          >
-            <p v-if="!isShow">
-              {{ $t('discussions.show') }}
-            </p>
-            <p v-if="isShow">
-              {{ $t('discussions.hide') }}
-            </p>
-          </base-btn>
-          <div class="bottom__panel">
-            <img
-              src="~assets/img/ui/comment.svg"
-              alt=""
-              class="bottom__comment"
-            >
-            <div class="bottom__counter">
-              {{ elem.commentCounter }}
-            </div>
-            <button class="bottom__like">
-              <span
+              <div class="bottom__counter">
+                {{ elem.commentCounter }}
+              </div>
+              <button class="bottom__like">
+                <span
                   v-if="!isVote"
                   class="icon-heart_fill bottom__like"
                   @click="toggleVote"
-              />
-              <span
+                />
+                <span
                   v-else
                   class="icon-heart_fill bottom__like bottom__like_choosen"
                   @click="toggleVote"
-              />
-            </button>
-            <div class="bottom__counter bottom__counter_right">
-              {{ elem.likeCounter }}
+                />
+              </button>
+              <div class="bottom__counter bottom__counter_right">
+                {{ elem.likeCounter }}
+              </div>
             </div>
           </div>
-        </div>
-        <div v-if="isShow">
-          <answers-card
-            v-for="(item) in answers"
-            :key="item.id"
-            :item="item"
-            class="comment__replays"
-          />
-        </div>
-        <base-btn
-          v-if="isShow"
-          mode="blue"
-          class="comment__btn"
-        >
-          {{ $t('discussions.more') }}
-        </base-btn>
-        <div class="comment__footer footer">
-          <span class="class= icon-link footer__chain" />
-          <input
-            class="footer__input"
-            :placeholder="$t('discussions.input')"
+          <div v-if="isShow">
+            <answers-card
+              v-for="(item) in answers"
+              :key="item.id"
+              :item="item"
+              class="comment__replays"
+            />
+          </div>
+          <base-btn
+            v-if="isShow"
+            mode="blue"
+            class="comment__btn"
           >
-          <span class="class= icon-send footer__arrow" />
+            {{ $t('discussions.more') }}
+          </base-btn>
+          <div class="comment__footer footer">
+            <span class="class= icon-link footer__chain" />
+            <input
+              class="footer__input"
+              :placeholder="$t('discussions.input')"
+            >
+            <span class="class= icon-send footer__arrow" />
+          </div>
         </div>
       </div>
+      <pagination />
     </div>
-    <pagination />
   </div>
 </template>
 
@@ -272,13 +264,13 @@ export default {
   },
   data() {
     return {
-      show: false,
       isFavorite: false,
       isLiked: false,
       isAddComment: false,
       isShow: false,
       isChoosen: false,
       isVote: false,
+      opinion: '',
       discussions: [
         {
           id: 1,
@@ -345,41 +337,6 @@ export default {
           isCommentLiked: false,
         },
       ],
-      files: [
-        {
-          id: 7,
-          size: '1.2 MB',
-          name: 'Some_document.pdf',
-        },
-        {
-          id: 8,
-          size: '1.2 MB',
-          name: 'Some_document.pdf',
-        },
-      ],
-      images: [
-        {
-          image: require('~/assets/img/ui/rectangle.svg'),
-          id: 1,
-        },
-        {
-          image: require('~/assets/img/ui/rectangle.svg'),
-          id: 2,
-
-        },
-        {
-          image: require('~/assets/img/ui/rectangle.svg'),
-          id: 3,
-        },
-        {
-          image: require('~/assets/img/ui/rectangle.svg'),
-          id: 4,
-        },
-        {
-          image: require('~/assets/img/ui/rectangle.svg'),
-          id: 5,
-        },
-      ],
       answers: [
         {
           id: 1,
@@ -424,6 +381,9 @@ export default {
     toggleVote() {
       this.isVote = !this.isVote;
     },
+    writeOpinion() {
+      console.log(this.opinion);
+    },
   },
 };
 
@@ -439,7 +399,7 @@ export default {
   @include _1024;
   }
   &__header{
-    margin: 30px 0px 0px 0px;
+    margin: 20px 0px 0px 0px;
     justify-content: left;
   }
   &__heading{
@@ -450,7 +410,7 @@ export default {
     font-size: 28px;
     line-height: 36px;
     margin-right: auto;
-    padding: 20px 0px 20px 0px;
+    padding: 10px 0px 20px 0px;
   }
   &__field {
     justify-content: space-between;
@@ -460,7 +420,7 @@ export default {
     height: 100%;
     background: #FFFFFF;
     border-radius: 8px;
-    padding: 20px;
+    padding: 20px 20px 0px 20px;
   }
   &__footer{
     margin-top: 20px;
@@ -504,7 +464,7 @@ export default {
   &__field{
     width: 100%;
     height: 100%;
-    background: #FFFFFF;
+    background: #fff;
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 15px;
@@ -685,6 +645,12 @@ export default {
   &__block{
     margin: 10px 0px 20px 0px;
   }
+  &__filesUploader{
+    margin: 0px 0px 20px 0px!important;
+  }
+  &__bottom{
+    padding-bottom: 10px;
+  }
 }
 
 .block{
@@ -731,40 +697,6 @@ export default {
     margin: 20px 0px 10px 0px;
   }
 }
-.image {
-  display:flex;
-  align-items: center;
-  margin-left: auto;
-  position: relative;
-  &__download {
-    color: black;
-    font-size: 30px;
-    align-items: center;
-    cursor: pointer;
-  }
-  &__close{
-    position: absolute;
-    top: 33px;
-    left: 33px;
-    display: none;
-    font-size: 25px;
-    color: red;
-    cursor: pointer;
-  }
-  &__file{
-    align-items: center;
-    margin-right: 20px;
-  }:hover {
-    -webkit-filter: brightness(40%);
-    filter: brightness(40%);
- }
-  &__file{
-    align-items: center;
-    margin-right: 20px;
-  }:hover .image__close{
-      display: block;
-   }
-}
 .response{
   &__field{
       background: #FFFFFF;
@@ -786,8 +718,13 @@ export default {
     width: 220px;
     height: 43px;
     margin-left: 20px;
-    border: none;
     outline: none;
+  }
+}
+.filesUploader{
+  &__files{
+    display: inline-flex;
+    flex-direction: row;
   }
 }
 </style>

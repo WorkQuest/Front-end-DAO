@@ -1,66 +1,68 @@
 <template>
-  <div class="answers answers__field">
-    <div class="answers__user user">
-      <img
-        src="~assets/img/icons/userAvatar.svg"
-        alt=""
-        class="user__image"
-      >
-      <div class="user__name">
-        {{ item.userName }}
+  <div class="answers">
+    <div class="answers__field">
+      <div class="answers__user user">
+        <img
+          src="~assets/img/icons/userAvatar.svg"
+          alt=""
+          class="user__image"
+        >
+        <div class="user__name">
+          {{ item.userName }}
+        </div>
+        <div class="user__date">
+          {{ item.date }}
+        </div>
       </div>
-      <div class="user__date">
-        {{ item.date }}
+      <div class="answers__description">
+        {{ item.description }}
       </div>
-    </div>
-    <div class="answers__description">
-      {{ item.description }}
-    </div>
-    <div class="answers__bottom bottom">
-      <base-btn
-        v-if="!isReplay"
-        class="bottom__btn"
-        mode="blue"
-        @click="toggleReplay"
-      >
-        {{ $t('discussions.reply') }}
-      </base-btn>
-      <base-btn
-        v-else
-        class="bottom__btn"
-        mode="blue"
-        @click="toggleReplay"
-      >
-        {{ $t('discussions.cancel') }}
-      </base-btn>
-      <div class="bottom__panel">
-        <button class="bottom__like">
-        <span
-            v-if="!isVote"
-            class="icon-heart_fill bottom__like"
-            @click="toggleVote"
-        />
-          <span
+      <div class="answers__bottom bottom">
+        <base-btn
+          v-if="!isReplay"
+          class="bottom__btn"
+          mode="blue"
+          @click="toggleReplay"
+        >
+          {{ $t('discussions.reply') }}
+        </base-btn>
+        <base-btn
+          v-else
+          class="bottom__btn"
+          mode="blue"
+          @click="toggleReplay"
+        >
+          {{ $t('discussions.cancel') }}
+        </base-btn>
+        <div class="bottom__panel">
+          <button class="bottom__like">
+            <span
+              v-if="!isVote"
+              class="icon-heart_fill bottom__like"
+              @click="toggleVote"
+            />
+            <span
               v-else
               class="icon-heart_fill bottom__like bottom__like_choosen"
               @click="toggleVote"
-          />
-        </button>
-        <div class="bottom__counter bottom__counter_right">
-          {{ item.likeCounter }}
+            />
+          </button>
+          <div class="bottom__counter bottom__counter_right">
+            {{ item.likeCounter }}
+          </div>
         </div>
       </div>
-    </div>
-    <div
-      v-if="isReplay"
-      class="answers__footer footer"
-    >
-      <span class="icon-link footer__chain" />
-      <input
-        class="footer__input"
-        :placeholder="$t('discussions.input')"
+      <div
+        v-if="isReplay"
+        class="answers__footer footer"
       >
-      <span class="icon-send footer__arrow" />
+        <span class="icon-link footer__chain" />
+        <input
+          class="footer__input"
+          :placeholder="$t('discussions.input')"
+        >
+        <span class="icon-send footer__arrow" />
+      </div>
     </div>
   </div>
 </template>
@@ -97,7 +99,7 @@ export default {
     width: 1080px;
     background: #FFFFFF;
     border-radius: 8px;
-    padding-right: 40px;
+    padding: 20px 40px 0px 20px;
     margin: 20px 20px 15px 80px;
   }
   &__description{
@@ -184,7 +186,7 @@ export default {
     border-radius: 6px;
     border: none;
     padding: 10px 20px 10px 15px;
-    margin: 0px 10px 0px 10px;
+    margin: 0px 10px 20px 10px;
   }
   &__chain{
     display: flex;

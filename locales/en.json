@@ -381,7 +381,13 @@
     "saveCardForNextPayment": "Save card for next payment",
     "insureCase": "Insure case",
     "connectWallet": "Connect wallet",
-    "howMuchWusdWouldYouLikeToGenerate": "How much WUSD would you like to generate?"
+    "howMuchWusdWouldYouLikeToGenerate": "How much WUSD would you like to generate?",
+    "addDiscussion": "Add Discussion",
+    "discussionTopic": "Discussion topic",
+    "addFile": "Add File",
+    "add": "Add",
+    "cancel": "Cancel",
+    "delete": "Delete"
   },
   "ui": {
     "workers": "Workers",
@@ -842,6 +848,7 @@
   "more": "Show more comments",
   "hide": "Hide comments",
   "cancel": "Cancel",
-  "responseTitle": "Add your comment"
+  "responseTitle": "Add your comment",
+  "noFiles": "No files"
   }
  }

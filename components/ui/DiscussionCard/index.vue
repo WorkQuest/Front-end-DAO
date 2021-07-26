@@ -118,7 +118,7 @@ export default {
     font-weight: 600;
     font-size: 24px;
     line-height: 32px;
-    margin: 20px 0px 10px 0px;
+    margin: 18px 0px 10px 0px;
   }
   &__date {
     font-size: 14px;

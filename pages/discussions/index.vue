@@ -11,7 +11,10 @@
           :is-search="true"
           :placeholder="$t('discussions.seacrhField')"
         />
-        <base-btn class="discussions__btn">
+        <base-btn
+          class="discussions__btn"
+          @click="openModalAddDiscussion"
+        >
           {{ $t('discussions.btn') }}
         </base-btn>
       </div>
@@ -32,6 +35,7 @@
 <script>
 
 import pagination from '~/components/app/Panels/Pagination';
+import modals from '~/store/modals/modals';
 
 export default {
   components: {
@@ -223,6 +227,13 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    openModalAddDiscussion() {
+      this.ShowModal({
+        key: modals.addDiscussion,
+      });
+    },
   },
 };
 </script>
