@@ -27,8 +27,9 @@
             >
               <div class="btn__container btn__left">
                 <button
+                  v-if="pickerValue > 0"
                   class="picker__btn"
-                  @click="pickerValue > 0 ? pickerValue -= 1 : pickerValue"
+                  @click="pickerValue -= 1"
                   @mouseover="isCaretLeftHovered = true"
                   @mouseleave="isCaretLeftHovered = false"
                 >
@@ -216,7 +217,7 @@ export default {
 
 .icon {
   &__plus {
-    color: $blue;
+    color: #0083C7;
     font-size: 20px;
     margin-left: 7px;
   }
@@ -224,7 +225,7 @@ export default {
     font-size: 25px;
     color: #AAB0B9;
     &_blue {
-      color: $blue;
+      color: #0083C7;
     }
   }
 }
@@ -264,7 +265,7 @@ export default {
     @include text-simple;
     font-weight: 400;
     font-size: 16px;
-    color: $black800;
+    color: #1D2127;
   }
 }
 

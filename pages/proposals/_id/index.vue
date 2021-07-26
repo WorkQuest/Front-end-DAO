@@ -393,10 +393,6 @@ export default {
     height: 100%;
   }
 
-  &__back {
-
-  }
-
   &__header {
     font-weight: 600;
     font-size: 28px;
@@ -409,10 +405,6 @@ export default {
     display: grid;
     grid-template-columns: 2fr 1fr;
     grid-column-gap: 20px;
-
-  }
-
-  &__info {
 
   }
 
@@ -498,10 +490,6 @@ export default {
     }
   }
 
-  &__header {
-
-  }
-
   &__transactions {
     display: grid;
     grid-template-columns: max-content auto;
@@ -512,10 +500,6 @@ export default {
   &__line {
     background: #E9EDF2;
     margin: 20px 0;
-  }
-
-  &__description {
-
   }
 
   &__forum {
@@ -653,14 +637,6 @@ export default {
     line-height: 130%;
     color: #1D2127;
     margin-bottom: 15px;
-  }
-
-  &__bar {
-
-  }
-
-  &__buttons {
-
   }
 }
 

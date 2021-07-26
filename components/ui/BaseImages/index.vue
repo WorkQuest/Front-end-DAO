@@ -12,7 +12,7 @@
         :src="item.img"
         alt=""
         class="image__img"
-        @mouseover="onMouseOver(i) this.hoverId = i"
+        @mouseover="onMouseOver(i)"
         @mouseleave="onMouseLeave(i)"
       >
       <span
@@ -39,22 +39,21 @@ export default {
   data() {
     return {
       images: this.items,
-      hoverId: -1,
     };
   },
   methods: {
     onMouseOver(i) {
       const { toElement, fromElement } = event;
-      if (toElement.classList.contains('icon')) return;
-      if (fromElement.classList.contains('icon')) return;
+      if (toElement && toElement.classList.contains('icon')) return;
+      if (fromElement && fromElement.classList.contains('icon')) return;
       const image = document.getElementById(i);
       image.childNodes[0].classList.add('image__img_brightness');
       image.childNodes[2].classList.add('icon_visible');
     },
     onMouseLeave(i) {
       const { toElement, fromElement } = event;
-      if (toElement.classList.contains('icon')) return;
-      if (fromElement.classList.contains('icon')) return;
+      if (toElement && toElement.classList.contains('icon')) return;
+      if (fromElement && fromElement.classList.contains('icon')) return;
       const image = document.getElementById(i);
       image.childNodes[0].classList.remove('image__img_brightness');
       image.childNodes[2].classList.remove('icon_visible');

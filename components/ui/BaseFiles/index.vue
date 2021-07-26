@@ -101,9 +101,6 @@ export default {
     line-height: 33px;
     margin-top: 10px;
   }
-  &__download {
-
-  }
 }
 
 .file {
@@ -138,10 +135,6 @@ export default {
 
   &__close {
     margin: 3px 0 0 5px;
-  }
-
-  &__download {
-
   }
 
 }
