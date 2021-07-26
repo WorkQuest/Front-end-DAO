@@ -1,0 +1,14 @@
+.table {
+
+  & > caption {
+    padding: 20px !important;
+  }
+
+  &__title {
+    margin: 0 !important;
+  }
+
+  &__header {
+    font-size: 16px !important;
+  }
+}

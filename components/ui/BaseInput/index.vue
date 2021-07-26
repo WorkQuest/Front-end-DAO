@@ -184,7 +184,7 @@ export default {
     letter-spacing: -0.025em;
     margin-bottom: 13px;
     height: 24px;
-    color: #fff;
+    color: #1D2127;
   }
   &__err {
     color: #F82727;
