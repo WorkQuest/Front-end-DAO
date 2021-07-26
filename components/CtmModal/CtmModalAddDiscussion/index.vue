@@ -31,32 +31,25 @@
         class="add-discussion__body"
         placeholder="Placeholder"
       />
-      <base-files
+      <base-uploader
+        class="files__container"
+        type="all"
+        :items="documents"
+        :is-show-empty="true"
         :is-show-download="false"
-        :is-show-close="true"
-        class="add-discussion__files"
-        :items="[
-          {name: 'Some_document', size:'1.2Mb', id:'1'},
-        ]"
-      />
-      <base-images
-        :is-show-download="false"
-        class="add-discussion__images"
-        :items="[
-          {img: require('~/assets/img/ui/rectangle.svg'), id: 1},
-          {img: require('~/assets/img/ui/rectangle.svg'), id: 2},
-          {img: require('~/assets/img/ui/rectangle.svg'), id: 3},
-          {img: require('~/assets/img/ui/rectangle.svg'), id: 4},
-          {img: require('~/assets/img/ui/rectangle.svg'), id: 5}
-        ]"
-      />
-      <base-btn
-        class="add-discussion__button"
-        mode="lightBlue"
       >
-        {{ $t('modals.addFile') }}
-        <span class="icon-plus_circle_outline add-discussion__plus" />
-      </base-btn>
+        <template v-slot:actionButton>
+          <base-btn
+            mode="lightBlue"
+            class="add-discussion__button"
+          >
+            {{ $t('meta.addFile') }}
+            <template v-slot:right>
+              <span class="icon-plus_circle_outline add-discussion__plus" />
+            </template>
+          </base-btn>
+        </template>
+      </base-uploader>
       <div class="add-discussion__footer footer">
         <base-btn
           class="footer__buttons"
@@ -85,6 +78,21 @@ export default {
     return {
       title: '',
       discussion: '',
+      documents: [
+        {
+          id: '1',
+          type: 'doc',
+          name: 'Some_document.pdf',
+          size: '1.2 MB',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        },
+        { img: require('~/assets/img/ui/rectangle.svg'), id: 1, type: 'img' },
+        { img: require('~/assets/img/ui/rectangle.svg'), id: 2, type: 'img' },
+        { img: require('~/assets/img/ui/rectangle.svg'), id: 3, type: 'img' },
+        { img: require('~/assets/img/ui/rectangle.svg'), id: 4, type: 'img' },
+        { img: require('~/assets/img/ui/rectangle.svg'), id: 5, type: 'img' },
+
+      ],
     };
   },
   computed: {
@@ -119,11 +127,10 @@ export default {
   &__field{
     width:  574px!important;
     height: 46px!important;
-    background: #F3F7FA;
+    background: #F3F7FA!important;
     justify-content: center;
     margin: 5px 0 25px 0;
     border-radius: 6px;
-    padding: -20px !important;
   }
   &__body {
     width: 574px;
@@ -157,7 +164,7 @@ export default {
   margin: 15px 0px 15px 0px;
   }
   &__files{
-    margin-top: 90px!important;
+    margin-top: 10px!important;
   }
 }
 

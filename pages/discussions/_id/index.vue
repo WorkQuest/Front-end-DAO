@@ -55,28 +55,13 @@
             {{ $t('discussions.files') }}
           </div>
           <div class="discussion__filesUploader filesUploader">
-            <base-files
-              :is-show-download="true"
-              :is-show-close="false"
-              class="filesUploader__files"
-              :items="[
-                {name: 'Some_document', size:'1.2Mb', id:'1'},
-                {name: 'Some_document', size:'1.2Mb', id:'2'},
-              ]"
+            <base-uploader
+              class="files__container"
+              type="all"
+              :items="documents"
+              :is-show-empty="true"
             />
           </div>
-          <base-images
-            :is-show-download="true"
-            :is-show-delete="false"
-            class="discussion__imagesUploader"
-            :items="[
-              {img: require('~/assets/img/ui/rectangle.svg'), id:'1'},
-              {img: require('~/assets/img/ui/rectangle.svg'), id:'2'},
-              {img: require('~/assets/img/ui/rectangle.svg'), id:'3'},
-              {img: require('~/assets/img/ui/rectangle.svg'), id:'4'},
-              {img: require('~/assets/img/ui/rectangle.svg'), id:'5'}
-            ]"
-          />
           <div class="discussion__description description">
             <hr class="discussion__line">
             <div class="description__title">
@@ -362,6 +347,21 @@ export default {
           description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
           likeCounter: 50,
         },
+      ],
+      documents: [
+        {
+          id: '1',
+          type: 'doc',
+          name: 'Some_document.pdf',
+          size: '1.2 MB',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        },
+        { img: require('~/assets/img/ui/rectangle.svg'), id: 1, type: 'img' },
+        { img: require('~/assets/img/ui/rectangle.svg'), id: 2, type: 'img' },
+        { img: require('~/assets/img/ui/rectangle.svg'), id: 3, type: 'img' },
+        { img: require('~/assets/img/ui/rectangle.svg'), id: 4, type: 'img' },
+        { img: require('~/assets/img/ui/rectangle.svg'), id: 5, type: 'img' },
+
       ],
     };
   },
