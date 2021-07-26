@@ -19,7 +19,10 @@ s<template>
                     {{ $t('proposals.textBanner') }}
                   </div>
                   <div class="ver-btn__container">
-                    <base-btn mode="ver">
+                    <base-btn
+                      mode="ver"
+                      @click="addProposalModal"
+                    >
                       {{ $t('proposals.addProposals') }}
                     </base-btn>
                   </div>
@@ -51,6 +54,7 @@ s<template>
 
 <script>
 import proposalCards from '~/components/app/Cards/proposalCards';
+import modals from '~/store/modals/modals';
 
 export default {
   name: 'Index',
@@ -65,6 +69,11 @@ export default {
   methods: {
     isCloseInfo() {
       this.isShowInfo = !this.isShowInfo;
+    },
+    addProposalModal() {
+      this.ShowModal({
+        key: modals.addProposal,
+      });
     },
   },
 };

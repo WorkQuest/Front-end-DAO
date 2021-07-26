@@ -135,7 +135,10 @@
     "showAllReviews": "Show all reviews",
     "later": "Later",
     "iAgree": "I agree",
-    "next": "Next"
+    "next": "Next",
+    "addProposal": "Add proposal",
+    "delete": "delete",
+    "addFile": "Add File"
   },
   "priority": {
     "title": "Priority",
@@ -388,6 +391,12 @@
     "add": "Add",
     "cancel": "Cancel",
     "delete": "Delete"
+    "howMuchWusdWouldYouLikeToGenerate": "How much WUSD would you like to generate?",
+    "addProposal": "Add Proposal",
+    "votingTopic": "Voting topic",
+    "numberOfVotes": "Number of Votes",
+    "votingStart": "Voting Start",
+    "votingEnd": "Voting End"
   },
   "ui": {
     "workers": "Workers",
@@ -470,7 +479,9 @@
     "ui": {
       "search": "Search proposal",
       "addTime": "Added time",
-      "allProposals": "All proposals"
+      "allProposals": "All proposals",
+      "yes": "Yes",
+      "no": "No"
     },
     "cards": {
       "status": {
@@ -478,6 +489,35 @@
         "rejected": "Rejected",
         "accepted": "Accepted"
       }
+    }
+  },
+  "proposal": {
+    "title": "Proposal info",
+    "back": "Back",
+    "hashTitle": "Tx Hash",
+    "filesTitle": "Files",
+    "noFiles": "No files",
+    "description": "Description",
+    "toTheForum": "Go to the Forum",
+    "results": "Results",
+    "yes": "Yes",
+    "no": "No",
+    "voteForProposal": "Vote for Proposal",
+    "votes": "votes",
+    "youVoted": "You voted:",
+    "ui": {
+      "addTime": "Added time",
+      "allProposals": "All proposals",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "proposalHistory": "Proposal history",
+    "table": {
+      "number": "#",
+      "hash": "Hash",
+      "date": "Date",
+      "address": "Address",
+      "vote": "Vote"
     }
   },
   "settings": {

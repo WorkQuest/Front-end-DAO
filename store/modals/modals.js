@@ -41,4 +41,5 @@ export default {
   changePassInSettings: 'changePassInSettings',
   twoFAAuth: 'twoFAAuth',
   addDiscussion: 'addDiscussion',
+  addProposal: 'addProposal',
 };
