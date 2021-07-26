@@ -42,7 +42,6 @@
         </div>
       </div>
     </div>
-    <slot name="add" />
     <div
       v-if="!files.length && isShowEmpty"
       class="files__empty"
@@ -180,7 +179,6 @@ export default {
     width: 100%;
     height: 100%;
     border-radius: 6px;
-    margin-left: 8px;
     padding-left: 5px;
     padding-top: 5px;
     &:hover {
