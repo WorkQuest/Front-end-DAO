@@ -14,29 +14,36 @@
           alt=""
         >
       </div>
-      <div class="file__name">
-        {{ item.name }}
-      </div>
-      <div class="file__size">
-        {{ item.size }}
-      </div>
       <div
-        v-if="isShowClose"
-        class="file__close icon"
-        @click="deleteFile(item.id)"
+        class="file__container"
       >
-        <span class="icon__close icon-close_big" />
+        <div class="file__name">
+          {{ item.name }}
+        </div>
+        <div class="file__size">
+          {{ item.size }}
+        </div>
       </div>
-      <div
-        v-if="isShowDownload"
-        class="file__download download"
-        @click="download(item.id)"
-      >
-        <div class="download__icon icon">
-          <span class="icon__download icon-download" />
+      <div class="file__actions actions">
+        <div
+          v-if="isShowClose"
+          class="actions__close icon"
+          @click="deleteFile(item.id)"
+        >
+          <span class="icon__close icon-close_big" />
+        </div>
+        <div
+          v-if="isShowDownload"
+          class="actions__download download"
+          @click="download(item.id)"
+        >
+          <div class="download__icon icon">
+            <span class="icon__download icon-download" />
+          </div>
         </div>
       </div>
     </div>
+    <slot name="add" />
     <div
       v-if="!files.length && isShowEmpty"
       class="files__empty"
@@ -60,11 +67,11 @@ export default {
     },
     isShowClose: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     isShowEmpty: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     isFilesInline: {
       type: Boolean,
@@ -106,9 +113,15 @@ export default {
 .file {
   display: flex;
   flex-direction: row;
+
   align-items: center;
+  align-content: center;
+  justify-content: flex-start;
+
   margin-top: 10px;
   margin-right: 8px;
+  width: 300px;
+  height: 33px;
 
   &_margin-right {
     margin-right: 10px;
@@ -117,26 +130,43 @@ export default {
   &__icon {
     width: 33px;
     height: 33px;
-    margin-right: 8px;
+
+    & > img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__container {
+    display: inline-flex;
+    line-height: 33px;
+    width: calc(100% - 82px);
   }
 
   &__name {
     font-size: 16px;
-    line-height: 145%;
     color: #282F39;
-    margin-right: 8px;
+    margin-left: 8px;
   }
 
   &__size {
     font-size: 13px;
-    line-height: 130%;
     color: #A7AEB9;
+    margin-left: 8px;
   }
 
+  &__actions {
+    display: inline-flex;
+    height: 100%;
+  }
+
+}
+
+.actions {
+  justify-content: flex-end;
   &__close {
-    margin: 3px 0 0 5px;
+    padding-top: 7px;
   }
-
 }
 
 .icon {
@@ -147,21 +177,22 @@ export default {
   }
 
   &__download {
-    color: #0083C7;
     font-size: 21px;
+    color: #0083C7;
   }
 }
 
 .download {
+  width: 33px;
+  height: 33px;
 
   &__icon {
-    width: 33px;
-    height: 33px;
+    width: 100%;
+    height: 100%;
     border-radius: 6px;
     margin-left: 8px;
-    padding-left: 6px;
+    padding-left: 5px;
     padding-top: 5px;
-    vertical-align: middle;
     &:hover {
       background: #F7F8FA;
     }

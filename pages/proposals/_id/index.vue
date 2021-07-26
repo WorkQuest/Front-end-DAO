@@ -49,9 +49,8 @@
                 {{ $t('proposal.filesTitle') }}
               </div>
               <base-files
+                class="files__container"
                 :items="documents"
-                :is-show-download="true"
-                :is-show-close="false"
               />
             </div>
           </div>
@@ -279,7 +278,7 @@ export default {
         {
           id: '2',
           type: 'pdf',
-          name: 'some_document2.pdf',
+          name: 'some_doc2.pdf',
           size: '1.5mb',
           img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
         },
@@ -571,45 +570,6 @@ export default {
     font-size: 18px;
     line-height: 130%;
     color: #1D2127;
-  }
-
-  &__container {
-    font-weight: normal;
-    font-size: 14px;
-    line-height: 130%;
-    color: #000000;
-    margin-top: 10px;
-  }
-
-  &__noFiles {
-    display: flex;
-    margin-top: 10px;
-    line-height: 130%;
-  }
-}
-
-.file {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 10px;
-
-  &__icon {
-    margin-right: 8px;
-  }
-
-  &__name {
-    font-size: 16px;
-    line-height: 145%;
-    color: #282F39;
-    margin-right: 8px;
-  }
-
-  &__size {
-    font-size: 13px;
-    line-height: 130%;
-    color: #A7AEB9;
-    margin-right: 8px;
   }
 }
 

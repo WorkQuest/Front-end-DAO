@@ -12,8 +12,6 @@
         :src="item.img"
         alt=""
         class="image__img"
-        @mouseover="onMouseOver(i)"
-        @mouseleave="onMouseLeave(i)"
       >
       <span
         class="image__icon icon"
@@ -41,23 +39,15 @@ export default {
       images: this.items,
     };
   },
+  computed: {
+    classIcon() {
+      return [
+        { 'icon__download icon-download': this.isShowDownload },
+        { 'icon-close_big': !this.isShowDownload },
+      ];
+    },
+  },
   methods: {
-    onMouseOver(i) {
-      const { toElement, fromElement } = event;
-      if (toElement && toElement.classList.contains('icon')) return;
-      if (fromElement && fromElement.classList.contains('icon')) return;
-      const image = document.getElementById(i);
-      image.childNodes[0].classList.add('image__img_brightness');
-      image.childNodes[2].classList.add('icon_visible');
-    },
-    onMouseLeave(i) {
-      const { toElement, fromElement } = event;
-      if (toElement && toElement.classList.contains('icon')) return;
-      if (fromElement && fromElement.classList.contains('icon')) return;
-      const image = document.getElementById(i);
-      image.childNodes[0].classList.remove('image__img_brightness');
-      image.childNodes[2].classList.remove('icon_visible');
-    },
     onIconClick(id) {
       if (this.isShowDownload) this.downloadImage(id);
       else this.deleteImage(id);
@@ -67,12 +57,6 @@ export default {
     },
     downloadImage(id) {
       console.log(`download Image ${id}`);
-    },
-    classIcon() {
-      return [
-        { 'icon__download icon-download': this.isShowDownload },
-        { 'icon-close_big': !this.isShowDownload },
-      ];
     },
   },
 };
@@ -94,36 +78,33 @@ export default {
   &__img {
     width: 100%;
     height: 100%;
-    &_brightness {
-      filter: brightness(70%);
-    }
-  }
-}
-
-.icon {
-  display: none;
-  cursor: pointer;
-
-  height: 45px;
-  width: 45px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.5);
-
-  font-weight: 800;
-  font-size: 25px;
-
-  padding: 10px 0 0 10px;
-
-  &__download {
-    vertical-align: middle;
   }
 
-  &_visible {
+  &__icon {
+    display: none;
+    cursor: pointer;
+
+    height: 45px;
+    width: 45px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+
+    font-weight: 800;
+    font-size: 25px;
+
+    padding: 10px 0 0 10px;
+  }
+
+  &:hover .icon {
     display: block;
     position: absolute;
     left: 23px;
     bottom: 20px;
     color: #FFFFFF;
+  }
+
+  &:hover .image__img {
+    filter: brightness(70%);
   }
 }
 </style>

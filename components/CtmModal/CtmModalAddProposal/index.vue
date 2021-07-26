@@ -4,7 +4,7 @@
     :title="$t('modals.addProposal')"
   >
     <div class="addProposal__content content">
-      <div class="content__grid content__grid_three-to-one">
+      <div class="content__voting">
         <div class="content__field">
           <base-field
             id="votingTopicInput"
@@ -30,12 +30,9 @@
                   v-if="pickerValue > 0"
                   class="picker__btn"
                   @click="pickerValue -= 1"
-                  @mouseover="isCaretLeftHovered = true"
-                  @mouseleave="isCaretLeftHovered = false"
                 >
                   <span
                     class="icon icon__caret icon-caret_left"
-                    :class="[{'icon__caret_blue': isCaretLeftHovered}]"
                   />
                 </button>
               </div>
@@ -48,12 +45,9 @@
                 <button
                   class="picker__btn"
                   @click="pickerValue += 1"
-                  @mouseover="isCaretRightHovered = true"
-                  @mouseleave="isCaretRightHovered = false"
                 >
                   <span
                     class="icon icon__caret icon-caret_right"
-                    :class="[{'icon__caret_blue': isCaretRightHovered}]"
                   />
                 </button>
               </div>
@@ -61,7 +55,7 @@
           </div>
         </div>
       </div>
-      <div class="content__grid">
+      <div class="content__dates">
         <div class="content__field">
           <base-field
             id="votingStartInput"
@@ -100,30 +94,25 @@
             class="uploader"
             :items="files"
             :is-show-close="true"
-            :is-show-empty="false"
             :is-show-download="false"
-          />
-        </div>
-        <div class="field__uploader uploader">
-          <base-btn
-            mode="outline"
-            class="uploader__btn"
-            @click="callUploader"
           >
-            {{ $t('meta.addFile') }}
-            <template v-slot:right>
-              <span class="icon icon__plus icon-plus_circle_outline" />
+            <template v-slot:add>
+              <base-btn
+                mode="outline"
+                class="uploader__btn"
+              >
+                {{ $t('meta.addFile') }}
+                <template v-slot:right>
+                  <span class="icon icon__plus icon-plus_circle_outline" />
+                </template>
+              </base-btn>
             </template>
-          </base-btn>
-          <uploader
-            ref="uploader"
-            class="uploader_hidden"
-          />
+          </base-files>
         </div>
       </div>
       <div class="field__action action">
         <base-btn
-          :mode="'outline'"
+          mode="outline"
           class="action__cancel"
           @click="hide()"
         >
@@ -138,11 +127,9 @@
 </template>
 
 <script>
-import uploader from '~/components/ui/Uploader';
 
 export default {
   name: 'ModalAddProposal',
-  components: { uploader },
   data() {
     return {
       votingTopicInput: '',
@@ -150,8 +137,6 @@ export default {
       votingStartInput: '',
       votingEndInput: '',
       descriptionInput: '',
-      isCaretLeftHovered: false,
-      isCaretRightHovered: false,
       files0: [],
       files: [
         {
@@ -163,7 +148,7 @@ export default {
         {
           id: '2',
           type: 'pdf',
-          name: 'some_document2.pdf',
+          name: 'some_doc2.pdf',
           size: '1.5mb',
         },
       ],
@@ -172,9 +157,6 @@ export default {
   methods: {
     hide() {
       this.CloseModal();
-    },
-    callUploader() {
-      this.$refs.uploader.$children[0].$el.click();
     },
   },
 };
@@ -191,14 +173,17 @@ export default {
 }
 
 .content {
-  &__grid {
+  &__voting {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    align-items: flex-end;
+    grid-gap: 25px;
+  }
+  &__dates {
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: flex-end;
     grid-gap: 25px;
-    &_three-to-one {
-      grid-template-columns: 3fr 1fr;
-    }
   }
 }
 
@@ -222,9 +207,13 @@ export default {
     margin-left: 7px;
   }
   &__caret {
+    display: inline-block;
+    height: 100%;
+    width: 100%;
     font-size: 25px;
     color: #AAB0B9;
-    &_blue {
+    padding-top: 10px;
+    &:hover {
       color: #0083C7;
     }
   }
@@ -253,7 +242,6 @@ export default {
   &__btn {
     width: 100%;
     height: 100%;
-    padding-top: 5px;
   }
   &__body {
     @include text-simple;
@@ -295,9 +283,6 @@ export default {
     width: 162px !important;
     margin-left: auto;
     margin-top: 15px;
-  }
-  &_hidden {
-    display: none;
   }
 }
 </style>
