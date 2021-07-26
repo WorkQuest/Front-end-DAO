@@ -1,7 +1,6 @@
 <template>
   <div
     class="files"
-    :class="[{'files_inline': isInLine}]"
   >
     <div
       v-for="(item, i) in files"
@@ -26,13 +25,6 @@
       </div>
       <div class="file__actions actions">
         <div
-          v-if="isShowClose"
-          class="actions__close icon"
-          @click="deleteFile(item.id)"
-        >
-          <span class="icon__close icon-close_big" />
-        </div>
-        <div
           v-if="isShowDownload"
           class="actions__download download"
           @click="download(item.id)"
@@ -40,6 +32,13 @@
           <div class="download__icon icon">
             <span class="icon__download icon-download" />
           </div>
+        </div>
+        <div
+          v-else
+          class="actions__close icon"
+          @click="deleteFile(item.id)"
+        >
+          <span class="icon__close icon-close_big" />
         </div>
       </div>
     </div>
@@ -73,24 +72,18 @@ export default {
       type: Boolean,
       default: false,
     },
-    isFilesInline: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
-      isInLine: this.isFilesInline,
       files: this.items,
     };
   },
   methods: {
     deleteFile(id) {
       this.files = this.files.filter((file) => file.id !== id);
-      if (!this.files.length) this.isInLine = false;
     },
     download(id) {
-      console.log('download', id);
+      console.log('download file', id);
     },
   },
 };
@@ -100,9 +93,6 @@ export default {
 
 .files {
   width: 100%;
-  &_inline {
-    display: inline-flex;
-  }
   &__empty {
     height: 33px;
     line-height: 33px;

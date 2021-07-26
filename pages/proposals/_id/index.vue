@@ -48,9 +48,11 @@
               <div class="files__title">
                 {{ $t('proposal.filesTitle') }}
               </div>
-              <base-files
+              <base-uploader
                 class="files__container"
+                type="files"
                 :items="documents"
+                :is-show-empty="true"
               />
             </div>
           </div>
@@ -270,14 +272,43 @@ export default {
       documents: [
         {
           id: '1',
-          type: 'pdf',
+          type: 'doc',
           name: 'some_document1.pdf',
           size: '1.2mb',
           img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        },
-        {
+        }, {
           id: '2',
-          type: 'pdf',
+          type: 'doc',
+          name: 'some_doc2.pdf',
+          size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
+          id: '3',
+          type: 'doc',
+          name: 'some_doc2.pdf',
+          size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
+          id: '4',
+          type: 'img',
+          name: 'some_doc2.pdf',
+          size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
+          id: '5',
+          type: 'img',
+          name: 'some_doc2.pdf',
+          size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
+          id: '6',
+          type: 'img',
+          name: 'some_doc2.pdf',
+          size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
+          id: '7',
+          type: 'img',
           name: 'some_doc2.pdf',
           size: '1.5mb',
           img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',

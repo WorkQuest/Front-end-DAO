@@ -90,13 +90,13 @@
       </div>
       <div class="content__field field">
         <div class="field__documents">
-          <base-files
+          <base-uploader
             class="uploader"
-            :items="files"
-            :is-show-close="true"
+            type="all"
+            :items="documents"
             :is-show-download="false"
           >
-            <template v-slot:add>
+            <template v-slot:actionButton>
               <base-btn
                 mode="outline"
                 class="uploader__btn"
@@ -107,7 +107,7 @@
                 </template>
               </base-btn>
             </template>
-          </base-files>
+          </base-uploader>
         </div>
       </div>
       <div class="field__action action">
@@ -137,19 +137,50 @@ export default {
       votingStartInput: '',
       votingEndInput: '',
       descriptionInput: '',
-      files0: [],
-      files: [
+      documents0: [],
+      documents: [
         {
           id: '1',
-          type: 'pdf',
+          type: 'doc',
           name: 'some_document1.pdf',
           size: '1.2mb',
-        },
-        {
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
           id: '2',
-          type: 'pdf',
+          type: 'doc',
           name: 'some_doc2.pdf',
           size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
+          id: '3',
+          type: 'doc',
+          name: 'some_docum2.pdf',
+          size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
+          id: '4',
+          type: 'img',
+          name: 'some_doc2.pdf',
+          size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
+          id: '5',
+          type: 'img',
+          name: 'some_doc2.pdf',
+          size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
+          id: '6',
+          type: 'img',
+          name: 'some_doc2.pdf',
+          size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
+          id: '7',
+          type: 'img',
+          name: 'some_doc2.pdf',
+          size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
         },
       ],
     };

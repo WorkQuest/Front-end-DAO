@@ -4,73 +4,65 @@
       v-if="type === 'files'"
       class="uploader__files"
     >
-      <files
+      <base-files
         :items="files"
-        :is-show-download="isShowFilesDownload"
+        :is-show-download="isShowDownload"
+        :is-show-empty="isShowEmpty"
       />
+      <slot name="actionButton" />
     </div>
     <div
       v-else-if="type === 'images'"
       class="uploader__images"
     >
-      <images
+      <base-images
         :items="images"
-        :is-show-download="isShowImagesDownload"
+        :is-show-download="isShowDownload"
       />
+      <slot name="actionButton" />
     </div>
     <div
       v-else-if="type === 'all'"
-      class="uploader__all all"
+      class="uploader__all"
     >
-      <files
+      <base-files
         :items="files"
-        :is-files-inline="isFilesInline"
-        :is-show-download="isShowFilesDownload"
+        :is-show-download="isShowDownload"
+        :is-show-empty="isShowEmpty"
       />
-      <images
-        class="all__images"
+      <base-images
         :items="images"
-        :is-show-download="isShowImagesDownload"
+        :is-show-download="isShowDownload"
       />
+      <slot name="actionButton" />
     </div>
   </div>
 </template>
 
 <script>
-import files from '~/components/ui/BaseFiles';
-import images from '~/components/ui/BaseImages';
-
 export default {
-  components: {
-    files,
-    images,
-  },
   props: {
     items: {
-      type: Object,
-      default: () => {},
+      type: Array,
+      default: () => [],
     },
     type: {
       type: String,
       default: '',
     },
-    isShowFilesDownload: {
+    isShowDownload: {
       type: Boolean,
       default: true,
     },
-    isShowImagesDownload: {
+    isShowEmpty: {
       type: Boolean,
-      default: true,
-    },
-    isFilesInline: {
-      type: Boolean,
-      default: true,
+      default: false,
     },
   },
   data() {
     return {
-      files: this.items.files,
-      images: this.items.images,
+      files: this.items.filter((item) => item.type === 'doc'),
+      images: this.items.filter((item) => item.type === 'img'),
     };
   },
 };
@@ -86,7 +78,6 @@ export default {
   &__images {
     display: flex;
     flex-direction: column;
-    margin-top: 10px;
   }
   &__all{
     display: flex;
@@ -94,9 +85,4 @@ export default {
   }
 }
 
-.all {
-  &__images {
-    margin-top: 10px;
-  }
-}
 </style>

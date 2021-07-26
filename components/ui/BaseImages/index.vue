@@ -74,6 +74,7 @@ export default {
   border-radius: 6px;
   margin-right: 20px;
   position: relative;
+  margin-top: 15px;
 
   &__img {
     width: 100%;
