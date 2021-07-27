@@ -188,5 +188,4 @@ export default {
     width: 274px!important;
   }
 }
-input:not(.ctm-field__input){background: #0b76ef}
 </style>
