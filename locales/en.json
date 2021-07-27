@@ -384,6 +384,12 @@
     "saveCardForNextPayment": "Save card for next payment",
     "insureCase": "Insure case",
     "connectWallet": "Connect wallet",
+    "addDiscussion": "Add Discussion",
+    "discussionTopic": "Discussion topic",
+    "addFile": "Add File",
+    "add": "Add",
+    "cancel": "Cancel",
+    "delete": "Delete",
     "howMuchWusdWouldYouLikeToGenerate": "How much WUSD would you like to generate?",
     "addProposal": "Add Proposal",
     "votingTopic": "Voting topic",
@@ -863,5 +869,25 @@
   },
   "errors": {
     "incorrectPass" : "Oops, something went wrong. Check the data and try again."
+  },
+  "discussions": {
+  "title": "Discussions",
+  "btn": "Add new discussion",
+  "seacrhField": "Search discussion",
+  "descriptionTitle": "Description",
+  "read": "Read completely",
+  "infoTitle": "Discussion info",
+  "back": "Back",
+  "add": "Add comment",
+  "show": "Show comments",
+  "input": "Write you response",
+  "commentTitle": "Comments",
+  "files": "Files",
+  "reply": "Reply",
+  "more": "Show more comments",
+  "hide": "Hide comments",
+  "cancel": "Cancel",
+  "responseTitle": "Add your comment",
+  "noFiles": "No files"
   }
  }

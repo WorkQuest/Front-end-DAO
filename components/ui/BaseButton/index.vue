@@ -72,6 +72,10 @@ export default {
         { 'base-btn_grey': mode === 'grey' },
         { 'base-btn_verification': mode === 'ver' },
         { 'base-btn_black': mode === 'black' },
+        { 'base-btn_blue': mode === 'blue' },
+        { 'base-btn_lightBlue': mode === 'lightBlue' },
+        { 'base-btn_lightRed': mode === 'lightRed' },
+
       ];
     },
   },
@@ -167,6 +171,31 @@ export default {
   &_show-messages {
     background-color: transparent;
     color: $blue;
+  }
+  &_blue{
+    background-color: transparent;
+    color: $blue;
+    &:hover {
+      color: #ffffff;
+      background-color: $blue;
+      transition: .3s;
+    }
+  }
+  &_lightBlue{
+    background-color: $white;
+    color: $blue ;
+    border: 0.5px solid  #e6f7ff;
+    &:hover{
+      background-color: #e6f7ff;
+    }
+  }
+  &_lightRed{
+    background-color: $white;
+    color: #DF3333 ;
+    border: 0.5px solid rgba(223, 51, 51, 0.1);;
+    &:hover{
+      background-color: rgba(223, 51, 51, 0.1);;
+    }
   }
   &_messages {
     background-color: $white;

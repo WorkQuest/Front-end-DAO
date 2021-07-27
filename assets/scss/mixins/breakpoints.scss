@@ -35,6 +35,12 @@
   }
 }
 
+@mixin _1024 {
+  @media(max-width: 1024px) {
+    padding: 20px
+    }
+}
+
 @mixin _991 {
   @media (max-width: 991px) {
     @content;

@@ -43,7 +43,7 @@
         <div class="role__content">
           <div class="role__top">
             <div class="role__text role__text_title role__text_light">
-              {{ $t('role.worker') }}
+              {{ $t('role.worker' ) }}
             </div>
             <div class="role__text role__text_desc role__text_light">
               {{ $t('role.workerWant') }}
