@@ -448,7 +448,7 @@
     "addCardProposal": "Add your own card for easy withdrawal",
     "addCard": "Add card",
     "table": {
-      "trx": "Transactions",
+      "trx": "Transaction History",
       "txHash": "Tx hash",
       "status": "Status",
       "block": "Block",

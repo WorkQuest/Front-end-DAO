@@ -6,14 +6,17 @@
           <span class="wallet__title">{{ $t('wallet.wallet') }}</span>
           <div class="wallet__address">
             <span class="user__wallet">{{ userInfo.userWallet }}</span>
-            <button
+            <base-btn
               v-clipboard:copy="userInfo.userWallet"
               v-clipboard:success="ClipboardSuccessHandler"
               v-clipboard:error="ClipboardErrorHandler"
-              type="button"
+              mode="back"
+              :style="`width: 24px; height: 24px;`"
             >
-              <span class="icon-copy wallet__icon" />
-            </button>
+              <template v-slot:default>
+                <span class="icon-copy wallet__icon" />
+              </template>
+            </base-btn>
           </div>
         </div>
         <div
@@ -23,7 +26,13 @@
           <div class="wallet__balance balance">
             <div class="balance__top">
               <span class="balance__title">{{ $t('wallet.balance') }}</span>
-              <span class="balance__currency">{{ `${userInfo.userBalance} ${userInfo.currency}` }}</span>
+              <span class="balance__currency">
+                {{
+                  userInfo.userBalance.length > 3 ?
+                    `${convertToCurrency(userInfo.userBalance)} ${userInfo.currency}` :
+                    `${userInfo.userBalance} ${userInfo.currency}`
+                }}
+              </span>
               <span class="balance__usd">{{ `$ ${userInfo.usd}` }}</span>
             </div>
             <div class="balance__bottom">
@@ -45,7 +54,7 @@
                 class="balance__btn"
                 @click=" showTransferModal()"
               >
-                {{ $t('wallet.transfer') }}
+                {{ $t('wallet.send') }}
               </base-btn>
             </div>
           </div>
@@ -67,14 +76,12 @@
             </base-btn>
           </div>
         </div>
-        <div class="wallet__table">
-          <base-table
-            class="wallet__table"
-            :title="$t('wallet.table.trx')"
-            :items="transactionsData"
-            :fields="walletTableFields"
-          />
-        </div>
+        <base-table
+          class="wallet__table"
+          :title="$t('wallet.table.trx')"
+          :items="transactionsData"
+          :fields="walletTableFields"
+        />
       </div>
     </div>
   </div>
@@ -90,25 +97,88 @@ export default {
       cardClosed: false,
       walletTableFields: [
         {
-          key: 'tx_hash', label: this.$t('wallet.table.txHash'), sortable: false,
+          key: 'tx_hash', label: this.$t('wallet.table.txHash'), sortable: true,
         },
         {
-          key: 'status', label: this.$t('wallet.table.status'), sortable: false,
+          key: 'status', label: this.$t('wallet.table.status'), sortable: true,
         },
         {
-          key: 'block', label: this.$t('wallet.table.block'), sortable: false,
+          key: 'block', label: this.$t('wallet.table.block'), sortable: true,
         },
         {
-          key: 'timestamp', label: this.$t('wallet.table.timestamp'), sortable: false,
+          key: 'timestamp', label: this.$t('wallet.table.timestamp'), sortable: true,
         },
         {
-          key: 'transferred', label: this.$t('wallet.table.transferred'), sortable: false,
+          key: 'transferred', label: this.$t('wallet.table.transferred'), sortable: true,
         },
         {
-          key: 'value', label: this.$t('wallet.table.value'), sortable: false,
+          key: 'value', label: this.$t('wallet.table.value'), sortable: true,
         },
         {
-          key: 'transaction_fee', label: this.$t('wallet.table.trxFee'), sortable: false,
+          key: 'transaction_fee', label: this.$t('wallet.table.trxFee'), sortable: true,
+        },
+      ],
+      userInfo: {
+        userWallet: '123t2323t23t3t23t23t3g45h45234',
+        cardClosed: false,
+        userBalance: '1234567',
+        currency: 'WUSD',
+        usd: '124.12',
+      },
+      transactionsData: [
+        {
+          tx_hash: 'sd535sd66sdsd',
+          status: 'Success',
+          block: '5267575474',
+          timestamp: 'Feb 1, 2021, 21:34',
+          transferred: 'To 2381hkjk123',
+          value: '120 WUSD',
+          transaction_fee: '5 WUSD',
+        },
+        {
+          tx_hash: 'sd535sd66sdsd',
+          status: 'Success',
+          block: '5267575474',
+          timestamp: 'Feb 1, 2021, 21:34',
+          transferred: 'To 2381hkjk123',
+          value: '120 WUSD',
+          transaction_fee: '5 WUSD',
+        },
+        {
+          tx_hash: 'sd535sd66sdsd',
+          status: 'Success',
+          block: '5267575474',
+          timestamp: 'Feb 1, 2021, 21:34',
+          transferred: 'To 2381hkjk123',
+          value: '120 WUSD',
+          transaction_fee: '5 WUSD',
+        },
+        {
+          tx_hash: 'sd535sd66sdsd',
+          status: 'Success',
+          block: '5267575474',
+          timestamp: 'Feb 1, 2021, 21:34',
+          transferred: 'To 2381hkjk123',
+          value: '120 WUSD',
+          transaction_fee: '5 WUSD',
+        },
+        {
+          tx_hash: 'sd535sd66sdsd',
+          status: 'Success',
+          block: '5267575474',
+          timestamp: 'Feb 1, 2021, 21:34',
+          transferred: 'To 2381hkjk123',
+          value: '120 WUSD',
+          transaction_fee: '5 WUSD',
+        },
+        {
+          tx_hash: 'sd535sd66sdsd',
+          status: 'Success',
+          block: '5267575474',
+          timestamp: 'Feb 1, 2021, 21:34',
+          transferred: 'To 2381hkjk123',
+          value: '120 WUSD',
+          transaction_fee: '5 WUSD',
         },
       ],
     };
@@ -118,9 +188,9 @@ export default {
       tags: 'ui/getTags',
       userRole: 'user/getUserRole',
       userData: 'user/getUserData',
-      userInfo: 'data/getUserInfo',
+      // userInfo: 'data/getUserInfo',
       transactions: 'data/getTransactions',
-      transactionsData: 'data/getTransactionsData',
+      // transactionsData: 'data/getTransactionsData',
     }),
   },
   async mounted() {
@@ -151,17 +221,24 @@ export default {
         key: modals.addCard,
       });
     },
+    convertToCurrency(value) {
+      let convertValue = value;
+      let valueAfterDote = '';
+      if (value.indexOf('.') !== -1) {
+        valueAfterDote = value.slice(value.indexOf('.'));
+        convertValue = value.slice(0, value.indexOf('.'));
+      }
+      const reverseValue = convertValue.split('').reverse().join('');
+      const reverseValueArr = reverseValue.match(/.{1,3}/g);
+      const valueArr = reverseValueArr.map((x) => x.split('').reverse().join(''));
+      convertValue = valueArr.reverse().join(' ');
+      return `${convertValue}${valueAfterDote}`;
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-
-.table {
-  &__container {
-    width: 100%;
-  }
-}
 
 .status {
   &__title {
@@ -190,12 +267,6 @@ export default {
     display: flex;
     justify-content: center;
   }
-  &__card {
-    box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
-  }
-  &__balance {
-    box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
-  }
   &__body {
     max-width: 1180px;
     width: calc(100vw - 40px);
@@ -212,10 +283,11 @@ export default {
     align-items: center;
     font-weight: 500;
     font-size: 16px;
+    color: #1D2127;
+    line-height: 21px;
   }
 
   &__icon {
-    margin-left: 22px;
     font-size: 24px;
     &::before {
       color: $blue;
@@ -237,16 +309,11 @@ export default {
       grid-template-columns: 1fr;
     }
   }
-  &__table {
-    margin: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
-  }
 }
 
 .balance {
   display: flex;
-  background: $white;
+  background: #FFFFFF;
   justify-content: space-between;
   flex-direction: column;
   border-radius: 6px;
@@ -265,9 +332,10 @@ export default {
     color: $blue;
   }
   &__title {
-    font-weight: 400;
     font-size: 16px;
-    color: $black800;
+    color: #4C5767;
+    line-height: 21px;
+    margin-bottom: 10px;
   }
 
   &__top {
@@ -289,15 +357,17 @@ export default {
 
   &__currency {
     @include text-simple;
-    color: $black800;
+    color: #1D2127;
     font-weight: 600;
     font-size: 35px;
-    line-height: 130%;
+    line-height: 45px;
   }
 
   &__usd {
     @include text-simple;
-    color: $blue;
+    color: #0083C7;
+    margin-top: 10px;
+    font-weight: 500;
   }
 }
 
@@ -310,19 +380,19 @@ export default {
   grid-gap: 10px;
   grid-template-columns: 230px 1fr;
   @include text-simple;
-  background: $blue url('/img/app/card.svg') no-repeat right center;
+  background: #0083C7 url('/img/app/card.svg') no-repeat right center;
   background-size: cover;
-  color: $white;
+  color: #FFFFFF;
   position: relative;
   overflow: hidden;
   border: none !important;
 
   &__title {
     @include text-simple;
-    color: $white;
+    color: #FFFFFF;
     font-weight: 500;
     font-size: 20px;
-    line-height: 130%;
+    line-height: 26px;
   }
 
   &__btn {
