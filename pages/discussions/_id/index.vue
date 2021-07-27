@@ -533,7 +533,7 @@ export default {
   }
   &__btn {
     align-items: center;
-    width: 130px;
+    width: 140px;
     height: 33px;
     border: none;
     padding: 0;

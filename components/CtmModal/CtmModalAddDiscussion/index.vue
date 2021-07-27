@@ -105,7 +105,6 @@ export default {
       this.CloseModal();
     },
     consoleValue() {
-      console.log(this.title, this.discussion);
       this.title = '';
       this.discussion = '';
     },
@@ -189,5 +188,5 @@ export default {
     width: 274px!important;
   }
 }
-
+input:not(.ctm-field__input){background: #0b76ef}
 </style>
