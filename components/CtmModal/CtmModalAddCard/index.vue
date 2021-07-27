@@ -96,7 +96,7 @@ export default {
 <style lang="scss" scoped>
 .ctm-modal {
   &__content-field {
-    margin: 15px 0 0 0;
+    //margin: 15px 0 0 0;
   }
 }
 

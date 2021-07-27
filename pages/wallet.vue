@@ -1,88 +1,103 @@
 <template>
   <div class="wallet">
-    <div class="wallet__container">
-      <div class="wallet__body">
-        <div class="wallet__nav">
-          <span class="wallet__title">{{ $t('wallet.wallet') }}</span>
-          <div class="wallet__address">
-            <span class="user__wallet">{{ userInfo.userWallet }}</span>
+    <div class="wallet__body">
+      <div class="wallet__header">
+        <span class="wallet__title">{{ $t('wallet.wallet') }}</span>
+        <div class="wallet__address address">
+          <span class="address__user">{{ userInfo.userWallet }}</span>
+          <base-btn
+            v-clipboard:copy="userInfo.userWallet"
+            v-clipboard:success="ClipboardSuccessHandler"
+            v-clipboard:error="ClipboardErrorHandler"
+            mode="back"
+            class="address__icon icon"
+          >
+            <template v-slot:default>
+              <span class="icon__copy icon-copy" />
+            </template>
+          </base-btn>
+        </div>
+      </div>
+      <div
+        class="wallet__info"
+        :class="{'wallet__info_full' : userInfo.cardClosed }"
+      >
+        <div
+          class="wallet__balance balance"
+          :class="{'wallet__balance_full': userInfo.cardClosed}"
+        >
+          <div class="balance__top">
+            <span class="balance__title">{{ $t('wallet.balance') }}</span>
+            <span class="balance__currency">
+              {{
+                userInfo.userBalance.length > 3 ?
+                  `${convertToCurrency(userInfo.userBalance)} ${userInfo.currency}` :
+                  `${userInfo.userBalance} ${userInfo.currency}`
+              }}
+            </span>
+            <span class="balance__usd">{{ `$ ${userInfo.usd}` }}</span>
+          </div>
+          <div
+            class="balance__bottom"
+            :class="{'balance__bottom_row': userInfo.cardClosed}"
+          >
             <base-btn
-              v-clipboard:copy="userInfo.userWallet"
-              v-clipboard:success="ClipboardSuccessHandler"
-              v-clipboard:error="ClipboardErrorHandler"
-              mode="back"
-              :style="`width: 24px; height: 24px;`"
+              mode="outline"
+              class="balance__btn"
+              @click="showDepositModal()"
             >
               <template v-slot:default>
-                <span class="icon-copy wallet__icon" />
+                {{ $t('wallet.deposit') }}
+              </template>
+            </base-btn>
+            <base-btn
+              :mode="userInfo.cardClosed ? '' : 'outline'"
+              class="balance__btn"
+              @click="showWithdrawModal()"
+            >
+              <template v-slot:default>
+                {{ $t('wallet.withdraw') }}
+              </template>
+            </base-btn>
+            <base-btn
+              v-if="!userInfo.cardClosed"
+              class="balance__btn"
+              @click=" showTransferModal()"
+            >
+              <template v-slot:default>
+                {{ $t('wallet.send') }}
               </template>
             </base-btn>
           </div>
         </div>
         <div
-          class="wallet__info"
-          :class="{'wallet__info_full' : userInfo.cardClosed }"
+          v-if="!userInfo.cardClosed"
+          class="wallet__card card"
         >
-          <div class="wallet__balance balance">
-            <div class="balance__top">
-              <span class="balance__title">{{ $t('wallet.balance') }}</span>
-              <span class="balance__currency">
-                {{
-                  userInfo.userBalance.length > 3 ?
-                    `${convertToCurrency(userInfo.userBalance)} ${userInfo.currency}` :
-                    `${userInfo.userBalance} ${userInfo.currency}`
-                }}
-              </span>
-              <span class="balance__usd">{{ `$ ${userInfo.usd}` }}</span>
-            </div>
-            <div class="balance__bottom">
-              <base-btn
-                mode="outline"
-                class="balance__btn"
-                @click="showDepositModal()"
-              >
-                {{ $t('wallet.deposit') }}
-              </base-btn>
-              <base-btn
-                mode="outline"
-                class="balance__btn"
-                @click="showWithdrawModal()"
-              >
-                {{ $t('wallet.withdraw') }}
-              </base-btn>
-              <base-btn
-                class="balance__btn"
-                @click=" showTransferModal()"
-              >
-                {{ $t('wallet.send') }}
-              </base-btn>
-            </div>
-          </div>
-          <div
-            v-if="!cardClosed"
-            class="wallet__card card"
-          >
-            <span class="card__title">{{ $t('wallet.addCardProposal') }}</span>
+          <span class="card__title">{{ $t('wallet.addCardProposal') }}</span>
+          <div class="card__icon icon">
             <span
-              class="icon-close_big card__icon"
+              class="icon__close icon-close_big"
               @click="closeCard()"
             />
-            <base-btn
-              class="card__btn"
-              mode="outline"
-              @click="showAddCardModal()"
-            >
-              {{ $t('wallet.addCard') }}
-            </base-btn>
           </div>
+          <base-btn
+            class="card__btn"
+            mode="outline"
+            @click="showAddCardModal()"
+          >
+            <template v-slot:default>
+              {{ $t('wallet.addCard') }}
+            </template>
+          </base-btn>
         </div>
-        <base-table
-          class="wallet__table"
-          :title="$t('wallet.table.trx')"
-          :items="transactionsData"
-          :fields="walletTableFields"
-        />
       </div>
+      <base-table
+        class="wallet__table"
+        :title="$t('wallet.table.trx')"
+        :items="transactionsData"
+        :fields="walletTableFields"
+      />
     </div>
   </div>
 </template>
@@ -94,7 +109,6 @@ import modals from '~/store/modals/modals';
 export default {
   data() {
     return {
-      cardClosed: false,
       walletTableFields: [
         {
           key: 'tx_hash', label: this.$t('wallet.table.txHash'), sortable: true,
@@ -118,13 +132,6 @@ export default {
           key: 'transaction_fee', label: this.$t('wallet.table.trxFee'), sortable: true,
         },
       ],
-      userInfo: {
-        userWallet: '123t2323t23t3t23t23t3g45h45234',
-        cardClosed: false,
-        userBalance: '1234567',
-        currency: 'WUSD',
-        usd: '124.12',
-      },
       transactionsData: [
         {
           tx_hash: 'sd535sd66sdsd',
@@ -181,6 +188,16 @@ export default {
           transaction_fee: '5 WUSD',
         },
       ],
+      userInfo: {
+        userWallet: '123t2323t23t3t23t23t3g45h45234',
+        cardClosed: false,
+        userBalance: '1234567',
+        currency: 'WUSD',
+        usd: '124.12',
+        userCards: [
+          '1234 1234 1234 1234',
+        ],
+      },
     };
   },
   computed: {
@@ -199,7 +216,7 @@ export default {
   },
   methods: {
     closeCard() {
-      this.cardClosed = true;
+      this.userInfo.cardClosed = true;
     },
     showTransferModal() {
       this.ShowModal({
@@ -214,6 +231,8 @@ export default {
     showWithdrawModal() {
       this.ShowModal({
         key: modals.withdraw,
+        isCardClosed: this.userInfo.cardClosed,
+        userCards: this.userInfo.userCards,
       });
     },
     showAddCardModal() {
@@ -240,146 +259,143 @@ export default {
 
 <style lang="scss" scoped>
 
-.status {
-  &__title {
-    font-weight: 400;
-    font-size: 16px;
-    color: $black800;
-  }
-  &__date {
-    font-weight: 400;
-    font-size: 14px;
-    color: $black300;
-  }
-}
-
-.btn {
-  &__container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    margin: 16px 0 0 0;
-    grid-gap: 20px;
-  }
-}
-
 .wallet {
-  &__container {
-    display: flex;
-    justify-content: center;
-  }
+  @include main;
+  @include text-simple;
+  color: #1D2127;
+
   &__body {
     max-width: 1180px;
     width: calc(100vw - 40px);
-  }
-  &__nav {
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-between;
-    font-size: 16px;
-  }
-  &__address {
-    @include text-simple;
-    display: flex;
-    align-items: center;
-    font-weight: 500;
-    font-size: 16px;
-    color: #1D2127;
-    line-height: 21px;
+    height: 100%;
   }
 
-  &__icon {
-    font-size: 24px;
-    &::before {
-      color: $blue;
-    }
+  &__header {
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 20px;
+
+    font-size: 16px;
   }
 
   &__title {
-    @include text-simple;
-    font-size: 25px;
     font-weight: 500;
+    font-size: 25px;
+    line-height: 32px;
+  }
+
+  &__address {
+    display: flex;
+    align-items: center;
+
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 21px;
   }
 
   &__info {
-    margin-top: 20px;
     display: grid;
     grid-template-columns: 1fr 479px;
     grid-gap: 20px;
+
+    margin-top: 20px;
     &_full {
       grid-template-columns: 1fr;
     }
   }
+  &__balance {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    background: #FFFFFF;
+    border-radius: 6px;
+
+    padding: 20px 20px 0 20px;
+    margin: 0 0 20px 0;
+
+    &_full {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      justify-content: space-between;
+      padding: 20px;
+    }
+  }
+}
+
+.address {
+  &__user {
+    margin-right: 20px;
+  }
+  &__icon {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .balance {
-  display: flex;
-  background: #FFFFFF;
-  justify-content: space-between;
-  flex-direction: column;
-  border-radius: 6px;
-  width: 100%;
-  padding: 20px 20px 0 20px;
-  margin: 0 0 20px 0;
-
-  &__dollar {
-    font-weight: 400;
-    font-size: 14px;
-    color: $black300;
-  }
-  &__number {
-    font-weight: 700;
-    font-size: 25px;
-    color: $blue;
-  }
-  &__title {
-    font-size: 16px;
-    color: #4C5767;
-    line-height: 21px;
-    margin-bottom: 10px;
-  }
-
   &__top {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
 
-  &__bottom {
-    display: flex;
-    grid-gap: 20px;
-    padding: 20px 0 20px 0;
-  }
-
   &__title {
-    @include text-simple;
     color: #4C5767;
+    font-size: 16px;
+    line-height: 21px;
+
+    margin-bottom: 10px;
   }
 
   &__currency {
-    @include text-simple;
     color: #1D2127;
+
     font-weight: 600;
     font-size: 35px;
     line-height: 45px;
   }
 
   &__usd {
-    @include text-simple;
     color: #0083C7;
-    margin-top: 10px;
     font-weight: 500;
+    font-size: 16px;
+    line-height: 21px;
+
+    margin-top: 10px;
   }
+
+  &__bottom {
+    display: flex;
+    grid-gap: 20px;
+
+    padding: 20px 0;
+    &_row {
+      flex-direction: column;
+
+      width: 220px;
+
+      margin-left: auto;
+      padding: 0;
+    }
+  }
+
 }
 
 .card {
-  margin: 0 0 20px 0;
   width: 100%;
-  padding: 20px;
+
   display: grid;
   grid-template-rows: auto 43px;
   grid-gap: 10px;
   grid-template-columns: 230px 1fr;
-  @include text-simple;
+
+  padding: 20px;
+  margin-bottom: 20px;
+
   background: #0083C7 url('/img/app/card.svg') no-repeat right center;
   background-size: cover;
   color: #FFFFFF;
@@ -388,39 +404,47 @@ export default {
   border: none !important;
 
   &__title {
-    @include text-simple;
-    color: #FFFFFF;
     font-weight: 500;
     font-size: 20px;
     line-height: 26px;
+  }
+
+  &__icon {
+    display: flex;
+    z-index: 2;
+
+    width: 20px;
+    height: 20px;
+
+    margin-left: auto;
   }
 
   &__btn {
     grid-column-start: 2;
     z-index: 2;
   }
+}
 
-  &__img {
-    position: absolute;
-    left: 144px;
-    top: -43px;
-    width: 355px;
-    height: 250px;
-    z-index: 1;
-    object-fit: cover;
+.icon {
+  cursor: pointer;
+  &__close {
+    font-size: 20px;
+    color: #FFFFFF;
   }
-
-  &__icon {
-    display: flex;
-    justify-content: flex-end;
-    z-index: 2;
-    &:before {
-      cursor: pointer;
-      font-size: 20px;
-      color: $white;
-    }
+  &__copy {
+    font-size: 24px;
+    color: #0083C7;
   }
 }
+
+//.btn {
+//  &__container {
+//    display: grid;
+//    grid-template-columns: repeat(2, 1fr);
+//    margin: 16px 0 0 0;
+//    grid-gap: 20px;
+//  }
+//}
 
 @include _1199 {
   .wallet {
