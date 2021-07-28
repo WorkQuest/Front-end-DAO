@@ -1,72 +1,86 @@
 <template>
   <ctm-modal-box
     class="withdrawal"
-    :title="$t('modals.withdraw')"
+    :title="$t('modals.withdrawal')"
   >
-    <div class="ctm-modal__content">
-      <div class="grid__3col">
-        <div class="ctm-modal__content-field">
-          <label for="amount_input">{{ $t('modals.amount') }}</label>
+    <div class="withdrawal__content content">
+      <div class="content__amount">
+        <div class="content__field">
           <base-field
-            id="amount_input"
-            :is-hide-error="true"
+            id="amountInput"
             :placeholder="'0 WDX'"
+            :label="$t('modals.amount')"
           />
         </div>
-        <div class="ctm-modal__equal">
+        <div class="content__equal">
           =
         </div>
-        <div class="ctm-modal__content-field">
+        <div class="content__field">
           <base-field
-            :is-hide-error="true"
             mode="white"
             :placeholder="'$ 0'"
           />
         </div>
       </div>
-      <div class="ctm-modal__content-field">
-        <label for="cardNumber_input">{{ $t('modals.numberOfCard') }}</label>
-        <base-field
-          id="cardNumber_input"
-          v-model="cardNumber_input"
-          :placeholder="'1234 1234 1234 1234'"
-        />
-      </div>
-      <div class="ctm-modal__content-field_couple">
-        <div>
-          <label for="date_input">{{ $t('modals.date') }}</label>
-          <base-field
-            id="date_input"
-            v-model="date_input"
-            :placeholder="'02/24'"
+      <div v-if="options.isCardClosed">
+        <div class="content__field">
+          <base-dd
+            v-model="ddValue"
+            type="gray"
+            :items="options.userCards"
           />
         </div>
-        <div>
-          <label for="cvv_input">{{ $t('modals.cvv') }}</label>
-          <base-field
-            id="cvv_input"
-            v-model="cvv_input"
-            :placeholder="'242'"
-          />
+        <div class="content__field field">
+          <div
+            class="field__add-card"
+            @click="showAddCardModal"
+          >
+            <span>{{ $t('modals.addAnotherCard') }}</span>
+          </div>
         </div>
       </div>
-      <div class="checkbox">
+      <div v-else>
+        <div class="content__field">
+          <base-field
+            id="cardNumberInput"
+            v-model="cardNumberInput"
+            :placeholder="'1234 1234 1234 1234'"
+            :label="$t('modals.numberOfCard')"
+          />
+        </div>
+        <div class="content__field field">
+          <div class="field__info">
+            <base-field
+              id="dateInput"
+              v-model="dateInput"
+              :placeholder="'02/24'"
+              :label="$t('modals.date')"
+            />
+            <base-field
+              id="cvvInput"
+              v-model="cvvInput"
+              :placeholder="'242'"
+              :label="$t('modals.cvv')"
+            />
+          </div>
+        </div>
         <base-checkbox
           v-model="isShowMap"
           name="map"
           :label="$t('modals.saveCardForNextPayment')"
         />
       </div>
-      <div class="ctm-modal__content-btns">
-        <div class="btn-group">
+      <div class="content__field field">
+        <div class="field__actions actions">
           <base-btn
-            class="btn"
+            mode="outline"
+            class="actions__cancel"
             @click="hide()"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
           <base-btn
-            class="btn_bl"
+            class="actions__submit"
             @click="showTransactionSendModal()"
           >
             {{ $t('meta.submit') }}
@@ -85,9 +99,12 @@ export default {
   name: 'ModalWithdraw',
   data() {
     return {
-      date_input: '',
-      balance_input: '',
-      cardNumber_input: '',
+      cvvInput: '',
+      dateInput: '',
+      balanceInput: '',
+      cardNumberInput: '',
+      isShowMap: false,
+      ddValue: 0,
     };
   },
   computed: {
@@ -104,6 +121,11 @@ export default {
         key: modals.transactionSend,
       });
     },
+    showAddCardModal() {
+      this.ShowModal({
+        key: modals.addCard,
+      });
+    },
   },
 };
 </script>
@@ -112,129 +134,49 @@ export default {
 
 .withdrawal {
   max-width: 615px !important;
-}
-
-.ctm-modal {
-  @include modalKit;
-
-  &__equal {
-    margin: 0 0 12px 12px;
-  }
-
-  .grid {
-    &__3col {
-      display: grid;
-      grid-template-columns: 47% 6% 47%;
-      justify-content: space-between;
-      align-items: flex-end;
-    }
-  }
-
-  .addLiquidity {
-    max-width: 945px !important;
-  }
-
-  &__content-field {
-    margin: 15px 0 0 0;
-
-    &_couple {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-  }
-
-  &__gray-zone {
-    background-color: #F7F8FA;
-    border-radius: 5px;
-    margin-top: 15px;
-    padding: 0 20px 20px 20px;
-  }
-
-  &__grid-cont {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-
-  &__content-btns {
-    .btn-group{
-      display: grid;
-      grid-template-columns: repeat(2, calc(50% - 10px));
-      grid-gap: 20px;
-      gap: 20px;
-      margin-top: 25px;
-
-      .btn {
-        box-sizing: border-box;
-        font-weight: 400;
-        font-size: 16px;
-        color: #0083C7;
-        border: 1px solid #0083C71A;
-        border-radius: 6px;
-        transition: .3s;
-        background-color: #fff;
-
-        &:hover {
-          background-color: #0083C71A;
-          border: 0px;
-        }
-
-        &_bl {
-          @extend .btn;
-          background-color: #0083C7;
-          border: unset;
-          color: #fff;
-
-          &:hover {
-            background-color: #103d7c;
-          }
-        }
-      }
-    }
-  }
-
-  &__label {
-    margin-bottom: 5px;
-  }
-
   &__content {
-    padding-top: 0 !important;
-  }
-
-  &__title-head {
-    font-size: 16px;
-    font-weight: 400;
-    margin-top: 20px;
-  }
-
-  &__subtitle {
-    color: #7C838D;
-    font-weight: 400;
-    font-size: 16px;
-
-    &_small {
-      color: #7C838D;
-      font-weight: 500;
-      font-size: 14px;
-    }
+    padding: 0 28px 30px;
+    margin-top: 25px;
   }
 }
 
-.input {
-  &_grey {
-    border-radius: 6px;
-    padding: 11px 20px 11px 15px;
-    height: 46px;
+.content {
+  &__amount {
+    display: grid;
+    grid-template-columns: 47% 6% 47%;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  &__equal {
+    margin: 0 0 35px 12px;
+  }
+}
+
+.field {
+  &__info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  &__actions {
+    display: grid;
+    grid-template-columns: repeat(2, calc(50% - 10px));
+    grid-gap: 20px;
+    margin-top: 25px;
+  }
+  &__add-card {
+    display: inline-flex;
+    justify-content: flex-end;
+    cursor: pointer;
+
     width: 100%;
-    border: 0;
-    background-color: $black0;
-    resize: none;
-    margin-top: 10px;
+    line-height: 21px;
 
-    &::placeholder {
-      color: $black200;
-    }
+    margin-top: 15px;
+
+    color: #0083C7;
+    text-decoration: underline;
   }
 }
+
 </style>

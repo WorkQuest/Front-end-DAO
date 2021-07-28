@@ -1,81 +1,89 @@
 <template>
   <div class="wallet">
-    <div class="wallet__container">
-      <div class="wallet__body">
-        <div class="wallet__nav">
-          <span class="wallet__title">{{ $t('wallet.wallet') }}</span>
-          <div class="wallet__address">
-            <span class="user__wallet">{{ userInfo.userWallet }}</span>
-            <button
-              v-clipboard:copy="userInfo.userWallet"
-              v-clipboard:success="ClipboardSuccessHandler"
-              v-clipboard:error="ClipboardErrorHandler"
-              type="button"
-            >
-              <span class="icon-copy wallet__icon" />
-            </button>
-          </div>
+    <div class="wallet__body">
+      <div class="wallet__header">
+        <span class="wallet__title">{{ $t('wallet.wallet') }}</span>
+        <div class="wallet__address address">
+          <span class="address__user">{{ userInfo.userWallet }}</span>
+          <base-btn
+            v-clipboard:copy="userInfo.userWallet"
+            v-clipboard:success="ClipboardSuccessHandler"
+            v-clipboard:error="ClipboardErrorHandler"
+            mode="back"
+            class="address__icon icon"
+          >
+            <span class="icon__copy icon-copy" />
+          </base-btn>
         </div>
+      </div>
+      <div
+        class="wallet__info"
+        :class="{'wallet__info_full' : userInfo.cardClosed }"
+      >
         <div
-          class="wallet__info"
-          :class="{'wallet__info_full' : userInfo.cardClosed }"
+          class="wallet__balance balance"
+          :class="{'wallet__balance_full': userInfo.cardClosed}"
         >
-          <div class="wallet__balance balance">
-            <div class="balance__top">
-              <span class="balance__title">{{ $t('wallet.balance') }}</span>
-              <span class="balance__currency">{{ `${userInfo.userBalance} ${userInfo.currency}` }}</span>
-              <span class="balance__usd">{{ `$ ${userInfo.usd}` }}</span>
-            </div>
-            <div class="balance__bottom">
-              <base-btn
-                mode="outline"
-                class="balance__btn"
-                @click="showDepositModal()"
-              >
-                {{ $t('wallet.deposit') }}
-              </base-btn>
-              <base-btn
-                mode="outline"
-                class="balance__btn"
-                @click="showWithdrawModal()"
-              >
-                {{ $t('wallet.withdraw') }}
-              </base-btn>
-              <base-btn
-                class="balance__btn"
-                @click=" showTransferModal()"
-              >
-                {{ $t('wallet.transfer') }}
-              </base-btn>
-            </div>
+          <div class="balance__top">
+            <span class="balance__title">{{ $t('wallet.balance') }}</span>
+            <span class="balance__currency">
+              {{ `${convertToCurrency(userInfo.userBalance)} ${userInfo.currency}` }}
+            </span>
+            <span class="balance__usd">{{ `$ ${userInfo.usd}` }}</span>
           </div>
           <div
-            v-if="!cardClosed"
-            class="wallet__card card"
+            class="balance__bottom"
+            :class="{'balance__bottom_row': userInfo.cardClosed}"
           >
-            <span class="card__title">{{ $t('wallet.addCardProposal') }}</span>
-            <span
-              class="icon-close_big card__icon"
-              @click="closeCard()"
-            />
             <base-btn
-              class="card__btn"
               mode="outline"
-              @click="showAddCardModal()"
+              class="balance__btn"
+              @click="showDepositModal()"
             >
-              {{ $t('wallet.addCard') }}
+              {{ $t('wallet.deposit') }}
+            </base-btn>
+            <base-btn
+              :mode="userInfo.cardClosed ? '' : 'outline'"
+              class="balance__btn"
+              @click="showWithdrawModal()"
+            >
+              {{ $t('wallet.withdraw') }}
+            </base-btn>
+            <base-btn
+              v-if="!userInfo.cardClosed"
+              class="balance__btn"
+              @click=" showTransferModal()"
+            >
+              {{ $t('wallet.send') }}
             </base-btn>
           </div>
         </div>
-        <div class="wallet__table">
-          <base-table
-            class="wallet__table"
-            :title="$t('wallet.table.trx')"
-            :items="transactionsData"
-            :fields="walletTableFields"
-          />
+        <div
+          v-if="!userInfo.cardClosed"
+          class="wallet__card card"
+        >
+          <span class="card__title">{{ $t('wallet.addCardProposal') }}</span>
+          <div class="card__icon icon">
+            <span
+              class="icon__close icon-close_big"
+              @click="closeCard()"
+            />
+          </div>
+          <base-btn
+            class="card__btn"
+            mode="outline"
+            @click="showAddCardModal()"
+          >
+            {{ $t('wallet.addCard') }}
+          </base-btn>
         </div>
       </div>
+      <base-table
+        class="wallet__table"
+        :title="$t('wallet.table.trx')"
+        :items="transactionsData"
+        :fields="walletTableFields"
+      />
     </div>
   </div>
 </template>
@@ -87,30 +95,95 @@ import modals from '~/store/modals/modals';
 export default {
   data() {
     return {
-      cardClosed: false,
       walletTableFields: [
         {
-          key: 'tx_hash', label: this.$t('wallet.table.txHash'), sortable: false,
+          key: 'tx_hash', label: this.$t('wallet.table.txHash'), sortable: true,
         },
         {
-          key: 'status', label: this.$t('wallet.table.status'), sortable: false,
+          key: 'status', label: this.$t('wallet.table.status'), sortable: true,
         },
         {
-          key: 'block', label: this.$t('wallet.table.block'), sortable: false,
+          key: 'block', label: this.$t('wallet.table.block'), sortable: true,
         },
         {
-          key: 'timestamp', label: this.$t('wallet.table.timestamp'), sortable: false,
+          key: 'timestamp', label: this.$t('wallet.table.timestamp'), sortable: true,
         },
         {
-          key: 'transferred', label: this.$t('wallet.table.transferred'), sortable: false,
+          key: 'transferred', label: this.$t('wallet.table.transferred'), sortable: true,
         },
         {
-          key: 'value', label: this.$t('wallet.table.value'), sortable: false,
+          key: 'value', label: this.$t('wallet.table.value'), sortable: true,
         },
         {
-          key: 'transaction_fee', label: this.$t('wallet.table.trxFee'), sortable: false,
+          key: 'transaction_fee', label: this.$t('wallet.table.trxFee'), sortable: true,
         },
       ],
+      transactionsData: [
+        {
+          tx_hash: 'sd535sd66sdsd',
+          status: 'Success',
+          block: '5267575474',
+          timestamp: 'Feb 1, 2021, 21:34',
+          transferred: 'To 2381hkjk123',
+          value: '120 WUSD',
+          transaction_fee: '5 WUSD',
+        },
+        {
+          tx_hash: 'sd535sd66sdsd',
+          status: 'Success',
+          block: '5267575474',
+          timestamp: 'Feb 1, 2021, 21:34',
+          transferred: 'To 2381hkjk123',
+          value: '120 WUSD',
+          transaction_fee: '5 WUSD',
+        },
+        {
+          tx_hash: 'sd535sd66sdsd',
+          status: 'Success',
+          block: '5267575474',
+          timestamp: 'Feb 1, 2021, 21:34',
+          transferred: 'To 2381hkjk123',
+          value: '120 WUSD',
+          transaction_fee: '5 WUSD',
+        },
+        {
+          tx_hash: 'sd535sd66sdsd',
+          status: 'Success',
+          block: '5267575474',
+          timestamp: 'Feb 1, 2021, 21:34',
+          transferred: 'To 2381hkjk123',
+          value: '120 WUSD',
+          transaction_fee: '5 WUSD',
+        },
+        {
+          tx_hash: 'sd535sd66sdsd',
+          status: 'Success',
+          block: '5267575474',
+          timestamp: 'Feb 1, 2021, 21:34',
+          transferred: 'To 2381hkjk123',
+          value: '120 WUSD',
+          transaction_fee: '5 WUSD',
+        },
+        {
+          tx_hash: 'sd535sd66sdsd',
+          status: 'Success',
+          block: '5267575474',
+          timestamp: 'Feb 1, 2021, 21:34',
+          transferred: 'To 2381hkjk123',
+          value: '120 WUSD',
+          transaction_fee: '5 WUSD',
+        },
+      ],
+      userInfo: {
+        userWallet: '123t2323t23t3t23t23t3g45h45234',
+        cardClosed: false,
+        userBalance: '1234567',
+        currency: 'WUSD',
+        usd: '124.12',
+        userCards: [
+          '1234 1234 1234 1234',
+        ],
+      },
     };
   },
   computed: {
@@ -118,9 +191,7 @@ export default {
       tags: 'ui/getTags',
       userRole: 'user/getUserRole',
       userData: 'user/getUserData',
-      userInfo: 'data/getUserInfo',
       transactions: 'data/getTransactions',
-      transactionsData: 'data/getTransactionsData',
     }),
   },
   async mounted() {
@@ -129,7 +200,7 @@ export default {
   },
   methods: {
     closeCard() {
-      this.cardClosed = true;
+      this.userInfo.cardClosed = true;
     },
     showTransferModal() {
       this.ShowModal({
@@ -144,6 +215,8 @@ export default {
     showWithdrawModal() {
       this.ShowModal({
         key: modals.withdraw,
+        isCardClosed: this.userInfo.cardClosed,
+        userCards: this.userInfo.userCards,
       });
     },
     showAddCardModal() {
@@ -151,204 +224,201 @@ export default {
         key: modals.addCard,
       });
     },
+    convertToCurrency(value) {
+      if (value.length < 3) return value;
+      let convertValue = value;
+      let valueAfterDote = '';
+      if (value.indexOf('.') !== -1) {
+        valueAfterDote = value.slice(value.indexOf('.'));
+        convertValue = value.slice(0, value.indexOf('.'));
+      }
+      const reverseValue = convertValue.split('').reverse().join('');
+      const reverseValueArr = reverseValue.match(/.{1,3}/g);
+      const valueArr = reverseValueArr.map((x) => x.split('').reverse().join(''));
+      convertValue = valueArr.reverse().join(' ');
+      return `${convertValue}${valueAfterDote}`;
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 
-.table {
-  &__container {
-    width: 100%;
-  }
-}
-
-.status {
-  &__title {
-    font-weight: 400;
-    font-size: 16px;
-    color: $black800;
-  }
-  &__date {
-    font-weight: 400;
-    font-size: 14px;
-    color: $black300;
-  }
-}
-
-.btn {
-  &__container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    margin: 16px 0 0 0;
-    grid-gap: 20px;
-  }
-}
-
 .wallet {
-  &__container {
-    display: flex;
-    justify-content: center;
-  }
-  &__card {
-    box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
-  }
-  &__balance {
-    box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
-  }
+  @include main;
+  @include text-simple;
+  color: #1D2127;
+
   &__body {
     max-width: 1180px;
     width: calc(100vw - 40px);
-  }
-  &__nav {
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-between;
-    font-size: 16px;
-  }
-  &__address {
-    @include text-simple;
-    display: flex;
-    align-items: center;
-    font-weight: 500;
-    font-size: 16px;
+    height: 100%;
   }
 
-  &__icon {
-    margin-left: 22px;
-    font-size: 24px;
-    &::before {
-      color: $blue;
-    }
+  &__header {
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 20px;
+
+    font-size: 16px;
   }
 
   &__title {
-    @include text-simple;
-    font-size: 25px;
     font-weight: 500;
+    font-size: 25px;
+    line-height: 32px;
+  }
+
+  &__address {
+    display: flex;
+    align-items: center;
+
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 21px;
   }
 
   &__info {
-    margin-top: 20px;
     display: grid;
     grid-template-columns: 1fr 479px;
     grid-gap: 20px;
+
+    margin-top: 20px;
     &_full {
       grid-template-columns: 1fr;
     }
   }
-  &__table {
-    margin: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
+  &__balance {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    background: #FFFFFF;
+    border-radius: 6px;
+
+    padding: 20px 20px 0 20px;
+    margin: 0 0 20px 0;
+
+    &_full {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      justify-content: space-between;
+      padding: 20px;
+    }
+  }
+}
+
+.address {
+  &__user {
+    margin-right: 20px;
+  }
+  &__icon {
+    width: 24px;
+    height: 24px;
   }
 }
 
 .balance {
-  display: flex;
-  background: $white;
-  justify-content: space-between;
-  flex-direction: column;
-  border-radius: 6px;
-  width: 100%;
-  padding: 20px 20px 0 20px;
-  margin: 0 0 20px 0;
-
-  &__dollar {
-    font-weight: 400;
-    font-size: 14px;
-    color: $black300;
-  }
-  &__number {
-    font-weight: 700;
-    font-size: 25px;
-    color: $blue;
-  }
-  &__title {
-    font-weight: 400;
-    font-size: 16px;
-    color: $black800;
-  }
-
   &__top {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
 
-  &__bottom {
-    display: flex;
-    grid-gap: 20px;
-    padding: 20px 0 20px 0;
-  }
-
   &__title {
-    @include text-simple;
     color: #4C5767;
+    font-size: 16px;
+    line-height: 21px;
+
+    margin-bottom: 10px;
   }
 
   &__currency {
-    @include text-simple;
-    color: $black800;
+    color: #1D2127;
+
     font-weight: 600;
     font-size: 35px;
-    line-height: 130%;
+    line-height: 45px;
   }
 
   &__usd {
-    @include text-simple;
-    color: $blue;
+    color: #0083C7;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 21px;
+
+    margin-top: 10px;
   }
+
+  &__bottom {
+    display: flex;
+    grid-gap: 20px;
+
+    padding: 20px 0;
+    &_row {
+      flex-direction: column;
+
+      width: 220px;
+
+      margin-left: auto;
+      padding: 0;
+    }
+  }
+
 }
 
 .card {
-  margin: 0 0 20px 0;
   width: 100%;
-  padding: 20px;
+
   display: grid;
   grid-template-rows: auto 43px;
   grid-gap: 10px;
   grid-template-columns: 230px 1fr;
-  @include text-simple;
-  background: $blue url('/img/app/card.svg') no-repeat right center;
+
+  padding: 20px;
+  margin-bottom: 20px;
+
+  background: #0083C7 url('/img/app/card.svg') no-repeat right center;
   background-size: cover;
-  color: $white;
+  color: #FFFFFF;
   position: relative;
   overflow: hidden;
   border: none !important;
 
   &__title {
-    @include text-simple;
-    color: $white;
     font-weight: 500;
     font-size: 20px;
-    line-height: 130%;
+    line-height: 26px;
+  }
+
+  &__icon {
+    display: flex;
+    z-index: 2;
+
+    width: 20px;
+    height: 20px;
+
+    margin-left: auto;
   }
 
   &__btn {
     grid-column-start: 2;
     z-index: 2;
   }
+}
 
-  &__img {
-    position: absolute;
-    left: 144px;
-    top: -43px;
-    width: 355px;
-    height: 250px;
-    z-index: 1;
-    object-fit: cover;
+.icon {
+  cursor: pointer;
+  &__close {
+    font-size: 20px;
+    color: #FFFFFF;
   }
-
-  &__icon {
-    display: flex;
-    justify-content: flex-end;
-    z-index: 2;
-    &:before {
-      cursor: pointer;
-      font-size: 20px;
-      color: $white;
-    }
+  &__copy {
+    font-size: 24px;
+    color: #0083C7;
   }
 }
 
