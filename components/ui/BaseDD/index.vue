@@ -8,8 +8,6 @@
       class="dd__btn"
       :class="ddClass"
       @click="isShown = !isShown"
-      @mouseover="isHovered = true"
-      @mouseleave="isHovered = false"
     >
       <div
         v-if="isIcon"
@@ -111,7 +109,6 @@ export default {
   data() {
     return {
       isShown: false,
-      isHovered: false,
     };
   },
   computed: {
@@ -162,6 +159,9 @@ export default {
   min-width: 131px;
   position: relative;
   text-align: left;
+  &:hover .dd__caret {
+    color: #0083C7;
+  }
   &__title {
     color: $black500;
     &_light {
@@ -223,7 +223,7 @@ export default {
       color: #8D96A2;
     }
     &_blue {
-      color: $blue;
+      color: #0083C7;
     }
   }
   &__btn {

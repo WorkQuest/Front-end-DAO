@@ -77,17 +77,13 @@
             class="actions__cancel"
             @click="hide()"
           >
-            <template v-slot:default>
-              {{ $t('meta.cancel') }}
-            </template>
+            {{ $t('meta.cancel') }}
           </base-btn>
           <base-btn
             class="actions__submit"
             @click="showTransactionSendModal()"
           >
-            <template v-slot:default>
-              {{ $t('meta.submit') }}
-            </template>
+            {{ $t('meta.submit') }}
           </base-btn>
         </div>
       </div>

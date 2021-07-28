@@ -12,9 +12,7 @@
             mode="back"
             class="address__icon icon"
           >
-            <template v-slot:default>
-              <span class="icon__copy icon-copy" />
-            </template>
+            <span class="icon__copy icon-copy" />
           </base-btn>
         </div>
       </div>
@@ -29,11 +27,7 @@
           <div class="balance__top">
             <span class="balance__title">{{ $t('wallet.balance') }}</span>
             <span class="balance__currency">
-              {{
-                userInfo.userBalance.length > 3 ?
-                  `${convertToCurrency(userInfo.userBalance)} ${userInfo.currency}` :
-                  `${userInfo.userBalance} ${userInfo.currency}`
-              }}
+              {{ `${convertToCurrency(userInfo.userBalance)} ${userInfo.currency}` }}
             </span>
             <span class="balance__usd">{{ `$ ${userInfo.usd}` }}</span>
           </div>
@@ -46,27 +40,21 @@
               class="balance__btn"
               @click="showDepositModal()"
             >
-              <template v-slot:default>
-                {{ $t('wallet.deposit') }}
-              </template>
+              {{ $t('wallet.deposit') }}
             </base-btn>
             <base-btn
               :mode="userInfo.cardClosed ? '' : 'outline'"
               class="balance__btn"
               @click="showWithdrawModal()"
             >
-              <template v-slot:default>
-                {{ $t('wallet.withdraw') }}
-              </template>
+              {{ $t('wallet.withdraw') }}
             </base-btn>
             <base-btn
               v-if="!userInfo.cardClosed"
               class="balance__btn"
               @click=" showTransferModal()"
             >
-              <template v-slot:default>
-                {{ $t('wallet.send') }}
-              </template>
+              {{ $t('wallet.send') }}
             </base-btn>
           </div>
         </div>
@@ -86,9 +74,7 @@
             mode="outline"
             @click="showAddCardModal()"
           >
-            <template v-slot:default>
-              {{ $t('wallet.addCard') }}
-            </template>
+            {{ $t('wallet.addCard') }}
           </base-btn>
         </div>
       </div>
@@ -205,9 +191,7 @@ export default {
       tags: 'ui/getTags',
       userRole: 'user/getUserRole',
       userData: 'user/getUserData',
-      // userInfo: 'data/getUserInfo',
       transactions: 'data/getTransactions',
-      // transactionsData: 'data/getTransactionsData',
     }),
   },
   async mounted() {
@@ -241,6 +225,7 @@ export default {
       });
     },
     convertToCurrency(value) {
+      if (value.length < 3) return value;
       let convertValue = value;
       let valueAfterDote = '';
       if (value.indexOf('.') !== -1) {
@@ -436,15 +421,6 @@ export default {
     color: #0083C7;
   }
 }
-
-//.btn {
-//  &__container {
-//    display: grid;
-//    grid-template-columns: repeat(2, 1fr);
-//    margin: 16px 0 0 0;
-//    grid-gap: 20px;
-//  }
-//}
 
 @include _1199 {
   .wallet {
