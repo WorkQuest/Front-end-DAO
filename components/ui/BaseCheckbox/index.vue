@@ -124,7 +124,7 @@ export default {
     width: 100%;
     height: 100%;
     border-radius: 3px;
-    background: $blue url('/assets/img/ui/checked.svg') no-repeat 50% 50%;
+    background: $blue url('assets/img/ui/checked.svg') no-repeat 50% 50%;
     opacity: 0;
   }
   input:checked ~ .checkmark::after {

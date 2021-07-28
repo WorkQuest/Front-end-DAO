@@ -19,6 +19,7 @@
         >
         <span
           class="dd__title"
+          :class="titleClass"
         >
           {{ items[value].title }}
         </span>
@@ -26,6 +27,7 @@
       <span
         v-else
         class="dd__title"
+        :class="titleClass"
       >
         {{ items[value] }}
       </span>
@@ -36,6 +38,7 @@
       <span
         v-else
         class="dd__caret icon-caret_down"
+        :class="caretClass"
       />
     </button>
     <transition name="fade">
@@ -103,15 +106,30 @@ export default {
       default: '',
     },
   },
-  data: () => ({
-    isShown: false,
-  }),
+  data() {
+    return {
+      isShown: false,
+    };
+  },
   computed: {
     ddClass() {
       const { type } = this;
       return [
         { dd__btn_dark: type === 'dark' },
         { dd__btn_gray: type === 'gray' },
+        { dd__btn_light: type === 'light' },
+      ];
+    },
+    titleClass() {
+      const { type } = this;
+      return [
+        { dd__title_light: type === 'light' },
+      ];
+    },
+    caretClass() {
+      const { type } = this;
+      return [
+        { dd__caret_light: type === 'light' },
       ];
     },
   },
@@ -140,8 +158,14 @@ export default {
   min-width: 131px;
   position: relative;
   text-align: left;
+  &:hover .dd__caret {
+    color: #0083C7;
+  }
   &__title {
     color: $black500;
+    &_light {
+      color: $black800;
+    }
   }
   &__top {
     align-items: flex-start;
@@ -187,14 +211,18 @@ export default {
     }
   }
   &__caret {
-    &::before {
-      padding-left: 10px;
-      color: $blue;
-      font-size: 24px;
+    padding-left: 10px;
+    color: $blue;
+    font-size: 24px;
 
-    }
-    &_dark::before {
+    &_dark {
       color: $black700;
+    }
+    &_light {
+      color: #8D96A2;
+    }
+    &_blue {
+      color: #0083C7;
     }
   }
   &__btn {
@@ -211,6 +239,13 @@ export default {
     }
     &_gray {
       background-color: $black0;
+    }
+    &_light {
+      background: #FFFFFF;
+      border: 1px solid rgba(0, 0, 0, 0);
+      &:hover {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
     }
   }
 }

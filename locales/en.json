@@ -143,7 +143,10 @@
     "showAllReviews": "Show all reviews",
     "later": "Later",
     "iAgree": "I agree",
-    "next": "Next"
+    "next": "Next",
+    "addProposal": "Add proposal",
+    "delete": "delete",
+    "addFile": "Add File"
   },
   "priority": {
     "title": "Priority",
@@ -389,7 +392,18 @@
     "saveCardForNextPayment": "Save card for next payment",
     "insureCase": "Insure case",
     "connectWallet": "Connect wallet",
-    "howMuchWusdWouldYouLikeToGenerate": "How much WUSD would you like to generate?"
+    "addDiscussion": "Add Discussion",
+    "discussionTopic": "Discussion topic",
+    "addFile": "Add File",
+    "add": "Add",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "howMuchWusdWouldYouLikeToGenerate": "How much WUSD would you like to generate?",
+    "addProposal": "Add Proposal",
+    "votingTopic": "Voting topic",
+    "numberOfVotes": "Number of Votes",
+    "votingStart": "Voting Start",
+    "votingEnd": "Voting End"
   },
   "ui": {
     "workers": "Workers",
@@ -442,7 +456,7 @@
     "addCardProposal": "Add your own card for easy withdrawal",
     "addCard": "Add card",
     "table": {
-      "trx": "Transactions",
+      "trx": "Transaction History",
       "txHash": "Tx hash",
       "status": "Status",
       "block": "Block",
@@ -451,6 +465,9 @@
       "value": "Value",
       "trxFee": "Transaction fee"
     }
+  },
+  "kyc": {
+    "KYC": "KYC"
   },
   "chat": {
     "openDispute": "Open dispute",
@@ -472,7 +489,9 @@
     "ui": {
       "search": "Search proposal",
       "addTime": "Added time",
-      "allProposals": "All proposals"
+      "allProposals": "All proposals",
+      "yes": "Yes",
+      "no": "No"
     },
     "cards": {
       "status": {
@@ -480,6 +499,35 @@
         "rejected": "Rejected",
         "accepted": "Accepted"
       }
+    }
+  },
+  "proposal": {
+    "title": "Proposal info",
+    "back": "Back",
+    "hashTitle": "Tx Hash",
+    "filesTitle": "Files",
+    "noFiles": "No files",
+    "description": "Description",
+    "toTheForum": "Go to the Forum",
+    "results": "Results",
+    "yes": "Yes",
+    "no": "No",
+    "voteForProposal": "Vote for Proposal",
+    "votes": "votes",
+    "youVoted": "You voted:",
+    "ui": {
+      "addTime": "Added time",
+      "allProposals": "All proposals",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "proposalHistory": "Proposal history",
+    "table": {
+      "number": "#",
+      "hash": "Hash",
+      "date": "Date",
+      "address": "Address",
+      "vote": "Vote"
     }
   },
   "settings": {
@@ -833,5 +881,25 @@
   },
   "errors": {
     "incorrectPass" : "Oops, something went wrong. Check the data and try again."
+  },
+  "discussions": {
+  "title": "Discussions",
+  "btn": "Add new discussion",
+  "seacrhField": "Search discussion",
+  "descriptionTitle": "Description",
+  "read": "Read completely",
+  "infoTitle": "Discussion info",
+  "back": "Back",
+  "add": "Add comment",
+  "show": "Show comments",
+  "input": "Write you response",
+  "commentTitle": "Comments",
+  "files": "Files",
+  "reply": "Reply",
+  "more": "Show more comments",
+  "hide": "Hide comments",
+  "cancel": "Cancel",
+  "responseTitle": "Add your comment",
+  "noFiles": "No files"
   }
  }

@@ -184,7 +184,7 @@ export default {
     letter-spacing: -0.025em;
     margin-bottom: 13px;
     height: 24px;
-    color: #fff;
+    color: #1D2127;
   }
   &__err {
     color: #F82727;
@@ -209,6 +209,7 @@ export default {
     transition: .3s;
     width: 100%;
   }
+
   &_search {
     .ctm-field__input {
       padding: 0 20px 0 50px;
@@ -224,7 +225,7 @@ export default {
   &_default {
     .ctm-field__input {
       color: $black700;
-      background: #F3F7FA;
+      background: #F7F8FA;
       border-radius: 6px;
       border: 1px solid transparent;
       &::placeholder {

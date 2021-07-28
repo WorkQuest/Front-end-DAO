@@ -3,21 +3,23 @@
     <div class="main__menu menu">
       <div class="menu__left">
         <base-btn
+          mode="light"
           class="btn_white"
+          @click="isDescending = !isDescending"
         >
           <template v-slot:right>
-            <span class="icon-Sorting_descending" />
+            <span
+              class="icon icon__sorting"
+              :class="sortingClass"
+            />
           </template>
           {{ $t('proposals.ui.addTime') }}
         </base-btn>
-        <base-btn
-          class="btn_white"
-        >
-          <template v-slot:right>
-            <span class="icon-Sorting_descending" />
-          </template>
-          {{ $t('proposals.ui.allProposals') }}
-        </base-btn>
+        <base-dd
+          v-model="ddValue"
+          type="light"
+          :items="ddValues"
+        />
       </div>
       <div class="menu__right">
         <div class="proposals__search">
@@ -167,6 +169,13 @@ export default {
       tab: 1,
       currentPage: 1,
       search: '',
+      isDescending: true,
+      ddValues: [
+        this.$t('proposals.ui.yes'),
+        this.$t('proposals.ui.no'),
+        this.$t('proposals.ui.allProposals'),
+      ],
+      ddValue: 2,
       cards: [
         {
           voting: 1,
@@ -272,6 +281,12 @@ export default {
       return [
         { card__level_reliable: cards[idx].level.code === 2 },
         { card__level_checked: cards[idx].level.code === 3 },
+      ];
+    },
+    sortingClass() {
+      return [
+        { 'icon-Sorting_descending': this.isDescending },
+        { 'icon-Sorting_ascending': !this.isDescending },
       ];
     },
   },
@@ -450,24 +465,19 @@ export default {
   margin-top: 20px;
 }
 .btn_white{
-  font-size: 14px;
-  background-color: $white;
-  color: $black800;
+  border: 1px solid rgba(0, 0, 0, 0);
   padding: 0 20px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  border-radius: 6px;
-  flex-shrink: 0;
   width: 100%;
-  transition: .2s;
   &:hover {
-    background-color: $white;
-    box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.1);
   }
 }
 .icon {
-  &_blue::before {
+  &__sorting {
+    color: #000000;
+  }
+  &_blue {
     color: $blue;
     font-size: 24px;
     display: block;
@@ -556,6 +566,11 @@ export default {
     letter-spacing: 0em;
     text-align: left;
   }
+}
+.dd {
+  color: #8D96A2;
+  border: 1px solid rgba(0, 0, 0, 0);
+  min-width: 140px;
 }
 
 @include _1199 {

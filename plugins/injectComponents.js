@@ -9,6 +9,10 @@ import BaseInput from '~/components/ui/BaseInput';
 import BaseDD from '~/components/ui/BaseDD';
 import BaseCheckbox from '~/components/ui/BaseCheckbox';
 import BaseTable from '~/components/ui/BaseTable';
+import DisscussionCard from '~/components/ui/DiscussionCard';
+import BaseUploader from '~/components/ui/BaseUploader';
+import BaseImages from '~/components/ui/BaseImages';
+import BaseFiles from '~/components/ui/BaseFiles';
 
 Vue.component('ctm-modal', CtmModal);
 Vue.component('ctm-modal-box', CtmModalBox);
@@ -19,3 +23,7 @@ Vue.component('base-dd', BaseDD);
 Vue.component('base-checkbox', BaseCheckbox);
 Vue.component('loader', Loader);
 Vue.component('base-table', BaseTable);
+Vue.component('discussion-card', DisscussionCard);
+Vue.component('base-uploader', BaseUploader);
+Vue.component('base-images', BaseImages);
+Vue.component('base-files', BaseFiles);
