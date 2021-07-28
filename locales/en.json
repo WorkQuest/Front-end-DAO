@@ -458,6 +458,9 @@
       "trxFee": "Transaction fee"
     }
   },
+  "kyc": {
+    "KYC": "KYC"
+  },
   "chat": {
     "openDispute": "Open dispute",
     "approveQuest": "Approve quest",
