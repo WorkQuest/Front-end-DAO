@@ -130,7 +130,6 @@ export default {
       const { type } = this;
       return [
         { dd__caret_light: type === 'light' },
-        { dd__caret_blue: this.isHovered },
       ];
     },
   },
