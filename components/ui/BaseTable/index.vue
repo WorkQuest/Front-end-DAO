@@ -124,12 +124,14 @@ export default {
     openModalDelegate(el) {
       this.ShowModal({
         key: modals.delegate,
+        stake: el.item.stake,
         investorAddress: el.item.investorAddress,
       });
     },
     openModalUndelegate(el) {
       this.ShowModal({
         key: modals.undelegate,
+        stake: el.item.stake,
         name: el.item.name,
       });
     },
@@ -240,7 +242,6 @@ export default {
     }
   }
   &__delegate{
-    cursor: default !important;
     width: 130px !important;
     height: 43px !important;
     &_hidden{

@@ -29,6 +29,7 @@
         <div class="tokens__footer footer">
           <base-field
             id="tokensNumber"
+            v-model="tokensAmount"
             class="footer__body"
             :placeholder="$t('modals.placeholder')"
           />
@@ -65,7 +66,9 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'Undelegate',
   data() {
-    return {};
+    return {
+      tokensAmount: '',
+    };
   },
   computed: {
     ...mapGetters({
@@ -111,6 +114,7 @@ export default {
   &__close{
     color: black;
     font-size: 25px;
+    cursor: pointer;
   }
 }
 .bottom{

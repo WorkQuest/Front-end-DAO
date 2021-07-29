@@ -29,12 +29,14 @@
         <div class="tokens__footer footer">
           <base-field
             id="tokensNumber"
+            v-model="tokensAmount"
             class="footer__body"
             :placeholder="$t('modals.placeholder')"
           />
           <base-btn
             class="footer__maximum"
             mode="lightBlue"
+            @click="maxDelegate"
           >
             {{ $t('modals.max') }}
           </base-btn>
@@ -57,6 +59,7 @@ export default {
   name: 'Delegate',
   data() {
     return {
+      tokensAmount: '',
     };
   },
   computed: {
@@ -67,6 +70,9 @@ export default {
   methods: {
     hide() {
       this.CloseModal();
+    },
+    maxDelegate() {
+      this.tokensAmount = this.options.stake;
     },
   },
 };
@@ -86,19 +92,6 @@ export default {
   }
   &__done{
     margin-top: 25px;
-  }
-}
-.header{
-  display: flex;
-  justify-content: space-between;
-  &__title{
-    font-weight: 500;
-    font-size: 23px;
-    line-height: 130%;
-  }
-  &__close{
-    color: black;
-    font-size: 25px;
   }
 }
 .footer {

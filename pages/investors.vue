@@ -151,6 +151,9 @@ export default {
     max-width: 1180px;
     height: 100%;
   }
+  &__table{
+    margin-bottom: 15px;
+  }
 }
 
 .body{
