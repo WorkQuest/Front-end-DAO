@@ -10,6 +10,7 @@
       tbody-tr-class="table__row"
     >
       <template
+        v-if="$props.title.length"
         #table-caption
       >
         <span class="table__title">{{ $props.title }}</span>
@@ -98,7 +99,6 @@ export default {
       type: Array,
       default: () => [],
     },
-
     fields: {
       type: Array,
       default: () => [],

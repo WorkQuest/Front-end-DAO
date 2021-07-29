@@ -1,8 +1,12 @@
 .table {
   padding: 0!important;
+  margin: 0;
+  &-responsive {
+    margin: 0;
+  }
 
   & > caption {
-    padding: 20px;
+    padding: 20px !important;
   }
 
   &__title {
@@ -11,24 +15,34 @@
 
   &__header {
     font-size: 16px !important;
-    font-weight:100!important;
-
   }
   &__th{
     font-weight: normal!important;
   }
 }
-.table__row{
-  margin: 0px;
+
+th:first-child {
+  padding-left:20px !important;
 }
-th{
-  font-style: normal!important;
-  font-weight: 500!important;
-  font-size: 16px!important;
-  line-height: 24px!important;
-  color: #0083C7!important;
-  padding: 12px 20px!important;
+
+th:last-child {
+  padding-right:20px !important;
+  background-position: right calc(20px) center !important;
 }
+
+td:first-child {
+  padding-left:20px !important;
+}
+
+td:last-child {
+  padding-right:20px !important;
+}
+
+th {
+  font-weight: 500 !important;
+}
+
 td{
   padding: 12px 20px!important;
 }
+

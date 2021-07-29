@@ -53,7 +53,7 @@
                   {{ $t('ui.discussions') }}
                 </nuxt-link>
                 <nuxt-link
-                  to="/wallet"
+                  to="/KYC"
                   class="header__link"
                   :exact-active-class="'header__link_active'"
                 >

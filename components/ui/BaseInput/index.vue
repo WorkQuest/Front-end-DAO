@@ -230,7 +230,7 @@ export default {
   &_default {
     .ctm-field__input {
       color: $black700;
-      background: #F3F7FA;
+      background: #F7F8FA;
       border-radius: 6px;
       border: 1px solid transparent;
       &::placeholder {

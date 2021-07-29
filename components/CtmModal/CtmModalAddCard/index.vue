@@ -94,11 +94,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.ctm-modal {
-  &__content-field {
-    margin: 15px 0 0 0;
-  }
-}
 
 .ctm-modal {
   @include modalKit;
