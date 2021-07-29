@@ -75,7 +75,7 @@ export default {
         { 'base-btn_blue': mode === 'blue' },
         { 'base-btn_lightBlue': mode === 'lightBlue' },
         { 'base-btn_lightRed': mode === 'lightRed' },
-
+        { 'base-btn_invisible': mode === 'invisible' },
       ];
     },
   },
@@ -235,6 +235,14 @@ export default {
     color: $blue;
     &:hover {
       background: #F7F8FA;
+      color: $blue;
+    }
+  }
+  &_invisible{
+    background: #FFFFFF;
+    color: $blue;
+    &:hover {
+      background: #FFFFFF;
       color: $blue;
     }
   }

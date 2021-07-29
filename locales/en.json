@@ -395,7 +395,15 @@
     "votingTopic": "Voting topic",
     "numberOfVotes": "Number of Votes",
     "votingStart": "Voting Start",
-    "votingEnd": "Voting End"
+    "votingEnd": "Voting End",
+    "undelegate": "Undelegate",
+    "shure": "Are you shure to undelegate",
+    "delegate": "Delegate",
+    "investorAddress": "Investor adress",
+    "tokensNumber": "Tokens Number",
+    "tokensDelegated": "Enter number of tokens that will be delegated",
+    "max": "Maximum",
+    "placeholder": "Placeholder"
   },
   "ui": {
     "workers": "Workers",
@@ -889,5 +897,16 @@
   "cancel": "Cancel",
   "responseTitle": "Add your comment",
   "noFiles": "No files"
+  },
+  "investors": {
+    "title": "Investors",
+    "search": "Search investor",
+    "table": {
+      "name": "Name",
+      "address": "Address",
+      "stake": "Stake",
+      "slots": "Slots",
+      "voting": "Voting power"
+    }
   }
  }

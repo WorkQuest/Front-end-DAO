@@ -259,6 +259,7 @@ export default {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 20px 20px;
+    margin-bottom: 15px;
     }
     &__header {
       display: flex;

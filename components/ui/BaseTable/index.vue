@@ -33,6 +33,24 @@
       <template #cell(transaction_fee)="el">
         <span class="table__grey">{{ el.item.transaction_fee }}</span>
       </template>
+      <template #cell(avatar)="el">
+        <img
+          :src="el.item.avatar"
+          alt="userAvatar"
+          class="table__avatar"
+        >
+      </template>
+      <template #cell(copy)="el">
+        <base-btn
+          v-clipboard:copy="el.item.investorAddress"
+          v-clipboard:success="ClipboardSuccessHandler"
+          v-clipboard:error="ClipboardErrorHandler"
+          mode="invisible"
+          class="table__copy"
+        >
+          <span class="icon-copy table__copy" />
+        </base-btn>
+      </template>
       <template #cell(vote)="el">
         <base-btn
           class="btn__vote"
@@ -41,11 +59,35 @@
           {{ el.item.vote }}
         </base-btn>
       </template>
+      <template #cell(undelegate)="el">
+        <base-btn
+          mode="lightRed"
+          class="btn__delegate"
+          :class="delegateClass(el)"
+          @click="openModalUndelegate(el)"
+        >
+          {{ el.item.undelegate }}
+        </base-btn>
+      </template>
+      <template #cell(delegate)="el">
+        <base-btn
+          mode="lightBlue"
+          class="btn__delegate"
+          @click="openModalDelegate(el)"
+        >
+          {{ el.item.delegate }}
+        </base-btn>
+      </template>
+      <template #cell(investorAddress)="el">
+        {{ modifyAddress(el.item.investorAddress) }}
+      </template>
     </b-table>
   </div>
 </template>
 
 <script>
+import modals from '~/store/modals/modals';
+
 export default {
   props: {
     title: {
@@ -56,10 +98,15 @@ export default {
       type: Array,
       default: () => [],
     },
+
     fields: {
       type: Array,
       default: () => [],
     },
+  },
+  data() {
+    return {
+    };
   },
   methods: {
     voteClass(el) {
@@ -68,15 +115,47 @@ export default {
         { btn__vote_red: el.item.vote === 'NO' },
       ];
     },
+    delegateClass(el) {
+      return [
+        { btn__delegate: el.item.undelegate === 'undelegate' },
+        { btn__delegate_hidden: el.item.undelegate === '' },
+      ];
+    },
+    openModalDelegate(el) {
+      this.ShowModal({
+        key: modals.delegate,
+        investorAddress: el.item.investorAddress,
+      });
+    },
+    openModalUndelegate(el) {
+      this.ShowModal({
+        key: modals.undelegate,
+        name: el.item.name,
+      });
+    },
+    ClipboardSuccessHandler(value) {
+      this.$store.dispatch('main/showToast', {
+        title: 'Copied successfully',
+        text: value,
+      });
+    },
+    ClipboardErrorHandler(value) {
+      this.$store.dispatch('main/showToast', {
+        title: 'Copy error',
+        text: value,
+      });
+    },
+    modifyAddress(investorAddress) {
+      return `${investorAddress.substr(0, 5)}...${investorAddress.substr(investorAddress.length - 6, 6)}`;
+    },
   },
 };
 </script>
 
 <style lang="scss">
 .table {
+  @include text-usual;
   overflow-x: hidden;
-  font-size: 16px;
-  line-height: 130%;
   background: #FFFFFF;
   border-radius: 6px;
   &__title {
@@ -137,6 +216,16 @@ export default {
     //  min-width: calc( 540px - 1em );
     //}
   }
+  &__copy{
+    color:#0083C7;
+    font-size: 25px;
+  }
+  &__avatar{
+    width: 40px!important;
+    height: 40px!important;
+    margin: 0!important;
+    text-align: center;
+  }
 }
 .btn {
   &__vote {
@@ -148,6 +237,14 @@ export default {
     }
     &_red {
       background: #DF3333 !important;
+    }
+  }
+  &__delegate{
+    cursor: default !important;
+    width: 130px !important;
+    height: 43px !important;
+    &_hidden{
+      display: none!important;
     }
   }
 }

@@ -39,7 +39,7 @@
                   {{ $t('ui.wallet') }}
                 </nuxt-link>
                 <nuxt-link
-                  to="/wallet"
+                  to="/investors"
                   class="header__link"
                   :exact-active-class="'header__link_active'"
                 >
