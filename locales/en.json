@@ -146,7 +146,8 @@
     "next": "Next",
     "addProposal": "Add proposal",
     "delete": "delete",
-    "addFile": "Add File"
+    "addFile": "Add File",
+    "change": "Change"
   },
   "priority": {
     "title": "Priority",
@@ -403,7 +404,9 @@
     "votingTopic": "Voting topic",
     "numberOfVotes": "Number of Votes",
     "votingStart": "Voting Start",
-    "votingEnd": "Voting End"
+    "votingEnd": "Voting End",
+    "warning": "Warning",
+    "warningDescription": "Changing information on this platform will lead to changes on the main service"
   },
   "ui": {
     "workers": "Workers",
@@ -542,6 +545,7 @@
     "term": "Term",
     "getVerification": "Get verification",
     "notVerified": "Not verified",
+    "verified": "Verified",
     "more": "More",
     "settings": "Settings",
     "addInfo": "Add information about you, profile photo and KYC and level up your rating",

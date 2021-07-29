@@ -1,74 +1,491 @@
 <template>
-  <div class="main">
-    <div class="main__body">
+  <div class="wq-profile">
+    <div class="wq-profile__body">
       <div
-        class="banner__top"
-        :class="[{'top-disabled': isShowInfo === false}]"
+        v-if="!localUserData.isVerified"
+        class="wq-profile__banner banner"
       >
         <transition name="fade-fast">
-          <div class="page__info">
-            <div class="page__grid">
-              <div
-                class="page__info"
-              >
-                <div class="page__info">
-                  <h2 class="page__info page__info-title">
-                    {{ $t('settings.addInfo') }}
-                  </h2>
-                  <div class="page__info page__info-subtitle">
-                    {{ $t('settings.alsoRating') }}
-                  </div>
-                  <div class="ver-btn__container">
-                    <base-btn mode="ver">
-                      {{ $t('settings.getVerification') }}
-                    </base-btn>
-                  </div>
-                </div>
+          <div class="banner__body">
+            <div class="banner__container">
+              <div class="banner__title">
+                {{ $t('settings.addInfo') }}
               </div>
-              <div>
-                <img
-                  class="higher-level__img"
-                  src="~/assets/img/ui/settingsHigherLevel.svg"
-                >
-                <button @click="isCloseInfo()">
-                  <span
-                    class="icon-close_big icon__close"
-                    :class="{'icon_close_closed' : isShowInfo }"
-                  />
-                </button>
+              <div class="banner__subtitle">
+                {{ $t('settings.alsoRating') }}
               </div>
+              <div class="banner__verification">
+                <base-btn mode="ver">
+                  {{ $t('settings.getVerification') }}
+                </base-btn>
+              </div>
+            </div>
+            <div class="banner__image">
+              <img src="~/assets/img/ui/settingsHigherLevel.svg">
             </div>
           </div>
         </transition>
       </div>
-      <h2 class="page__title">
+      <div
+        class="wq-profile__header"
+        :class="{ 'wq-profile__header_noMarginTop': localUserData.isVerified }"
+      >
         {{ $t('profile.title') }}
-      </h2>
-      <profileData />
+      </div>
+      <div class="wq-profile__info info">
+        <div class="info__base">
+          <div class="info__avatar avatar">
+            <img
+              v-if="imageData"
+              id="userAvatar"
+              class="avatar__img"
+              :src="imageData"
+              alt=""
+            >
+            <img
+              v-else
+              id="userAvatarEmpty"
+              class="avatar__img"
+              src="~/assets/img/app/avatar_empty.png"
+              alt=""
+            >
+            <label
+              v-if="isProfileEdit"
+              class="avatar__edit edit"
+            >
+              <span class="edit__icon icon-edit" />
+              <ValidationProvider
+                v-slot="{ validate }"
+                class="edit__validator"
+                rules="required|ext:png,jpeg,jpg"
+                tag="div"
+              >
+                <input
+                  id="coverUpload"
+                  type="file"
+                  accept="image/*"
+                  @change="processFile($event, validate)"
+                >
+              </ValidationProvider>
+            </label>
+          </div>
+          <div class="info__contacts contacts">
+            <div
+              class="contacts__status status"
+              :class="{ 'status_verified': localUserData.isVerified }"
+            >
+              {{ localUserData.isVerified ? $t('settings.verified') : $t('settings.notVerified') }}
+              <span class="status__icon icon icon-check_all_big" />
+            </div>
+            <base-field
+              v-if="firstName"
+              v-model="localUserData.firstName"
+              :placeholder="firstName || $t('settings.nameInput')"
+              :disabled="!isProfileEdit"
+              :is-hide-error="true"
+              mode="icon"
+            >
+              <template v-slot:left>
+                <span class="icon icon__input icon-user" />
+              </template>
+            </base-field>
+            <base-field
+              v-if="lastName"
+              v-model="localUserData.lastName"
+              :placeholder="$t('settings.lastNameInput')"
+              :disabled="!isProfileEdit"
+              :is-hide-error="true"
+              mode="icon"
+            >
+              <template v-slot:left>
+                <span class="icon icon__input icon-user" />
+              </template>
+            </base-field>
+          </div>
+          <div class="info__contacts contacts">
+            <div />
+            <base-field
+              v-model="localUserData.additionalInfo.address"
+              :placeholder="address || $t('settings.addressInput')"
+              :disabled="!isProfileEdit"
+              :is-hide-error="true"
+              mode="icon"
+            >
+              <template v-slot:left>
+                <span class="icon icon__input icon-location" />
+              </template>
+            </base-field>
+            <base-field
+              v-model="localUserData.additionalInfo.secondMobileNumber"
+              :placeholder="secondMobileNumber || $t('settings.telInput')"
+              :disabled="!isProfileEdit"
+              :is-hide-error="true"
+              mode="icon"
+            >
+              <template v-slot:left>
+                <span class="icon icon__input icon-phone" />
+              </template>
+            </base-field>
+          </div>
+          <div class="info__contacts contacts">
+            <div />
+            <base-field
+              v-model="userEmail"
+              :placeholder="userEmail || $t('settings.addressInput')"
+              :disabled="true"
+              :is-hide-error="true"
+              mode="icon"
+            >
+              <template v-slot:left>
+                <span class="icon icon__input icon-mail" />
+              </template>
+            </base-field>
+            <base-field
+              v-model="localUserData.additionalInfo.secondMobileNumber"
+              :placeholder="secondMobileNumber || $t('settings.telInput')"
+              :disabled="!isProfileEdit"
+              :is-hide-error="true"
+              mode="icon"
+            >
+              <template v-slot:left>
+                <span class="icon icon__input icon-phone" />
+              </template>
+            </base-field>
+          </div>
+        </div>
+        <div class="info__additional">
+          <div class="info__about about">
+            <div class="about__title">
+              {{ $t('profile.aboutMe') }}
+            </div>
+            <textarea
+              id="textarea"
+              v-model="localUserData.additionalInfo.description"
+              class="about__textarea"
+              :class="{ 'about__textarea_disabled': !isProfileEdit }"
+              :title="'test'"
+              :placeholder="userDesc || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus dolor purus non enim praesent elementum facilisis leo, vel'"
+              :disabled="!isProfileEdit"
+            />
+          </div>
+          <div class="info__social social">
+            <div class="social__container">
+              <base-field
+                v-model="localUserData.additionalInfo.socialNetwork.instagram"
+                :placeholder="userInstagram || $t('settings.socialInput')"
+                :disabled="!isProfileEdit"
+                :is-hide-error="true"
+                mode="icon"
+              >
+                <template v-slot:left>
+                  <span class="icon icon__input icon-instagram" />
+                </template>
+              </base-field>
+              <base-field
+                v-model="localUserData.additionalInfo.socialNetwork.twitter"
+                :placeholder="userTwitter || $t('settings.socialInput')"
+                :disabled="!isProfileEdit"
+                :is-hide-error="true"
+                mode="icon"
+              >
+                <template v-slot:left>
+                  <span class="icon icon__input icon-twitter" />
+                </template>
+              </base-field>
+            </div>
+            <div class="social__container">
+              <base-field
+                v-model="localUserData.additionalInfo.socialNetwork.linkedin"
+                :placeholder="userLinkedin || $t('settings.socialInput')"
+                :disabled="!isProfileEdit"
+                :is-hide-error="true"
+                mode="icon"
+              >
+                <template v-slot:left>
+                  <span class="icon icon__input icon-LinkedIn" />
+                </template>
+              </base-field>
+              <base-field
+                v-model="localUserData.additionalInfo.socialNetwork.facebook"
+                :placeholder="userFacebook || $t('settings.socialInput')"
+                :disabled="!isProfileEdit"
+                :is-hide-error="true"
+                mode="icon"
+              >
+                <template v-slot:left>
+                  <span class="icon icon__input icon-facebook" />
+                </template>
+              </base-field>
+            </div>
+          </div>
+        </div>
+        <div class="info__action action">
+          <base-btn
+            v-if="isProfileEdit"
+            mode="lightBlue"
+            class="action__save"
+            @click="editUserData()"
+          >
+            {{ $t('profile.save') }}
+          </base-btn>
+          <base-btn
+            v-else
+            mode="lightBlue"
+            class="action__change"
+            @click="showModalWarning()"
+          >
+            {{ $t('profile.change') }}
+          </base-btn>
+        </div>
+      </div>
+      <div
+        v-if="isProfileEdit"
+        class="wq-profile__header"
+      >
+        {{ $t('profile.security') }}
+      </div>
+      <div
+        v-if="isProfileEdit"
+        class="wq-profile__security security"
+      >
+        <div class="security__password">
+          <div class="security__title">
+            {{ $t('profile.changePass') }}
+          </div>
+          <base-btn
+            class="security__btn"
+            mode="lightBlue"
+            @click="modalChangePassword()"
+          >
+            {{ $t('profile.change') }}
+          </base-btn>
+        </div>
+        <div class="security__auth">
+          <div class="security__title">
+            {{ $t('profile.2FA') }}
+          </div>
+          <base-btn
+            class="security__btn"
+            mode="lightBlue"
+            @click="modalTwoFAAuth()"
+          >
+            {{ $t('profile.switchOn') }}
+          </base-btn>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import profileData from '~/components/app/Panels/SettingsProfile';
+
+import { mapGetters } from 'vuex';
+import modals from '~/store/modals/modals';
 
 export default {
   name: 'Settings',
-  components: {
-    profileData,
-  },
   data() {
     return {
-      isShowInfo: true,
+      sms: false,
+      allRegisterUser: false,
+      allPeopleInInternet: false,
+      onlyWhenSubmitedWork: false,
+      onlyUrgentProposals: false,
+      onlyInplemention: false,
+      onlyReadyForExecution: false,
+      allRegisteredUsers: false,
+      isVerified: false,
+      localUserData: {
+        avatarId: null,
+        firstName: null,
+        lastName: null,
+        additionalInfo: {
+          secondMobileNumber: null,
+          address: null,
+          socialNetwork: {
+            instagram: null,
+            twitter: null,
+            linkedin: null,
+            facebook: null,
+          },
+          description: null,
+          skills: [],
+          educations: [],
+          workExperiences: [],
+          CEO: null,
+          company: null,
+          website: null,
+        },
+      },
+      avatar_change: {
+        data: {},
+        file: {},
+      },
     };
+  },
+  computed: {
+    ...mapGetters({
+      tags: 'ui/getTags',
+      userRole: 'user/getUserRole',
+      userData: 'user/getUserData',
+      firstName: 'user/getFirstName',
+      lastName: 'user/getLastName',
+      address: 'user/getUserAddress',
+      company: 'user/getUserCompany',
+      userCEO: 'user/getUserCEO',
+      userDesc: 'user/getUserDesc',
+      userWorkExp: 'user/getUserWorkExp',
+      userEducations: 'user/getUserEducations',
+      userWebsite: 'user/getUserWebsite',
+      userInstagram: 'user/getUserInstagram',
+      userTwitter: 'user/getUserTwitter',
+      userLinkedin: 'user/getUserLinkedin',
+      userFacebook: 'user/getUserFacebook',
+      userEmail: 'user/getUserEmail',
+      firstMobileNumber: 'user/getUserFirstMobileNumber',
+      secondMobileNumber: 'user/getUserSecondMobileNumber',
+      imageData: 'user/getImageData',
+      additionalInfo: 'user/getAdditionalInfo',
+      isProfileEdit: 'user/isProfileEdit',
+    }),
   },
   async mounted() {
     this.SetLoader(true);
+    this.isVerified = Boolean(this.userData.statusKYC);
+    this.localUserData = {
+      avatarId: this.userData.avatarId,
+      firstName: this.userData.firstName,
+      lastName: this.userData.lastName,
+      additionalInfo: JSON.parse(JSON.stringify(this.userData.additionalInfo)),
+    };
     this.SetLoader(false);
   },
   methods: {
-    isCloseInfo() {
-      this.isShowInfo = !this.isShowInfo;
+    // eslint-disable-next-line consistent-return
+    async processFile(e, validate) {
+      const isValid = await validate(e);
+      const file = e.target.files[0];
+      if (isValid.valid) {
+        const MAX_SIZE = 20e6; // макс размер - тут 2мб
+        if (!file) {
+          return false;
+        }
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        this.avatar_change.data = await this.$store.dispatch('user/imageType', { contentType: file.type });
+        this.avatar_change.file = file;
+        let output = document.getElementById('userAvatar');
+        if (!output) {
+          output = document.getElementById('userAvatarTwo');
+        }
+        output.src = URL.createObjectURL(file);
+        // eslint-disable-next-line func-names
+        output.onload = function () {
+          URL.revokeObjectURL(output.src);
+        };
+        this.showModalImageOk();
+        reader.onerror = (evt) => {
+          console.error(evt);
+        };
+      }
+    },
+    showModalImageOk() {
+      this.ShowModal({
+        key: modals.status,
+        img: require('~/assets/img/ui/questAgreed.svg'),
+        title: 'Image loaded successful',
+        subtitle: 'Please press save button',
+        path: '/profile?v=read',
+      });
+    },
+    showModalSave() {
+      this.ShowModal({
+        key: modals.status,
+        img: require('~/assets/img/ui/questAgreed.svg'),
+        title: 'Saved',
+        subtitle: 'User data has been saved',
+        path: '/profile?v=read',
+      });
+    },
+    showModalWarning() {
+      this.ShowModal({
+        key: modals.warning,
+        path: '/profile?v=change',
+      });
+    },
+    modalChangePassword() {
+      this.ShowModal({
+        key: modals.changePassInSettings,
+      });
+    },
+    modalTwoFAAuth() {
+      this.ShowModal({
+        key: modals.twoFAAuth,
+      });
+    },
+    switch2Fa() {
+      this.twoFa = !this.twoFa;
+    },
+    switchSms() {
+      this.sms = !this.sms;
+      this.$router.push('/sms-verification');
+    },
+    transitionToChange() {
+      this.$router.push('/profile?v=change');
+      this.isProfileEdit = true;
+    },
+    async editUserData() {
+      const formData = new FormData();
+      formData.append('image', this.avatar_change.file);
+      try {
+        if (this.avatar_change.data.ok) {
+          const data = {
+            url: this.avatar_change.data.result.url,
+            formData: this.avatar_change.file,
+            type: this.avatar_change.file.type,
+          };
+          await this.$store.dispatch('user/setImage', data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      let payload = {};
+      const checkAvatarID = this.avatar_change.data.ok ? this.avatar_change.data.result.mediaId : this.userData.avatarId;
+      if (this.userRole === 'employer') {
+        payload = {
+          ...this.localUserData,
+          avatarId: checkAvatarID,
+          additionalInfo: {
+            ...this.localUserData.additionalInfo,
+            ...{
+              educations: undefined,
+              workExperiences: undefined,
+              skills: undefined,
+            },
+          },
+        };
+      } else {
+        payload = {
+          ...this.localUserData,
+          avatarId: checkAvatarID,
+          additionalInfo: {
+            ...this.localUserData.additionalInfo,
+            ...{
+              company: undefined,
+              CEO: undefined,
+              website: undefined,
+            },
+          },
+        };
+      }
+      try {
+        await this.$store.dispatch('user/editUserData', payload);
+        this.showModalSave();
+      } catch (e) {
+        console.log(e);
+      }
     },
   },
 };
@@ -76,554 +493,315 @@ export default {
 
 <style lang="scss" scoped>
 
-.selector {
-  @include box;
-  width: 100%;
-  z-index: 140;
-  &__items {
-    background: #FFFFFF;
-    display: grid;
-    grid-template-columns: 1fr;
-    width: 100%;
-  }
-  &__item {
-    @include text-simple;
-    padding: 15px 20px;
-    background: #FFFFFF;
-    font-weight: 500;
-    font-size: 16px;
-    color: $black800;
-    cursor: pointer;
-    transition: .3s;
-    &:hover {
-      background: #F3F7FA;
-    }
-  }
-}
-
-.ver-btn {
-  &__container {
-    display: flex;
-    margin: 20px;
-    width: 250px;
-  }
-}
-
-.top-disabled {
-  display: none;
-}
-
-.btn {
-  &__container {
-    justify-content: center;
-    align-content: center;
-    display: flex;
-  }
-  &__plus {
-    justify-content: flex-end;
-    align-items: center;
-    display: flex;
-  }
-}
-.icon {
-  font-size: 25px;
-  color: $blue;
-  align-items: center;
-  &__gradient {
-    color: transparent;
-    -webkit-background-clip: text;
-    background-image: linear-gradient(135deg, #0083C7 0%, #00AA5B 100%);
-  }
-  &-check_all_big:before {
-    @extend .icon;
-    content: "\ea00";
-    color: $white;
-    padding: 0 0 0 10px;
-  }
-  &-Lock:before {
-    @extend .icon;
-    @extend .icon__gradient;
-    content: "\ea24";
-  }
-  &-user_pin:before {
-    @extend .icon;
-    @extend .icon__gradient;
-    content: "\e908";
-  }
-  &-caret_right:before {
-    @extend .icon;
-    @extend .icon__gradient;
-    content: "\ea4a";
-    color: $black200;
-  }
-  &-data:before {
-    @extend .icon;
-    @extend .icon__gradient;
-    content: "\e914";
-  }
-  &-group_alt:before {
-    @extend .icon;
-    @extend .icon__gradient;
-    content: "\e900";
-  }
-  &-home_alt_check:before {
-    @extend .icon;
-    @extend .icon__gradient;
-    content: "\e961";
-  }
-  &-credit_card:before {
-    @extend .icon;
-    @extend .icon__gradient;
-    content: "\ea0e";
-  }
-  &-Case:before {
-    @extend .icon;
-    @extend .icon__gradient;
-    content: "\e9ff";
-  }
-  &-line_chart_up:before {
-    @extend .icon;
-    @extend .icon__gradient;
-    content: "\e9cb";
-  }
-  &-settings:before {
-    @extend .icon;
-    content: "\ea34";
-  }
-  &-chevron_big_right:before {
-    @extend .icon;
-    content: "\ea4e";
-    color: $black200;
-  }
-  &-plus_circle:before {
-    @extend .icon;
-    content: "\e9a6";
-  }
-  &-Case:before {
-    @extend .icon;
-    content: "\e9ff";
-  }
-  &-id_card:before {
-    @extend .icon;
-    content: "\e902";
-  }
-  &-Earth:before {
-    @extend .icon;
-    content: "\ea11";
-  }
-  &-facebook:before {
-    @extend .icon;
-    content: "\e9e5";
-  }
-  &-LinkedIn::before {
-    @extend .icon;
-    content: "\e9ed";
-  }
-  &-twitter::before {
-    @extend .icon;
-    content: "\e9fa";
-  }
-  &-instagram::before {
-    @extend .icon;
-    content: "\e9ea";
-  }
-  &-phone::before {
-    @extend .icon;
-    content: "\ea2d";
-  }
-  &-mail::before {
-    @extend .icon;
-    content: "\ea27";
-  }
-  &-location::before {
-    @extend .icon;
-    content: "\ea23";
-  }
-  &-user::before {
-    @extend .icon;
-    content: "\e90c";
-  }
-  &-close_big::before {
-    content: "\e948";
-    color: #2e3a59;
-    font-size: 26px;
-  }
-  &__close {
-    position: absolute;
-    bottom: 155px;
-    right: 25px;
-    z-index: 2;
-    &_closed {
-      display: none;
-    }
-  }
-  &-edit {
-    position: absolute;
-    top: 50%;
-    margin-right: -50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  &-edit::before {
-    @extend .icon;
-    content: "\e997"
-  }
-}
-
-.higher-level {
-  &__img {
-    z-index: 1;
-    height: 100%;
-    width: 100%;
-    max-height: 207px;
-    padding: 0 0 0 30px;
-  }
-}
-
-.btn {
-  width: 100%;
-  &__container-right {
-    @extend .btn;
-    display: flex;
-    justify-content: flex-end;
-    margin: 0 20px 0 -20px;
-    padding: 0 0 20px 0;
-  }
-  &__save {
-    @extend .btn;
-    margin-bottom: 20px;
-    grid-column: 5/17;
-    max-width: 220px;
-  }
-}
-.banner {
-  &__top {
-    position: relative;
-    min-height: 160px;
+.wq-profile {
+  @include main;
+  @include text-simple;
+  &__body {
     margin-top: 30px;
+    max-width: 1180px;
+    height: 100%;
+  }
+  &__header {
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 36px;
+
+    margin-top: 25px;
+    &_noMarginTop {
+      margin-top: 0;
+    }
+  }
+  &__info {
+    display: grid;
+    grid-template-rows: 151px 1fr 43px;
+    grid-gap: 20px;
+
+    margin-top: 20px;
+    padding: 20px;
+
+    background: #FFFFFF;
+    border-radius: 6px;
+  }
+
+  &__security {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+  }
+}
+
+.banner {
+  background-color: #0083C7;
+  color: #FFFFFF;
+  border-radius: 6px;
+
+  &__body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    width: 100%;
+  }
+
+  &__container {
+    padding: 20px 0 20px 20px;
+  }
+
+  &__title {
+    font-weight: 500;
+    font-size: 25px;
+    line-height: 32px;
+
+  }
+
+  &__subtitle {
+    font-size: 16px;
+    line-height: 21px;
+
+    margin-top: 10px;
+  }
+
+  &__verification {
+    width: 250px;
+
+    margin-top: 29px;
+  }
+
+  &__image {
+    width: max-content;
+    height: 100%;
+
+    margin-left: auto;
   }
 }
 
 .info {
-  &__toggle {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    margin: 50px 0 21px 9px;
-  }
-}
-
-.main {
-  @include main;
-  &-white {
-    @include main;
-    background: $white;
-    background: #FFFFFF;
-    margin: 0 0 20px 0;
-    border-radius: 6px;
-    justify-content: center;
-  }
-  &__body {
-    max-width: 1180px;
-    height: 100%;
-  }
-}
-
-.page {
-  &__grid {
+  &__base {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 151px repeat(3, 1fr);
+    grid-gap: 20px;
   }
-  &__title {
-    margin: 20px 0 20px 0;
-    font-weight: 500;
-    font-size: 25px;
-    color: $black800;
-  }
-  &__profile {
-    @include main-white;
-    justify-content: flex-start;
-    border-radius: 6px;
-    margin: 20px 0 20px 0;
-    display: inherit;
-  }
-  &__checkbox {
-    margin: 50px 0 20px 20px;
-    display: flex;
-    flex-direction: row;
-  }
-  &__part {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    &_left {
-      display: grid;
-    }
-    &_right {
-      display: grid;
-    }
-  }
-  &__info {
-    background-color: #0083C7;
-    border-radius: 6px;
-    color: $white;
-    max-height: 207px;
-    &-title {
-      margin: 20px 0 0 20px;
-      font-size: 25px;
-      font-weight: 500;
-    }
-    &-subtitle {
-      margin: 10px 0 0 20px;
-      font-size: 16px;
-      font-weight: 400;
-    }
-  }
-  &__badge {
-    background: rgba(0, 131, 199, 0.1);
-    border-radius: 44px;
-    margin: 10px;
-    color: $blue;
-    padding: 5px 6px;
-    display: flex;
-    text-align: center;
-    &-skills {
-      padding: 15px;
-    }
-  }
-  &__skills {
-    flex-direction: row;
-    flex-wrap: wrap;
-    display: flex;
-    max-width: 1180px;
+
+  &__avatar {
     width: 100%;
-    justify-content: flex-start;
-    //padding: 0 20px 0 0;
+    height: 151px;
+    border-radius: 6px;
+    overflow: hidden;
   }
-}
 
-.user {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  margin: 0 16px;
-  &__name {
-    padding: 10px 0 0 0;
-    @include text-simple;
-    font-size: 16px;
-    font-weight: 600;
-    color: $white;
-  }
-  &__icon {
-    padding: 10px 0 0 0;
+  &__contacts {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: flex-end;
-    align-items: center;
+  }
+
+  &__additional {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+  }
+
+  &__social {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+  }
+
+}
+
+.contacts {
+
+  & div:first-child {
+    margin-bottom: 10px;
+  }
+
+  & div:last-child {
+    margin-top: 15px;
+  }
+
+  &__input {
+    width: 100%;
   }
 }
 
-@include _1199 {
-  .main-white {
-    margin: 0 20px;
+.status {
+  display: flex;
+
+  max-width: max-content;
+  height: 34px;
+  padding: 8px 13px;
+
+  background: #E9EDF2;
+  color: #AAB0B9;
+  border-radius: 36px;
+
+  font-size: 14px;
+  line-height: 18px;
+  &__icon {
+    font-size: 23px;
+    color: #AAB0B9;
+
+    margin-left: 10px;
+    margin-top: -3px;
   }
-  .banner {
-    &__top {
-      margin: 0 20px;
+
+  &_verified {
+    color: #0083C7;
+    background: rgba(0, 131, 199, 0.1);
+
+    & .status__icon {
+      color: #0083C7;
     }
-  }
-  .page {
-    &__title {
-      margin: 20px 0 20px 20px;
-    }
-    &__skills {
-      margin: 0 0 10px 20px;
-    }
-    &__badge {
-      text-align: center;
-    }
-    &__profile {
-      margin: 20px;
-    }
-  }
-  .settings {
-    margin: 20px;
   }
 }
-@include _991 {
-  .knowledge {
-    &__container {
-      grid-template-columns: 5fr 28px 5fr 0;
-      max-height: 100%;
-    }
+
+.avatar {
+  &:hover .edit {
+    opacity: 1;
   }
-  .settings {
-    grid-auto-rows: auto auto;
-    grid-template-columns: 5fr;
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
-  .icon {
-    &__close {
-      bottom: 154px;
-      right: 10px;
-    }
-  }
-  .page {
-    &__grid {
-      grid-template-columns: 11fr 1fr;
-    }
-  }
-  .profile {
-    &__main-data {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    &__button {
-      grid-template-rows: auto auto;
-      grid-template-columns: 1fr;
-      max-height: 100%;
-    }
-  }
-  .higher {
-    &-level {
-      &__img {
-        display: none;
+  &__edit {
+    position: relative;
+    top: -60%;
+    left: 35%;
+    opacity: 0;
+
+    width: 40px;
+    height: 40px;
+
+    background: #F7F8FA;
+    border-radius: 6px;
+
+    -moz-transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+    -o-transition: all 0.5s;
+    transition: all 0.5s;
+
+    &:hover {
+      background: #0083C7;
+      & .edit__icon {
+        color: #FFFFFF;
       }
     }
   }
 }
 
-@include _767 {
-  .avatar {
-    &__row {
-      margin: 20px 20px 0 20px;
+.edit {
+  cursor: pointer;
+  &__validator {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+    & input {
+      width: 100%;
+      height: 100%;
     }
   }
-  .company {
-    &__inputs {
-      grid-template-columns: 1fr;
-      grid-gap: 0;
-    }
+  &__icon {
+    position: absolute;
+    top: 50%;
+    margin-right: -50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #0083C7;
+    font-size: 20px;
   }
-  .icon {
-    &__close {
-      bottom: 154px;
-    }
-  }
-  .page {
-    &__info {
-      max-height: 100%;
-    }
-  }
-  .avatar {
-    &__row {
-      flex-direction: column;
-    }
-    &__container {
-      justify-self: center;
-    }
-  }
-  .profile {
-    &__main-data {
-      grid-template-columns: 1fr;
-    }
-    &__button {
-      grid-template-columns: 1fr;
-    }
-  }
+}
 
-  .settings {
-    grid-template-columns: 1fr;
-    &__left {
-      padding: 20px 0 20px 20px;
+.about {
+  display: flex;
+  flex-direction: column;
+  &__title {
+    color: #1D2127;
+    font-size: 16px;
+    line-height: 21px;
+
+    margin-bottom: 5px;
+  }
+  &__textarea {
+    height: 100%;
+
+    padding: 10px 10px 0 10px;
+    border: none;
+    border-radius: 6px;
+    color: #1D2127;
+    background-color: #F7F8FA;
+    resize: none;
+
+    &:focus {
+      background-color: #FFFFFF;
+      border: 1px solid #F3F7FA;
+    }
+
+    &_disabled {
+      background-color: #FFFFFF;
+      border: 1px solid #F3F7FA;
+    }
+    &::placeholder {
+      color: #D8DFE3;
     }
   }
 }
 
-@include _575 {
-  .profile {
-    &__additional-data{
-      grid-template-columns: 1fr;
-      grid-gap: 20px;
-    }
-  }
-  .avatar {
-    &__row {
-      grid-template-columns: 1fr;
-    }
-  }
-  .main-white {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-  .btn {
-    &__container {
-      width: initial;
-      justify-content: center;
-      margin: 0 0 10px;
-    }
-    &__container-right {
-      margin: 0 20px;
-      justify-content: center;
-    }
-  }
-  .page {
-    &__info-title {
-      font-size: 18px;
-    }
-  }
-  .settings {
-    &_blue {
-      grid-template-columns: 1fr;
-      padding: 10px;
-      grid-gap: 10px;
-    }
-  }
-  .icon {
-    &__close {
-      bottom: 137px;
-      right: 10px;
-    }
-  }
-}
-@include _480 {
-  .main-white {
-    width: calc(98vw - 71px);
-  }
-  .btn {
-    &__save {
-      margin-bottom: 20px;
-      grid-column: 5/14;
-    }
-  }
-  .icon {
-    &__close {
-      bottom: 157px;
-      right: 6px;
+.social {
+  &__container {
+    display: flex;
+    flex-direction: column;
+    & div:first-child {
+      margin-bottom: 15px;
     }
   }
 }
 
-@include _380 {
-  .btn {
-    &__save {
-      margin-bottom: 20px;
-      grid-column: 5/14;
-    }
+.action {
+  display: flex;
+  justify-content: flex-end;
+  &__save {
+    max-width: 250px;
   }
-  .icon {
-    &__close {
-      bottom: 195px;
-      right: 5px;
-    }
+  &__change {
+    @extend .action__save;
   }
-  .option {
-    &__title {
-      padding: 0 10px 0 16px;
-      font-size: 14px;
-    }
+}
+
+.security {
+  margin-top: 20px;
+  &__title {
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 39px;
+
+    color: #000000;
   }
-  .user {
-    grid-template-columns: 11fr 1fr;
+
+  &__btn {
+    width: 250px;
   }
-  .icons {
-    padding: 16px 0 0 16px;
+  &__password {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    background: #FFFFFF;
+    border-radius: 6px;
+    padding: 20px;
+  }
+  &__auth {
+    @extend .security__password;
+  }
+}
+
+.icon {
+  &__input {
+    font-size: 23px;
+    color: #0083C7;
+    line-height: 36px;
   }
 }
 </style>

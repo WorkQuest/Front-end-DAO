@@ -464,11 +464,11 @@ export default {
       return [
         {
           title: this.$t('ui.profile.myProfile'),
-          path: '/profile',
+          path: '/profile?v=read',
         },
         {
           title: this.$t('ui.profile.settings'),
-          path: '/settings',
+          path: '/profile?v=change',
         },
       ];
     },

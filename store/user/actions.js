@@ -62,4 +62,7 @@ export default {
     commit('setImage', response.result);
     return response;
   },
+  async changeProfile({ commit }, payload) {
+    commit('changeProfile', payload);
+  },
 };
