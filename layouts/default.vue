@@ -8,6 +8,7 @@
     >
       <div class="template__content">
         <div
+          v-click-outside="closeAll"
           class="template__header header"
         >
           <div class="header__body">
@@ -292,7 +293,9 @@
               </div>
             </div>
           </transition>
-          <div class="template__main">
+          <div
+            class="template__main"
+          >
             <nuxt />
           </div>
         </div>
@@ -443,10 +446,6 @@ export default {
           title: 'My profile',
         },
         {
-          link: '/settings',
-          title: 'Settings',
-        },
-        {
           link: '/',
           title: 'Logout',
         },
@@ -464,11 +463,7 @@ export default {
       return [
         {
           title: this.$t('ui.profile.myProfile'),
-          path: '/profile?v=read',
-        },
-        {
-          title: this.$t('ui.profile.settings'),
-          path: '/profile?v=change',
+          path: '/profile',
         },
       ];
     },
@@ -579,14 +574,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-
-.profile {
-  &__img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-  }
-}
 
 .hidden {
   display: none;
@@ -881,15 +868,19 @@ export default {
 }
 .profile {
   position: absolute;
-  top: calc(72px + 5px);
+  top: 57px;
   right: calc(100% - 43px);
+  z-index: 10000000;
+
   background: #FFFFFF;
   box-shadow: 0 17px 17px rgba(0, 0, 0, 0.05), 0 5.125px 5.125px rgba(0, 0, 0, 0.03), 0 2.12866px 2.12866px rgba(0, 0, 0, 0.025), 0 0.769896px 0.769896px rgba(0, 0, 0, 0.0174206);
   border-radius: 6px;
+
   min-width: 223px;
   width: 100%;
-  min-height: 200px;
-  z-index: 10000000;
+  min-height: 100%;
+  overflow: hidden;
+
   &__header {
     border-bottom: 1px solid #F7F8FA;
     display: grid;
@@ -901,6 +892,11 @@ export default {
     max-width: 40px;
     max-height: 40px;
     border-radius: 100%;
+  }
+  &__img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
   }
   &__items {
     display: grid;

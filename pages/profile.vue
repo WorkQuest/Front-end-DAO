@@ -397,7 +397,6 @@ export default {
         img: require('~/assets/img/ui/questAgreed.svg'),
         title: 'Image loaded successful',
         subtitle: 'Please press save button',
-        path: '/profile?v=read',
       });
     },
     showModalSave() {
@@ -406,13 +405,12 @@ export default {
         img: require('~/assets/img/ui/questAgreed.svg'),
         title: 'Saved',
         subtitle: 'User data has been saved',
-        path: '/profile?v=read',
       });
+      this.$store.dispatch('user/changeProfile', false);
     },
     showModalWarning() {
       this.ShowModal({
         key: modals.warning,
-        path: '/profile?v=change',
       });
     },
     modalChangePassword() {

@@ -43,9 +43,7 @@ export default {
     }),
   },
   methods: {
-    async hide() {
-      if (this.options.path) this.$router.push(this.options.path);
-      if (this.options.path === '/profile?v=read') await this.$store.dispatch('user/changeProfile', false);
+    hide() {
       this.CloseModal();
     },
   },

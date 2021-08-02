@@ -19,13 +19,13 @@
         <base-btn
           class="action__cancel"
           mode="lightBlue"
-          @click="hide()"
+          @click="cancel()"
         >
           {{ $t('meta.cancel') }}
         </base-btn>
         <base-btn
           class="action__change"
-          @click="hide()"
+          @click="change()"
         >
           {{ $t('meta.change') }}
         </base-btn>
@@ -50,9 +50,11 @@ export default {
     },
   },
   methods: {
-    async hide() {
-      if (this.options.path) this.$router.push(this.options.path);
-      if (this.options.path === '/profile?v=change') await this.$store.dispatch('user/changeProfile', true);
+    cancel() {
+      this.CloseModal();
+    },
+    change() {
+      this.$store.dispatch('user/changeProfile', true);
       this.CloseModal();
     },
   },
