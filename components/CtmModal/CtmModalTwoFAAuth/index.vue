@@ -411,7 +411,7 @@ export default {
 
 .step {
   &__number {
-    padding: 10px;
+    //padding: 10px;
   }
   &__container {
     &_grid {
@@ -426,6 +426,13 @@ export default {
   flex-direction: row;
   align-items: flex-start;
   &__step {
+    display: inline-flex;
+    justify-content: center;
+    white-space: nowrap;
+    height: 44px;
+    min-width: 44px;
+    line-height: 24px;
+
     @include text-simple;
     background: rgba(0, 131, 199, 0.1);
     border-radius: 6px;
@@ -433,6 +440,10 @@ export default {
     font-size: 16px;
     color: $black500;
     padding: 10px;
+
+    & span:first-child {
+      margin-right: 10px;
+    }
     &_active {
       @extend .step-panel__step;
       color: $white;
