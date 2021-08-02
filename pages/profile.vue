@@ -164,7 +164,7 @@
               class="about__textarea"
               :class="{ 'about__textarea_disabled': !isProfileEdit }"
               :title="'test'"
-              :placeholder="userDesc || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus dolor purus non enim praesent elementum facilisis leo, vel'"
+              :placeholder="userDesc || descLorem"
               :disabled="!isProfileEdit"
             />
           </div>
@@ -321,6 +321,7 @@ export default {
         data: {},
         file: {},
       },
+      descLorem: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus dolor purus non enim praesent elementum facilisis leo, vel',
     };
   },
   computed: {
