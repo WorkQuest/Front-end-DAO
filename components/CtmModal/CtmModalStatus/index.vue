@@ -44,7 +44,6 @@ export default {
   },
   methods: {
     hide() {
-      if (this.options.path) this.$router.push(this.options.path);
       this.CloseModal();
     },
   },

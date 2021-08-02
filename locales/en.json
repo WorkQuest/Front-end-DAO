@@ -93,6 +93,14 @@
     "create": "Create account"
   },
   "profile": {
+    "title": "Profile",
+    "security": "Security",
+    "aboutMe": "About Me",
+    "2FA": "2FA Authentication",
+    "changePass": "Change password",
+    "switchOn": "Switch On",
+    "change": "Change",
+    "save": "Save",
     "raiseViews": "Raise views",
     "educations": "Educations",
     "prevWorkExp": "Previous work experience",
@@ -138,7 +146,8 @@
     "next": "Next",
     "addProposal": "Add proposal",
     "delete": "delete",
-    "addFile": "Add File"
+    "addFile": "Add File",
+    "change": "Change"
   },
   "priority": {
     "title": "Priority",
@@ -395,7 +404,9 @@
     "votingTopic": "Voting topic",
     "numberOfVotes": "Number of Votes",
     "votingStart": "Voting Start",
-    "votingEnd": "Voting End"
+    "votingEnd": "Voting End",
+    "warning": "Warning",
+    "warningDescription": "Changing information on this platform will lead to changes on the main service"
   },
   "ui": {
     "workers": "Workers",
@@ -534,6 +545,7 @@
     "term": "Term",
     "getVerification": "Get verification",
     "notVerified": "Not verified",
+    "verified": "Verified",
     "more": "More",
     "settings": "Settings",
     "addInfo": "Add information about you, profile photo and KYC and level up your rating",
@@ -565,7 +577,7 @@
     "amazon_com": "amazon.com",
     "filterAllWorkProposals": "Filter all work proposals",
     "changeRole": "Change role",
-    "2FA": "2FA",
+    "2FA": "2FA Authentication",
     "smsVerification2": "SMS verification",
     "instruments": "Instruments",
     "pensionProgram": "Pension program",
@@ -573,7 +585,8 @@
     "p2pInsurance": "P2P insurance",
     "savingProduct": "Savings product",
     "crediting": "Crediting",
-    "liquidityMining": "Liquidity mining"
+    "liquidityMining": "Liquidity mining",
+    "aboutMe": "About Me"
   },
   "disputes": {
     "disputes": "Disputes",
