@@ -150,7 +150,6 @@ export default {
 .investors {
   @include main;
   @include text-simple;
-
   &__body {
     margin: 30px 0 0px 0px;
     max-width: 1180px;

@@ -843,13 +843,10 @@ export default {
     margin-top: -3px;
   }
 }
-.menu{
-  margin-top: 25px;
-  display: flex;
-}
 
 .menu {
   display: flex;
+  margin-top: 25px;
 }
 .icon {
   &__sorting {

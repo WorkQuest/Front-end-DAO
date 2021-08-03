@@ -404,7 +404,6 @@
     "votingTopic": "Voting topic",
     "numberOfVotes": "Number of Votes",
     "votingStart": "Voting Start",
-    "votingEnd": "Voting End",
     "undelegate": "Undelegate",
     "shure": "Are you shure to undelegate",
     "delegate": "Delegate",
@@ -412,7 +411,7 @@
     "tokensNumber": "Tokens Number",
     "tokensDelegated": "Enter number of tokens that will be delegated",
     "max": "Maximum",
-    "placeholder": "Placeholder"
+    "placeholder": "Placeholder",
     "votingEnd": "Voting End",
     "warning": "Warning",
     "warningDescription": "Changing information on this platform will lead to changes on the main service"
