@@ -60,7 +60,7 @@
                   :value="$t('settings.nameInput')"
                 >
                   <template v-slot:left>
-                    <span class="icon icon__input icon-user" />
+                    <span class="icon contacts__icon icon-user" />
                   </template>
                 </base-field>
                 <base-field
@@ -71,7 +71,7 @@
                   :value="$t('settings.lastNameInput') "
                 >
                   <template v-slot:left>
-                    <span class="icon icon__input icon-user" />
+                    <span class="icon contacts__icon icon-user" />
                   </template>
                 </base-field>
               </div>
@@ -85,7 +85,7 @@
                   :value="$t('settings.addressInput')"
                 >
                   <template v-slot:left>
-                    <span class="icon icon__input icon-location" />
+                    <span class="icon contacts__icon icon-location" />
                   </template>
                 </base-field>
                 <base-field
@@ -96,7 +96,7 @@
                   :value="$t('settings.telInput')"
                 >
                   <template v-slot:left>
-                    <span class="icon icon__input icon-phone" />
+                    <span class="icon contacts__icon icon-phone" />
                   </template>
                 </base-field>
               </div>
@@ -110,7 +110,7 @@
                   mode="iconWhite"
                 >
                   <template v-slot:left>
-                    <span class="icon icon__input icon-mail" />
+                    <span class="icon contacts__icon icon-mail" />
                   </template>
                 </base-field>
                 <base-field
@@ -121,7 +121,7 @@
                   :disabled="true"
                 >
                   <template v-slot:left>
-                    <span class="icon icon__input icon-phone" />
+                    <span class="icon contacts__icon icon-phone" />
                   </template>
                 </base-field>
               </div>
@@ -149,7 +149,7 @@
                     :value="$t('settings.socialInput')"
                   >
                     <template v-slot:left>
-                      <span class="icon icon__input icon-instagram" />
+                      <span class="icon social__icon icon-instagram" />
                     </template>
                   </base-field>
 
@@ -161,7 +161,7 @@
                     :disabled="true"
                   >
                     <template v-slot:left>
-                      <span class="icon icon__input icon-twitter" />
+                      <span class="icon social__icon icon-twitter" />
                     </template>
                   </base-field>
                 </div>
@@ -174,7 +174,7 @@
                     :disabled="true"
                   >
                     <template v-slot:left>
-                      <span class="icon icon__input icon-LinkedIn" />
+                      <span class="icon social__icon icon-LinkedIn" />
                     </template>
                   </base-field>
                   <base-field
@@ -185,7 +185,7 @@
                     :disabled="true"
                   >
                     <template v-slot:left>
-                      <span class="icon icon__input icon-facebook" />
+                      <span class="icon social__icon icon-facebook" />
                     </template>
                   </base-field>
                 </div>
@@ -539,6 +539,11 @@ export default {
   &__name{
     color: #1D2127!important;
   }
+  &__icon {
+    font-size: 23px;
+    color: #0083C7;
+    line-height: 36px;
+  }
 }
 .avatar {
   &:hover .edit {
@@ -579,12 +584,18 @@ export default {
   &__container {
     display: flex;
     flex-direction: column;
+
     & div:first-child {
       margin-bottom: 15px;
     }
   }
-}
 
+  &__icon {
+    font-size: 23px;
+    color: #0083C7;
+    line-height: 36px;
+  }
+}
 .action {
   display: flex;
   justify-content: flex-end;
@@ -594,14 +605,6 @@ export default {
   &__delegate {
     @extend .action__undelegate;
     margin-left: 20px;
-  }
-}
-
-.icon {
-  &__input {
-    font-size: 23px;
-    color: #0083C7;
-    line-height: 36px;
   }
 }
 
