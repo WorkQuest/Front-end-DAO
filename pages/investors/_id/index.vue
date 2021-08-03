@@ -212,20 +212,23 @@
               :title="$t('wallet.table.trx')"
               :items="transactionsData"
               :fields="walletTableFields"
-              :is-pagination="true"
             />
           </div>
         </div>
       </div>
+      <pagination />
     </div>
   </div>
 </template>
 
 <script>
 import modals from '~/store/modals/modals';
+import pagination from '~/components/app/Panels/Pagination';
 
 export default {
-
+  components: {
+    pagination,
+  },
   data() {
     return {
       profileDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus dolor purus non enim praesent elementum facilisis leo, vel',
@@ -429,7 +432,7 @@ export default {
     border-radius: 6px;
   }
   &__table{
-    margin-top: 15px;
+    margin: 15px 0;
   }
 }
 .info {

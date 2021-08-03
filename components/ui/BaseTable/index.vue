@@ -8,7 +8,6 @@
       caption-top
       :responsive="true"
       tbody-tr-class="table__row"
-      :is-pagination="false"
     >
       <template
         v-if="$props.title.length"
@@ -97,21 +96,14 @@
         </nuxt-link>
       </template>
     </b-table>
-    <pagination
-      v-if="isPagination"
-      class="table__pagination"
-    />
   </div>
 </template>
 
 <script>
 import modals from '~/store/modals/modals';
-import pagination from '~/components/app/Panels/Pagination';
 
 export default {
-  components: {
-    pagination,
-  },
+
   props: {
     title: {
       type: String,
@@ -124,10 +116,6 @@ export default {
     fields: {
       type: Array,
       default: () => [],
-    },
-    isPagination: {
-      type: Boolean,
-      default: false,
     },
   },
   data() {
@@ -257,9 +245,6 @@ export default {
     height: 40px!important;
     margin: 0!important;
     text-align: center;
-  }
-  &__pagination{
-    float: right ;
   }
 }
 .btn {
