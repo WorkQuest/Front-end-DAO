@@ -8,6 +8,7 @@
       caption-top
       :responsive="true"
       tbody-tr-class="table__row"
+      :is-pagination="false"
     >
       <template
         v-if="$props.title.length"
@@ -35,11 +36,16 @@
         <span class="table__grey">{{ el.item.transaction_fee }}</span>
       </template>
       <template #cell(avatar)="el">
-        <img
-          :src="el.item.avatar"
-          alt="userAvatar"
-          class="table__avatar"
+        <nuxt-link
+          :to="`/investors/${el.item.id}`"
+          class=" table__link"
         >
+          <img
+            :src="el.item.avatar"
+            alt="userAvatar"
+            class="table__avatar"
+          >
+        </nuxt-link>
       </template>
       <template #cell(copy)="el">
         <base-btn
@@ -82,14 +88,32 @@
       <template #cell(investorAddress)="el">
         {{ modifyAddress(el.item.investorAddress) }}
       </template>
+      <template
+        #cell(name)="el"
+      >
+        <nuxt-link
+          :to="`/investors/${el.item.id}`"
+          class="table__link"
+        >
+          <span>{{ el.item.name }}</span>
+        </nuxt-link>
+      </template>
     </b-table>
+    <pagination
+      class="pagination"
+      :class="togglleVisible"
+    />
   </div>
 </template>
 
 <script>
 import modals from '~/store/modals/modals';
+import pagination from '~/components/app/Panels/Pagination';
 
 export default {
+  components: {
+    pagination,
+  },
   props: {
     title: {
       type: String,
@@ -103,10 +127,22 @@ export default {
       type: Array,
       default: () => [],
     },
+    isPagination: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
     };
+  },
+  computed: {
+    togglleVisible() {
+      return [
+        { pagination_vis: this.isPagination },
+        { pagination_invis: !this.isPagination },
+      ];
+    },
   },
   methods: {
     voteClass(el) {
@@ -186,6 +222,10 @@ export default {
   &__row {
     line-height: 40px;
   }
+  &__link{
+    color: #1D2127!important;
+    text-decoration: none!important;
+  }
   @include _991 {
     .table {
       &__row {
@@ -247,6 +287,14 @@ export default {
     &_hidden{
       display: none!important;
     }
+  }
+}
+.pagination{
+  &_vis{
+    display:block;
+  }
+  &_invis{
+  display: none;
   }
 }
 </style>

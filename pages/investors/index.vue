@@ -71,6 +71,7 @@ export default {
           voting: '127 millions',
           undelegate: 'Undelegate',
           delegate: 'Delegate',
+          id: 1,
         },
         {
           avatar: require('~/assets/img/ui/avatar.svg'),
@@ -81,6 +82,7 @@ export default {
           voting: '127 millions',
           undelegate: 'Undelegate',
           delegate: 'Delegate',
+          id: 2,
         },
         {
           avatar: require('~/assets/img/ui/avatar.svg'),
@@ -91,6 +93,7 @@ export default {
           voting: '127 millions',
           undelegate: 'Undelegate',
           delegate: 'Delegate',
+          id: 3,
 
         },
         {
@@ -102,7 +105,7 @@ export default {
           voting: '127 millions',
           undelegate: 'Undelegate',
           delegate: 'Delegate',
-
+          id: 4,
         },
         {
           avatar: require('~/assets/img/ui/avatar.svg'),
@@ -113,7 +116,7 @@ export default {
           voting: '127 millions',
           undelegate: 'Undelegate',
           delegate: 'Delegate',
-
+          id: 5,
         },
         {
           avatar: require('~/assets/img/ui/avatar.svg'),
@@ -124,6 +127,7 @@ export default {
           voting: '127 millions',
           undelegate: 'Undelegate',
           delegate: 'Delegate',
+          id: 6,
         },
         {
           avatar: require('~/assets/img/ui/avatar.svg'),
@@ -134,6 +138,7 @@ export default {
           voting: '127 millions',
           undelegate: 'Undelegate',
           delegate: 'Delegate',
+          id: 7,
         },
       ],
     };

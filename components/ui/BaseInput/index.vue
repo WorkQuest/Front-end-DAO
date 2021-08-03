@@ -8,7 +8,9 @@
       {'ctm-field_disabled': disabled},
       {'ctm-field_search': isSearch},
       {'ctm-field_icon': mode === 'icon'},
-      {'ctm-field_white': mode === 'white'},]"
+      {'ctm-field_white': mode === 'white'},
+      {'ctm-field_iconWhite': mode === 'iconWhite'},
+    ]"
     :rules="rules"
     :name="name"
     :vid="vid"
@@ -261,6 +263,18 @@ export default {
     .ctm-field {
       &__input {
         padding: 0 20px 0 50px;
+      }
+    }
+  }
+  &_iconWhite {
+    color:  $blue!important;
+    .ctm-field {
+      color: black!important;
+      &__input {
+        color: #1D2127!important;
+        padding: 0 20px 0 50px;
+        border: 1px solid #F7F8FA;
+        background-color: white;
       }
     }
   }
