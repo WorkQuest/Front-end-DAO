@@ -40,7 +40,7 @@
           class=" table__link"
         >
           <img
-            :src="el.item.avatar"
+            src="~/assets/img/ui/profileAvatar.svg"
             alt="userAvatar"
             class="table__avatar"
           >
@@ -243,6 +243,7 @@ export default {
   &__avatar{
     width: 40px!important;
     height: 40px!important;
+    border-radius: 50%;
     margin: 0!important;
     text-align: center;
   }

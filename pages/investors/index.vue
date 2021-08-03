@@ -63,7 +63,7 @@ export default {
       ],
       historyTableData: [
         {
-          avatar: require('~/assets/img/ui/avatar.svg'),
+          avatar: '',
           name: 'user@gmail.com',
           investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
           stake: '126,613,276',
@@ -74,7 +74,7 @@ export default {
           id: 1,
         },
         {
-          avatar: require('~/assets/img/ui/avatar.svg'),
+          avatar: '',
           name: 'Main Node',
           investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
           stake: '126,613,276',
@@ -85,7 +85,7 @@ export default {
           id: 2,
         },
         {
-          avatar: require('~/assets/img/ui/avatar.svg'),
+          avatar: '',
           name: 'Turing',
           investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
           stake: '126,613,276',
@@ -97,7 +97,7 @@ export default {
 
         },
         {
-          avatar: require('~/assets/img/ui/avatar.svg'),
+          avatar: '',
           name: 'user@gmail.com',
           investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
           stake: '126,613,276',
@@ -108,7 +108,7 @@ export default {
           id: 4,
         },
         {
-          avatar: require('~/assets/img/ui/avatar.svg'),
+          avatar: '',
           name: 'Spacebot',
           investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
           stake: '126,613,276',
@@ -119,7 +119,7 @@ export default {
           id: 5,
         },
         {
-          avatar: require('~/assets/img/ui/avatar.svg'),
+          avatar: '',
           name: 'user@gmail.com',
           investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
           stake: '126,613,276',
@@ -130,7 +130,7 @@ export default {
           id: 6,
         },
         {
-          avatar: require('~/assets/img/ui/avatar.svg'),
+          avatar: '',
           name: 'user@gmail.com',
           investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
           stake: '126,613,276',
