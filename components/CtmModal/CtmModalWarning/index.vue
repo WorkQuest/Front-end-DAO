@@ -1,0 +1,97 @@
+<template>
+  <ctm-modal-box
+    class="warning"
+    :is-header="false"
+  >
+    <div class="warning__content">
+      <img
+        alt=""
+        src="~/assets/img/ui/warning.svg"
+        class="warning__icon"
+      >
+      <div class="warning__title">
+        {{ $t('modals.warning') }}
+      </div>
+      <div class="warning__desc">
+        {{ $t('modals.warningDescription') }}
+      </div>
+      <div class="warning__action">
+        <base-btn
+          class="action__cancel"
+          mode="lightBlue"
+          @click="cancel()"
+        >
+          {{ $t('meta.cancel') }}
+        </base-btn>
+        <base-btn
+          class="action__change"
+          @click="change()"
+        >
+          {{ $t('meta.change') }}
+        </base-btn>
+      </div>
+    </div>
+  </ctm-modal-box>
+</template>
+
+<script>
+import { mapGetters } from 'vuex';
+
+export default {
+  name: 'Warning',
+  computed: {
+    ...mapGetters({
+      options: 'modals/getOptions',
+    }),
+    modalBody() {
+      return [
+        this.$t('modals.lorem'),
+      ];
+    },
+  },
+  methods: {
+    cancel() {
+      this.CloseModal();
+    },
+    change() {
+      this.$store.dispatch('user/changeProfile', true);
+      this.CloseModal();
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.warning {
+  @include text-simple;
+  min-width: 380px !important;
+  &__content {
+    padding: 0 28px 30px;
+    margin-top: 25px;
+  }
+  &__icon {
+    margin: 5px auto 0;
+  }
+  &__title {
+    font-weight: 500;
+    font-size: 23px;
+    line-height: 30px;
+    text-align: center;
+    color: #1D2127;
+    margin-top: 30px;
+  }
+  &__desc {
+    font-size: 16px;
+    line-height: 21px;
+    text-align: center;
+    color: #4C5767;
+    margin-top: 5px;
+  }
+  &__action {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 30px;
+  }
+}
+</style>

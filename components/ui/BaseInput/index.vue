@@ -212,11 +212,6 @@ export default {
     width: 100%;
   }
 
-  &_disabled {
-    .ctm-field__input {
-      pointer-events: none;
-    }
-  }
   &_search {
     .ctm-field__input {
       padding: 0 20px 0 50px;
@@ -287,6 +282,14 @@ export default {
         font-size: 25px;
         height: 84px;
       }
+    }
+  }
+  &_disabled {
+    .ctm-field__input {
+      pointer-events: none;
+      background: #FFFFFF;
+      border-radius: 6px;
+      border: 1px solid #F3F7FA;
     }
   }
 }

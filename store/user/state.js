@@ -3,6 +3,7 @@ export default () => ({
     access: '',
     refresh: '',
   },
+  isProfileEdit: false,
   userData: {},
   currentUserPosition: null,
   userRole: {},

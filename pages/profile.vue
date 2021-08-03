@@ -50,7 +50,7 @@
               alt=""
             >
             <label
-              v-if="isEditPage"
+              v-if="isProfileEdit"
               class="avatar__edit edit"
             >
               <span class="edit__icon icon-edit" />
@@ -81,7 +81,7 @@
               v-if="firstName"
               v-model="localUserData.firstName"
               :placeholder="firstName || $t('settings.nameInput')"
-              :disabled="!isEditPage"
+              :disabled="!isProfileEdit"
               :is-hide-error="true"
               mode="icon"
             >
@@ -93,7 +93,7 @@
               v-if="lastName"
               v-model="localUserData.lastName"
               :placeholder="$t('settings.lastNameInput')"
-              :disabled="!isEditPage"
+              :disabled="!isProfileEdit"
               :is-hide-error="true"
               mode="icon"
             >
@@ -107,7 +107,7 @@
             <base-field
               v-model="localUserData.additionalInfo.address"
               :placeholder="address || $t('settings.addressInput')"
-              :disabled="!isEditPage"
+              :disabled="!isProfileEdit"
               :is-hide-error="true"
               mode="icon"
             >
@@ -118,7 +118,7 @@
             <base-field
               v-model="localUserData.additionalInfo.secondMobileNumber"
               :placeholder="secondMobileNumber || $t('settings.telInput')"
-              :disabled="!isEditPage"
+              :disabled="!isProfileEdit"
               :is-hide-error="true"
               mode="icon"
             >
@@ -143,7 +143,7 @@
             <base-field
               v-model="localUserData.additionalInfo.secondMobileNumber"
               :placeholder="secondMobileNumber || $t('settings.telInput')"
-              :disabled="!isEditPage"
+              :disabled="!isProfileEdit"
               :is-hide-error="true"
               mode="icon"
             >
@@ -162,10 +162,10 @@
               id="textarea"
               v-model="localUserData.additionalInfo.description"
               class="about__textarea"
-              :class="{ 'about__textarea_disabled': !isEditPage }"
+              :class="{ 'about__textarea_disabled': !isProfileEdit }"
               :title="'test'"
-              :placeholder="userDesc || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus dolor purus non enim praesent elementum facilisis leo, vel'"
-              :disabled="!isEditPage"
+              :placeholder="userDesc || descLorem"
+              :disabled="!isProfileEdit"
             />
           </div>
           <div class="info__social social">
@@ -173,7 +173,7 @@
               <base-field
                 v-model="localUserData.additionalInfo.socialNetwork.instagram"
                 :placeholder="userInstagram || $t('settings.socialInput')"
-                :disabled="!isEditPage"
+                :disabled="!isProfileEdit"
                 :is-hide-error="true"
                 mode="icon"
               >
@@ -184,7 +184,7 @@
               <base-field
                 v-model="localUserData.additionalInfo.socialNetwork.twitter"
                 :placeholder="userTwitter || $t('settings.socialInput')"
-                :disabled="!isEditPage"
+                :disabled="!isProfileEdit"
                 :is-hide-error="true"
                 mode="icon"
               >
@@ -197,7 +197,7 @@
               <base-field
                 v-model="localUserData.additionalInfo.socialNetwork.linkedin"
                 :placeholder="userLinkedin || $t('settings.socialInput')"
-                :disabled="!isEditPage"
+                :disabled="!isProfileEdit"
                 :is-hide-error="true"
                 mode="icon"
               >
@@ -208,7 +208,7 @@
               <base-field
                 v-model="localUserData.additionalInfo.socialNetwork.facebook"
                 :placeholder="userFacebook || $t('settings.socialInput')"
-                :disabled="!isEditPage"
+                :disabled="!isProfileEdit"
                 :is-hide-error="true"
                 mode="icon"
               >
@@ -221,7 +221,7 @@
         </div>
         <div class="info__action action">
           <base-btn
-            v-if="isEditPage"
+            v-if="isProfileEdit"
             mode="lightBlue"
             class="action__save"
             @click="editUserData()"
@@ -239,13 +239,13 @@
         </div>
       </div>
       <div
-        v-if="isEditPage"
+        v-if="isProfileEdit"
         class="wq-profile__header"
       >
         {{ $t('profile.security') }}
       </div>
       <div
-        v-if="isEditPage"
+        v-if="isProfileEdit"
         class="wq-profile__security security"
       >
         <div class="security__password">
@@ -287,7 +287,6 @@ export default {
   data() {
     return {
       sms: false,
-      isEditPage: this.$route.query.v === 'change',
       allRegisterUser: false,
       allPeopleInInternet: false,
       onlyWhenSubmitedWork: false,
@@ -295,7 +294,6 @@ export default {
       onlyInplemention: false,
       onlyReadyForExecution: false,
       allRegisteredUsers: false,
-      isShowInfo: true,
       isVerified: false,
       localUserData: {
         avatarId: null,
@@ -323,6 +321,7 @@ export default {
         data: {},
         file: {},
       },
+      descLorem: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus dolor purus non enim praesent elementum facilisis leo, vel',
     };
   },
   computed: {
@@ -348,6 +347,7 @@ export default {
       secondMobileNumber: 'user/getUserSecondMobileNumber',
       imageData: 'user/getImageData',
       additionalInfo: 'user/getAdditionalInfo',
+      isProfileEdit: 'user/isProfileEdit',
     }),
   },
   async mounted() {
@@ -398,7 +398,6 @@ export default {
         img: require('~/assets/img/ui/questAgreed.svg'),
         title: 'Image loaded successful',
         subtitle: 'Please press save button',
-        path: '/profile?v=read',
       });
     },
     showModalSave() {
@@ -407,14 +406,12 @@ export default {
         img: require('~/assets/img/ui/questAgreed.svg'),
         title: 'Saved',
         subtitle: 'User data has been saved',
-        path: '/profile?v=read',
       });
+      this.$store.dispatch('user/changeProfile', false);
     },
     showModalWarning() {
-      this.isEditPage = true;
       this.ShowModal({
         key: modals.warning,
-        path: '/profile?v=change',
       });
     },
     modalChangePassword() {
@@ -436,7 +433,7 @@ export default {
     },
     transitionToChange() {
       this.$router.push('/profile?v=change');
-      this.isEditPage = true;
+      this.isProfileEdit = true;
     },
     async editUserData() {
       const formData = new FormData();
@@ -484,7 +481,6 @@ export default {
       }
       try {
         await this.$store.dispatch('user/editUserData', payload);
-        this.isEditPage = false;
         this.showModalSave();
       } catch (e) {
         console.log(e);
@@ -805,207 +801,6 @@ export default {
     font-size: 23px;
     color: #0083C7;
     line-height: 36px;
-  }
-}
-
-@include _1199 {
-  .main-white {
-    margin: 0 20px;
-  }
-  .page {
-    &__title {
-      margin: 20px 0 20px 20px;
-    }
-    &__skills {
-      margin: 0 0 10px 20px;
-    }
-    &__badge {
-      text-align: center;
-    }
-    &__profile {
-      margin: 20px;
-    }
-  }
-  .settings {
-    margin: 20px;
-  }
-}
-@include _991 {
-  .knowledge {
-    &__container {
-      grid-template-columns: 5fr 28px 5fr 0;
-      max-height: 100%;
-    }
-  }
-  .settings {
-    grid-auto-rows: auto auto;
-    grid-template-columns: 5fr;
-  }
-  .icon {
-    &__close {
-      bottom: 154px;
-      right: 10px;
-    }
-  }
-  .page {
-    &__grid {
-      grid-template-columns: 11fr 1fr;
-    }
-  }
-  .profile {
-    &__main-data {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    &__button {
-      grid-template-rows: auto auto;
-      grid-template-columns: 1fr;
-      max-height: 100%;
-    }
-  }
-  .higher {
-    &-level {
-      &__img {
-        display: none;
-      }
-    }
-  }
-}
-
-@include _767 {
-  .avatar {
-    &__row {
-      margin: 20px 20px 0 20px;
-    }
-  }
-  .company {
-    &__inputs {
-      grid-template-columns: 1fr;
-      grid-gap: 0;
-    }
-  }
-  .icon {
-    &__close {
-      bottom: 154px;
-    }
-  }
-  .page {
-    &__info {
-      max-height: 100%;
-    }
-  }
-  .avatar {
-    &__row {
-      flex-direction: column;
-    }
-    &__container {
-      justify-self: center;
-    }
-  }
-  .profile {
-    &__main-data {
-      grid-template-columns: 1fr;
-    }
-    &__button {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .settings {
-    grid-template-columns: 1fr;
-    &__left {
-      padding: 20px 0 20px 20px;
-    }
-  }
-}
-
-@include _575 {
-  .profile {
-    &__additional-data{
-      grid-template-columns: 1fr;
-      grid-gap: 20px;
-    }
-  }
-  .avatar {
-    &__row {
-      grid-template-columns: 1fr;
-    }
-  }
-  .main-white {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-  .btn {
-    &__container {
-      width: initial;
-      justify-content: center;
-      margin: 0 0 10px;
-    }
-    &__container-right {
-      margin: 0 20px;
-      justify-content: center;
-    }
-  }
-  .page {
-    &__info-title {
-      font-size: 18px;
-    }
-  }
-  .settings {
-    &_blue {
-      grid-template-columns: 1fr;
-      padding: 10px;
-      grid-gap: 10px;
-    }
-  }
-  .icon {
-    &__close {
-      bottom: 137px;
-      right: 10px;
-    }
-  }
-}
-@include _480 {
-  .main-white {
-    width: calc(98vw - 71px);
-  }
-  .btn {
-    &__save {
-      margin-bottom: 20px;
-      grid-column: 5/14;
-    }
-  }
-  .icon {
-    &__close {
-      bottom: 157px;
-      right: 6px;
-    }
-  }
-}
-
-@include _380 {
-  .btn {
-    &__save {
-      margin-bottom: 20px;
-      grid-column: 5/14;
-    }
-  }
-  .icon {
-    &__close {
-      bottom: 195px;
-      right: 5px;
-    }
-  }
-  .option {
-    &__title {
-      padding: 0 10px 0 16px;
-      font-size: 14px;
-    }
-  }
-  .user {
-    grid-template-columns: 11fr 1fr;
-  }
-  .icons {
-    padding: 16px 0 0 16px;
   }
 }
 </style>
