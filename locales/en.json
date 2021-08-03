@@ -405,7 +405,7 @@
     "numberOfVotes": "Number of Votes",
     "votingStart": "Voting Start",
     "undelegate": "Undelegate",
-    "shure": "Are you shure to undelegate",
+    "shure": "Are you shure to undelegate {n}?",
     "delegate": "Delegate",
     "investorAddress": "Investor adress",
     "tokensNumber": "Tokens Number",

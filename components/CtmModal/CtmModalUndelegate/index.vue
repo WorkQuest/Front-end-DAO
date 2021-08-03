@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="undelegate__body">
-        {{ $t('modals.shure') }} {{ options.name + '?' }}
+        {{ $tc('modals.shure', options.name) }}
       </div>
       <div class="undelegate__tokens tokens">
         <div class="tokens__title">

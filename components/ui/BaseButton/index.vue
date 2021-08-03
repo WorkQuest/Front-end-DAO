@@ -75,7 +75,7 @@ export default {
         { 'base-btn_blue': mode === 'blue' },
         { 'base-btn_lightBlue': mode === 'lightBlue' },
         { 'base-btn_lightRed': mode === 'lightRed' },
-        { 'base-btn_invisible': mode === 'invisible' },
+        { 'base-btn_copy icon-copy': mode === 'copy' },
       ];
     },
   },
@@ -238,9 +238,10 @@ export default {
       color: $blue;
     }
   }
-  &_invisible{
+  &_copy{
     background: #FFFFFF;
     color: $blue;
+    font-size: 25px;
     &:hover {
       background: #FFFFFF;
       color: $blue;

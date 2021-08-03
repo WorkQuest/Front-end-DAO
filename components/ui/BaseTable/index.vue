@@ -52,11 +52,9 @@
           v-clipboard:copy="el.item.investorAddress"
           v-clipboard:success="ClipboardSuccessHandler"
           v-clipboard:error="ClipboardErrorHandler"
-          mode="invisible"
+          mode="copy"
           class="table__copy"
-        >
-          <span class="icon-copy table__copy" />
-        </base-btn>
+        />
       </template>
       <template #cell(vote)="el">
         <base-btn
@@ -100,8 +98,8 @@
       </template>
     </b-table>
     <pagination
-      class="pagination"
-      :class="togglleVisible"
+      v-if="isPagination"
+      class="table__pagination"
     />
   </div>
 </template>
@@ -135,14 +133,6 @@ export default {
   data() {
     return {
     };
-  },
-  computed: {
-    togglleVisible() {
-      return [
-        { pagination_vis: this.isPagination },
-        { pagination_invis: !this.isPagination },
-      ];
-    },
   },
   methods: {
     voteClass(el) {
@@ -268,6 +258,9 @@ export default {
     margin: 0!important;
     text-align: center;
   }
+  &__pagination{
+    float: right ;
+  }
 }
 .btn {
   &__vote {
@@ -289,12 +282,5 @@ export default {
     }
   }
 }
-.pagination{
-  &_vis{
-    display:block;
-  }
-  &_invis{
-  display: none;
-  }
-}
+
 </style>

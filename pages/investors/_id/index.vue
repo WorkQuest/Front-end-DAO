@@ -22,14 +22,12 @@
           </div>
           <div class="panel__picture">
             <base-btn
-              v-clipboard:copy="this.investorAddress"
+              v-clipboard:copy="investorAddress"
               v-clipboard:success="ClipboardSuccessHandler"
               v-clipboard:error="ClipboardErrorHandler"
-              mode="invisible"
+              mode="copy"
               class="panel__copy"
-            >
-              <span class="icon-copy panel__copy" />
-            </base-btn>
+            />
           </div>
         </div>
       </div>
@@ -136,7 +134,7 @@
                   class="about__textarea"
                   :title="'test'"
                   :disabled="true"
-                  :placeholder="'Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus dolor purus non enim praesent elementum facilisis leo, vel'"
+                  :placeholder="profileDescription"
                 />
               </div>
               <div class="info__social social">
@@ -208,23 +206,6 @@
               </base-btn>
             </div>
           </div>
-          <div>
-            <div class="menu">
-              <base-btn
-                mode="light"
-                class="btn__sorting"
-                @click="isDescending = !isDescending"
-              >
-                <template v-slot:right>
-                  <span
-                    class="icon icon__sorting"
-                    :class="sortingClass"
-                  />
-                </template>
-                {{ $t('proposal.ui.addTime') }}
-              </base-btn>
-            </div>
-          </div>
           <div class="profile__table">
             <base-table
               class="profile__field"
@@ -241,13 +222,13 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
 
 export default {
 
   data() {
     return {
+      profileDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus dolor purus non enim praesent elementum facilisis leo, vel',
       investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
       stake: '126,613,276',
       name: 'user@gmail.com',
@@ -344,26 +325,10 @@ export default {
       },
     };
   },
-  computed: {
-    ...mapGetters({
-      tags: 'ui/getTags',
-      userRole: 'user/getUserRole',
-      userData: 'user/getUserData',
-      transactions: 'data/getTransactions',
-    }),
-    sortingClass() {
-      return [
-        { 'icon-Sorting_descending': this.isDescending },
-        { 'icon-Sorting_ascending': !this.isDescending },
-      ];
-    },
-  },
   async mounted() {
-    this.SetLoader(true);
     this.SetLoader(false);
   },
   methods: {
-
     openModalDelegate() {
       this.ShowModal({
         key: modals.delegate,
@@ -381,6 +346,12 @@ export default {
     ClipboardSuccessHandler(value) {
       this.$store.dispatch('main/showToast', {
         title: 'Copied successfully',
+        text: value,
+      });
+    },
+    ClipboardErrorHandler(value) {
+      this.$store.dispatch('main/showToast', {
+        title: 'Copy error',
         text: value,
       });
     },
@@ -416,8 +387,6 @@ export default {
   display: table;
 
   &__copy{
-    color: #0083C7;
-    font-size: 25px;
     background: #F7F8FA;
   }
   &__copy:hover{
@@ -440,31 +409,6 @@ export default {
       flex-direction: column-reverse;
     }
 
-  }
-}
-@include _991 {
-  .investor {
-    &__field {
-      overflow: auto;
-      width: calc(100vw - 40px);
-    }
-  }
-  .table {
-    width: 1180px;
-  }
-}
-@include _480 {
-  .user {
-    &__investor{
-      font-size: 13px;
-    }
-  }
-}
-@include _480 {
-  .user {
-    &__investor {
-      font-size: 12px;
-    }
   }
 }
 .profile {
@@ -519,7 +463,6 @@ export default {
     grid-template-columns: 1fr 1fr;
     grid-gap: 20px;
   }
-
 }
 
 .contacts {
@@ -608,206 +551,6 @@ export default {
   }
 }
 
-@include _1199 {
-  .main-white {
-    margin: 0 20px;
-  }
-  .page {
-    &__title {
-      margin: 20px 0 20px 20px;
-    }
-    &__skills {
-      margin: 0 0 10px 20px;
-    }
-    &__badge {
-      text-align: center;
-    }
-    &__profile {
-      margin: 20px;
-    }
-  }
-  .settings {
-    margin: 20px;
-  }
-}
-@include _991 {
-  .knowledge {
-    &__container {
-      grid-template-columns: 5fr 28px 5fr 0;
-      max-height: 100%;
-    }
-  }
-  .settings {
-    grid-auto-rows: auto auto;
-    grid-template-columns: 5fr;
-  }
-  .icon {
-    &__close {
-      bottom: 154px;
-      right: 10px;
-    }
-  }
-  .page {
-    &__grid {
-      grid-template-columns: 11fr 1fr;
-    }
-  }
-  .profile {
-    &__main-data {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    &__button {
-      grid-template-rows: auto auto;
-      grid-template-columns: 1fr;
-      max-height: 100%;
-    }
-  }
-  .higher {
-    &-level {
-      &__img {
-        display: none;
-      }
-    }
-  }
-}
-
-@include _767 {
-  .avatar {
-    &__row {
-      margin: 20px 20px 0 20px;
-    }
-  }
-  .company {
-    &__inputs {
-      grid-template-columns: 1fr;
-      grid-gap: 0;
-    }
-  }
-  .icon {
-    &__close {
-      bottom: 154px;
-    }
-  }
-  .page {
-    &__info {
-      max-height: 100%;
-    }
-  }
-  .avatar {
-    &__row {
-      flex-direction: column;
-    }
-    &__container {
-      justify-self: center;
-    }
-  }
-  .profile {
-    &__main-data {
-      grid-template-columns: 1fr;
-    }
-    &__button {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .settings {
-    grid-template-columns: 1fr;
-    &__left {
-      padding: 20px 0 20px 20px;
-    }
-  }
-}
-
-@include _575 {
-  .profile {
-    &__additional-data{
-      grid-template-columns: 1fr;
-      grid-gap: 20px;
-    }
-  }
-  .avatar {
-    &__row {
-      grid-template-columns: 1fr;
-    }
-  }
-  .main-white {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-  .btn {
-    &__container {
-      width: initial;
-      justify-content: center;
-      margin: 0 0 10px;
-    }
-    &__container-right {
-      margin: 0 20px;
-      justify-content: center;
-    }
-  }
-  .page {
-    &__info-title {
-      font-size: 18px;
-    }
-  }
-  .settings {
-    &_blue {
-      grid-template-columns: 1fr;
-      padding: 10px;
-      grid-gap: 10px;
-    }
-  }
-  .icon {
-    &__close {
-      bottom: 137px;
-      right: 10px;
-    }
-  }
-}
-@include _480 {
-  .main-white {
-    width: calc(98vw - 71px);
-  }
-  .btn {
-    &__save {
-      margin-bottom: 20px;
-      grid-column: 5/14;
-    }
-  }
-  .icon {
-    &__close {
-      bottom: 157px;
-      right: 6px;
-    }
-  }
-}
-
-@include _380 {
-  .btn {
-    &__save {
-      margin-bottom: 20px;
-      grid-column: 5/14;
-    }
-  }
-  .icon {
-    &__close {
-      bottom: 195px;
-      right: 5px;
-    }
-  }
-  .option {
-    &__title {
-      padding: 0 10px 0 16px;
-      font-size: 14px;
-    }
-  }
-  .user {
-    grid-template-columns: 11fr 1fr;
-  }
-  .icons {
-    padding: 16px 0 0 16px;
-  }
-}
 .link{
   display: flex;
   align-items: center;
@@ -844,23 +587,4 @@ export default {
   }
 }
 
-.menu {
-  display: flex;
-  margin-top: 25px;
-}
-.icon {
-  &__sorting {
-    color: #000000;
-  }
-}
-.btn{
-  &__sorting {
-    width: 152px;
-    border: 1px solid rgba(0, 0, 0, 0);
-    &:hover {
-      background: #FFFFFF;
-      border: 1px solid rgba(0, 0, 0, 0.1);
-    }
-  }
-}
 </style>
