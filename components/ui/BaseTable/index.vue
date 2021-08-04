@@ -10,6 +10,7 @@
       tbody-tr-class="table__row"
     >
       <template
+        v-if="$props.title.length"
         #table-caption
       >
         <span class="table__title">{{ $props.title }}</span>
@@ -33,6 +34,27 @@
       <template #cell(transaction_fee)="el">
         <span class="table__grey">{{ el.item.transaction_fee }}</span>
       </template>
+      <template #cell(avatar)="el">
+        <nuxt-link
+          :to="`/investors/${el.item.id}`"
+          class=" table__link"
+        >
+          <img
+            src="~/assets/img/ui/avatar.svg"
+            alt="userAvatar"
+            class="table__avatar"
+          >
+        </nuxt-link>
+      </template>
+      <template #cell(copy)="el">
+        <base-btn
+          v-clipboard:copy="el.item.investorAddress"
+          v-clipboard:success="ClipboardSuccessHandler"
+          v-clipboard:error="ClipboardErrorHandler"
+          mode="copy"
+          class="table__copy"
+        />
+      </template>
       <template #cell(vote)="el">
         <base-btn
           class="btn__vote"
@@ -41,12 +63,47 @@
           {{ el.item.vote }}
         </base-btn>
       </template>
+      <template #cell(undelegate)="el">
+        <base-btn
+          mode="lightRed"
+          class="btn__delegate"
+          :class="delegateClass(el)"
+          @click="openModalUndelegate(el)"
+        >
+          {{ el.item.undelegate }}
+        </base-btn>
+      </template>
+      <template #cell(delegate)="el">
+        <base-btn
+          mode="lightBlue"
+          class="btn__delegate"
+          @click="openModalDelegate(el)"
+        >
+          {{ el.item.delegate }}
+        </base-btn>
+      </template>
+      <template #cell(investorAddress)="el">
+        {{ modifyAddress(el.item.investorAddress) }}
+      </template>
+      <template
+        #cell(name)="el"
+      >
+        <nuxt-link
+          :to="`/investors/${el.item.id}`"
+          class="table__link"
+        >
+          <span>{{ el.item.name }}</span>
+        </nuxt-link>
+      </template>
     </b-table>
   </div>
 </template>
 
 <script>
+import modals from '~/store/modals/modals';
+
 export default {
+
   props: {
     title: {
       type: String,
@@ -61,6 +118,10 @@ export default {
       default: () => [],
     },
   },
+  data() {
+    return {
+    };
+  },
   methods: {
     voteClass(el) {
       return [
@@ -68,15 +129,49 @@ export default {
         { btn__vote_red: el.item.vote === 'NO' },
       ];
     },
+    delegateClass(el) {
+      return [
+        { btn__delegate: el.item.undelegate === 'undelegate' },
+        { btn__delegate_hidden: el.item.undelegate === '' },
+      ];
+    },
+    openModalDelegate(el) {
+      this.ShowModal({
+        key: modals.delegate,
+        stake: el.item.stake,
+        investorAddress: el.item.investorAddress,
+      });
+    },
+    openModalUndelegate(el) {
+      this.ShowModal({
+        key: modals.undelegate,
+        stake: el.item.stake,
+        name: el.item.name,
+      });
+    },
+    ClipboardSuccessHandler(value) {
+      this.$store.dispatch('main/showToast', {
+        title: 'Copied successfully',
+        text: value,
+      });
+    },
+    ClipboardErrorHandler(value) {
+      this.$store.dispatch('main/showToast', {
+        title: 'Copy error',
+        text: value,
+      });
+    },
+    modifyAddress(investorAddress) {
+      return `${investorAddress.substr(0, 5)}...${investorAddress.substr(investorAddress.length - 6, 6)}`;
+    },
   },
 };
 </script>
 
 <style lang="scss">
 .table {
+  @include text-usual;
   overflow-x: hidden;
-  font-size: 16px;
-  line-height: 130%;
   background: #FFFFFF;
   border-radius: 6px;
   &__title {
@@ -104,6 +199,10 @@ export default {
   }
   &__row {
     line-height: 40px;
+  }
+  &__link{
+    color: #1D2127!important;
+    text-decoration: none!important;
   }
   @include _991 {
     .table {
@@ -137,6 +236,17 @@ export default {
     //  min-width: calc( 540px - 1em );
     //}
   }
+  &__copy{
+    color:#0083C7;
+    font-size: 25px;
+  }
+  &__avatar{
+    width: 40px!important;
+    height: 40px!important;
+    border-radius: 50%;
+    margin: 0!important;
+    text-align: center;
+  }
 }
 .btn {
   &__vote {
@@ -150,5 +260,13 @@ export default {
       background: #DF3333 !important;
     }
   }
+  &__delegate{
+    width: 130px !important;
+    height: 43px !important;
+    &_hidden{
+      display: none!important;
+    }
+  }
 }
+
 </style>

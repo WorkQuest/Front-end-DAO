@@ -2,7 +2,7 @@
   <div class="discussion">
     <div class="discussion__user user">
       <img
-        src="~assets/img/icons/userAvatar.svg"
+        src="~/assets/img/ui/avatar.svg"
         alt="userAvatar"
         class="user__avatar"
       >

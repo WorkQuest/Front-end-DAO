@@ -75,7 +75,7 @@ export default {
         { 'base-btn_blue': mode === 'blue' },
         { 'base-btn_lightBlue': mode === 'lightBlue' },
         { 'base-btn_lightRed': mode === 'lightRed' },
-
+        { 'base-btn_copy icon-copy': mode === 'copy' },
       ];
     },
   },
@@ -235,6 +235,15 @@ export default {
     color: $blue;
     &:hover {
       background: #F7F8FA;
+      color: $blue;
+    }
+  }
+  &_copy{
+    background: #FFFFFF;
+    color: $blue;
+    font-size: 25px;
+    &:hover {
+      background: #FFFFFF;
       color: $blue;
     }
   }

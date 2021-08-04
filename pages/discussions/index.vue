@@ -47,7 +47,7 @@ export default {
       discussions: [
         {
           id: 1,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -57,7 +57,7 @@ export default {
         },
         {
           id: 2,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -67,7 +67,7 @@ export default {
         },
         {
           id: 3,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -77,7 +77,7 @@ export default {
         },
         {
           id: 4,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -87,7 +87,7 @@ export default {
         },
         {
           id: 5,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -97,7 +97,7 @@ export default {
         },
         {
           id: 6,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -106,8 +106,8 @@ export default {
           commentCounter: 50,
         },
         {
-          id: 1,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          id: 7,
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -116,8 +116,8 @@ export default {
           commentCounter: 50,
         },
         {
-          id: 2,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          id: 8,
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -126,8 +126,8 @@ export default {
           commentCounter: 50,
         },
         {
-          id: 3,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          id: 9,
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -136,8 +136,8 @@ export default {
           commentCounter: 50,
         },
         {
-          id: 4,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          id: 10,
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -146,8 +146,8 @@ export default {
           commentCounter: 50,
         },
         {
-          id: 5,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          id: 11,
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -156,8 +156,8 @@ export default {
           commentCounter: 50,
         },
         {
-          id: 6,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          id: 12,
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -166,8 +166,8 @@ export default {
           commentCounter: 50,
         },
         {
-          id: 1,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          id: 13,
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -176,8 +176,8 @@ export default {
           commentCounter: 50,
         },
         {
-          id: 2,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          id: 14,
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -186,8 +186,8 @@ export default {
           commentCounter: 50,
         },
         {
-          id: 3,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          id: 15,
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -196,8 +196,8 @@ export default {
           commentCounter: 50,
         },
         {
-          id: 4,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          id: 16,
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -206,8 +206,8 @@ export default {
           commentCounter: 50,
         },
         {
-          id: 5,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          id: 17,
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -216,8 +216,8 @@ export default {
           commentCounter: 50,
         },
         {
-          id: 6,
-          avatar: '~assets/img/icons/userAvatar.svg',
+          id: 18,
+          avatar: '~assets/img/ui/avatar.svg',
           userName: 'Rosalia Vans',
           title: 'Lorem ipsum dolor sit amet consectetur',
           date: 'Jan 01, 2021, 12:00',
@@ -259,6 +259,7 @@ export default {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 20px 20px;
+    margin-bottom: 15px;
     }
     &__header {
       display: flex;

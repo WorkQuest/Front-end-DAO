@@ -119,7 +119,7 @@ export default {
   justify-content: flex-end;
   border-radius: 6px;
   width: max-content;
-  margin-top: 25px;
+  margin-top: 10px;
   float: right;
   .nav {
     align-content: center;

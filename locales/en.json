@@ -404,6 +404,14 @@
     "votingTopic": "Voting topic",
     "numberOfVotes": "Number of Votes",
     "votingStart": "Voting Start",
+    "undelegate": "Undelegate",
+    "shure": "Are you shure to undelegate {n}?",
+    "delegate": "Delegate",
+    "investorAddress": "Investor adress",
+    "tokensNumber": "Tokens Number",
+    "tokensDelegated": "Enter number of tokens that will be delegated",
+    "max": "Maximum",
+    "placeholder": "Placeholder",
     "votingEnd": "Voting End",
     "warning": "Warning",
     "warningDescription": "Changing information on this platform will lead to changes on the main service"
@@ -545,6 +553,7 @@
     "term": "Term",
     "getVerification": "Get verification",
     "notVerified": "Not verified",
+    "verifiсated": "Verifiсated",
     "verified": "Verified",
     "more": "More",
     "settings": "Settings",
@@ -905,5 +914,17 @@
   "cancel": "Cancel",
   "responseTitle": "Add your comment",
   "noFiles": "No files"
+  },
+  "investors": {
+    "title": "Investors",
+    "search": "Search investor",
+    "table": {
+      "name": "Name",
+      "address": "Address",
+      "stake": "Stake",
+      "slots": "Slots",
+      "voting": "Voting power"
+    },
+    "profile": "Investor Profile"
   }
  }

@@ -42,4 +42,6 @@ export default {
   twoFAAuth: 'twoFAAuth',
   addDiscussion: 'addDiscussion',
   addProposal: 'addProposal',
+  delegate: 'delegate',
+  undelegate: 'undelegate',
 };
