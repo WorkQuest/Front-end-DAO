@@ -40,7 +40,7 @@
           class=" table__link"
         >
           <img
-            src="~/assets/img/ui/profileAvatar.svg"
+            src="~/assets/img/ui/avatar.svg"
             alt="userAvatar"
             class="table__avatar"
           >

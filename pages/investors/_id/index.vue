@@ -39,7 +39,7 @@
                 <img
                   id="userAvatar"
                   class="avatar__img"
-                  src="~/assets/img/ui/profileAvatar.svg"
+                  src="~/assets/img/ui/avatar.svg"
                   alt=""
                 >
               </div>

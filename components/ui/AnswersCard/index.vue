@@ -3,9 +3,9 @@
     <div class="answers__field">
       <div class="answers__user user">
         <img
-          src="~assets/img/icons/userAvatar.svg"
+          src="~assets/img/ui/avatar.svg"
           alt=""
-          class="user__image"
+          class="user__avatar"
         >
         <div class="user__name">
           {{ item.userName }}
