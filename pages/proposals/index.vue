@@ -11,11 +11,11 @@
               <div
                 class="page__info"
               >
-                <div class="page__info">
-                  <h2 class="page__info page__info-title">
+                <div class="page__info info">
+                  <h2 class="info__title">
                     {{ $t('proposals.title') }}
                   </h2>
-                  <div class="page__info page__info-subtitle">
+                  <div class="info__subtitle">
                     {{ $t('proposals.textBanner') }}
                   </div>
                   <div class="ver-btn__container">
@@ -33,15 +33,6 @@
                   class="higher-level__img"
                   src="~/assets/img/ui/proposals-img.svg"
                 >
-                <!--<button
-                  class="close-button-info"
-                  @click="isCloseInfo()"
-                >
-                  <span
-                    class="icon-close_big icon__close"
-                    :class="{'icon_close_closed' : isShowInfo }"
-                  />
-                </button>-->
               </div>
             </div>
           </div>
@@ -135,17 +126,6 @@ export default {
     border-radius: 6px;
     color: $white;
     min-height: 85px;
-    &-title {
-      margin: 20px 0 0 20px;
-      font-size: 45px;
-      font-weight: 500;
-    }
-    &-subtitle {
-      margin: 10px 0 0 20px;
-      font-size: 16px;
-      font-weight: 500;
-      opacity: 0.5;
-    }
   }
   &__badge {
     background: rgba(0, 131, 199, 0.1);
@@ -169,11 +149,24 @@ export default {
    //padding: 0 20px 0 0;
   }
 }
+.info{
+  &__title {
+    margin: 40px 0 0 20px;
+    font-size: 45px;
+    font-weight: 500;
+  }
+  &__subtitle {
+    margin: 9px 0 0 20px;
+    font-size: 16px;
+    font-weight: 500;
+    opacity: 0.5;
+  }
+}
 .ver-btn {
   &__container {
     display: flex;
-    margin: 20px;
-    width: 250px;
+    margin: 30px 0 0 20px;
+    max-width: 220px;
   }
 }
 .higher-level {

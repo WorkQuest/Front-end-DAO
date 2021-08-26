@@ -216,19 +216,20 @@
           </div>
         </div>
       </div>
-      <pagination />
+      <base-pager
+        v-model="pages"
+        class="investor__pagination"
+        :total-pages="totalPages"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import modals from '~/store/modals/modals';
-import pagination from '~/components/app/Panels/Pagination';
 
 export default {
-  components: {
-    pagination,
-  },
+
   data() {
     return {
       profileDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus dolor purus non enim praesent elementum facilisis leo, vel',
@@ -236,7 +237,8 @@ export default {
       stake: '126,613,276',
       name: 'user@gmail.com',
       isDescending: true,
-
+      pages: 1,
+      totalPages: 5,
       walletTableFields: [
         {
           key: 'tx_hash', label: this.$t('wallet.table.txHash'), sortable: true,
@@ -368,7 +370,9 @@ export default {
   @include main;
   @include text-simple;
   color: #1D2127;
-
+  &__pagination{
+    margin-top: 10px;
+  }
   &__header {
     display: flex;
     justify-content: left;

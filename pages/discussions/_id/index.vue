@@ -232,19 +232,21 @@
           </div>
         </div>
       </div>
-      <pagination />
+      <base-pager
+        v-model="pages"
+        class="info__pagination"
+        :total-pages="totalPages"
+      />
     </div>
   </div>
 </template>
 
 <script>
 
-import pagination from '~/components/app/Panels/Pagination';
 import answersCard from '~/components/ui/AnswersCard';
 
 export default {
   components: {
-    pagination,
     answersCard,
   },
   data() {
@@ -256,6 +258,8 @@ export default {
       isChoosen: false,
       isVote: false,
       opinion: '',
+      pages: 1,
+      totalPages: 5,
       discussions: [
         {
           id: 1,
@@ -425,6 +429,9 @@ export default {
   &__footer{
     margin-top: 20px;
   }
+  &__pagination{
+    margin-top: 5px;
+  }
 }
 .heading{
   display: flex;
@@ -533,7 +540,7 @@ export default {
   }
   &__btn {
     align-items: center;
-    width: 140px;
+    width: 150px;
     height: 33px;
     border: none;
     padding: 0;
@@ -679,7 +686,7 @@ export default {
     width: 33px;
     margin-right: 13px;
     display:flex;
-    justify-content: center; /*центрируем элемент по горизонтали */
+    justify-content: center;
     align-items: center;
   }
 }

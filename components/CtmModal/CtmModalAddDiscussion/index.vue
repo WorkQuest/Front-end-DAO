@@ -3,7 +3,9 @@
     class="add-discussion"
     :is-header="false"
   >
-    <div class="add-discussion__content">
+    <div
+      class="add-discussion__content"
+    >
       <div class="add-discussion__header header">
         <div class="header__title">
           {{ $t('modals.addDiscussion') }}
@@ -62,7 +64,7 @@
           class="footer__buttons"
           @click="consoleValue"
         >
-          {{ $t('modals.add') }}
+          {{ $t('modals.addDiscussion') }}
         </base-btn>
       </div>
     </div>

@@ -4,124 +4,145 @@
     :title="$t('modals.addProposal')"
   >
     <div class="addProposal__content content">
-      <div class="content__voting">
-        <div class="content__field">
-          <base-field
-            id="votingTopicInput"
-            v-model="votingTopicInput"
-            :placeholder="$t('modals.votingTopic')"
-            :label="$t('modals.votingTopic')"
-          />
-        </div>
-        <div class="content__field field">
-          <div class="field__picker picker">
-            <label
-              for="runtime__picker"
-              class="picker__header"
-            >
-              {{ $t('modals.numberOfVotes') }}
-            </label>
-            <div
-              id="runtime__picker"
-              class="picker__container"
-            >
-              <div class="btn__container btn__left">
-                <button
-                  v-if="pickerValue > 0"
-                  class="picker__btn"
-                  @click="pickerValue -= 1"
-                >
-                  <span
-                    class="icon icon__caret icon-caret_left"
-                  />
-                </button>
-              </div>
-              <div class="picker__body">
-                <div class="picker__number">
-                  {{ pickerValue }}
+      <validation-observer
+        v-slot="{handleSubmit, validated, passed, invalid}"
+      >
+        <div class="content__voting">
+          <div class="content__field">
+            <base-field
+              id="votingTopicInput"
+              v-model="votingTopicInput"
+              :placeholder="$t('modals.votingTopic')"
+              :label="$t('modals.votingTopic')"
+              rules="required"
+              :name="$t('modals.votingTopicField')"
+            />
+          </div>
+          <div class="content__field field">
+            <div class="field__picker picker">
+              <label
+                for="runtime__picker"
+                class="picker__header"
+              >
+                {{ $t('modals.numberOfVotes') }}
+              </label>
+              <div
+                id="runtime__picker"
+                class="picker__container"
+              >
+                <div class="btn__container btn__left">
+                  <button
+                    v-if="pickerValue > 0"
+                    class="picker__btn"
+                    @click="prevValue"
+                  >
+                    <span
+                      class="icon icon__caret icon-caret_left"
+                    />
+                  </button>
                 </div>
-              </div>
-              <div class="btn__container btn__right">
-                <button
-                  class="picker__btn"
-                  @click="pickerValue += 1"
+                <div
+                  class="picker__body"
                 >
-                  <span
-                    class="icon icon__caret icon-caret_right"
+                  <base-field
+                    v-model="pickerValue"
+                    type="number"
+                    value="Number"
+                    class="picker__field"
+                    is-hide-error
                   />
-                </button>
+                </div>
+                <div class="btn__container btn__right">
+                  <button
+                    class="picker__btn"
+                    @click="addValue()"
+                  >
+                    <span
+                      class="icon icon__caret icon-caret_right"
+                    />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="content__dates">
-        <div class="content__field">
-          <base-field
-            id="votingStartInput"
-            v-model="votingStartInput"
-            :placeholder="'DD/MM/YYYY'"
-            :label="$t('modals.votingStart')"
-          />
+        <div class="content__dates">
+          <div class="content__field">
+            <base-field
+              id="votingStartInput"
+              v-model="votingStartInput"
+              :placeholder="'DD/MM/YYYY'"
+              :label="$t('modals.votingStart')"
+              rules="required|fullDate"
+              :name="$t('modals.votingStartField')"
+            />
+          </div>
+          <div class="content__field">
+            <base-field
+              id="votingEndInput"
+              v-model="votingEndInput"
+              :placeholder="'DD/MM/YYYY'"
+              :label="$t('modals.votingEnd')"
+              rules="required|fullDate"
+              :name="$t('modals.votingEndField')"
+            />
+          </div>
         </div>
-        <div class="content__field">
-          <base-field
-            id="votingEndInput"
-            v-model="votingEndInput"
-            :placeholder="'DD/MM/YYYY'"
-            :label="$t('modals.votingEnd')"
-          />
+        <div class="content__field field">
+          <div class="content-field__description description">
+            <label
+              for="descriptionInput"
+              class="description__header"
+            >
+              {{ $t('modals.description') }}
+            </label>
+            <textarea
+              id="descriptionInput"
+              v-model="descriptionInput"
+              class="description__textarea"
+            />
+          </div>
         </div>
-      </div>
-      <div class="content__field field">
-        <div class="content-field__description description">
-          <label
-            for="descriptionInput"
-            class="description__header"
+        <div class="content__field field">
+          <div class="field__documents">
+            <base-uploader
+              class="uploader"
+              type="all"
+              :items="documents"
+              :is-show-download="false"
+              rules="required|alpha_num"
+              :name="$t('modals.recepientAddressField')"
+            >
+              <template v-slot:actionButton>
+                <base-btn
+                  mode="outline"
+                  class="uploader__btn"
+                >
+                  {{ $t('meta.addFile') }}
+                  <template v-slot:right>
+                    <span class="icon icon__plus icon-plus_circle_outline" />
+                  </template>
+                </base-btn>
+              </template>
+            </base-uploader>
+          </div>
+        </div>
+        <div class="field__action action">
+          <base-btn
+            mode="outline"
+            class="action__cancel"
+            @click="hide()"
           >
-            {{ $t('modals.description') }}
-          </label>
-          <textarea
-            id="descriptionInput"
-            v-model="descriptionInput"
-            class="description__textarea"
-          />
-        </div>
-      </div>
-      <div class="content__field field">
-        <div class="field__documents">
-          <base-uploader
-            class="uploader"
-            type="all"
-            :items="documents"
-            :is-show-download="false"
+            {{ $t('meta.cancel') }}
+          </base-btn>
+          <base-btn
+            class="action__add"
+            :disabled="!validated || !passed || invalid "
           >
-            <template v-slot:actionButton>
-              <base-btn
-                mode="outline"
-                class="uploader__btn"
-              >
-                {{ $t('meta.addFile') }}
-                <template v-slot:right>
-                  <span class="icon icon__plus icon-plus_circle_outline" />
-                </template>
-              </base-btn>
-            </template>
-          </base-uploader>
+            {{ $t('meta.addProposal') }}
+          </base-btn>
         </div>
-      </div>
-      <div class="field__action action">
-        <base-btn
-          mode="outline"
-          class="action__cancel"
-          @click="hide()"
-        >
-          {{ $t('meta.cancel') }}
-        </base-btn>
-        <base-btn class="action__add">
-          {{ $t('meta.addProposal') }}
-        </base-btn>
-      </div>
+      </validation-observer>
     </div>
   </ctm-modal-box>
 </template>
@@ -133,7 +154,7 @@ export default {
   data() {
     return {
       votingTopicInput: '',
-      pickerValue: 0,
+      pickerValue: '0',
       votingStartInput: '',
       votingEndInput: '',
       descriptionInput: '',
@@ -189,6 +210,12 @@ export default {
     hide() {
       this.CloseModal();
     },
+    addValue(el) {
+      this.pickerValue = Number(this.pickerValue) + 1;
+    },
+    prevValue(el) {
+      this.pickerValue = Number(this.pickerValue) - 1;
+    },
   },
 };
 </script>
@@ -207,7 +234,7 @@ export default {
   &__voting {
     display: grid;
     grid-template-columns: 3fr 1fr;
-    align-items: flex-end;
+    align-items: flex-start;
     grid-gap: 25px;
   }
   &__dates {
@@ -257,6 +284,10 @@ export default {
     margin-bottom: 13px;
     height: 24px;
     color: #1D2127;
+  }
+  &__field{
+    min-width: 72px;
+    text-align: center;
   }
 
   &__container {

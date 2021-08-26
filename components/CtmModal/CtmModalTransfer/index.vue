@@ -4,47 +4,63 @@
     :title="$t('modals.withdraw')"
   >
     <div class="ctm-modal__content">
-      <div class="ctm-modal__content-field">
-        <label for="date_input">{{ $t('modals.address') }}</label>
-        <base-field
-          id="date_input"
-          v-model="date_input"
-          :placeholder="'0 WUSD'"
-        />
-      </div>
-      <label for="value_dd">{{ $t('modals.value') }}</label>
-      <base-dd
-        id="value_dd"
-        type="gray"
-        :items="items"
-      />
-      <div class="ctm-modal__content-field">
-        <label for="cardNumber_input">{{ $t('modals.amount') }}</label>
-        <base-field
-          id="cardNumber_input"
-          v-model="cardNumber_input"
-          :placeholder="'1234 1234 1234 1234'"
-        />
-      </div>
-      <div class="btn__container">
-        <div class="btn__wrapper">
-          <base-btn
-            class="message__action"
-            @click="showTransactionSendModal()"
-          >
-            {{ $t('meta.submit') }}
-          </base-btn>
+      <validation-observer
+        v-slot="{handleSubmit, validated, passed, invalid}"
+      >
+        <div class="ctm-modal__content-field">
+          <label for="address_input">
+            {{ $t('modals.address') }}
+          </label>
+          <base-field
+            id="address_input"
+            v-model="address"
+            :placeholder="$t('modals.recepientAddress')"
+            rules="required|alpha_num"
+            :name="$t('modals.recepientAddressField')"
+          />
         </div>
-        <div class="btn__wrapper">
-          <base-btn
-            :mode="'outline'"
-            class="message__action"
-            @click="hide()"
-          >
-            {{ $t('meta.cancel') }}
-          </base-btn>
+        <label for="value_dd">
+          {{ $t('modals.cardNumber') }}
+        </label>
+        <base-dd
+          id="value_dd"
+          v-model="card"
+          type="gray"
+          :items="items"
+        />
+        <div class="ctm-modal__content-field">
+          <label for="amount_input">
+            {{ $t('modals.amount') }}
+          </label>
+          <base-field
+            id="amount_input"
+            v-model="amount"
+            :placeholder="'0 WUSD'"
+            rules="required|decimal"
+            :name="$t('modals.amountField')"
+          />
         </div>
-      </div>
+        <div class="btn__container">
+          <div class="btn__wrapper">
+            <base-btn
+              class="message__action"
+              :disabled="!validated || !passed || invalid "
+              @click="handleSubmit(showTransactionSendModal)"
+            >
+              {{ $t('meta.submit') }}
+            </base-btn>
+          </div>
+          <div class="btn__wrapper">
+            <base-btn
+              :mode="'outline'"
+              class="message__action"
+              @click="hide()"
+            >
+              {{ $t('meta.cancel') }}
+            </base-btn>
+          </div>
+        </div>
+      </validation-observer>
     </div>
   </ctm-modal-box>
 </template>
@@ -57,9 +73,9 @@ export default {
   name: 'ModalTransfer',
   data() {
     return {
-      date_input: '',
-      balance_input: '',
-      cardNumber_input: '',
+      card: 0,
+      address: '',
+      amount: '',
       items: ['1234 1234 1234 1234'],
     };
   },
