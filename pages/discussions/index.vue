@@ -27,23 +27,26 @@
           />
         </div>
       </div>
-      <pagination />
+      <base-pager
+        v-model="pages"
+        class="discussions__pagination"
+        :total-pages="totalPages"
+      />
     </div>
   </div>
 </template>
 
 <script>
 
-import pagination from '~/components/app/Panels/Pagination';
 import modals from '~/store/modals/modals';
 
 export default {
-  components: {
-    pagination,
-  },
+
   data() {
     return {
       search: '',
+      pages: 1,
+      totalPages: 5,
       discussions: [
         {
           id: 1,
@@ -281,5 +284,8 @@ export default {
         width: 220px;
         height: 43px;
       }
+    &__pagination{
+      margin-top: 5px;
+    }
     }
 </style>

@@ -68,7 +68,8 @@ export default {
     grid-gap: 5px;
     cursor: pointer;
     width: 170px;
-    padding: 10px 30%;
+    padding: 10px 38.5%;
+    margin-top: 15px;
     span {
       font-family: 'Inter', sans-serif;
       font-style: normal;
@@ -138,7 +139,7 @@ export default {
       padding: 0px 10px;
     }
     &__logo {
-      padding: 10px 10px;
+      padding: 10px 39%;
     }
   }
 }

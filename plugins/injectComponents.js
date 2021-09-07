@@ -12,6 +12,7 @@ import BaseTable from '~/components/ui/BaseTable';
 import DisscussionCard from '~/components/ui/DiscussionCard';
 import BaseUploader from '~/components/ui/BaseUploader';
 import BaseImages from '~/components/ui/BaseImages';
+import BasePager from '~/components/ui/BasePager';
 import BaseFiles from '~/components/ui/BaseFiles';
 
 Vue.component('ctm-modal', CtmModal);
@@ -27,3 +28,4 @@ Vue.component('discussion-card', DisscussionCard);
 Vue.component('base-uploader', BaseUploader);
 Vue.component('base-images', BaseImages);
 Vue.component('base-files', BaseFiles);
+Vue.component('base-pager', BasePager);

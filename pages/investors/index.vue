@@ -16,22 +16,24 @@
         :fields="historyTableFields"
         :items="historyTableData"
       />
-      <pagination />
+      <base-pager
+        v-model="pages"
+        class="investors__pagination"
+        :total-pages="totalPages"
+      />
     </div>
   </div>
 </template>
 
 <script>
 
-import pagination from '~/components/app/Panels/Pagination';
-
 export default {
-  components: {
-    pagination,
-  },
+
   data() {
     return {
       search: '',
+      pages: 1,
+      totalPages: 5,
       historyTableFields: [
         {
           key: 'avatar', label: this.$t('investors.table.name'),
@@ -157,6 +159,9 @@ export default {
   }
   &__table{
     margin-bottom: 15px;
+  }
+  &__pagination{
+    margin-top: 10px;
   }
 }
 

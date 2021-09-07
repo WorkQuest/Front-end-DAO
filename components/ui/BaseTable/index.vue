@@ -174,6 +174,7 @@ export default {
   overflow-x: hidden;
   background: #FFFFFF;
   border-radius: 6px;
+  text-align: center;
   &__title {
     margin: 10px;
     color: $black800;
@@ -253,6 +254,8 @@ export default {
     cursor: default !important;
     width: 63px !important;
     height: 31px !important;
+    margin-right: -30px;
+    justify-content: center!important;
     &_green {
       background: #22CC14 !important;
     }

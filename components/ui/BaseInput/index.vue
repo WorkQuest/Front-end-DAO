@@ -68,7 +68,7 @@
 export default {
   props: {
     value: {
-      type: String,
+      type: [String, Number],
       default: '',
     },
     mode: {
@@ -258,6 +258,9 @@ export default {
     .ctm-field {
       &__input {
         padding: 0 20px 0 50px;
+      }
+      &__err{
+        min-height: 36px;
       }
     }
   }

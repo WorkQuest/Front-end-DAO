@@ -81,11 +81,20 @@
           {{ $t('signIn.loginWith') }}
         </div>
         <div class="auth__icons">
+          <button class="auth__btn auth__btn_wq">
+            <img
+              src="~assets/img/app/logo.svg"
+              alt="Work Quest"
+              class="auth__btn__picture"
+            >
+            <img
+              src="~assets/img/app/logo_white.svg"
+              alt="Work Quest"
+              class="auth__btn__image"
+            >
+          </button>
           <button class="auth__btn auth__btn_google">
             <span class="icon-google" />
-          </button>
-          <button class="auth__btn auth__btn_instagram">
-            <span class="icon-instagram" />
           </button>
           <button class="auth__btn auth__btn_twitter">
             <span class="icon-twitter" />
@@ -135,9 +144,9 @@ export default {
         });
         if (response?.ok) {
           if (this.userData.role === 'employer') {
-            this.$router.push('/workers');
+            this.$router.push('/proposals');
           } else if (this.userData.role === 'worker') {
-            this.$router.push('/quests');
+            this.$router.push('/proposals');
           }
         }
         // if (response?.ok) {
@@ -246,14 +255,6 @@ export default {
         -webkit-text-fill-color: transparent;
       }
     }
-    &_instagram {
-      span:before {
-        font-size: 18px;
-        background: linear-gradient(180deg, #C540F3 0%, #FF8C05 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-    }
     &_twitter {
       span:before {
         font-size: 18px;
@@ -277,6 +278,17 @@ export default {
         font-size: 18px;
         color: #0A7EEA;
       }
+    }
+    &_wq:hover .auth__btn__picture{
+      display: none;
+    }
+    &_wq:hover .auth__btn__image{
+      display: block;
+      width: 22px;
+      height: 17px;
+    }
+    &__image{
+      display: none;
     }
   }
 }

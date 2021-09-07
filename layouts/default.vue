@@ -952,7 +952,7 @@ export default {
 .header {
   position: sticky;
   top: 0;
-  z-index: 99999;
+  z-index: 1300;
   min-height: 72px;
   background: #FFFFFF;
   box-shadow: 0 1px 0 #E6E9EC;

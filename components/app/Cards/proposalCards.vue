@@ -19,6 +19,7 @@
           v-model="ddValue"
           type="light"
           :items="ddValues"
+          class="menu__drop"
         />
       </div>
       <div class="menu__right">
@@ -70,6 +71,7 @@
           <div class="btn__container">
             <div class="btn__wrapper">
               <nuxt-link
+                v-if="card.status===0"
                 class="btn__link"
                 to="/proposals/1"
               >
@@ -80,94 +82,37 @@
                   {{ $t('meta.open') }}
                 </base-btn>
               </nuxt-link>
+              <base-btn
+                v-else
+                mode="outline"
+                class="message__action"
+                :disabled="true"
+              >
+                {{ $t('proposal.voted') }}
+              </base-btn>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="nav_block">
-      <ul class="nav">
-        <li class="nav-item">
-          <button
-            class="nav-btn nav-btn_prev"
-            @click="prevTab()"
-          >
-            <div
-              class="nav-arrow"
-              :disabled="tab === 1"
-              :class="tab === 1 ? 'nav-arrow_disabled' : 'nav-arrow_active'"
-            />
-          </button>
-        </li>
-        <li class="nav-item">
-          <button
-            class="nav-btn"
-            :class="[{'nav-btn__active' :tab === 1}]"
-            @click="tab = 1"
-          >
-            1
-          </button>
-        </li>
-        <li class="nav-item">
-          <button
-            class="nav-btn"
-            :class="[{'nav-btn__active' :tab === 2}]"
-            @click="tab = 2"
-          >
-            2
-          </button>
-        </li>
-        <li class="nav-item">
-          <button
-            class="nav-btn"
-            :class="[{'nav-btn__active' :tab === 3}]"
-            @click="tab = 3"
-          >
-            3
-          </button>
-        </li>
-        <li class="nav-item">
-          <button
-            class="nav-btn"
-            :class="[{'nav-btn__active' :tab === 4}]"
-            @click="tab = 4"
-          >
-            4
-          </button>
-        </li>
-        <li class="nav-item">
-          <button
-            class="nav-btn"
-            :class="[{'nav-btn__active' :tab === 5}]"
-            @click="tab = 5"
-          >
-            5
-          </button>
-        </li>
-        <li class="nav-item">
-          <button
-            class="nav-btn nav-btn_next"
-            :disabled="tab === 5"
-            @click="nextTab()"
-          >
-            <div
-              class="nav-arrow"
-              :class="tab === 5 ? 'nav-arrow_disabled' : 'nav-arrow_active'"
-            />
-          </button>
-        </li>
-      </ul>
-    </div>
+    <base-pager
+      v-model="pages"
+      class="main__pagination"
+      :total-pages="totalPages"
+    />
   </div>
 </template>
 
 <script>
+
 export default {
   name: 'ProposalCards',
   data() {
     return {
+      totalPages: 5,
       tab: 1,
       currentPage: 1,
+      pages: 1,
       search: '',
       isDescending: true,
       ddValues: [
@@ -295,14 +240,6 @@ export default {
     this.SetLoader(false);
   },
   methods: {
-    prevTab() {
-      if (this.tab > 1) {
-        this.tab -= 1;
-      }
-    },
-    nextTab() {
-      this.tab += 1;
-    },
     showDetails() {
       this.$router.push('/proposals/1');
     },
@@ -327,45 +264,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.nav_block {
-  background-color: #FFFFFF;
-  display: flex;
-  justify-content: flex-end;
-  border-radius: 6px;
-  width: max-content;
-  margin-top: 25px;
-  float: right;
-  .nav {
-    align-content: center;
-    &-btn {
-      border-left: 1px solid #F7F8FA;
-      width:43px;
-      height:43px;
-      &__active {
-        background-color: #E6F3F9;
-        color: #0083c7;
-      }
-      &_next .nav-arrow {
-        mask-image: url('~assets/img/ui/coolicon_next.svg');
-      }
-      &_prev .nav-arrow {
-        mask-image: url('~assets/img/ui/coolicon_prev.svg');
-      }
-    }
-    &-arrow {
-      margin-left: auto;
-      margin-right: auto;
-      height: 10px;
-      width: 5px;
-      &_disabled {
-        background-color: #c2c2c2;
-      }
-      &_active {
-        background-color: #4C5767;
-      }
-    }
-  }
-}
+
 .message {
   &__action {
     margin-top: 10px;
@@ -434,6 +333,9 @@ export default {
     color: $black800;
     margin: 30px 0 25px 0;
   }
+  &__pagination{
+    margin-top: 20px;
+  }
 }
 .menu {
   display: grid;
@@ -450,6 +352,9 @@ export default {
   }
   &__right {
     justify-content: flex-end;
+  }
+  &__drop{
+    width: 183px;
   }
 }
 .map {
@@ -490,11 +395,9 @@ export default {
   box-sizing: border-box;
   border-radius: 6px;
   align-items: center;
-  cursor: pointer;
   box-shadow: none;
   transition: .2s;
   &:hover {
-    cursor: pointer;
     box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
   }
   &_higher {
