@@ -8,24 +8,20 @@
         <transition name="fade-fast">
           <div class="page__info">
             <div class="page__grid">
-              <div
-                class="page__info"
-              >
-                <div class="page__info info">
-                  <h2 class="info__title">
-                    {{ $t('proposals.title') }}
-                  </h2>
-                  <div class="info__subtitle">
-                    {{ $t('proposals.textBanner') }}
-                  </div>
-                  <div class="ver-btn__container">
-                    <base-btn
-                      mode="ver"
-                      @click="addProposalModal"
-                    >
-                      {{ $t('proposals.addProposals') }}
-                    </base-btn>
-                  </div>
+              <div class="page__info info">
+                <h2 class="info__title">
+                  {{ $t('proposals.title') }}
+                </h2>
+                <div class="info__subtitle">
+                  {{ $t('proposals.textBanner') }}
+                </div>
+                <div class="info__btn-container">
+                  <base-btn
+                    mode="ver"
+                    @click="addProposalModal"
+                  >
+                    {{ $t('proposals.addProposals') }}
+                  </base-btn>
                 </div>
               </div>
               <div>
@@ -146,29 +142,29 @@ export default {
     max-width: 1180px;
     width: 100%;
     justify-content: flex-start;
-   //padding: 0 20px 0 0;
   }
 }
 .info{
+  padding: 40px 0 40px 20px;
   &__title {
-    margin: 40px 0 0 20px;
+    line-height: 58px;
     font-size: 45px;
     font-weight: 500;
   }
   &__subtitle {
-    margin: 9px 0 0 20px;
+    margin-top: 9px;
+    line-height: 23px;
     font-size: 16px;
     font-weight: 500;
     opacity: 0.5;
   }
-}
-.ver-btn {
-  &__container {
+  &__btn-container {
     display: flex;
-    margin: 30px 0 0 20px;
+    margin-top: 25px;
     max-width: 220px;
   }
 }
+
 .higher-level {
   &__img {
     z-index: 1;
@@ -178,9 +174,7 @@ export default {
     padding: 0 0 0 30px;
   }
 }
-.close-button-info {
-  float: right;
-}
+
 .icon {
   font-size: 25px;
   color: $blue;
