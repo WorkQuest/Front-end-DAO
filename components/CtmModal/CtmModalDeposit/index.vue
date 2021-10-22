@@ -33,6 +33,7 @@
             <base-field
               id="amount_input"
               v-model="amount_input"
+              type="number"
               :placeholder="'0 WUSD'"
             />
           </div>
@@ -47,6 +48,7 @@
               <base-field
                 id="amount_input2"
                 v-model="amount_input"
+                type="number"
                 :placeholder="'0 WUSD'"
               />
             </div>
@@ -57,6 +59,7 @@
               <base-field
                 v-model="balance_input"
                 mode="white"
+                type="number"
                 :placeholder="'$ 0'"
               />
             </div>
@@ -87,6 +90,7 @@
               <base-field
                 id="cvv_input"
                 v-model="cvv_input"
+                type="number"
                 :placeholder="'242'"
               />
             </div>

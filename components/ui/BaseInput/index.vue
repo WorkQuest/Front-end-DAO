@@ -37,6 +37,9 @@
         :value="value"
         :type="type"
         :autocomplete="autocomplete"
+        :disabled="disabled"
+        :pattern="pattern"
+        :inputmode="inputmode"
         @input="input"
       >
       <div
@@ -128,6 +131,14 @@ export default {
     selector: {
       type: Boolean,
       default: false,
+    },
+    pattern: {
+      type: String,
+      default: '',
+    },
+    inputmode: {
+      type: String,
+      default: '',
     },
   },
   methods: {
