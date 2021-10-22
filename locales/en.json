@@ -430,6 +430,7 @@
     "emailField": "email",
     "instagramField": "instagram address",
     "linkedInField": "linkedIn address",
+    "twitterField": "twitter address",
     "workQuestField": "workQuest address",
     "facebookField": "facebook address"
   },

@@ -1,8 +1,6 @@
 <template>
   <div class="wq-profile">
-    <validation-observer
-      v-slot="{handleSubmit}"
-    >
+    <validation-observer v-slot="{handleSubmit}">
       <div class="wq-profile__body">
         <div
           v-if="!localUserData.isVerified"
@@ -90,6 +88,7 @@
                 rules="required|alpha_num"
                 :name="$t('modals.nameField')"
                 mode="icon"
+                mode-error="small"
               >
                 <template v-slot:left>
                   <span class="icon icon__input icon-user" />
@@ -103,6 +102,7 @@
                 rules="required|alpha_num"
                 :name="$t('modals.lastNameField')"
                 mode="icon"
+                mode-error="small"
               >
                 <template v-slot:left>
                   <span class="icon icon__input icon-user" />
@@ -110,26 +110,27 @@
               </base-field>
             </div>
             <div class="info__contacts contacts">
-              <div />
               <div class="info__space" />
               <base-field
-                v-model="localUserData.additionalInfo.address"
+                v-model="localUserData.address"
                 :placeholder="address || $t('settings.addressInput')"
                 :disabled="!isProfileEdit"
                 mode="icon"
                 :name="$t('modals.addressField')"
+                mode-error="small"
               >
                 <template v-slot:left>
                   <span class="icon icon__input icon-location" />
                 </template>
               </base-field>
               <base-field
-                v-model="localUserData.additionalInfo.firstMobileNumber"
+                v-model="localUserData.firstMobileNumber"
                 :placeholder="firstMobileNumber || $t('settings.telInput')"
                 :disabled="!isProfileEdit"
                 rules="required|telephone"
                 :name="$t('modals.firstMobileField')"
                 mode="icon"
+                mode-error="small"
               >
                 <template v-slot:left>
                   <span class="icon icon__input icon-phone" />
@@ -137,26 +138,28 @@
               </base-field>
             </div>
             <div class="info__contacts contacts">
-              <div />
               <div class="info__space" />
               <base-field
                 v-model="localUserData.userEmail"
                 :placeholder="userEmail || $t('settings.addressInput')"
+                :disabled="!isProfileEdit"
                 mode="icon"
                 rules="required|email"
                 :name="$t('modals.emailField')"
+                mode-error="small"
               >
                 <template v-slot:left>
                   <span class="icon icon__input icon-mail" />
                 </template>
               </base-field>
               <base-field
-                v-model="localUserData.additionalInfo.secondMobileNumber"
+                v-model="localUserData.secondMobileNumber"
                 :placeholder="secondMobileNumber || $t('settings.telInput')"
                 :disabled="!isProfileEdit"
                 rules="telephone"
                 :name="$t('modals.secondMobileField')"
                 mode="icon"
+                mode-error="small"
               >
                 <template v-slot:left>
                   <span class="icon icon__input icon-phone" />
@@ -180,57 +183,57 @@
               />
             </div>
             <div class="info__social social">
-              <div class="social__container">
-                <base-field
-                  v-model="localUserData.additionalInfo.socialNetwork.instagram"
-                  :placeholder="userInstagram || $t('settings.socialInput')"
-                  :disabled="!isProfileEdit"
-                  mode="icon"
-                  :name="$t('modals.instagramField')"
-                >
-                  <template v-slot:left>
-                    <span class="icon icon__input icon-instagram" />
-                  </template>
-                </base-field>
-                <base-field
-                  v-model="localUserData.additionalInfo.socialNetwork.twitter"
-                  :placeholder="userTwitter || $t('settings.socialInput')"
-                  :disabled="!isProfileEdit"
-                  mode="icon"
-                  rules="twitter"
-                  :name="$t('modals.twitterField')"
-                >
-                  <template v-slot:left>
-                    <span class="icon icon__input icon-twitter" />
-                  </template>
-                </base-field>
-              </div>
-              <div class="social__container">
-                <base-field
-                  v-model="localUserData.additionalInfo.socialNetwork.linkedin"
-                  :placeholder="userLinkedin || $t('settings.socialInput')"
-                  :disabled="!isProfileEdit"
-                  mode="icon"
-                  rules="linkedIn"
-                  :name="$t('modals.linkedInField')"
-                >
-                  <template v-slot:left>
-                    <span class="icon icon__input icon-LinkedIn" />
-                  </template>
-                </base-field>
-                <base-field
-                  v-model="localUserData.additionalInfo.socialNetwork.facebook"
-                  :placeholder="userFacebook || $t('settings.socialInput')"
-                  :disabled="!isProfileEdit"
-                  mode="icon"
-                  rules="facebook"
-                  :name="$t('modals.facebookField')"
-                >
-                  <template v-slot:left>
-                    <span class="icon icon__input icon-facebook" />
-                  </template>
-                </base-field>
-              </div>
+              <base-field
+                v-model="localUserData.additionalInfo.socialNetwork.instagram"
+                :placeholder="userInstagram || $t('settings.socialInput')"
+                :disabled="!isProfileEdit"
+                mode="icon"
+                :name="$t('modals.instagramField')"
+                mode-error="small"
+              >
+                <template v-slot:left>
+                  <span class="icon icon__input icon-instagram" />
+                </template>
+              </base-field>
+              <base-field
+                v-model="localUserData.additionalInfo.socialNetwork.twitter"
+                :placeholder="userTwitter || $t('settings.socialInput')"
+                :disabled="!isProfileEdit"
+                mode="icon"
+                rules="twitter"
+                :name="$t('modals.twitterField')"
+                mode-error="small"
+              >
+                <template v-slot:left>
+                  <span class="icon icon__input icon-twitter" />
+                </template>
+              </base-field>
+              <base-field
+                v-model="localUserData.additionalInfo.socialNetwork.linkedin"
+                :placeholder="userLinkedin || $t('settings.socialInput')"
+                :disabled="!isProfileEdit"
+                mode="icon"
+                rules="linkedIn"
+                :name="$t('modals.linkedInField')"
+                mode-error="small"
+              >
+                <template v-slot:left>
+                  <span class="icon icon__input icon-LinkedIn" />
+                </template>
+              </base-field>
+              <base-field
+                v-model="localUserData.additionalInfo.socialNetwork.facebook"
+                :placeholder="userFacebook || $t('settings.socialInput')"
+                :disabled="!isProfileEdit"
+                mode="icon"
+                rules="facebook"
+                :name="$t('modals.facebookField')"
+                mode-error="small"
+              >
+                <template v-slot:left>
+                  <span class="icon icon__input icon-facebook" />
+                </template>
+              </base-field>
             </div>
           </div>
           <div class="info__action action">
@@ -314,16 +317,11 @@ export default {
         avatarId: null,
         firstName: null,
         lastName: null,
+        userEmail: null,
+        firstMobileNumber: null,
+        secondMobileNumber: null,
+        address: null,
         additionalInfo: {
-          secondMobileNumber: null,
-          address: null,
-          socialNetwork: {
-            instagram: null,
-            twitter: null,
-            linkedin: null,
-            facebook: null,
-            workQuest: null,
-          },
           description: null,
           skills: [],
           educations: [],
@@ -331,6 +329,13 @@ export default {
           CEO: null,
           company: null,
           website: null,
+          socialNetwork: {
+            instagram: null,
+            twitter: null,
+            linkedin: null,
+            facebook: null,
+            workQuest: null,
+          },
         },
       },
       avatar_change: {
@@ -373,6 +378,10 @@ export default {
       avatarId: this.userData.avatarId,
       firstName: this.userData.firstName,
       lastName: this.userData.lastName,
+      userEmail: this.userEmail,
+      firstMobileNumber: this.firstMobileNumber,
+      secondMobileNumber: this.secondMobileNumber,
+      address: this.address,
       additionalInfo: JSON.parse(JSON.stringify(this.userData.additionalInfo)),
     };
     this.SetLoader(false);
@@ -528,7 +537,7 @@ export default {
   }
   &__info {
     display: grid;
-    grid-template-rows: 140px 1fr 43px;
+    grid-template-rows: 151px 112px 43px;
     grid-gap: 20px;
 
     margin-top: 20px;
@@ -593,7 +602,6 @@ export default {
   &__base {
     display: grid;
     grid-template-columns: 151px repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
     grid-gap: 20px;
   }
 
@@ -614,13 +622,16 @@ export default {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 20px;
+    height: 100%;
   }
 
   &__social {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-gap: 20px;
-    margin-top: 47px;
+    grid-template-rows: 1fr 1fr;
+    grid-column-gap: 20px;
+    grid-row-gap: 5px;
+    height: 100%;
   }
   &__space{
     height: 44px;
@@ -628,15 +639,6 @@ export default {
 }
 
 .contacts {
-
-  & div:first-child {
-    //margin-bottom: 10px;
-  }
-
-  & div:last-child {
-    //margin-top: 15px;
-  }
-
   &__input {
     width: 100%;
   }
@@ -676,6 +678,7 @@ export default {
 }
 
 .avatar {
+  border: 1px solid $black0;
   &:hover .edit {
     opacity: 1;
   }
@@ -746,8 +749,7 @@ export default {
     margin-bottom: 5px;
   }
   &__textarea {
-    height: 100%;
-    margin-top: 23px;
+    height: 86px;
     padding: 10px 10px 0 10px;
     border: none;
     border-radius: 6px;

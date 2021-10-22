@@ -62,6 +62,7 @@
     <div
       v-if="!isHideError"
       class="ctm-field__err"
+      :class="[{'ctm-field__err_small': modeError === 'small'}]"
     >
       {{ errors[0] }}
     </div>
@@ -101,6 +102,10 @@ export default {
     isHideError: {
       type: Boolean,
       default: false,
+    },
+    modeError: {
+      type: String,
+      default: '',
     },
     type: {
       type: String,
@@ -203,6 +208,9 @@ export default {
     color: #F82727;
     font-size: 12px;
     min-height: 23px;
+    &_small {
+      min-height: 15px !important;
+    }
   }
   &__search {
     position: absolute;
