@@ -4,9 +4,7 @@
     :title="$t('modals.addProposal')"
   >
     <div class="addProposal__content content">
-      <validation-observer
-        v-slot="{handleSubmit, validated, passed, invalid}"
-      >
+      <validation-observer v-slot="{handleSubmit, validated, passed, invalid}">
         <div class="content__voting">
           <div class="content__field">
             <base-field
@@ -36,19 +34,16 @@
                     class="picker__btn"
                     @click="prevValue"
                   >
-                    <span
-                      class="icon icon__caret icon-caret_left"
-                    />
+                    <span class="icon icon__caret icon-caret_left" />
                   </button>
                 </div>
-                <div
-                  class="picker__body"
-                >
+                <div class="picker__body">
                   <base-field
                     v-model="pickerValue"
                     type="number"
                     value="Number"
                     class="picker__field"
+                    text-align="center"
                     is-hide-error
                   />
                 </div>
@@ -57,9 +52,7 @@
                     class="picker__btn"
                     @click="addValue()"
                   >
-                    <span
-                      class="icon icon__caret icon-caret_right"
-                    />
+                    <span class="icon icon__caret icon-caret_right" />
                   </button>
                 </div>
               </div>
@@ -69,7 +62,6 @@
         <div class="content__dates">
           <div class="content__field">
             <base-field
-              id="votingStartInput"
               v-model="votingStartInput"
               :placeholder="'DD/MM/YYYY'"
               :label="$t('modals.votingStart')"
@@ -79,7 +71,6 @@
           </div>
           <div class="content__field">
             <base-field
-              id="votingEndInput"
               v-model="votingEndInput"
               :placeholder="'DD/MM/YYYY'"
               :label="$t('modals.votingEnd')"
@@ -137,7 +128,7 @@
           </base-btn>
           <base-btn
             class="action__add"
-            :disabled="!validated || !passed || invalid "
+            :disabled="validated || passed || invalid "
           >
             {{ $t('meta.addProposal') }}
           </base-btn>
@@ -293,11 +284,10 @@ export default {
   &__container {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
-    background: #F3F7FA;
+    background: $black0;
     border-radius: 6px;
     border: 1px solid transparent;
-    height: 100%;
-    min-height: 46px;
+    height: 46px;
     margin-bottom: 23px;
   }
 
@@ -326,7 +316,7 @@ export default {
 
   &__textarea {
     resize: none;
-    background: #f3f7fa;
+    background: $black0;
     border: none;
     border-radius: 6px;
     min-height: 174px;

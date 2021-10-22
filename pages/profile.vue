@@ -1,7 +1,7 @@
 <template>
   <div class="wq-profile">
     <validation-observer
-      v-slot="{handleSubmit, invalid}"
+      v-slot="{handleSubmit}"
     >
       <div class="wq-profile__body">
         <div
@@ -175,7 +175,7 @@
                 class="about__textarea"
                 :class="{ 'about__textarea_disabled': !isProfileEdit }"
                 :title="'test'"
-                :placeholder="userDesc || descLorem"
+                :placeholder="userDesc"
                 :disabled="!isProfileEdit"
               />
             </div>
@@ -238,7 +238,6 @@
               v-if="isProfileEdit"
               mode="lightBlue"
               class="action__save"
-              :disabled="invalid "
               @click="handleSubmit(editUserData)"
             >
               {{ $t('profile.save') }}
@@ -338,7 +337,6 @@ export default {
         data: {},
         file: {},
       },
-      descLorem: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus dolor purus non enim praesent elementum facilisis leo, vel',
     };
   },
   computed: {

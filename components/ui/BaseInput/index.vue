@@ -33,12 +33,12 @@
       </div>
       <input
         class="ctm-field__input"
+        :class="[{'ctm-field__input_text-align-center' : textAlign === 'center'}]"
         :placeholder="placeholder"
         :value="value"
         :type="type"
         :autocomplete="autocomplete"
         :disabled="disabled"
-        :pattern="pattern"
         :inputmode="inputmode"
         @input="input"
       >
@@ -132,13 +132,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    pattern: {
-      type: String,
-      default: '',
-    },
     inputmode: {
       type: String,
       default: '',
+    },
+    textAlign: {
+      type: String,
+      default: 'left',
     },
   },
   methods: {
@@ -221,6 +221,10 @@ export default {
     padding: 0 20px;
     transition: .3s;
     width: 100%;
+
+    &_text-align-center {
+      text-align: center;
+    }
   }
 
   &_search {
