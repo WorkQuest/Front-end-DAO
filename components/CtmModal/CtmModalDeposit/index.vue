@@ -4,7 +4,7 @@
     :title="$t('modals.deposit')"
   >
     <div class="ctm-modal__content">
-      <validation-observer>
+      <validation-observer v-slot="{handleSubmit}">
         <div
           class="step-panel"
           :class="{'hide': step === 3}"
@@ -33,7 +33,9 @@
             <base-field
               id="amount_input"
               v-model="amount_input"
+              :name="$t('modals.amount')"
               type="number"
+              rules="required"
               :placeholder="'0 WUSD'"
             />
           </div>
@@ -48,7 +50,9 @@
               <base-field
                 id="amount_input2"
                 v-model="amount_input"
+                :name="$t('modals.amount')"
                 type="number"
+                rules="required"
                 :placeholder="'0 WUSD'"
               />
             </div>
@@ -58,8 +62,10 @@
             <div class="ctm-modal__content-field">
               <base-field
                 v-model="balance_input"
+                :name="$t('modals.amount')"
                 mode="white"
                 type="number"
+                rules="required"
                 :placeholder="'$ 0'"
               />
             </div>
@@ -69,7 +75,10 @@
             <base-field
               id="cardNumber_input"
               v-model="cardNumber_input"
+              :name="$t('modals.numberOfCard')"
+              type="tel"
               :placeholder="'1234 1234 1234 1234'"
+              rules="max:19|required"
             />
           </div>
           <div
@@ -82,7 +91,9 @@
               <base-field
                 id="date_input"
                 v-model="date_input"
+                :name="$t('modals.date')"
                 :placeholder="'02/24'"
+                rules="max:5|required|date"
               />
             </div>
             <div class="ctm-modal__content-field">
@@ -90,8 +101,10 @@
               <base-field
                 id="cvv_input"
                 v-model="cvv_input"
+                :name="$t('modals.cvv')"
                 type="number"
                 :placeholder="'242'"
+                rules="max:4|required"
               />
             </div>
           </div>
@@ -134,7 +147,7 @@
             >
               <base-btn
                 class="message__action"
-                @click="nextStep()"
+                @click="handleSubmit(nextStep)"
               >
                 {{ $t('meta.next') }}
               </base-btn>
@@ -145,7 +158,7 @@
             >
               <base-btn
                 class="message__action"
-                @click="nextStep()"
+                @click="handleSubmit(nextStep)"
               >
                 {{ $t('meta.submit') }}
               </base-btn>
@@ -156,7 +169,7 @@
             >
               <base-btn
                 class="message__action"
-                @click="hide()"
+                @click="handleSubmit(hide)"
               >
                 {{ $t('meta.submit') }}
               </base-btn>

@@ -82,7 +82,7 @@
                 :name="$t('modals.date')"
                 :placeholder="'02/24'"
                 :label="$t('modals.date')"
-                rules="max:5|required"
+                rules="max:5|required|date"
               />
               <base-field
                 id="cvvInput"

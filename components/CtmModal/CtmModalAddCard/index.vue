@@ -36,7 +36,7 @@
               v-model="date_input"
               :name="$t('modals.date')"
               :placeholder="'02/24'"
-              rules="max:5|required"
+              rules="max:5|required|date"
             />
           </div>
           <div class="ctm-modal__content-field">
