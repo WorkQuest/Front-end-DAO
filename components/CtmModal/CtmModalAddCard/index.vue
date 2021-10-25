@@ -3,61 +3,74 @@
     class="messageSend"
     :title="$t('modals.addCard')"
   >
-    <div class="ctm-modal__content">
-      <div class="ctm-modal__content-field">
-        <label for="cardNumber_input">{{ $t('modals.numberOfCard') }}</label>
-        <base-field
-          id="cardNumber_input"
-          v-model="cardNumber_input"
-          :placeholder="'1234 1234 1234 1234'"
-        />
-      </div>
-      <div class="ctm-modal__content-field">
-        <label for="name_input">{{ $t('modals.cardholderName') }}</label>
-        <base-field
-          id="name_input"
-          v-model="name_input"
-          placeholder="John Doe"
-        />
-      </div>
-      <div class="grid__2col">
+    <validation-observer v-slot="{handleSubmit}">
+      <div class="ctm-modal__content">
         <div class="ctm-modal__content-field">
-          <label for="date_input">{{ $t('modals.date') }}</label>
+          <label for="cardNumber_input">{{ $t('modals.numberOfCard') }}</label>
           <base-field
-            id="date_input"
-            v-model="date_input"
-            :placeholder="'02/24'"
+            id="cardNumber_input"
+            v-model="cardNumber_input"
+            :name="$t('modals.numberOfCard')"
+            type="tel"
+            rules="max:19|required"
+            inputmode="numeric"
+            :placeholder="'1234 1234 1234 1234'"
           />
         </div>
         <div class="ctm-modal__content-field">
-          <label for="cvv_input">{{ $t('modals.cvv') }}</label>
+          <label for="name_input">{{ $t('modals.cardholderName') }}</label>
           <base-field
-            id="cvv_input"
-            v-model="cvv_input"
-            placeholder="242"
+            id="name_input"
+            v-model="name_input"
+            :name="$t('modals.cardholderName')"
+            placeholder="John Doe"
+            type="text"
+            rules="max:30|required"
           />
         </div>
-      </div>
-      <div class="btn__container">
-        <div class="btn__wrapper">
-          <base-btn
-            class="message__action"
-            @click="showCardHasBeenAddedModal()"
-          >
-            {{ $t('meta.submit') }}
-          </base-btn>
+        <div class="grid__2col">
+          <div class="ctm-modal__content-field">
+            <label for="date_input">{{ $t('modals.date') }}</label>
+            <base-field
+              id="date_input"
+              v-model="date_input"
+              :name="$t('modals.date')"
+              :placeholder="'02/24'"
+              rules="max:5|required"
+            />
+          </div>
+          <div class="ctm-modal__content-field">
+            <label for="cvv_input">{{ $t('modals.cvv') }}</label>
+            <base-field
+              id="cvv_input"
+              v-model="cvv_input"
+              :name="$t('modals.cvv')"
+              placeholder="242"
+              rules="max:4|required"
+            />
+          </div>
         </div>
-        <div class="btn__wrapper">
-          <base-btn
-            :mode="'outline'"
-            class="message__action"
-            @click="hide()"
-          >
-            {{ $t('meta.cancel') }}
-          </base-btn>
+        <div class="btn__container">
+          <div class="btn__wrapper">
+            <base-btn
+              class="message__action"
+              @click="handleSubmit(showCardHasBeenAddedModal)"
+            >
+              {{ $t('meta.submit') }}
+            </base-btn>
+          </div>
+          <div class="btn__wrapper">
+            <base-btn
+              mode="outline"
+              class="message__action"
+              @click="hide()"
+            >
+              {{ $t('meta.cancel') }}
+            </base-btn>
+          </div>
         </div>
       </div>
-    </div>
+    </validation-observer>
   </ctm-modal-box>
 </template>
 
