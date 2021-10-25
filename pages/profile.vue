@@ -127,6 +127,8 @@
                 v-model="localUserData.firstMobileNumber"
                 :placeholder="firstMobileNumber || $t('settings.telInput')"
                 :disabled="!isProfileEdit"
+                type="tel"
+                inputmode="numeric"
                 rules="required|telephone|max:15"
                 :name="$t('modals.firstMobileField')"
                 mode="icon"
@@ -154,10 +156,12 @@
               </base-field>
               <base-field
                 v-model="localUserData.secondMobileNumber"
+                :name="$t('modals.secondMobileField')"
                 :placeholder="secondMobileNumber || $t('settings.telInput')"
                 :disabled="!isProfileEdit"
+                type="tel"
+                inputmode="numeric"
                 rules="telephone|max:15"
-                :name="$t('modals.secondMobileField')"
                 mode="icon"
                 mode-error="small"
               >
@@ -177,8 +181,7 @@
                 v-model="localUserData.additionalInfo.description"
                 class="about__textarea"
                 :class="{ 'about__textarea_disabled': !isProfileEdit }"
-                :title="'test'"
-                :placeholder="userDesc"
+                :placeholder="$t('profile.aboutMe')"
                 :disabled="!isProfileEdit"
               />
             </div>
