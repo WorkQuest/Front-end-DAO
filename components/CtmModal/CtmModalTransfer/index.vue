@@ -1,12 +1,10 @@
 <template>
   <ctm-modal-box
     class="messageSend"
-    :title="$t('modals.withdraw')"
+    :title="$t('modals.send')"
   >
     <div class="ctm-modal__content">
-      <validation-observer
-        v-slot="{handleSubmit, validated, passed, invalid}"
-      >
+      <validation-observer v-slot="{handleSubmit}">
         <div class="ctm-modal__content-field">
           <label for="address_input">
             {{ $t('modals.address') }}
@@ -14,9 +12,10 @@
           <base-field
             id="address_input"
             v-model="address"
-            :placeholder="$t('modals.recepientAddress')"
-            rules="required|alpha_num"
             :name="$t('modals.recepientAddressField')"
+            :placeholder="$t('modals.recepientAddress')"
+            type="text"
+            rules="required|alpha_num"
           />
         </div>
         <label for="value_dd">
@@ -36,6 +35,7 @@
             id="amount_input"
             v-model="amount"
             :placeholder="'0 WUSD'"
+            type="number"
             rules="required|decimal"
             :name="$t('modals.amountField')"
           />
@@ -44,7 +44,6 @@
           <div class="btn__wrapper">
             <base-btn
               class="message__action"
-              :disabled="!validated || !passed || invalid "
               @click="handleSubmit(showTransactionSendModal)"
             >
               {{ $t('meta.submit') }}
@@ -52,7 +51,7 @@
           </div>
           <div class="btn__wrapper">
             <base-btn
-              :mode="'outline'"
+              mode="outline"
               class="message__action"
               @click="hide()"
             >

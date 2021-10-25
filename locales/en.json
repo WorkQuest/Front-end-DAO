@@ -432,7 +432,8 @@
     "linkedInField": "linkedIn address",
     "twitterField": "twitter address",
     "workQuestField": "workQuest address",
-    "facebookField": "facebook address"
+    "facebookField": "facebook address",
+    "send": "Send"
   },
   "ui": {
     "workers": "Workers",
