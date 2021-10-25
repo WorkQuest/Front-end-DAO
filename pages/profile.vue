@@ -127,7 +127,7 @@
                 v-model="localUserData.firstMobileNumber"
                 :placeholder="firstMobileNumber || $t('settings.telInput')"
                 :disabled="!isProfileEdit"
-                rules="required|telephone"
+                rules="required|telephone|max:15"
                 :name="$t('modals.firstMobileField')"
                 mode="icon"
                 mode-error="small"
@@ -156,7 +156,7 @@
                 v-model="localUserData.secondMobileNumber"
                 :placeholder="secondMobileNumber || $t('settings.telInput')"
                 :disabled="!isProfileEdit"
-                rules="telephone"
+                rules="telephone|max:15"
                 :name="$t('modals.secondMobileField')"
                 mode="icon"
                 mode-error="small"
@@ -185,10 +185,11 @@
             <div class="info__social social">
               <base-field
                 v-model="localUserData.additionalInfo.socialNetwork.instagram"
+                :name="$t('modals.instagramField')"
                 :placeholder="userInstagram || $t('settings.socialInput')"
                 :disabled="!isProfileEdit"
                 mode="icon"
-                :name="$t('modals.instagramField')"
+                type="text"
                 mode-error="small"
               >
                 <template v-slot:left>
@@ -197,11 +198,11 @@
               </base-field>
               <base-field
                 v-model="localUserData.additionalInfo.socialNetwork.twitter"
+                :name="$t('modals.twitterField')"
                 :placeholder="userTwitter || $t('settings.socialInput')"
                 :disabled="!isProfileEdit"
                 mode="icon"
-                rules="twitter"
-                :name="$t('modals.twitterField')"
+                type="text"
                 mode-error="small"
               >
                 <template v-slot:left>
@@ -210,11 +211,11 @@
               </base-field>
               <base-field
                 v-model="localUserData.additionalInfo.socialNetwork.linkedin"
+                :name="$t('modals.linkedInField')"
                 :placeholder="userLinkedin || $t('settings.socialInput')"
                 :disabled="!isProfileEdit"
                 mode="icon"
-                rules="linkedIn"
-                :name="$t('modals.linkedInField')"
+                type="text"
                 mode-error="small"
               >
                 <template v-slot:left>
@@ -223,11 +224,11 @@
               </base-field>
               <base-field
                 v-model="localUserData.additionalInfo.socialNetwork.facebook"
+                :name="$t('modals.facebookField')"
                 :placeholder="userFacebook || $t('settings.socialInput')"
                 :disabled="!isProfileEdit"
                 mode="icon"
-                rules="facebook"
-                :name="$t('modals.facebookField')"
+                type="text"
                 mode-error="small"
               >
                 <template v-slot:left>
@@ -241,7 +242,7 @@
               v-if="isProfileEdit"
               mode="lightBlue"
               class="action__save"
-              @click="handleSubmit(editUserData)"
+              @click="handleSubmit(editUserData())"
             >
               {{ $t('profile.save') }}
             </base-btn>
@@ -461,6 +462,7 @@ export default {
       this.isProfileEdit = true;
     },
     async editUserData() {
+      console.log('edit');
       const formData = new FormData();
       formData.append('image', this.avatar_change.file);
       try {
@@ -504,6 +506,7 @@ export default {
           },
         };
       }
+      console.log('qq');
       try {
         await this.$store.dispatch('user/editUserData', payload);
         this.showModalSave();
