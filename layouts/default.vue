@@ -182,13 +182,6 @@
                   </div>
                 </transition>
               </button>
-              <base-btn
-                v-if="userRole === 'employer'"
-                class="header__btn"
-                @click="createNewQuest()"
-              >
-                {{ $t('layout.create') }}
-              </base-btn>
             </div>
           </div>
         </div>
@@ -1042,12 +1035,9 @@ export default {
   }
   &__right {
     display: grid;
-    grid-template-columns: repeat(5, auto);
+    grid-template-columns: repeat(2, auto);
     grid-gap: 10px;
     align-items: center;
-  }
-  &__btn {
-    min-width: 163px;
   }
   &__logo {
     display: grid;
