@@ -33,10 +33,13 @@
       </div>
       <input
         class="ctm-field__input"
+        :class="[{'ctm-field__input_text-align-center' : textAlign === 'center'}]"
         :placeholder="placeholder"
         :value="value"
         :type="type"
         :autocomplete="autocomplete"
+        :disabled="disabled"
+        :inputmode="inputmode"
         @input="input"
       >
       <div
@@ -59,6 +62,7 @@
     <div
       v-if="!isHideError"
       class="ctm-field__err"
+      :class="[{'ctm-field__err_small': modeError === 'small'}]"
     >
       {{ errors[0] }}
     </div>
@@ -99,6 +103,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    modeError: {
+      type: String,
+      default: '',
+    },
     type: {
       type: String,
       default: 'text',
@@ -128,6 +136,14 @@ export default {
     selector: {
       type: Boolean,
       default: false,
+    },
+    inputmode: {
+      type: String,
+      default: '',
+    },
+    textAlign: {
+      type: String,
+      default: 'left',
     },
   },
   methods: {
@@ -192,6 +208,9 @@ export default {
     color: #F82727;
     font-size: 12px;
     min-height: 23px;
+    &_small {
+      min-height: 15px !important;
+    }
   }
   &__search {
     position: absolute;
@@ -210,6 +229,10 @@ export default {
     padding: 0 20px;
     transition: .3s;
     width: 100%;
+
+    &_text-align-center {
+      text-align: center;
+    }
   }
 
   &_search {

@@ -84,11 +84,14 @@ export default {
     align-items: center;
   }
   &__right {
-    background:  url("~assets/img/app/auth_proposals-bg.svg") center center no-repeat;
-    background-size: cover;
     display: grid;
     grid-template-rows: auto 1fr;
     grid-gap: 53px;
+
+    background-image: url("~assets/img/app/auth_proposals-bg.svg");
+    background-position: right;
+    background-repeat: no-repeat;
+    background-size: cover;
   }
   &__long {
     justify-self: flex-end;
@@ -117,26 +120,28 @@ export default {
 
 @include _1199 {
   .template {
-    &__content {
-      align-items: initial;
-      padding-top: 30px;
-    }
     &__container {
       grid-template-columns: 1fr;
-      grid-template-rows: 400px 1fr;
-    }
-    &__slogan {
-      font-size: 32px;
-    }
-    &__right {
-      grid-row: 1/2;
-      grid-column: 1/3;
+      grid-template-rows: 500px 1fr;
     }
     &__left {
       margin: 0;
       max-width: initial;
       justify-self: initial;
       padding: 0px 10px;
+    }
+    &__content {
+      margin: 0 auto;
+      width: 470px;
+      align-items: center;
+      padding-top: 30px;
+    }
+    &__right {
+      grid-row: 1/2;
+      grid-column: 1/3;
+    }
+    &__slogan {
+      font-size: 32px;
     }
     &__logo {
       padding: 10px 39%;
@@ -149,7 +154,7 @@ export default {
       grid-template-rows: 300px 1fr;
     }
     &__left {
-      padding: 0px 10px 30px;
+      padding: 0 10px 30px;
     }
   }
 }

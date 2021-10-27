@@ -430,8 +430,10 @@
     "emailField": "email",
     "instagramField": "instagram address",
     "linkedInField": "linkedIn address",
+    "twitterField": "twitter address",
     "workQuestField": "workQuest address",
-    "facebookField": "facebook address"
+    "facebookField": "facebook address",
+    "send": "Send"
   },
   "ui": {
     "workers": "Workers",
@@ -582,7 +584,7 @@
     "nameInput": "Rosalia",
     "lastNameInput": "Vance",
     "addressInput": "Moscow, Lenina street, 2",
-    "telInput": "+ 7 989 989 9823",
+    "telInput": "+ 79899899823",
     "socialInput": "@useruser",
     "save": "Save",
     "skills": "Skills:",
