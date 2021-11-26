@@ -28,8 +28,7 @@
       {{ item.title }}
     </div>
     <div class="discussion__date">
-      <!--      TODO: Подключить moment-->
-      {{ item.updatedAt }}
+      {{ $moment(item.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
     </div>
     <hr class="discussion__line">
     <div class="description discussion__description">
