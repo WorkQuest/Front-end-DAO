@@ -16,19 +16,20 @@
         {{ $t('discussions.infoTitle') }}
       </div>
       <div
-        v-for="(item) in discussions"
-        :key="item.id"
         class="info__field"
       >
         <div class="info__discussion discussion">
           <div class=" discussion__user user">
             <img
-              src="~assets/img/ui/avatar.svg"
-              alt="avatar"
+              :src="currentDiscussion.author.avatar.url ?
+                currentDiscussion.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
+              alt="userAvatar"
               class="user__avatar"
             >
             <span class="user__name">
-              {{ item.userName }}
+              {{ currentDiscussion.author.firstName
+                ? currentDiscussion.author.firstName : this.$t('user.nameless') }}
+              {{ currentDiscussion.author.lastName ? currentDiscussion.author.lastName : '' }}
             </span>
             <button class="user__star">
               <img
@@ -46,10 +47,10 @@
             </button>
           </div>
           <div class="discussion__title">
-            {{ item.title }}
+            {{ currentDiscussion.title }}
           </div>
           <div class="discussion__date">
-            {{ item.date }}
+            {{ $moment( currentDiscussion.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
           </div>
           <div class="discussion__subtitle">
             {{ $t('discussions.files') }}
@@ -68,7 +69,7 @@
               {{ $t('discussions.descriptionTitle') }}
             </div>
             <div class="description__item">
-              {{ item.description }}
+              {{ currentDiscussion.description }}
             </div>
           </div>
           <div class="discussion__bottom bottom">
@@ -80,7 +81,7 @@
                 >
               </div>
               <div class="bottom__counter">
-                {{ item.commentCounter }}
+                {{ currentDiscussion.amountComments }}
               </div>
               <button class="bottom__like">
                 <span
@@ -95,7 +96,7 @@
                 />
               </button>
               <div class="bottom__counter bottom__counter_right">
-                {{ item.likeCounter }}
+                {{ currentDiscussion.amountLikes }}
               </div>
             </div>
           </div>
@@ -243,6 +244,7 @@
 
 <script>
 
+import { mapGetters } from 'vuex';
 import answersCard from '~/components/ui/AnswersCard';
 
 export default {
@@ -260,18 +262,6 @@ export default {
       opinion: '',
       pages: 1,
       totalPages: 5,
-      discussions: [
-        {
-          id: 1,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          title: 'Lorem ipsum dolor sit amet consectetur',
-          date: 'Jan 01, 2021, 12:00',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-        },
-      ],
       comments: [
         {
           id: 2,
@@ -368,6 +358,11 @@ export default {
 
       ],
     };
+  },
+  computed: {
+    ...mapGetters({
+      currentDiscussion: 'discussions/getCurrentDiscussion',
+    }),
   },
   methods: {
     toggleFavorite() {

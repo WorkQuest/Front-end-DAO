@@ -100,4 +100,7 @@ export default {
       return console.log(e);
     }
   },
+  async setCurrentDiscussion({ commit }, payload) {
+    commit('setCurrentDiscussion', payload);
+  },
 };

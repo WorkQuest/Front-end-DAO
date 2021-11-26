@@ -1,4 +1,5 @@
 export default () => ({
+  currentDiscussion: {},
   discussions: {},
   discussionCount: '',
   usersLikesOnComment: {},

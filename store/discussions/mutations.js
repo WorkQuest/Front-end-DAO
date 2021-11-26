@@ -1,4 +1,7 @@
 export default {
+  setCurrentDiscussion(state, data) {
+    state.currentDiscussion = data;
+  },
   setDiscussions(state, data) {
     state.discussions = data.discussions;
     state.discussionCount = data.count;
