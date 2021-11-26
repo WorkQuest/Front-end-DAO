@@ -1,6 +1,7 @@
 export default {
   setDiscussions(state, data) {
-    state.discussions = data;
+    state.discussions = data.discussions;
+    state.discussionCount = data.count;
   },
   setUsersLikesOnComment(state, data) {
     state.usersLikesOnComment = data;

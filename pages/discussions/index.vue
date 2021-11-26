@@ -5,6 +5,7 @@
         {{ $t('discussions.title') }}
       </div>
       <div class="discussions__header">
+        <!--        TODO: Добавить поиск-->
         <base-field
           v-model="search"
           class="discussions__search"
@@ -27,6 +28,7 @@
           />
         </div>
       </div>
+      <!--      TODO: Добавить пагинацию-->
       <base-pager
         v-model="pages"
         class="discussions__pagination"
@@ -38,6 +40,7 @@
 
 <script>
 
+import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
 
 export default {
@@ -47,111 +50,20 @@ export default {
       search: '',
       pages: 1,
       totalPages: 5,
-      discussions: [
-        {
-          id: 1,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          title: 'Lorem ipsum dolor sit amet consectetur',
-          date: 'Jan 01, 2021, 12:00',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-        },
-        {
-          id: 2,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          title: 'Lorem ipsum dolor sit amet consectetur',
-          date: 'Jan 01, 2021, 12:00',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-        },
-        {
-          id: 3,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          title: 'Lorem ipsum dolor sit amet consectetur',
-          date: 'Jan 01, 2021, 12:00',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-        },
-        {
-          id: 4,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          title: 'Lorem ipsum dolor sit amet consectetur',
-          date: 'Jan 01, 2021, 12:00',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-        },
-        {
-          id: 5,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          title: 'Lorem ipsum dolor sit amet consectetur',
-          date: 'Jan 01, 2021, 12:00',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-        },
-        {
-          id: 6,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          title: 'Lorem ipsum dolor sit amet consectetur',
-          date: 'Jan 01, 2021, 12:00',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-        },
-        {
-          id: 7,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          title: 'Lorem ipsum dolor sit amet consectetur',
-          date: 'Jan 01, 2021, 12:00',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-        },
-        {
-          id: 8,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          title: 'Lorem ipsum dolor sit amet consectetur',
-          date: 'Jan 01, 2021, 12:00',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-        },
-        {
-          id: 9,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          title: 'Lorem ipsum dolor sit amet consectetur',
-          date: 'Jan 01, 2021, 12:00',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-        },
-        {
-          id: 10,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          title: 'Lorem ipsum dolor sit amet consectetur',
-          date: 'Jan 01, 2021, 12:00',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-        },
-      ],
     };
   },
+  computed: {
+    ...mapGetters({
+      discussions: 'discussions/getDiscussions',
+    }),
+  },
+  mounted() {
+    this.getDiscussions();
+  },
   methods: {
+    async getDiscussions() {
+      await this.$store.dispatch('discussions/getDiscussions');
+    },
     openModalAddDiscussion() {
       this.ShowModal({
         key: modals.addDiscussion,

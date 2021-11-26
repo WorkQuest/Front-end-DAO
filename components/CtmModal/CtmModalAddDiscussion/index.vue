@@ -62,7 +62,7 @@
         </base-btn>
         <base-btn
           class="footer__buttons"
-          @click="consoleValue"
+          @click="createDiscussion"
         >
           {{ $t('modals.addDiscussion') }}
         </base-btn>
@@ -93,7 +93,6 @@ export default {
         { img: require('~/assets/img/ui/rectangle.svg'), id: 3, type: 'img' },
         { img: require('~/assets/img/ui/rectangle.svg'), id: 4, type: 'img' },
         { img: require('~/assets/img/ui/rectangle.svg'), id: 5, type: 'img' },
-
       ],
     };
   },
@@ -103,6 +102,14 @@ export default {
     }),
   },
   methods: {
+    createDiscussion() {
+      const payload = {
+        title: this.title,
+        description: this.discussion,
+        medias: [],
+      };
+      this.$store.dispatch('discussions/createDiscussion', payload);
+    },
     hide() {
       this.CloseModal();
     },

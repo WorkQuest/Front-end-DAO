@@ -2,12 +2,12 @@
   <div class="discussion">
     <div class="discussion__user user">
       <img
-        src="~/assets/img/ui/avatar.svg"
+        :src="item.author.avatar.url ? item.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
         alt="userAvatar"
         class="user__avatar"
       >
       <span class="user__name">
-        {{ item.userName }}
+        {{ item.author.firstName ? item.author.firstName : this.$t('user.nameless') }} {{ item.author.lastName ? item.author.lastName : '' }}
       </span>
       <button class="user__star">
         <img
@@ -28,7 +28,8 @@
       {{ item.title }}
     </div>
     <div class="discussion__date">
-      {{ item.date }}
+      <!--      TODO: Подключить moment-->
+      {{ item.updatedAt }}
     </div>
     <hr class="discussion__line">
     <div class="description discussion__description">
@@ -61,7 +62,7 @@
           >
         </button>
         <div class="bottom__counter">
-          {{ item.commentCounter }}
+          {{ item.amountComments }}
         </div>
         <button class="bottom__like">
           <span
@@ -76,7 +77,7 @@
           />
         </button>
         <div class="bottom__counter bottom__counter_right">
-          {{ item.likeCounter }}
+          {{ item.amountLikes }}
         </div>
       </div>
     </div>
