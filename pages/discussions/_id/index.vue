@@ -21,15 +21,15 @@
         <div class="info__discussion discussion">
           <div class=" discussion__user user">
             <img
-              :src="currentDiscussion.author.avatar.url ?
-                currentDiscussion.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
+              :src="authorAvatarUrl ?
+                authorAvatarUrl : require('~/assets/img/app/avatar_empty.png')"
               alt="userAvatar"
               class="user__avatar"
             >
             <span class="user__name">
-              {{ currentDiscussion.author.firstName
-                ? currentDiscussion.author.firstName : this.$t('user.nameless') }}
-              {{ currentDiscussion.author.lastName ? currentDiscussion.author.lastName : '' }}
+              {{ authorFirstName
+                ? authorFirstName : this.$t('user.nameless') }}
+              {{ authorLastName ? authorLastName : '' }}
             </span>
             <button class="user__star">
               <img
@@ -87,12 +87,12 @@
                 <span
                   v-if="!isLiked"
                   class="icon-heart_fill bottom__like"
-                  @click="toggleLiked"
+                  @click="likeDiscussion"
                 />
                 <span
-                  v-else
+                  v-if="isLiked"
                   class="icon-heart_fill bottom__like bottom__like_choosen"
-                  @click="toggleLiked"
+                  @click="dislikeDiscussion"
                 />
               </button>
               <div class="bottom__counter bottom__counter_right">
@@ -140,40 +140,44 @@
             </base-btn>
             <base-btn
               class="response__btn"
-              @click="writeOpinion"
+              @click="addRootCommentResponse()"
             >
               {{ $t('discussions.add') }}
             </base-btn>
           </div>
         </div>
       </div>
+      <!--      TODO: Добавить заглушку, если нет комментов-->
       <div
-        v-for="(elem) in comments"
+        v-for="(elem) in rootComments.comments"
         :key="elem.id"
         class="info__comment comment"
       >
         <div class="comment__field">
           <div class="comment__user user">
             <img
-              src="~assets/img/ui/avatar.svg"
-              alt=""
+              :src="elem.author.avatar ?
+                elem.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
+              alt="userAvatar"
               class="user__avatar"
             >
             <div class="user__name">
-              {{ elem.userName }}
+              {{ elem.author.firstName ?
+                elem.author.firstName : this.$t('user.nameless') }}
+              {{ elem.author.lastName ? elem.author.lastName : '' }}
             </div>
             <div class="user__date">
-              {{ elem.date }}
+              {{ $moment(elem.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
             </div>
           </div>
           <div class="comment__description">
-            {{ elem.description }}
+            {{ elem.text }}
           </div>
           <div class="comment__bottom bottom">
             <base-btn
               class="bottom__btn"
               mode="blue"
-              @click="toggleShow"
+              @click="toggleShow(elem.id)"
             >
               <p v-if="!isShow">
                 {{ $t('discussions.show') }}
@@ -189,7 +193,7 @@
                 class="bottom__comment"
               >
               <div class="bottom__counter">
-                {{ elem.commentCounter }}
+                {{ elem.amountSubComments }}
               </div>
               <button class="bottom__like">
                 <span
@@ -204,11 +208,12 @@
                 />
               </button>
               <div class="bottom__counter bottom__counter_right">
-                {{ elem.likeCounter }}
+                {{ elem.amountLikes }}
               </div>
             </div>
           </div>
           <div v-if="isShow">
+            {{ subComments }}
             <answers-card
               v-for="(item) in answers"
               :key="item.id"
@@ -226,10 +231,14 @@
           <div class="comment__footer footer">
             <span class="class= icon-link footer__chain" />
             <input
+              v-model="subCommentInput"
               class="footer__input"
               :placeholder="$t('discussions.input')"
             >
-            <span class="class= icon-send footer__arrow" />
+            <span
+              class="class= icon-send footer__arrow"
+              @click="addSubCommentResponse(elem.id)"
+            />
           </div>
         </div>
       </div>
@@ -260,62 +269,9 @@ export default {
       isChoosen: false,
       isVote: false,
       opinion: '',
+      subCommentInput: '',
       pages: 1,
       totalPages: 5,
-      comments: [
-        {
-          id: 2,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          date: '10 days ago',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-          isCommentLiked: false,
-        },
-        {
-          id: 3,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          date: '10 days ago',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-          isCommentLiked: false,
-
-        },
-        {
-          id: 4,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          date: '10 days ago',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-          isCommentLiked: false,
-
-        },
-        {
-          id: 5,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          date: '10 days ago',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-          isCommentLiked: false,
-        },
-        {
-          id: 6,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          date: '10 days ago',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-          isCommentLiked: false,
-        },
-      ],
       answers: [
         {
           id: 7,
@@ -362,20 +318,73 @@ export default {
   computed: {
     ...mapGetters({
       currentDiscussion: 'discussions/getCurrentDiscussion',
+      authorFirstName: 'discussions/getCurrentDiscussionAuthorFirstName',
+      authorLastName: 'discussions/getCurrentDiscussionAuthorLastName',
+      authorAvatarUrl: 'discussions/getCurrentDiscussionAuthorAvatarUrl',
+      rootComments: 'discussions/getRootComments',
+      subComments: 'discussions/getUsersSubCommentsOnComment',
     }),
   },
+  async mounted() {
+    this.getCurrentDiscussion();
+    this.getRootComments();
+  },
   methods: {
+    getCurrentDiscussion() {
+      const discussionId = this.$route.params.id;
+      this.$store.dispatch('discussions/getCurrentDiscussion', discussionId);
+    },
+    getRootComments() {
+      const discussionId = this.$route.params.id;
+      this.$store.dispatch('discussions/getRootComments', discussionId);
+    },
+    getSubComments(commentId) {
+      this.$store.dispatch('discussions/getUsersSubCommentsOnComment', commentId);
+    },
+    addRootCommentResponse() {
+      const discussionId = this.currentDiscussion.id;
+      const payload = {
+        text: this.opinion,
+        medias: [],
+      };
+      this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
+      this.isAddComment = false;
+    },
+    addSubCommentResponse(rootCommentId) {
+      const discussionId = this.currentDiscussion.id;
+      const payload = {
+        rootCommentId,
+        text: this.subCommentInput,
+        medias: [],
+      };
+      this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
+      this.isAddComment = false;
+    },
+    toggleShow(commentId) {
+      this.isShow = !this.isShow;
+      if (this.isShow) {
+        this.getSubComments(commentId);
+      }
+    },
     toggleFavorite() {
       this.isFavorite = !this.isFavorite;
     },
-    toggleLiked() {
-      this.isLiked = !this.isLiked;
+    dislikeDiscussion() {
+      this.isLiked = false;
+      this.deleteLikeOnDiscussion(this.currentDiscussion.id);
+    },
+    likeDiscussion() {
+      this.isLiked = true;
+      this.addLikeOnDiscussion(this.currentDiscussion.id);
+    },
+    deleteLikeOnDiscussion(discussionId) {
+      this.$store.dispatch('discussions/deleteLikeOnDiscussion', discussionId);
+    },
+    addLikeOnDiscussion(discussionId) {
+      this.$store.dispatch('discussions/addLikeOnDiscussion', discussionId);
     },
     addComment() {
       this.isAddComment = !this.isAddComment;
-    },
-    toggleShow() {
-      this.isShow = !this.isShow;
     },
     toggleVote() {
       this.isVote = !this.isVote;

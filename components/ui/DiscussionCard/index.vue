@@ -97,13 +97,7 @@ export default {
       isLiked: false,
     };
   },
-  mounted() {
-    this.setCurrenDiscussion();
-  },
   methods: {
-    setCurrenDiscussion() {
-      this.$store.dispatch('discussions/setCurrentDiscussion', this.item);
-    },
     toggleFavorite() {
       this.isFavorite = !this.isFavorite;
     },
