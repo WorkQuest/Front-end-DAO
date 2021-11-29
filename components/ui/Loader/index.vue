@@ -3,28 +3,31 @@
     class="loader"
     :class="{'loader_hider': isLoaderBackgroundHider}"
   >
-    <div
-      class="loader__body"
-    >
-      <div class="sk-chase">
-        <div class="sk-chase-dot" />
-        <div class="sk-chase-dot" />
-        <div class="sk-chase-dot" />
-        <div class="sk-chase-dot" />
-        <div class="sk-chase-dot" />
-        <div class="sk-chase-dot" />
+    <div class="loader__body">
+      <div
+        class="sk-chase"
+        :class="{'sk-chase_small' : isMiniLoader}"
+      >
+        <div
+          v-for="(dot, i) in ['', '', '', '', '', '']"
+          :key="i"
+          class="sk-chase-dot"
+          :class="{'sk-chase-dot_small' : isMiniLoader}"
+        />
       </div>
     </div>
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex';
-import loaderModes from '~/store/main/loaderModes';
 
 export default {
-  data: () => ({
-    loaderModes,
-  }),
+  props: {
+    isMiniLoader: {
+      type: Boolean,
+      default: false,
+    },
+  },
   computed: {
     ...mapGetters({
       loaderStatusText: 'main/getLoaderStatusText',
@@ -67,6 +70,11 @@ export default {
   height: 40px;
   position: relative;
   animation: sk-chase 2.5s infinite linear both;
+
+  &_small {
+    height: 20px;
+    width: 20px;
+  }
 }
 
 .sk-chase-dot {
@@ -76,6 +84,11 @@ export default {
   left: 0;
   top: 0;
   animation: sk-chase-dot 2.0s infinite ease-in-out both;
+
+  &_small {
+    //width: 50%;
+    //height: 50%;
+  }
 }
 
 .sk-chase-dot:before {

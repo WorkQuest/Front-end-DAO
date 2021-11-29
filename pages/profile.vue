@@ -107,10 +107,11 @@
                 v-model="localUserData.address"
                 :placeholder="address || $t('settings.addressInput')"
                 :disabled="!isProfileEdit"
+                :is-with-loader="true"
                 mode="icon"
                 :name="$t('modals.addressField')"
                 mode-error="small"
-                @focus="qwe"
+                @focus="changeFocusValue"
                 @input="getPositionData"
               >
                 <template v-slot:left>
@@ -121,37 +122,49 @@
                     v-if="isPositionSearch"
                     class="loader-cont"
                   >
-                    <loader class="loader-cont__loader" />
+                    <loader
+                      class="loader-cont__loader"
+                      :is-mini-loader="true"
+                    />
                   </div>
                 </template>
                 <template v-slot:selector>
                   <div
-                    v-if="addresses.length && isSearchDDStatus"
+                    v-if="addresses.length && isGeoInputOnFocus"
                     class="selector"
                   >
                     <div class="selector__items">
                       <div
-                        v-for="(item, i) in addresses"
+                        v-for="({formatted}, i) in addresses"
                         :key="i"
                         class="selector__item"
-                        @click="selectAddress(item)"
+                        @click="selectAddress(formatted)"
                       >
-                        {{ item.formatted }}
+                        {{ formatted }}
                       </div>
                     </div>
                   </div>
                 </template>
               </base-field>
+              <vue-phone-number-input
+                v-if="isProfileEdit"
+                v-model="localUserData.firstMobileNumber"
+                class="input-phone"
+                error-color="#EB5757"
+                clearable
+                show-code-on-list
+                required
+                size="lg"
+                @update="updatedPhone = $event"
+              />
               <base-field
+                v-else
                 v-model="localUserData.firstMobileNumber"
                 :placeholder="firstMobileNumber || $t('settings.telInput')"
-                :disabled="!isProfileEdit"
-                type="tel"
+                :disabled="true"
                 inputmode="numeric"
-                rules="required|telephone|max:15"
                 :name="$t('modals.firstMobileField')"
                 mode="icon"
-                mode-error="small"
               >
                 <template v-slot:left>
                   <span class="icon icon__input icon-phone" />
@@ -323,13 +336,15 @@
 import { mapGetters } from 'vuex';
 import { GeoCode } from 'geo-coder';
 import modals from '~/store/modals/modals';
+import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 
 export default {
   name: 'Settings',
   data() {
     return {
+      isProfileEdit: false,
       isPositionSearch: false,
-      isSearchDDStatus: false,
+      isGeoInputOnFocus: false,
       addresses: [],
       geoCode: null,
       delay: 0,
@@ -383,18 +398,18 @@ export default {
       secondMobileNumber: 'user/getUserSecondMobileNumber',
       imageData: 'user/getImageData',
       additionalInfo: 'user/getAdditionalInfo',
-      isProfileEdit: 'user/isProfileEdit',
     }),
   },
   async mounted() {
     this.SetLoader(true);
-    this.isVerified = Boolean(this.userData.statusKYC);
 
     const {
       userData: {
-        avatarId, firstName, lastName, additionalInfo,
+        avatarId, firstName, lastName, additionalInfo, statusKYC,
       }, userEmail, firstMobileNumber, secondMobileNumber, address,
     } = this;
+
+    this.isVerified = !!statusKYC;
 
     this.localUserData = {
       avatarId,
@@ -409,8 +424,13 @@ export default {
     this.SetLoader(false);
   },
   methods: {
-    qwe(arg) {
-      this.isSearchDDStatus = arg;
+    selectAddress(address) {
+      this.localUserData.address = address;
+    },
+    changeFocusValue(arg) {
+      setTimeout(() => {
+        this.isGeoInputOnFocus = arg;
+      }, 300);
     },
     getPositionData(address) {
       this.addresses = [];
@@ -424,10 +444,15 @@ export default {
       this.isPositionSearch = true;
 
       this.setDelay(async () => {
-        const response = await geoCode.geolookup(address);
-        this.addresses = JSON.parse(JSON.stringify(response));
-        this.coordinates = JSON.parse(JSON.stringify({ lng: response[0].lng, lat: response[0].lat }));
-        this.isPositionSearch = false;
+        try {
+          const response = await geoCode.geolookup(address);
+          this.addresses = JSON.parse(JSON.stringify(response));
+          this.coordinates = JSON.parse(JSON.stringify({ lng: response[0].lng, lat: response[0].lat }));
+          this.isPositionSearch = false;
+        } catch (e) {
+          console.log(e);
+          this.isPositionSearch = false;
+        }
       }, 500);
     },
     setDelay(f, t) {
@@ -469,7 +494,7 @@ export default {
       });
     },
     showModalSave() {
-      this.$store.dispatch('user/changeProfile', false);
+      this.isProfileEdit = false;
 
       this.ShowModal({
         key: modals.status,
@@ -481,6 +506,9 @@ export default {
     showModalWarning() {
       this.ShowModal({
         key: modals.warning,
+        callback: () => {
+          this.isProfileEdit = true;
+        },
       });
     },
     modalChangePassword() {
@@ -499,10 +527,6 @@ export default {
     switchSms() {
       this.sms = !this.sms;
       this.$router.push('/sms-verification');
-    },
-    transitionToChange() {
-      this.$router.push('/profile?v=change');
-      this.isProfileEdit = true;
     },
     async editUserData() {
       const formData = new FormData();
@@ -889,7 +913,35 @@ export default {
 
   &__loader {
     position: absolute !important;
-    background: rgba(255, 255, 255, 1) !important;
+    background: transparent !important;
+  }
+}
+
+</style>
+
+<style lang="scss">
+.input-phone {
+  input {
+    background-color: #F7F8FA !important;
+    border: unset !important;
+    height: 46px !important;
+    min-height: 46px !important;
+
+    &:focus {
+      background-color: #FFFFFF !important;
+      border: 1px solid #0083C7 !important;
+    }
+  }
+
+  .country-selector__input {
+    border-top-left-radius: 6px !important;
+    border-bottom-left-radius: 6px !important;
+  }
+
+  .input-tel__input {
+    border-top-right-radius: 6px !important;
+    border-bottom-right-radius: 6px !important;
+    border-left: 1px solid #ccc !important;
   }
 }
 </style>

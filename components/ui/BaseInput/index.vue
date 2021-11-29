@@ -33,7 +33,8 @@
       </div>
       <input
         class="ctm-field__input"
-        :class="{'ctm-field__input_text-align-center' : textAlign === 'center'}"
+        :class="[{'ctm-field__input_text-align-center' : textAlign === 'center'},
+                 {'ctm-field__input_padding-r' : isWithLoader}]"
         :placeholder="placeholder"
         :value="value"
         :type="type"
@@ -147,6 +148,10 @@ export default {
       type: String,
       default: 'left',
     },
+    isWithLoader: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     changeFocus(arg) {
@@ -237,6 +242,10 @@ export default {
 
     &_text-align-center {
       text-align: center;
+    }
+
+    &_padding-r {
+      padding-right: 40px !important;
     }
   }
 
