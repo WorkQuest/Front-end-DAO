@@ -3,19 +3,22 @@
     <div class="answers__field">
       <div class="answers__user user">
         <img
-          src="~assets/img/ui/avatar.svg"
-          alt=""
+          :src="item.author.avatar ?
+            item.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
+          alt="userAvatar"
           class="user__avatar"
         >
         <div class="user__name">
-          {{ item.userName }}
+          {{ item.author.firstName ?
+            item.author.firstName : this.$t('user.nameless') }}
+          {{ item.author.lastName ? item.author.lastName : '' }}
         </div>
         <div class="user__date">
-          {{ item.date }}
+          {{ $moment(item.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
         </div>
       </div>
       <div class="answers__description">
-        {{ item.description }}
+        {{ item.text }}
       </div>
       <div class="answers__bottom bottom">
         <base-btn
@@ -39,16 +42,16 @@
             <span
               v-if="!isVote"
               class="icon-heart_fill bottom__like"
-              @click="toggleVote"
+              @click="addLikeOnComment(item.id)"
             />
             <span
               v-else
               class="icon-heart_fill bottom__like bottom__like_choosen"
-              @click="toggleVote"
+              @click="deleteLikeOnComment(item.id)"
             />
           </button>
           <div class="bottom__counter bottom__counter_right">
-            {{ item.likeCounter }}
+            {{ item.amountLikes }}
           </div>
         </div>
       </div>
@@ -58,15 +61,21 @@
       >
         <span class="icon-link footer__chain" />
         <input
+          v-model="subCommentInput"
           class="footer__input"
           :placeholder="$t('discussions.input')"
         >
-        <span class="icon-send footer__arrow" />
+        <span
+          class="icon-send footer__arrow"
+          @click="addSubCommentResponse(item.id)"
+        />
       </div>
     </div>
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   props: {
     item: {
@@ -79,14 +88,35 @@ export default {
     return {
       isReplay: false,
       isVote: false,
+      subCommentInput: '',
     };
+  },
+  computed: {
+    ...mapGetters({
+      currentDiscussion: 'discussions/getCurrentDiscussion',
+    }),
   },
   methods: {
     toggleReplay() {
       this.isReplay = !this.isReplay;
     },
-    toggleVote() {
-      this.isVote = !this.isVote;
+    addSubCommentResponse(rootCommentId) {
+      const discussionId = this.currentDiscussion.id;
+      const payload = {
+        rootCommentId,
+        text: this.subCommentInput,
+        medias: [],
+      };
+      this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
+      this.isReplay = false;
+    },
+    addLikeOnComment(commentId) {
+      this.isVote = true;
+      this.$store.dispatch('discussions/addLikeOnComment', commentId);
+    },
+    deleteLikeOnComment(commentId) {
+      this.isVote = false;
+      this.$store.dispatch('discussions/deleteLikeOnComment', commentId);
     },
   },
 };

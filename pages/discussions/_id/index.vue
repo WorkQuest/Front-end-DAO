@@ -199,12 +199,12 @@
                 <span
                   v-if="!isVote"
                   class="icon-heart_fill bottom__like"
-                  @click="toggleVote"
+                  @click="addLikeOnComment(elem.id)"
                 />
                 <span
                   v-else
                   class="icon-heart_fill bottom__like bottom__like_choosen"
-                  @click="toggleVote"
+                  @click="deleteLikeOnComment(elem.id)"
                 />
               </button>
               <div class="bottom__counter bottom__counter_right">
@@ -213,9 +213,8 @@
             </div>
           </div>
           <div v-if="isShow">
-            {{ subComments }}
             <answers-card
-              v-for="(item) in answers"
+              v-for="(item) in subComments.comments"
               :key="item.id"
               :item="item"
               class="comment__replays"
@@ -272,32 +271,6 @@ export default {
       subCommentInput: '',
       pages: 1,
       totalPages: 5,
-      answers: [
-        {
-          id: 7,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          date: '10 days ago',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-        },
-        {
-          id: 8,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          date: '10 days ago',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-        },
-        {
-          id: 9,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          date: '10 days ago',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-        },
-      ],
       documents: [
         {
           id: '1',
@@ -349,6 +322,7 @@ export default {
       };
       this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
       this.isAddComment = false;
+      this.getRootComments();
     },
     addSubCommentResponse(rootCommentId) {
       const discussionId = this.currentDiscussion.id;
@@ -371,26 +345,24 @@ export default {
     },
     dislikeDiscussion() {
       this.isLiked = false;
-      this.deleteLikeOnDiscussion(this.currentDiscussion.id);
+      this.$store.dispatch('discussions/deleteLikeOnDiscussion', this.currentDiscussion.id);
+      this.getCurrentDiscussion();
     },
     likeDiscussion() {
       this.isLiked = true;
-      this.addLikeOnDiscussion(this.currentDiscussion.id);
-    },
-    deleteLikeOnDiscussion(discussionId) {
-      this.$store.dispatch('discussions/deleteLikeOnDiscussion', discussionId);
-    },
-    addLikeOnDiscussion(discussionId) {
-      this.$store.dispatch('discussions/addLikeOnDiscussion', discussionId);
+      this.$store.dispatch('discussions/addLikeOnDiscussion', this.currentDiscussion.id);
+      this.getCurrentDiscussion();
     },
     addComment() {
       this.isAddComment = !this.isAddComment;
     },
-    toggleVote() {
-      this.isVote = !this.isVote;
+    addLikeOnComment(commentId) {
+      this.isVote = true;
+      this.$store.dispatch('discussions/addLikeOnComment', commentId);
     },
-    writeOpinion() {
-      console.log(this.opinion);
+    deleteLikeOnComment(commentId) {
+      this.isVote = false;
+      this.$store.dispatch('discussions/deleteLikeOnComment', commentId);
     },
   },
 };
@@ -407,18 +379,18 @@ export default {
   @include _1024;
   }
   &__header{
-    margin: 20px 0px 0px 0px;
+    margin: 20px 0 0 0;
     justify-content: left;
   }
   &__heading{
-    margin: 30px 0px 20px 0px;
+    margin: 30px 0 20px 0;
   }
   &__title {
     font-weight: 600;
     font-size: 28px;
     line-height: 36px;
     margin-right: auto;
-    padding: 10px 0px 20px 0px;
+    padding: 10px 0 20px 0;
   }
   &__field {
     justify-content: space-between;
@@ -428,7 +400,7 @@ export default {
     height: 100%;
     background: #FFFFFF;
     border-radius: 8px;
-    padding: 20px 20px 0px 20px;
+    padding: 20px 20px 0 20px;
   }
   &__footer{
     margin-top: 20px;
@@ -465,7 +437,7 @@ export default {
     color: #4C5767;
     }
   &__arrow {
-    margin: 6px 10px 6px 0px;
+    margin: 6px 10px 6px 0;
     color:  #4C5767;
     font-size: 25px;
     cursor: pointer;
@@ -484,7 +456,7 @@ export default {
     @include text-usual;
     color: #7C838D;
     align-self: stretch;
-    margin: 20px 0px 25px 0px;
+    margin: 20px 0 25px 0;
   }
   &__btn {
     border: none;
@@ -510,14 +482,14 @@ export default {
     flex: 0 0 0 32px;
     width: 32px;
     height: 32px;
-    left: 0px;
-    top: 0px;
+    left: 0;
+    top: 0;
     border-radius: 50%;
   }
   &__name{
     @include text-usual;
     color: #1D2127;
-    padding: 0px 10px 0px 10px;
+    padding: 0 10px 0 10px;
   }
   &__date{
     font-size: 12px;
@@ -568,7 +540,7 @@ export default {
     font-size: 14px;
     line-height: 18px;
     color: #1D2127;
-    margin: 0px 22px 0px 8px;
+    margin: 0 22px 0 8px;
     cursor: pointer;
     &_right {
       margin: 7px;
@@ -595,7 +567,7 @@ export default {
     border-radius: 6px;
     border: none;
     padding: 10px 20px 10px 15px;
-    margin: 0px 10px 0px 10px;
+    margin: 0 10px 0 10px;
   }
   &__comment{
     @include text-usual;
@@ -605,7 +577,7 @@ export default {
     border-radius: 6px;
     border: none;
     padding: 10px 20px 10px 15px;
-    margin: 0px 0px 0px 10px;
+    margin: 0 0 0 10px;
   }
   &__chain{
     display: flex;
@@ -637,7 +609,7 @@ export default {
     font-weight: 600;
     font-size: 24px;
     line-height: 32px;
-    margin: 20px 0px 10px 0px;
+    margin: 20px 0 10px 0;
   }
   &__date {
     font-size: 14px;
@@ -654,10 +626,10 @@ export default {
     line-height: 130%;
   }
   &__block{
-    margin: 10px 0px 20px 0px;
+    margin: 10px 0 20px 0;
   }
   &__filesUploader{
-    margin: 0px 0px 20px 0px!important;
+    margin: 0 0 20px 0 !important;
   }
   &__bottom{
     padding-bottom: 10px;
@@ -669,7 +641,7 @@ export default {
   align-items: center;
   cursor: pointer;
   &__icon{
-    margin: 0px 16px 0px 0px;
+    margin: 0 16px 0 0;
   }
   &__name{
     font-size: 16px;
@@ -683,7 +655,7 @@ export default {
     color: #A7AEB9;
   }
   &__file{
-    margin: 0px 10px 0px 8px;
+    margin: 0 10px 0 8px;
   }
   &__close{
     height: 33px;
@@ -705,7 +677,7 @@ export default {
     font-size: 18px;
     line-height: 130%;
     font-weight: 600;
-    margin: 20px 0px 10px 0px;
+    margin: 20px 0 10px 0;
   }
 }
 .response{

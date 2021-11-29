@@ -58,12 +58,27 @@ export default {
       return console.log(e);
     }
   },
-  // TODO: Ждать правок бэка (ошибка)
   async getRootComments({ commit }, discussionId) {
     try {
       const response = await this.$axios.$get(`/v1/discussion/${discussionId}/root-comments`);
       commit('setRootComments', response.result);
       console.log('rootComments', response.result);
+      return response.result;
+    } catch (e) {
+      return console.log(e);
+    }
+  },
+  async addLikeOnComment({ commit }, commentId) {
+    try {
+      const response = await this.$axios.$post(`/v1/discussion/comment/${commentId}/like`);
+      return response.result;
+    } catch (e) {
+      return console.log(e);
+    }
+  },
+  async deleteLikeOnComment({ commit }, commentId) {
+    try {
+      const response = await this.$axios.$delete(`/v1/discussion/comment/${commentId}/like`);
       return response.result;
     } catch (e) {
       return console.log(e);
@@ -83,22 +98,6 @@ export default {
     try {
       const response = await this.$axios.$get(`/v1/discussion/comment/${commentId}/usersLikes`);
       commit('setUsersLikesOnComment', response.result);
-      return response.result;
-    } catch (e) {
-      return console.log(e);
-    }
-  },
-  async deleteLikeOnComment({ commit }, commentId) {
-    try {
-      const response = await this.$axios.$delete(`/v1/discussion/comment/${commentId}/like`);
-      return response.result;
-    } catch (e) {
-      return console.log(e);
-    }
-  },
-  async addLikeOnComment({ commit }, commentId) {
-    try {
-      const response = await this.$axios.$post(`/v1/discussion/comment/${commentId}/like`);
       return response.result;
     } catch (e) {
       return console.log(e);
