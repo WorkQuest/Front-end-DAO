@@ -90,7 +90,7 @@
                   @click="likeDiscussion"
                 />
                 <span
-                  v-if="isLiked"
+                  v-else
                   class="icon-heart_fill bottom__like bottom__like_choosen"
                   @click="dislikeDiscussion"
                 />
@@ -196,6 +196,7 @@
                 {{ elem.amountSubComments }}
               </div>
               <button class="bottom__like">
+                <!--                TODO: Заменить переменную-->
                 <span
                   v-if="!isVote"
                   class="icon-heart_fill bottom__like"
