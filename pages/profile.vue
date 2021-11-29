@@ -37,18 +37,10 @@
           <div class="info__base">
             <div class="info__avatar avatar">
               <img
-                v-if="imageData"
                 id="userAvatar"
                 class="avatar__img"
-                :src="imageData"
-                alt=""
-              >
-              <img
-                v-else
-                id="userAvatarTwo"
-                class="avatar__img"
-                src="~/assets/img/app/avatar_empty.png"
-                alt="empty avatar"
+                :src="imageData || require('~/assets/img/app/avatar_empty.png')"
+                :alt="imageData ? 'avatar' : 'empty avatar'"
               >
               <label
                 v-if="isProfileEdit"
@@ -76,7 +68,7 @@
                 class="contacts__status status"
                 :class="{ 'status_verified': localUserData.isVerified }"
               >
-                {{ localUserData.isVerified ? $t('settings.verified') : $t('settings.notVerified') }}
+                {{ $t(`settings.${localUserData.isVerified ? 'verified' : 'notVerified'}`) }}
                 <span class="status__icon icon icon-check_all_big" />
               </div>
 
@@ -118,9 +110,36 @@
                 mode="icon"
                 :name="$t('modals.addressField')"
                 mode-error="small"
+                @focus="qwe"
+                @input="getPositionData"
               >
                 <template v-slot:left>
                   <span class="icon icon__input icon-location" />
+                </template>
+                <template v-slot:right-absolute>
+                  <div
+                    v-if="isPositionSearch"
+                    class="loader-cont"
+                  >
+                    <loader class="loader-cont__loader" />
+                  </div>
+                </template>
+                <template v-slot:selector>
+                  <div
+                    v-if="addresses.length && isSearchDDStatus"
+                    class="selector"
+                  >
+                    <div class="selector__items">
+                      <div
+                        v-for="(item, i) in addresses"
+                        :key="i"
+                        class="selector__item"
+                        @click="selectAddress(item)"
+                      >
+                        {{ item.formatted }}
+                      </div>
+                    </div>
+                  </div>
                 </template>
               </base-field>
               <base-field
@@ -302,12 +321,18 @@
 <script>
 
 import { mapGetters } from 'vuex';
+import { GeoCode } from 'geo-coder';
 import modals from '~/store/modals/modals';
 
 export default {
   name: 'Settings',
   data() {
     return {
+      isPositionSearch: false,
+      isSearchDDStatus: false,
+      addresses: [],
+      geoCode: null,
+      delay: 0,
       sms: false,
       allRegisterUser: false,
       allPeopleInInternet: false,
@@ -327,12 +352,6 @@ export default {
         address: null,
         additionalInfo: {
           description: null,
-          skills: [],
-          educations: [],
-          workExperiences: [],
-          CEO: null,
-          company: null,
-          website: null,
           socialNetwork: {
             instagram: null,
             twitter: null,
@@ -350,24 +369,16 @@ export default {
   },
   computed: {
     ...mapGetters({
-      tags: 'ui/getTags',
       userRole: 'user/getUserRole',
       userData: 'user/getUserData',
       firstName: 'user/getFirstName',
       lastName: 'user/getLastName',
       address: 'user/getUserAddress',
-      company: 'user/getUserCompany',
-      userCEO: 'user/getUserCEO',
-      userDesc: 'user/getUserDesc',
-      userWorkExp: 'user/getUserWorkExp',
-      userEducations: 'user/getUserEducations',
-      userWebsite: 'user/getUserWebsite',
       userInstagram: 'user/getUserInstagram',
       userTwitter: 'user/getUserTwitter',
       userLinkedin: 'user/getUserLinkedin',
       userFacebook: 'user/getUserFacebook',
       userEmail: 'user/getUserEmail',
-      userWorkQuest: 'user/getUserWorkQuest',
       firstMobileNumber: 'user/getUserFirstMobileNumber',
       secondMobileNumber: 'user/getUserSecondMobileNumber',
       imageData: 'user/getImageData',
@@ -378,44 +389,72 @@ export default {
   async mounted() {
     this.SetLoader(true);
     this.isVerified = Boolean(this.userData.statusKYC);
+
+    const {
+      userData: {
+        avatarId, firstName, lastName, additionalInfo,
+      }, userEmail, firstMobileNumber, secondMobileNumber, address,
+    } = this;
+
     this.localUserData = {
-      avatarId: this.userData.avatarId,
-      firstName: this.userData.firstName,
-      lastName: this.userData.lastName,
-      userEmail: this.userEmail,
-      firstMobileNumber: this.firstMobileNumber,
-      secondMobileNumber: this.secondMobileNumber,
-      address: this.address,
-      additionalInfo: JSON.parse(JSON.stringify(this.userData.additionalInfo)),
+      avatarId,
+      firstName,
+      lastName,
+      userEmail,
+      firstMobileNumber,
+      secondMobileNumber,
+      address,
+      additionalInfo: JSON.parse(JSON.stringify(additionalInfo)),
     };
     this.SetLoader(false);
   },
   methods: {
-    // eslint-disable-next-line consistent-return
+    qwe(arg) {
+      this.isSearchDDStatus = arg;
+    },
+    getPositionData(address) {
+      this.addresses = [];
+
+      if (!address) return;
+
+      if (!this.geoCode) this.geoCode = new GeoCode('google', { key: process.env.GMAPKEY });
+
+      const { geoCode } = this;
+
+      this.isPositionSearch = true;
+
+      this.setDelay(async () => {
+        const response = await geoCode.geolookup(address);
+        this.addresses = JSON.parse(JSON.stringify(response));
+        this.coordinates = JSON.parse(JSON.stringify({ lng: response[0].lng, lat: response[0].lat }));
+        this.isPositionSearch = false;
+      }, 500);
+    },
+    setDelay(f, t) {
+      clearTimeout(this.delay);
+      this.delay = setTimeout(f, t);
+    },
     async processFile(e, validate) {
-      const isValid = await validate(e);
       const file = e.target.files[0];
+      if (!file) return;
+      const isValid = await validate(e);
+
       if (isValid.valid) {
         const MAX_SIZE = 20e6; // макс размер - тут 2мб
-        if (!file) {
-          return false;
-        }
 
         const reader = new FileReader();
         reader.readAsDataURL(file);
 
         this.avatar_change.data = await this.$store.dispatch('user/imageType', { contentType: file.type });
         this.avatar_change.file = file;
-        let output = document.getElementById('userAvatar');
-        if (!output) {
-          output = document.getElementById('userAvatarTwo');
-        }
+
+        const output = document.getElementById('userAvatar');
         output.src = URL.createObjectURL(file);
-        // eslint-disable-next-line func-names
-        output.onload = function () {
+        output.onload = () => {
           URL.revokeObjectURL(output.src);
+          this.showModalImageOk();
         };
-        this.showModalImageOk();
+
         reader.onerror = (evt) => {
           console.error(evt);
         };
@@ -425,18 +464,19 @@ export default {
       this.ShowModal({
         key: modals.status,
         img: require('~/assets/img/ui/questAgreed.svg'),
-        title: 'Image loaded successful',
-        subtitle: 'Please press save button',
+        title: this.$t('modals.imageLoadedSuccessful'),
+        subtitle: this.$t('modals.pleasePressSaveButton'),
       });
     },
     showModalSave() {
+      this.$store.dispatch('user/changeProfile', false);
+
       this.ShowModal({
         key: modals.status,
         img: require('~/assets/img/ui/questAgreed.svg'),
-        title: 'Saved',
-        subtitle: 'User data has been saved',
+        title: this.$t('modals.saved'),
+        subtitle: this.$t('modals.userDataHasBeenSaved'),
       });
-      this.$store.dispatch('user/changeProfile', false);
     },
     showModalWarning() {
       this.ShowModal({
@@ -465,51 +505,31 @@ export default {
       this.isProfileEdit = true;
     },
     async editUserData() {
-      console.log('edit');
       const formData = new FormData();
-      formData.append('image', this.avatar_change.file);
+      const { avatar_change: { file, data: { ok, result } }, additionalInfo, localUserData } = this;
+
+      formData.append('image', file);
       try {
-        if (this.avatar_change.data.ok) {
-          const data = {
-            url: this.avatar_change.data.result.url,
-            formData: this.avatar_change.file,
-            type: this.avatar_change.file.type,
+        if (ok) {
+          const response = {
+            url: result.url,
+            formData: file,
+            type: file.type,
           };
-          await this.$store.dispatch('user/setImage', data);
+          await this.$store.dispatch('user/setImage', response);
         }
       } catch (error) {
         console.log(error);
       }
-      let payload = {};
-      const checkAvatarID = this.avatar_change.data.ok ? this.avatar_change.data.result.mediaId : this.userData.avatarId;
-      if (this.userRole === 'employer') {
-        payload = {
-          ...this.localUserData,
-          avatarId: checkAvatarID,
-          additionalInfo: {
-            ...this.localUserData.additionalInfo,
-            ...{
-              educations: undefined,
-              workExperiences: undefined,
-              skills: undefined,
-            },
-          },
-        };
-      } else {
-        payload = {
-          ...this.localUserData,
-          avatarId: checkAvatarID,
-          additionalInfo: {
-            ...this.localUserData.additionalInfo,
-            ...{
-              company: undefined,
-              CEO: undefined,
-              website: undefined,
-            },
-          },
-        };
-      }
-      console.log('qq');
+
+      const avatarId = ok ? result.mediaId : this.userData.avatarId;
+
+      const payload = {
+        ...localUserData,
+        avatarId,
+        additionalInfo,
+      };
+
       try {
         await this.$store.dispatch('user/editUserData', payload);
         this.showModalSave();
@@ -834,4 +854,42 @@ export default {
   }
 }
 
+.selector {
+  @include box;
+  width: 100%;
+  z-index: 140;
+  &_hide {
+    display: none;
+  }
+  &__items {
+    background: #FFFFFF;
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+  &__item {
+    @include text-simple;
+    padding: 15px 20px;
+    background: #FFFFFF;
+    font-weight: 500;
+    font-size: 16px;
+    color: $black800;
+    cursor: pointer;
+    transition: .3s;
+    &:hover {
+      background: #F3F7FA;
+    }
+  }
+}
+
+.loader-cont {
+  height: 20px;
+  width: 20px;
+  position: relative;
+
+  &__loader {
+    position: absolute !important;
+    background: rgba(255, 255, 255, 1) !important;
+  }
+}
 </style>

@@ -33,13 +33,15 @@
       </div>
       <input
         class="ctm-field__input"
-        :class="[{'ctm-field__input_text-align-center' : textAlign === 'center'}]"
+        :class="{'ctm-field__input_text-align-center' : textAlign === 'center'}"
         :placeholder="placeholder"
         :value="value"
         :type="type"
         :autocomplete="autocomplete"
         :disabled="disabled"
         :inputmode="inputmode"
+        @focus="changeFocus(true)"
+        @blur="changeFocus(false)"
         @input="input"
       >
       <div
@@ -147,6 +149,9 @@ export default {
     },
   },
   methods: {
+    changeFocus(arg) {
+      this.$emit('focus', arg);
+    },
     input($event) {
       this.$emit('input', $event.target.value);
       if (this.selector) {
