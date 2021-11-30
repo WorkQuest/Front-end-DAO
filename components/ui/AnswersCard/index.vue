@@ -22,10 +22,10 @@
       </div>
       <div class="answers__bottom bottom">
         <base-btn
-          v-if="!isReplay"
+          v-if="!isReply"
           class="bottom__btn"
           mode="blue"
-          @click="toggleReplay"
+          @click="toggleReply"
         >
           {{ $t('discussions.reply') }}
         </base-btn>
@@ -33,7 +33,7 @@
           v-else
           class="bottom__btn"
           mode="blue"
-          @click="toggleReplay"
+          @click="toggleReply"
         >
           {{ $t('discussions.cancel') }}
         </base-btn>
@@ -56,7 +56,7 @@
         </div>
       </div>
       <div
-        v-if="isReplay"
+        v-if="isReply"
         class="answers__footer footer"
       >
         <span class="icon-link footer__chain" />
@@ -86,7 +86,7 @@ export default {
   },
   data() {
     return {
-      isReplay: false,
+      isReply: false,
       isVote: false,
       subCommentInput: '',
     };
@@ -105,7 +105,7 @@ export default {
         medias: [],
       };
       await this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
-      this.isReplay = false;
+      this.isReply = false;
     },
     async addLikeOnComment(commentId) {
       this.isVote = true;
@@ -115,8 +115,8 @@ export default {
       this.isVote = false;
       await this.$store.dispatch('discussions/deleteLikeOnComment', commentId);
     },
-    toggleReplay() {
-      this.isReplay = !this.isReplay;
+    toggleReply() {
+      this.isReply = !this.isReply;
     },
   },
 };
@@ -129,14 +129,14 @@ export default {
     width: 1080px;
     background: #FFFFFF;
     border-radius: 8px;
-    padding: 20px 40px 0px 20px;
+    padding: 20px 40px 0 20px;
     margin: 20px 20px 15px 80px;
   }
   &__description{
     @include text-usual;
     color: #7C838D;
     align-self: stretch;
-    margin: 20px 0px 25px 0px;
+    margin: 20px 0 25px 0;
   }
   &__footer{
     margin-top: 20px;
@@ -151,14 +151,14 @@ export default {
     flex: 0 0 0 32px;
     width: 32px;
     height: 32px;
-    left: 0px;
-    top: 0px;
+    left: 0;
+    top: 0;
     border-radius: 50%;
   }
   &__name{
     @include text-usual;
     color: #1D2127;
-    padding: 0px 10px 0px 10px;
+    padding: 0 10px 0 10px;
   }
   &__date{
     font-size: 12px;
@@ -199,7 +199,7 @@ export default {
     font-size: 14px;
     line-height: 18px;
     color: #1D2127;
-    margin: 0px 22px 0px 8px;
+    margin: 0 22px 0 8px;
     cursor: pointer;
     &_right {
       margin: 7px;
@@ -216,7 +216,7 @@ export default {
     border-radius: 6px;
     border: none;
     padding: 10px 20px 10px 15px;
-    margin: 0px 10px 20px 10px;
+    margin: 0 10px 20px 10px;
   }
   &__chain{
     display: flex;
