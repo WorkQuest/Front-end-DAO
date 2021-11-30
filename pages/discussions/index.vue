@@ -85,10 +85,7 @@ export default {
     async getDiscussions(additionalValue) {
       this.discussionObjects = await this.$store.dispatch('discussions/getDiscussions', additionalValue);
       this.discussionArray = this.discussionObjects.discussions;
-      console.log(this.discussionObjects);
-      console.log('this.totalPagesValue', this.totalPagesValue);
       this.totalPagesValue = this.totalPages();
-      console.log('this.totalPagesValue', this.totalPagesValue);
     },
     openModalAddDiscussion() {
       this.ShowModal({

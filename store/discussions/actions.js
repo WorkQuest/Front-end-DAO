@@ -58,11 +58,10 @@ export default {
       return console.log(e);
     }
   },
-  async getRootComments({ commit }, discussionId) {
+  async getRootComments({ commit }, { discussionId, additionalValue }) {
     try {
-      const response = await this.$axios.$get(`/v1/discussion/${discussionId}/root-comments`);
+      const response = await this.$axios.$get(`/v1/discussion/${discussionId}/root-comments?${additionalValue || 'limit=4'}`);
       commit('setRootComments', response.result);
-      console.log('rootComments', response.result);
       return response.result;
     } catch (e) {
       return console.log(e);

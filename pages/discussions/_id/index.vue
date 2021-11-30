@@ -243,9 +243,9 @@
         </div>
       </div>
       <base-pager
-        v-model="pages"
+        v-model="page"
         class="info__pagination"
-        :total-pages="totalPages"
+        :total-pages="totalPagesValue"
       />
     </div>
   </div>
@@ -262,6 +262,11 @@ export default {
   },
   data() {
     return {
+      page: 1,
+      perPager: 4,
+      rootCommentObjects: {},
+      rootCommentArray: [],
+      totalPagesValue: 1,
       discussionId: '',
       isFavorite: false,
       isLiked: false,
@@ -271,8 +276,6 @@ export default {
       isVote: false,
       opinion: '',
       subCommentInput: '',
-      pages: 1,
-      totalPages: 5,
       documents: [
         {
           id: '1',
@@ -298,19 +301,38 @@ export default {
       subComments: 'discussions/getUsersSubCommentsOnComment',
     }),
   },
+  watch: {
+    async page() {
+      this.SetLoader(true);
+      const additionalValue = `limit=${this.perPager}&offset=${(this.page - 1) * this.perPager}`;
+      await this.getRootComments(additionalValue);
+      this.SetLoader(false);
+    },
+  },
   async mounted() {
+    this.SetLoader(true);
     this.discussionId = this.$route.params.id;
-    await Promise.all(
-      [this.getCurrentDiscussion(this.discussionId),
-        this.getRootComments(this.discussionId)],
-    );
+    await this.getCurrentDiscussion(this.discussionId);
+    await this.getRootComments();
+    this.totalPages();
+    this.SetLoader(false);
   },
   methods: {
+    totalPages() {
+      console.log('this.rootCommentObjects', this.rootCommentObjects);
+      if (this.rootCommentObjects.comments) {
+        return Math.ceil(this.rootCommentObjects.count / this.perPager);
+      }
+      return 0;
+    },
+    async getRootComments(additionalValue) {
+      const discussionId = this.currentDiscussion.id;
+      this.rootCommentObjects = await this.$store.dispatch('discussions/getRootComments', { discussionId, additionalValue });
+      this.rootCommentArray = this.rootCommentObjects.comments;
+      this.totalPagesValue = this.totalPages();
+    },
     async getCurrentDiscussion() {
       await this.$store.dispatch('discussions/getCurrentDiscussion', this.discussionId);
-    },
-    async getRootComments() {
-      await this.$store.dispatch('discussions/getRootComments', this.discussionId);
     },
     async getSubComments(commentId) {
       await this.$store.dispatch('discussions/getUsersSubCommentsOnComment', commentId);
