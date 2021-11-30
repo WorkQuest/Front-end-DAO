@@ -1,7 +1,7 @@
 export default {
-  async getDiscussions({ commit }) {
+  async getDiscussions({ commit }, additionalValue) {
     try {
-      const response = await this.$axios.$get('/v1/discussions');
+      const response = await this.$axios.$get(`/v1/discussions?${additionalValue || 'limit=8'}`);
       commit('setDiscussions', response.result);
       return response.result;
     } catch (e) {

@@ -109,13 +109,10 @@ export default {
         medias: [],
       };
       this.$store.dispatch('discussions/createDiscussion', payload);
+      this.hide();
     },
     hide() {
       this.CloseModal();
-    },
-    consoleValue() {
-      this.title = '';
-      this.discussion = '';
     },
   },
 };

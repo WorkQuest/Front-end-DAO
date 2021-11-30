@@ -30,9 +30,10 @@
       </div>
       <!--      TODO: Добавить пагинацию-->
       <base-pager
-        v-model="pages"
+        v-if="totalPagesValue > 1"
+        v-model="page"
         class="discussions__pagination"
-        :total-pages="totalPages"
+        :total-pages="totalPagesValue"
       />
     </div>
   </div>
@@ -48,8 +49,11 @@ export default {
   data() {
     return {
       search: '',
-      pages: 1,
-      totalPages: 5,
+      page: 1,
+      perPager: 8,
+      discussionObjects: {},
+      discussionArray: [],
+      totalPagesValue: 1,
     };
   },
   computed: {
@@ -57,12 +61,34 @@ export default {
       discussions: 'discussions/getDiscussions',
     }),
   },
+  watch: {
+    async page() {
+      this.SetLoader(true);
+      const additionalValue = `limit=${this.perPager}&offset=${(this.page - 1) * this.perPager}&${this.search}`;
+      await this.getDiscussions(additionalValue);
+      this.SetLoader(false);
+    },
+  },
   async mounted() {
-    await Promise.all([this.getDiscussions]);
+    this.SetLoader(true);
+    await this.getDiscussions();
+    this.totalPages();
+    this.SetLoader(false);
   },
   methods: {
-    async getDiscussions() {
-      await this.$store.dispatch('discussions/getDiscussions');
+    totalPages() {
+      if (this.discussionObjects.discussions) {
+        return Math.ceil(this.discussionObjects.count / this.perPager);
+      }
+      return 0;
+    },
+    async getDiscussions(additionalValue) {
+      this.discussionObjects = await this.$store.dispatch('discussions/getDiscussions', additionalValue);
+      this.discussionArray = this.discussionObjects.discussions;
+      console.log(this.discussionObjects);
+      console.log('this.totalPagesValue', this.totalPagesValue);
+      this.totalPagesValue = this.totalPages();
+      console.log('this.totalPagesValue', this.totalPagesValue);
     },
     openModalAddDiscussion() {
       this.ShowModal({
