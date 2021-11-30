@@ -10,6 +10,7 @@
         {{ item.author.firstName ? item.author.firstName : this.$t('user.nameless') }} {{ item.author.lastName ? item.author.lastName : '' }}
       </span>
       <button class="user__star">
+        <!--        TODO: Нет на бэке добавить в избраное дискуссию-->
         <img
           v-if="!isFavorite"
           src="~assets/img/ui/star_simple.svg"
@@ -67,12 +68,12 @@
           <span
             v-if="!isLiked"
             class="icon-heart_fill bottom__like"
-            @click="toggleLiked"
+            @click="likeDiscussion(item.id)"
           />
           <span
             v-else
             class="icon-heart_fill bottom__like bottom__like_choosen"
-            @click="toggleLiked"
+            @click="dislikeDiscussion(item.id)"
           />
         </button>
         <div class="bottom__counter bottom__counter_right">
@@ -101,8 +102,18 @@ export default {
     toggleFavorite() {
       this.isFavorite = !this.isFavorite;
     },
-    toggleLiked() {
-      this.isLiked = !this.isLiked;
+    async getDiscussions() {
+      await this.$store.dispatch('discussions/getDiscussions');
+    },
+    async dislikeDiscussion(discussionId) {
+      this.isLiked = false;
+      await this.$store.dispatch('discussions/deleteLikeOnDiscussion', discussionId);
+      await this.getDiscussions();
+    },
+    async likeDiscussion(discussionId) {
+      this.isLiked = true;
+      await this.$store.dispatch('discussions/addLikeOnDiscussion', discussionId);
+      await this.getDiscussions();
     },
   },
 };
@@ -118,7 +129,7 @@ export default {
     font-weight: 600;
     font-size: 24px;
     line-height: 32px;
-    margin: 18px 0px 10px 0px;
+    margin: 18px 0 10px 0;
   }
   &__date {
     font-size: 14px;
@@ -143,8 +154,8 @@ export default {
       flex: 0 0 0 32px;
       width: 32px;
       height: 32px;
-      left: 0px;
-      top: 0px;
+      left: 0;
+      top: 0;
       border-radius: 50%;
     }
     &__star {
@@ -165,7 +176,7 @@ export default {
     font-size: 18px;
     line-height: 130%;
     font-weight: 600;
-    margin: 20px 0px 10px 0px;
+    margin: 20px 0 10px 0;
   }
 }
 .bottom {
@@ -204,7 +215,7 @@ export default {
       font-size: 14px;
       line-height: 18px;
       color: #1D2127;
-      margin: 0px 22px 0px 8px;
+      margin: 0 22px 0 8px;
       cursor: pointer;
       &_right {
         margin: 7px;

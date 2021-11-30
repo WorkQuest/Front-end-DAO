@@ -57,8 +57,8 @@ export default {
       discussions: 'discussions/getDiscussions',
     }),
   },
-  mounted() {
-    this.getDiscussions();
+  async mounted() {
+    await Promise.all([this.getDiscussions]);
   },
   methods: {
     async getDiscussions() {

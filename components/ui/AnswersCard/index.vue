@@ -97,26 +97,26 @@ export default {
     }),
   },
   methods: {
-    toggleReplay() {
-      this.isReplay = !this.isReplay;
-    },
-    addSubCommentResponse(rootCommentId) {
+    async addSubCommentResponse(rootCommentId) {
       const discussionId = this.currentDiscussion.id;
       const payload = {
         rootCommentId,
         text: this.subCommentInput,
         medias: [],
       };
-      this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
+      await this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
       this.isReplay = false;
     },
-    addLikeOnComment(commentId) {
+    async addLikeOnComment(commentId) {
       this.isVote = true;
-      this.$store.dispatch('discussions/addLikeOnComment', commentId);
+      await this.$store.dispatch('discussions/addLikeOnComment', commentId);
     },
-    deleteLikeOnComment(commentId) {
+    async deleteLikeOnComment(commentId) {
       this.isVote = false;
-      this.$store.dispatch('discussions/deleteLikeOnComment', commentId);
+      await this.$store.dispatch('discussions/deleteLikeOnComment', commentId);
+    },
+    toggleReplay() {
+      this.isReplay = !this.isReplay;
     },
   },
 };

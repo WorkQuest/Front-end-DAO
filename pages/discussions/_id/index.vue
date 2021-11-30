@@ -262,6 +262,7 @@ export default {
   },
   data() {
     return {
+      discussionId: '',
       isFavorite: false,
       isLiked: false,
       isAddComment: false,
@@ -298,69 +299,71 @@ export default {
     }),
   },
   async mounted() {
-    await Promise.all([this.getCurrentDiscussion, this.getRootComments]);
+    this.discussionId = this.$route.params.id;
+    await Promise.all(
+      [this.getCurrentDiscussion(this.discussionId),
+        this.getRootComments(this.discussionId)],
+    );
   },
   methods: {
     async getCurrentDiscussion() {
-      const discussionId = this.$route.params.id;
-      await this.$store.dispatch('discussions/getCurrentDiscussion', discussionId);
+      await this.$store.dispatch('discussions/getCurrentDiscussion', this.discussionId);
     },
     async getRootComments() {
-      const discussionId = this.$route.params.id;
-      await this.$store.dispatch('discussions/getRootComments', discussionId);
+      await this.$store.dispatch('discussions/getRootComments', this.discussionId);
     },
-    getSubComments(commentId) {
-      this.$store.dispatch('discussions/getUsersSubCommentsOnComment', commentId);
+    async getSubComments(commentId) {
+      await this.$store.dispatch('discussions/getUsersSubCommentsOnComment', commentId);
     },
-    addRootCommentResponse() {
-      const discussionId = this.currentDiscussion.id;
+    async addRootCommentResponse() {
+      const { discussionId } = this.this;
       const payload = {
         text: this.opinion,
         medias: [],
       };
-      this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
+      await this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
       this.isAddComment = false;
-      this.getRootComments();
+      await this.getRootComments();
     },
-    addSubCommentResponse(rootCommentId) {
-      const discussionId = this.currentDiscussion.id;
+    async addSubCommentResponse(rootCommentId) {
+      const { discussionId } = this.this;
       const payload = {
         rootCommentId,
         text: this.subCommentInput,
         medias: [],
       };
-      this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
+      await this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
       this.isAddComment = false;
     },
-    toggleShow(commentId) {
+    async toggleShow(commentId) {
       this.isShow = !this.isShow;
       if (this.isShow) {
-        this.getSubComments(commentId);
+        await this.getSubComments(commentId);
       }
+    },
+    async dislikeDiscussion() {
+      this.isLiked = false;
+      await this.$store.dispatch('discussions/deleteLikeOnDiscussion', this.discussionId);
+      await this.getCurrentDiscussion();
+    },
+    async likeDiscussion() {
+      this.isLiked = true;
+      await this.$store.dispatch('discussions/addLikeOnDiscussion', this.discussionId);
+      await this.getCurrentDiscussion();
+    },
+    async addLikeOnComment(commentId) {
+      this.isVote = true;
+      await this.$store.dispatch('discussions/addLikeOnComment', commentId);
+    },
+    async deleteLikeOnComment(commentId) {
+      this.isVote = false;
+      await this.$store.dispatch('discussions/deleteLikeOnComment', commentId);
     },
     toggleFavorite() {
       this.isFavorite = !this.isFavorite;
     },
-    dislikeDiscussion() {
-      this.isLiked = false;
-      this.$store.dispatch('discussions/deleteLikeOnDiscussion', this.currentDiscussion.id);
-      this.getCurrentDiscussion();
-    },
-    likeDiscussion() {
-      this.isLiked = true;
-      this.$store.dispatch('discussions/addLikeOnDiscussion', this.currentDiscussion.id);
-      this.getCurrentDiscussion();
-    },
     addComment() {
       this.isAddComment = !this.isAddComment;
-    },
-    addLikeOnComment(commentId) {
-      this.isVote = true;
-      this.$store.dispatch('discussions/addLikeOnComment', commentId);
-    },
-    deleteLikeOnComment(commentId) {
-      this.isVote = false;
-      this.$store.dispatch('discussions/deleteLikeOnComment', commentId);
     },
   },
 };
