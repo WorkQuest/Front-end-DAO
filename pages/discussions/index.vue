@@ -28,7 +28,6 @@
           />
         </div>
       </div>
-      <!--      TODO: Добавить пагинацию-->
       <base-pager
         v-if="totalPagesValue > 1"
         v-model="page"

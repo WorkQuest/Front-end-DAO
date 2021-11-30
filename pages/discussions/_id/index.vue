@@ -243,6 +243,7 @@
         </div>
       </div>
       <base-pager
+        v-if="totalPagesValue > 1"
         v-model="page"
         class="info__pagination"
         :total-pages="totalPagesValue"
