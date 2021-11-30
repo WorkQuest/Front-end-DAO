@@ -27,21 +27,16 @@
               class="user__avatar"
             >
             <span class="user__name">
-              {{ authorFirstName
-                ? authorFirstName : this.$t('user.nameless') }}
-              {{ authorLastName ? authorLastName : '' }}
+              {{ discussionAuthor
+                ? discussionAuthor.firstName : this.$t('user.nameless') }}
+              {{ discussionAuthor ? discussionAuthor.lastName : '' }}
             </span>
             <button class="user__star">
               <img
-                v-if="!isFavorite"
-                src="~assets/img/ui/star_simple.svg"
-                alt="simpleStar"
-                @click="toggleFavorite"
-              >
-              <img
-                v-else
-                src="~assets/img/ui/star_checked.svg"
-                alt="checkedStar"
+                :src="!isFavorite
+                  ? require('~/assets/img/ui/star_simple.svg')
+                  : require('~/assets/img/ui/star_checked.svg')"
+                :alt="!isFavorite ? 'simpleStar' : 'favoriteStar'"
                 @click="toggleFavorite"
               >
             </button>
@@ -85,14 +80,9 @@
               </div>
               <button class="bottom__like">
                 <span
-                  v-if="!isLiked"
+                  :class="{'bottom__like_choosen' : isLiked}"
                   class="icon-heart_fill bottom__like"
-                  @click="likeDiscussion"
-                />
-                <span
-                  v-else
-                  class="icon-heart_fill bottom__like bottom__like_choosen"
-                  @click="dislikeDiscussion"
+                  @click="!isLiked ? likeDiscussion : dislikeDiscussion"
                 />
               </button>
               <div class="bottom__counter bottom__counter_right">
@@ -147,7 +137,14 @@
           </div>
         </div>
       </div>
-      <!--      TODO: Добавить заглушку, если нет комментов-->
+      <div
+        v-if="rootComments.count === 0"
+        class="info__comment comment"
+      >
+        <div class="comment__field">
+          {{ $t('discussions.comments.noComments') }}
+        </div>
+      </div>
       <div
         v-for="(elem) in rootComments.comments"
         :key="elem.id"
@@ -177,14 +174,9 @@
             <base-btn
               class="bottom__btn"
               mode="blue"
-              @click="toggleShow(elem.id)"
+              @click="toggleShow(elem.id) && getSubComments(elem.id);"
             >
-              <p v-if="!isShow">
-                {{ $t('discussions.show') }}
-              </p>
-              <p v-if="isShow">
-                {{ $t('discussions.hide') }}
-              </p>
+              {{ !isShow ? $t('discussions.show') : $t('discussions.hide') }}
             </base-btn>
             <div class="bottom__panel">
               <img
@@ -198,14 +190,10 @@
               <button class="bottom__like">
                 <!--                TODO: Заменить переменную-->
                 <span
-                  v-if="!isVote"
+                  :class="{'bottom__like_choosen' : isVote}"
                   class="icon-heart_fill bottom__like"
-                  @click="addLikeOnComment(elem.id)"
-                />
-                <span
-                  v-else
-                  class="icon-heart_fill bottom__like bottom__like_choosen"
-                  @click="deleteLikeOnComment(elem.id)"
+                  @click="!isVote ?
+                    addLikeOnComment(elem.id) : deleteLikeOnComment(elem.id)"
                 />
               </button>
               <div class="bottom__counter bottom__counter_right">
@@ -213,7 +201,8 @@
               </div>
             </div>
           </div>
-          <div v-if="isShow">
+          <!--          TODO: Нужна связь с rootComments-->
+          <div v-if="isShow && subComments.count > 0">
             <answers-card
               v-for="(item) in subComments.comments"
               :key="item.id"
@@ -296,6 +285,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      discussionAuthor: 'discussions/getCurrentDiscussionAuthorData',
       currentDiscussion: 'discussions/getCurrentDiscussion',
       authorAvatarUrl: 'discussions/getCurrentDiscussionAuthorAvatarUrl',
       rootComments: 'discussions/getRootComments',
@@ -313,14 +303,13 @@ export default {
   async mounted() {
     this.SetLoader(true);
     this.discussionId = this.$route.params.id;
-    await this.getCurrentDiscussion(this.discussionId);
+    await this.getCurrentDiscussion();
     await this.getRootComments();
     this.totalPages();
     this.SetLoader(false);
   },
   methods: {
     totalPages() {
-      console.log('this.rootCommentObjects', this.rootCommentObjects);
       if (this.rootCommentObjects.comments) {
         return Math.ceil(this.rootCommentObjects.count / this.perPager);
       }
@@ -360,11 +349,8 @@ export default {
       this.isAddComment = false;
       this.subCommentInput = '';
     },
-    async toggleShow(commentId) {
+    async toggleShow() {
       this.isShow = !this.isShow;
-      if (this.isShow) {
-        await this.getSubComments(commentId);
-      }
     },
     async dislikeDiscussion() {
       this.isLiked = false;

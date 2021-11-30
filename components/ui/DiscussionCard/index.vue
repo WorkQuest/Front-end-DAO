@@ -26,7 +26,7 @@
       </button>
     </div>
     <div class="discussion__title">
-      {{ item.title }}
+      {{ cropTxt(item.title) }}
     </div>
     <div class="discussion__date">
       {{ $moment(item.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
@@ -37,7 +37,7 @@
         {{ $t('discussions.descriptionTitle') }}
       </div>
       <div class="description__item">
-        {{ item.description }}
+        {{ cropTxt(item.description) }}
       </div>
     </div>
     <div class="bottom discussion__bottom">
@@ -101,6 +101,11 @@ export default {
   methods: {
     toggleFavorite() {
       this.isFavorite = !this.isFavorite;
+    },
+    cropTxt(str) {
+      const maxLength = 80;
+      if (str.length > maxLength) str = `${str.slice(0, maxLength)}...`;
+      return str;
     },
     async getDiscussions() {
       await this.$store.dispatch('discussions/getDiscussions');
@@ -194,7 +199,7 @@ export default {
       margin-top: 5px;
       color: #E9EDF2;
       font-size: 22px;
-      &_choosen{
+      &_choosen {
         color: #0083C7;
       }
     }
@@ -210,6 +215,7 @@ export default {
       height: 18px;
       width: 18px;
       margin-top: 5px;
+      cursor: default;
     }
     &__counter {
       font-size: 14px;

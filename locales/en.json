@@ -919,6 +919,9 @@
     "incorrectPass" : "Oops, something went wrong. Check the data and try again."
   },
   "discussions": {
+    "comments": {
+      "noComments": "There is no comments!"
+    },
   "title": "Discussions",
   "btn": "Add new discussion",
   "seacrhField": "Search discussion",

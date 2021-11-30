@@ -3,7 +3,7 @@ export default () => ({
   discussions: {},
   discussionCount: '',
   usersLikesOnComment: {},
-  usersSubCommentsOnComment: {},
+  usersSubCommentsOnComment: [],
   peopleListWhoLikeDiscussion: {},
   rootComments: {},
 });
