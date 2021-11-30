@@ -316,17 +316,18 @@ export default {
       await this.$store.dispatch('discussions/getUsersSubCommentsOnComment', commentId);
     },
     async addRootCommentResponse() {
-      const { discussionId } = this.this;
+      const discussionId = this.currentDiscussion.id;
       const payload = {
         text: this.opinion,
         medias: [],
       };
       await this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
       this.isAddComment = false;
+      this.opinion = '';
       await this.getRootComments();
     },
     async addSubCommentResponse(rootCommentId) {
-      const { discussionId } = this.this;
+      const discussionId = this.currentDiscussion.id;
       const payload = {
         rootCommentId,
         text: this.subCommentInput,
@@ -334,6 +335,7 @@ export default {
       };
       await this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
       this.isAddComment = false;
+      this.subCommentInput = '';
     },
     async toggleShow(commentId) {
       this.isShow = !this.isShow;
