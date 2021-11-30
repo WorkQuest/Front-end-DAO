@@ -24,11 +24,6 @@ export default {
     commit('setApplicant', response.result);
     return response.result;
   },
-  async changingRequiredDocumentSetLevel({ commit }, payload) {
-    const response = await this.$axios.$post(`https://test-api.sumsub.com/resources/applicants/${payload.applicantId}/moveToLevel?name=${payload.levelName}`);
-    commit('setLevel', response.result);
-    return response.result;
-  },
   async getRequiredIdDocs({ commit }, payload) {
     const response = await this.$axios.$post(`https://test-api.sumsub.com/resources/applicants/${payload.applicantId}/requiredIdDocs`);
     commit('setRequiredIdDocs', response.result);
