@@ -1,8 +1,6 @@
 export default {
   getCurrentDiscussionAuthorData: (state) => state.currentDiscussion?.author,
-  getCurrentDiscussionAuthorFirstName: (state) => state.currentDiscussion?.author.firstName,
-  getCurrentDiscussionAuthorLastName: (state) => state.currentDiscussion?.author.lastName,
-  getCurrentDiscussionAuthorAvatarUrl: (state) => state.currentDiscussion?.author?.avatar?.url,
+  getCurrentDiscussionAuthorAvatarUrl: (state) => state.currentDiscussion?.author?.avatar?.url || null,
   getCurrentDiscussion: (state) => state.currentDiscussion,
   getDiscussions: (state) => state.discussions,
   getUsersLikesOnComment: (state) => state.usersLikesOnComment,

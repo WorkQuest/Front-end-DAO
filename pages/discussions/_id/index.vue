@@ -292,25 +292,22 @@ export default {
   computed: {
     ...mapGetters({
       currentDiscussion: 'discussions/getCurrentDiscussion',
-      authorFirstName: 'discussions/getCurrentDiscussionAuthorFirstName',
-      authorLastName: 'discussions/getCurrentDiscussionAuthorLastName',
       authorAvatarUrl: 'discussions/getCurrentDiscussionAuthorAvatarUrl',
       rootComments: 'discussions/getRootComments',
       subComments: 'discussions/getUsersSubCommentsOnComment',
     }),
   },
   async mounted() {
-    this.getCurrentDiscussion();
-    this.getRootComments();
+    await Promise.all([this.getCurrentDiscussion, this.getRootComments]);
   },
   methods: {
-    getCurrentDiscussion() {
+    async getCurrentDiscussion() {
       const discussionId = this.$route.params.id;
-      this.$store.dispatch('discussions/getCurrentDiscussion', discussionId);
+      await this.$store.dispatch('discussions/getCurrentDiscussion', discussionId);
     },
-    getRootComments() {
+    async getRootComments() {
       const discussionId = this.$route.params.id;
-      this.$store.dispatch('discussions/getRootComments', discussionId);
+      await this.$store.dispatch('discussions/getRootComments', discussionId);
     },
     getSubComments(commentId) {
       this.$store.dispatch('discussions/getUsersSubCommentsOnComment', commentId);

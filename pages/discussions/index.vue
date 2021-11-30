@@ -85,7 +85,7 @@ export default {
     font-size: 28px;
     line-height: 36px;
     margin-right: auto;
-    padding: 30px 0px 30px 0px;
+    padding: 30px 0 30px 0;
     }
     &__field{
     justify-content: space-between;
@@ -99,7 +99,7 @@ export default {
     &__header {
       display: flex;
       justify-content: space-between;
-      margin: 0px 0px 30px 0px;
+      margin: 0 0 30px 0;
     }
     &__search {
         width: 680px;
