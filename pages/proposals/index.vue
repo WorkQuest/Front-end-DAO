@@ -44,7 +44,7 @@ import proposalCards from '~/components/app/Cards/proposalCards';
 import modals from '~/store/modals/modals';
 
 export default {
-  name: 'Index',
+  name: 'Proposals',
   components: {
     proposalCards,
   },

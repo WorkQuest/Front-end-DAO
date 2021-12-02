@@ -114,12 +114,9 @@ export default {
       currentPage: 1,
       pages: 1,
       search: '',
+      timeoutIdSearch: null,
       isDescending: true,
-      ddValues: [
-        this.$t('proposals.ui.yes'),
-        this.$t('proposals.ui.no'),
-        this.$t('proposals.ui.allProposals'),
-      ],
+      cardsLimit: 12,
       ddValue: 2,
       cards: [
         {
@@ -140,87 +137,17 @@ export default {
           date: 'Jan 01, 2021 - Mar 01, 2021',
           about: 'Lorem ipsum dolor sit amet, consectetur',
         },
-        {
-          voting: 1,
-          status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 2,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 0,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 2,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 0,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 2,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 0,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 2,
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 0,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
       ],
     };
   },
   computed: {
+    ddValues() {
+      return [
+        this.$t('proposals.ui.yes'),
+        this.$t('proposals.ui.no'),
+        this.$t('proposals.ui.allProposals'),
+      ];
+    },
     cardLevelClass(idx) {
       const { cards } = this;
       return [
@@ -237,6 +164,7 @@ export default {
   },
   async mounted() {
     this.SetLoader(true);
+    await this.loadPage(1);
     this.SetLoader(false);
   },
   methods: {
@@ -258,6 +186,18 @@ export default {
         2: this.$t('proposals.cards.status.accepted'),
       };
       return priority[index] || 'None';
+    },
+    async searchProposals() {
+      if (this.timeoutIdSearch) {
+        clearTimeout(this.timeoutIdSearch);
+        this.timeoutIdSearch = null;
+      }
+      this.timeoutIdSearch = setTimeout(async () => {
+        await this.loadPage(1);
+      }, 500);
+    },
+    async loadPage(page) {
+      // TODO: load proposals from backend
     },
   },
 };

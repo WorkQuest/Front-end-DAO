@@ -61,22 +61,13 @@
         </div>
         <div class="content__dates">
           <div class="content__field">
-            <base-field
-              v-model="votingStartInput"
-              :placeholder="'DD/MM/YYYY'"
-              :label="$t('modals.votingStart')"
-              rules="required|fullDate"
-              :name="$t('modals.votingStartField')"
-            />
+            {{ $t('modals.votingStart') }}
+            <div class="date-field">
+              {{ votingStartInput }}
+            </div>
           </div>
-          <div class="content__field">
-            <base-field
-              v-model="votingEndInput"
-              :placeholder="'DD/MM/YYYY'"
-              :label="$t('modals.votingEnd')"
-              rules="required|fullDate"
-              :name="$t('modals.votingEndField')"
-            />
+          <div class="content__field date-field">
+            {{ votingEndInput }}
           </div>
         </div>
         <div class="content__field field">
@@ -139,7 +130,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'ModalAddProposal',
   data() {
@@ -196,6 +186,9 @@ export default {
         },
       ],
     };
+  },
+  mounted() {
+    this.votingStartInput = this.$moment.now();
   },
   methods: {
     hide() {
@@ -337,4 +330,15 @@ export default {
     margin-top: 15px;
   }
 }
+
+.date-field {
+  margin-top: 5px;
+  background: #F7F8FA;
+  border-radius: 6px;
+  height: 46px;
+  padding: 15px 12.5px;
+  font-size: 16px;
+  line-height: 130%;
+}
+
 </style>
