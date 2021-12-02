@@ -29,28 +29,12 @@ export default {
   async mounted() {
     this.SetLoader(true);
     await this.createAccessToken();
-    // await this.getApiHealthStatus();
     this.initSumSub();
     this.SetLoader(false);
   },
   methods: {
     async createAccessToken() {
-      try {
-        const payload = {
-          userId: this.accessToken.userId,
-        };
-        await this.$store.dispatch('sumsub/createAccessTokenBackend', payload);
-      } catch (e) {
-        console.log(e);
-      }
-    },
-    async getApiHealthStatus() {
-      try {
-        const response = await this.$store.dispatch('sumsub/apiHealth');
-        console.log(response.result);
-      } catch (e) {
-        console.log(e);
-      }
+      await this.$store.dispatch('sumsub/createAccessTokenBackend', { userId: this.accessToken.userId });
     },
     initSumSub() {
       const accessToken = this.accessToken.token;
