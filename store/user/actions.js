@@ -65,4 +65,12 @@ export default {
   async changeProfile({ commit }, payload) {
     commit('changeProfile', payload);
   },
+  async editProfile({ commit }, { config, method }) {
+    try {
+      const { result } = await this.$axios.$post(method, config);
+      return result;
+    } catch (e) {
+      return console.log(e);
+    }
+  },
 };

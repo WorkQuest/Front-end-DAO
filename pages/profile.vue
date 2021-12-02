@@ -1,83 +1,82 @@
 <template>
   <div class="wq-profile">
-    <validation-observer v-slot="{handleSubmit}">
-      <div class="wq-profile__body">
-        <div
-          v-if="!localUserData.isVerified"
-          class="wq-profile__banner banner"
-        >
-          <transition name="fade-fast">
-            <div class="banner__body">
-              <div class="banner__container">
-                <div class="banner__title">
-                  {{ $t('settings.addInfo') }}
-                </div>
-                <div class="banner__subtitle">
-                  {{ $t('settings.alsoRating') }}
-                </div>
-                <div class="banner__verification">
-                  <base-btn mode="ver">
-                    {{ $t('settings.getVerification') }}
-                  </base-btn>
-                </div>
+    <div class="wq-profile__body">
+      <div
+        v-if="!localUserData.isVerified"
+        class="wq-profile__banner banner"
+      >
+        <transition name="fade-fast">
+          <div class="banner__body">
+            <div class="banner__container">
+              <div class="banner__title">
+                {{ $t('settings.addInfo') }}
               </div>
-              <div class="banner__image">
-                <img src="~/assets/img/ui/goldStatus.svg">
+              <div class="banner__subtitle">
+                {{ $t('settings.alsoRating') }}
+              </div>
+              <div class="banner__verification">
+                <base-btn mode="ver">
+                  {{ $t('settings.getVerification') }}
+                </base-btn>
               </div>
             </div>
-          </transition>
-        </div>
-        <div
-          class="wq-profile__header"
-          :class="{ 'wq-profile__header_noMarginTop': localUserData.isVerified }"
-        >
-          {{ $t('profile.title') }}
-        </div>
-        <div class="wq-profile__info info">
-          <div class="info__base">
-            <div class="info__avatar avatar">
-              <img
-                id="userAvatar"
-                class="avatar__img"
-                :src="imageData || require('~/assets/img/app/avatar_empty.png')"
-                :alt="imageData ? 'avatar' : 'empty avatar'"
-              >
-              <label
-                v-if="isProfileEdit"
-                class="avatar__edit edit"
-              >
-                <span class="edit__icon icon-edit" />
-                <ValidationProvider
-                  v-slot="{ validate }"
-                  class="edit__validator"
-                  rules="required|ext:png,jpeg,jpg"
-                  tag="div"
+            <div class="banner__image">
+              <img src="~/assets/img/ui/goldStatus.svg">
+            </div>
+          </div>
+        </transition>
+      </div>
+      <div
+        class="wq-profile__header"
+        :class="{ 'wq-profile__header_noMarginTop': localUserData.isVerified }"
+      >
+        {{ $t('profile.title') }}
+      </div>
+      <validation-observer v-slot="{handleSubmit}">
+        <div class="profile-cont">
+          <div class="profile-cont__grid-container">
+            <div class="profile-cont__main-data">
+              <div class="profile-cont__avatar avatar">
+                <img
+                  id="userAvatar"
+                  class="avatar__img"
+                  :src="imageData || require('~/assets/img/app/avatar_empty.png')"
+                  :alt="imageData ? 'avatar' : 'empty avatar'"
                 >
-                  <input
-                    id="coverUpload"
-                    type="file"
-                    accept="image/*"
-                    @change="processFile($event, validate)"
+                <label
+                  v-if="isProfileEdit"
+                  class="avatar__edit edit"
+                >
+                  <span class="edit__icon icon-edit" />
+                  <ValidationProvider
+                    v-slot="{ validate }"
+                    class="edit__validator"
+                    rules="required|ext:png,jpeg,jpg"
+                    tag="div"
                   >
-                </ValidationProvider>
-              </label>
-            </div>
-
-            <div class="info__contacts contacts">
+                    <input
+                      id="coverUpload"
+                      type="file"
+                      accept="image/*"
+                      @change="processFile($event, validate)"
+                    >
+                  </ValidationProvider>
+                </label>
+              </div>
               <div
-                class="contacts__status status"
+                class="profile-cont__status status"
                 :class="{ 'status_verified': localUserData.isVerified }"
               >
                 {{ $t(`settings.${localUserData.isVerified ? 'verified' : 'notVerified'}`) }}
                 <span class="status__icon icon icon-check_all_big" />
               </div>
-
               <base-field
-                v-if="firstName"
-                v-model="localUserData.firstName"
-                :placeholder="firstName || $t('settings.nameInput')"
+                v-for="(cell, i) in nameInputsArr"
+                :key="i"
+                v-model="cell.model"
+                :placeholder="cell.placeholder || $t('settings.nameInput')"
                 :disabled="!isProfileEdit"
-                rules="required|alpha_num"
+                rules="required"
                 :name="$t('modals.nameField')"
                 mode="icon"
                 mode-error="small"
@@ -86,23 +85,6 @@
                   <span class="icon icon__input icon-user" />
                 </template>
               </base-field>
-              <base-field
-                v-if="lastName"
-                v-model="localUserData.lastName"
-                :placeholder="$t('settings.lastNameInput')"
-                :disabled="!isProfileEdit"
-                rules="required|alpha_num"
-                :name="$t('modals.lastNameField')"
-                mode="icon"
-                mode-error="small"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-user" />
-                </template>
-              </base-field>
-            </div>
-            <div class="info__contacts contacts">
-              <div class="info__space" />
               <base-field
                 v-model="localUserData.address"
                 :placeholder="address || $t('settings.addressInput')"
@@ -146,36 +128,9 @@
                   </div>
                 </template>
               </base-field>
-              <vue-phone-number-input
-                v-if="isProfileEdit"
-                v-model="localUserData.firstMobileNumber"
-                class="input-phone"
-                error-color="#EB5757"
-                clearable
-                show-code-on-list
-                required
-                size="lg"
-                @update="updatedPhone = $event"
-              />
               <base-field
-                v-else
-                v-model="localUserData.firstMobileNumber"
-                :placeholder="firstMobileNumber || $t('settings.telInput')"
-                :disabled="true"
-                inputmode="numeric"
-                :name="$t('modals.firstMobileField')"
-                mode="icon"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-phone" />
-                </template>
-              </base-field>
-            </div>
-            <div class="info__contacts contacts">
-              <div class="info__space" />
-              <base-field
-                v-model="localUserData.userEmail"
-                :placeholder="userEmail || $t('settings.addressInput')"
+                v-model="localUserData.email"
+                :placeholder="localUserData.email || $t('settings.addressInput')"
                 :disabled="!isProfileEdit"
                 mode="icon"
                 rules="required|email"
@@ -186,30 +141,40 @@
                   <span class="icon icon__input icon-mail" />
                 </template>
               </base-field>
-              <base-field
-                v-model="localUserData.secondMobileNumber"
-                :name="$t('modals.secondMobileField')"
-                :placeholder="secondMobileNumber || $t('settings.telInput')"
-                :disabled="!isProfileEdit"
-                type="tel"
-                inputmode="numeric"
-                rules="telephone|max:15"
-                mode="icon"
-                mode-error="small"
+              <div
+                v-for="cell in phoneInputsArr"
+                :key="cell.id"
               >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-phone" />
-                </template>
-              </base-field>
+                <vue-phone-number-input
+                  v-if="isProfileEdit"
+                  v-model="cell.model"
+                  class="input-phone"
+                  error-color="#EB5757"
+                  clearable
+                  show-code-on-list
+                  required
+                  size="lg"
+                />
+                <base-field
+                  v-else
+                  v-model="cell.model"
+                  :placeholder="cell.placeholder || $t('settings.telInput')"
+                  :disabled="true"
+                  is-hide-error
+                  inputmode="numeric"
+                  mode="icon"
+                >
+                  <template v-slot:left>
+                    <span class="icon icon__input icon-phone" />
+                  </template>
+                </base-field>
+              </div>
             </div>
-          </div>
-          <div class="info__additional">
-            <div class="info__about about">
+            <div class="profile-cont__about about">
               <div class="about__title">
                 {{ $t('profile.aboutMe') }}
               </div>
               <textarea
-                id="textarea"
                 v-model="localUserData.additionalInfo.description"
                 class="about__textarea"
                 :class="{ 'about__textarea_disabled': !isProfileEdit }"
@@ -217,117 +182,74 @@
                 :disabled="!isProfileEdit"
               />
             </div>
-            <div class="info__social social">
+            <div class="profile-cont__social social">
               <base-field
-                v-model="localUserData.additionalInfo.socialNetwork.instagram"
-                :name="$t('modals.instagramField')"
-                :placeholder="userInstagram || $t('settings.socialInput')"
+                v-for="cell in socialInputs"
+                :key="cell.id"
+                v-model="cell.model"
+                :placeholder="cell.placeholder || $t('settings.socialInput')"
                 :disabled="!isProfileEdit"
+                is-hide-error
                 mode="icon"
                 type="text"
                 mode-error="small"
               >
                 <template v-slot:left>
-                  <span class="icon icon__input icon-instagram" />
-                </template>
-              </base-field>
-              <base-field
-                v-model="localUserData.additionalInfo.socialNetwork.twitter"
-                :name="$t('modals.twitterField')"
-                :placeholder="userTwitter || $t('settings.socialInput')"
-                :disabled="!isProfileEdit"
-                mode="icon"
-                type="text"
-                mode-error="small"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-twitter" />
-                </template>
-              </base-field>
-              <base-field
-                v-model="localUserData.additionalInfo.socialNetwork.linkedin"
-                :name="$t('modals.linkedInField')"
-                :placeholder="userLinkedin || $t('settings.socialInput')"
-                :disabled="!isProfileEdit"
-                mode="icon"
-                type="text"
-                mode-error="small"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-LinkedIn" />
-                </template>
-              </base-field>
-              <base-field
-                v-model="localUserData.additionalInfo.socialNetwork.facebook"
-                :name="$t('modals.facebookField')"
-                :placeholder="userFacebook || $t('settings.socialInput')"
-                :disabled="!isProfileEdit"
-                mode="icon"
-                type="text"
-                mode-error="small"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-facebook" />
+                  <span
+                    class="icon icon__input"
+                    :class="cell.imgClass"
+                  />
                 </template>
               </base-field>
             </div>
-          </div>
-          <div class="info__action action">
-            <base-btn
-              v-if="isProfileEdit"
-              mode="lightBlue"
-              class="action__save"
-              @click="handleSubmit(editUserData())"
-            >
-              {{ $t('profile.save') }}
-            </base-btn>
-            <base-btn
-              v-else
-              mode="lightBlue"
-              class="action__change"
-              @click="showModalWarning()"
-            >
-              {{ $t('profile.change') }}
-            </base-btn>
+            <div class="profile-cont__action action">
+              <base-btn
+                mode="lightBlue"
+                class="action__btn"
+                @click="isProfileEdit ? handleSubmit(editUserData) : showModalWarning()"
+              >
+                {{ $t(`profile.${isProfileEdit ? 'save' : 'change'}`) }}
+              </base-btn>
+            </div>
           </div>
         </div>
-        <div
-          v-if="isProfileEdit"
-          class="wq-profile__header"
-        >
-          {{ $t('profile.security') }}
+      </validation-observer>
+      <div
+        v-if="isProfileEdit"
+        class="wq-profile__header"
+      >
+        {{ $t('profile.security') }}
+      </div>
+      <div
+        v-if="isProfileEdit"
+        class="wq-profile__security security"
+      >
+        <div class="security__password">
+          <div class="security__title">
+            {{ $t('profile.changePass') }}
+          </div>
+          <base-btn
+            class="security__btn"
+            mode="lightBlue"
+            @click="modalChangePassword()"
+          >
+            {{ $t('profile.change') }}
+          </base-btn>
         </div>
-        <div
-          v-if="isProfileEdit"
-          class="wq-profile__security security"
-        >
-          <div class="security__password">
-            <div class="security__title">
-              {{ $t('profile.changePass') }}
-            </div>
-            <base-btn
-              class="security__btn"
-              mode="lightBlue"
-              @click="modalChangePassword()"
-            >
-              {{ $t('profile.change') }}
-            </base-btn>
+        <div class="security__auth">
+          <div class="security__title">
+            {{ $t('profile.2FA') }}
           </div>
-          <div class="security__auth">
-            <div class="security__title">
-              {{ $t('profile.2FA') }}
-            </div>
-            <base-btn
-              class="security__btn"
-              mode="lightBlue"
-              @click="modalTwoFAAuth()"
-            >
-              {{ $t('profile.switchOn') }}
-            </base-btn>
-          </div>
+          <base-btn
+            class="security__btn"
+            mode="lightBlue"
+            @click="modalTwoFAAuth()"
+          >
+            {{ $t('profile.switchOn') }}
+          </base-btn>
         </div>
       </div>
-    </validation-observer>
+    </div>
   </div>
 </template>
 
@@ -349,37 +271,12 @@ export default {
       geoCode: null,
       delay: 0,
       sms: false,
-      allRegisterUser: false,
-      allPeopleInInternet: false,
-      onlyWhenSubmitedWork: false,
-      onlyUrgentProposals: false,
-      onlyInplemention: false,
-      onlyReadyForExecution: false,
-      allRegisteredUsers: false,
       isVerified: false,
-      localUserData: {
-        avatarId: null,
-        firstName: null,
-        lastName: null,
-        userEmail: null,
-        firstMobileNumber: null,
-        secondMobileNumber: null,
-        address: null,
-        additionalInfo: {
-          description: null,
-          socialNetwork: {
-            instagram: null,
-            twitter: null,
-            linkedin: null,
-            facebook: null,
-            workQuest: null,
-          },
-        },
-      },
-      avatar_change: {
-        data: {},
-        file: {},
-      },
+      localUserData: null,
+      avatar_change: null,
+      socialInputs: [],
+      phoneInputsArr: [],
+      nameInputsArr: [],
     };
   },
   computed: {
@@ -397,30 +294,69 @@ export default {
       firstMobileNumber: 'user/getUserFirstMobileNumber',
       secondMobileNumber: 'user/getUserSecondMobileNumber',
       imageData: 'user/getImageData',
-      additionalInfo: 'user/getAdditionalInfo',
     }),
   },
-  async mounted() {
-    this.SetLoader(true);
+  beforeMount() {
+    const { userData } = this;
+
+    this.isVerified = !!userData.statusKYC;
+
+    this.localUserData = JSON.parse(JSON.stringify(userData));
 
     const {
-      userData: {
-        avatarId, firstName, lastName, additionalInfo, statusKYC,
-      }, userEmail, firstMobileNumber, secondMobileNumber, address,
+      localUserData, firstMobileNumber, secondMobileNumber, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
     } = this;
 
-    this.isVerified = !!statusKYC;
+    const {
+      instagram, facebook, linkedin, twitter,
+    } = localUserData.additionalInfo.socialNetwork;
 
-    this.localUserData = {
-      avatarId,
-      firstName,
-      lastName,
-      userEmail,
-      firstMobileNumber,
-      secondMobileNumber,
-      address,
-      additionalInfo: JSON.parse(JSON.stringify(additionalInfo)),
-    };
+    this.socialInputs = [{
+      id: 'instagram',
+      model: instagram,
+      placeholder: userInstagram,
+      imgClass: 'icon-instagram',
+    },
+    {
+      id: 'facebook',
+      model: facebook,
+      placeholder: userFacebook,
+      imgClass: 'icon-facebook',
+    },
+    {
+      id: 'linkedin',
+      model: linkedin,
+      placeholder: userLinkedin,
+      imgClass: 'icon-LinkedIn',
+    },
+    {
+      id: 'twitter',
+      model: twitter,
+      placeholder: userTwitter,
+      imgClass: 'icon-twitter',
+    }];
+
+    this.phoneInputsArr = [{
+      id: 'firstMobileNumber',
+      model: localUserData.firstMobileNumber,
+      placeholder: firstMobileNumber,
+    },
+    {
+      id: 'secondMobileNumber',
+      model: localUserData.secondMobileNumber,
+      placeholder: secondMobileNumber,
+    }];
+
+    this.nameInputsArr = [{
+      model: localUserData.firstName,
+      placeholder: firstName,
+    },
+    {
+      model: localUserData.lastName,
+      placeholder: lastName,
+    }];
+  },
+  mounted() {
     this.SetLoader(false);
   },
   methods: {
@@ -470,8 +406,19 @@ export default {
         const reader = new FileReader();
         reader.readAsDataURL(file);
 
-        this.avatar_change.data = await this.$store.dispatch('user/imageType', { contentType: file.type });
-        this.avatar_change.file = file;
+        const { ok, result } = await this.$store.dispatch('user/imageType', { contentType: file.type });
+
+        if (!ok) {
+          this.avatar_change = null;
+          return;
+        }
+
+        this.avatar_change = {
+          data: result,
+          file,
+        };
+
+        this.localUserData.avatarId = result.mediaId;
 
         const output = document.getElementById('userAvatar');
         output.src = URL.createObjectURL(file);
@@ -529,37 +476,32 @@ export default {
       this.$router.push('/sms-verification');
     },
     async editUserData() {
-      const formData = new FormData();
-      const { avatar_change: { file, data: { ok, result } }, additionalInfo, localUserData } = this;
+      const { avatar_change } = this;
 
-      formData.append('image', file);
-      try {
-        if (ok) {
+      if (avatar_change) {
+        const { file, data: { url } } = avatar_change;
+
+        const formData = new FormData();
+        formData.append('image', file);
+        try {
           const response = {
-            url: result.url,
+            url,
             formData: file,
             type: file.type,
           };
           await this.$store.dispatch('user/setImage', response);
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
       }
-
-      const avatarId = ok ? result.mediaId : this.userData.avatarId;
 
       const payload = {
-        ...localUserData,
-        avatarId,
-        additionalInfo,
+        config: this.localUserData,
+        method: `/v1/${userRole}/profile/edit`,
       };
 
-      try {
-        await this.$store.dispatch('user/editUserData', payload);
-        this.showModalSave();
-      } catch (e) {
-        console.log(e);
-      }
+      await this.$store.dispatch('user/editUserData', payload);
+      this.showModalSave();
     },
   },
 };
@@ -648,18 +590,48 @@ export default {
   }
 }
 
+.profile-cont {
+  background-color: #fff;
+  border-radius: 6px;
+
+  &__grid-container {
+    display: grid;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  &__main-data {
+    display: grid;
+    gap: 20px;
+    row-gap: 3px;
+    grid-template-columns: 151px repeat(2, 1fr);
+  }
+
+  &__avatar {
+    height: 151px;
+    border-radius: 6px;
+    overflow: hidden;
+    grid-column: 1;
+    grid-row: 1/5;
+  }
+
+  &__status{
+    grid-column: 2/4;
+    margin-bottom: 15px;
+  }
+
+  &__social {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+
 .info {
   &__base {
     display: grid;
     grid-template-columns: 151px repeat(3, 1fr);
     grid-gap: 20px;
-  }
-
-  &__avatar {
-    width: 100%;
-    height: 151px;
-    border-radius: 6px;
-    overflow: hidden;
   }
 
   &__contacts {
@@ -674,15 +646,6 @@ export default {
     grid-gap: 20px;
     height: 100%;
   }
-
-  &__social {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    grid-column-gap: 20px;
-    grid-row-gap: 5px;
-    height: 100%;
-  }
   &__space{
     height: 44px;
   }
@@ -691,9 +654,6 @@ export default {
 .contacts {
   &__input {
     width: 100%;
-  }
-  &__status{
-    margin-bottom: 10px;
   }
 }
 
@@ -835,11 +795,8 @@ export default {
 .action {
   display: flex;
   justify-content: flex-end;
-  &__save {
+  &__btn {
     max-width: 250px;
-  }
-  &__change {
-    @extend .action__save;
   }
 }
 
