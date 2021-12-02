@@ -99,6 +99,7 @@
                 <base-btn
                   mode="outline"
                   class="uploader__btn"
+                  @click="test"
                 >
                   {{ $t('meta.addFile') }}
                   <template v-slot:right>
@@ -113,13 +114,14 @@
           <base-btn
             mode="outline"
             class="action__cancel"
-            @click="hide()"
+            @click="close()"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
           <base-btn
             class="action__add"
             :disabled="validated || passed || invalid "
+            @click="handleSubmit(addProposal)"
           >
             {{ $t('meta.addProposal') }}
           </base-btn>
@@ -130,6 +132,9 @@
 </template>
 
 <script>
+
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'ModalAddProposal',
   data() {
@@ -187,11 +192,20 @@ export default {
       ],
     };
   },
-  mounted() {
-    this.votingStartInput = this.$moment.now();
+  computed: {
+    ...mapGetters({
+      isConnected: 'web3/getWalletIsConnected',
+    }),
+  },
+  async mounted() {
+    if (!this.isConnected) await this.$store.dispatch('web3/checkMetamaskStatus');
+
+    const start = this.$moment();
+    this.votingStartInput = this.$moment(start).format('DD/MM/YYYY');
+    this.votingEndInput = this.$moment(start).add(1, 'M').format('DD/MM/YYYY');
   },
   methods: {
-    hide() {
+    close() {
       this.CloseModal();
     },
     addValue(el) {
@@ -199,6 +213,17 @@ export default {
     },
     prevValue(el) {
       this.pickerValue = Number(this.pickerValue) - 1;
+    },
+    async addProposal() {
+      // TODO: Где-то нужно вводить адрес контракта голосования
+      const res = await this.$store.dispatch('web3/addProposal', {
+        address: process.env.WQ_TOKEN,
+        description: this.descriptionInput,
+      });
+      console.log(res);
+    },
+    test() {
+      console.log('1');
     },
   },
 };
@@ -332,11 +357,12 @@ export default {
 }
 
 .date-field {
+  margin-bottom: 25px;
   margin-top: 5px;
   background: #F7F8FA;
   border-radius: 6px;
   height: 46px;
-  padding: 15px 12.5px;
+  padding: 12.5px 15px;
   font-size: 16px;
   line-height: 130%;
 }

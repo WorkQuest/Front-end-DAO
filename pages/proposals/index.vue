@@ -18,6 +18,7 @@
                 <div class="info__btn-container">
                   <base-btn
                     mode="ver"
+                    :disabled="!isConnected"
                     @click="addProposalModal"
                   >
                     {{ $t('proposals.addProposals') }}
@@ -40,8 +41,10 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import proposalCards from '~/components/app/Cards/proposalCards';
 import modals from '~/store/modals/modals';
+import { Chains } from '~/utils/enums';
 
 export default {
   name: 'Proposals',
@@ -51,7 +54,22 @@ export default {
   data() {
     return {
       isShowInfo: true,
+      firstLoading: true,
     };
+  },
+  computed: {
+    ...mapGetters({
+      isConnected: 'web3/getWalletIsConnected',
+    }),
+  },
+  watch: {
+    async isConnected(newValue) {
+      // if (this.firstLoading) return;
+      // const rightChain = await this.$store.dispatch('web3/chainIsCompareToCurrent', Chains.ETHEREUM);
+    },
+  },
+  async mounted() {
+    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
   },
   methods: {
     isCloseInfo() {
