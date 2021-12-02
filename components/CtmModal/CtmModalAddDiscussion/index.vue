@@ -143,7 +143,7 @@ export default {
     background: #F7F7FA;
     border-radius: 6px;
     padding: 11px 20px 11px 20px;
-    margin: 5px 0px 15px 0px;
+    margin: 5px 0 15px 0;
     border: none;
     resize: none;
     &:focus {
@@ -166,7 +166,7 @@ export default {
     border: 0.1px solid #0083C7;
   }
   &__images{
-  margin: 15px 0px 15px 0px;
+  margin: 15px 0 15px 0;
   }
   &__files{
     margin-top: 10px!important;

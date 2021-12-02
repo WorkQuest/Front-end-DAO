@@ -5,8 +5,12 @@
         :src="item.author.avatar.url ? item.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
         alt="userAvatar"
         class="user__avatar"
+        @click="toInvestor(item.author.id)"
       >
-      <span class="user__name">
+      <span
+        class="user__name"
+        @click="toInvestor(item.author.id)"
+      >
         {{ item.author.firstName ? item.author.firstName : this.$t('user.nameless') }} {{ item.author.lastName ? item.author.lastName : '' }}
       </span>
       <button class="user__star">
@@ -99,6 +103,9 @@ export default {
     };
   },
   methods: {
+    toInvestor(authorId) {
+      this.$router.push(`/investors/${authorId}`);
+    },
     toggleFavorite() {
       this.isFavorite = !this.isFavorite;
     },
@@ -154,6 +161,7 @@ export default {
       line-height: 130%;
       color: #1D2127;
       padding: 10px;
+      cursor: pointer;
     }
     &__avatar {
       flex: 0 0 0 32px;
@@ -162,6 +170,7 @@ export default {
       left: 0;
       top: 0;
       border-radius: 50%;
+      cursor: pointer;
     }
     &__star {
       margin-left: auto;

@@ -51,7 +51,6 @@ export default {
       page: 1,
       perPager: 8,
       discussionObjects: {},
-      discussionArray: [],
       totalPagesValue: 1,
     };
   },
@@ -83,7 +82,6 @@ export default {
     },
     async getDiscussions(additionalValue) {
       this.discussionObjects = await this.$store.dispatch('discussions/getDiscussions', additionalValue);
-      this.discussionArray = this.discussionObjects.discussions;
       this.totalPagesValue = this.totalPages();
     },
     openModalAddDiscussion() {
@@ -102,14 +100,14 @@ export default {
     width: 100%;
     height: 100%;
     @include _1024;
-    &__title{
+    &__title {
     font-weight: 600;
     font-size: 28px;
     line-height: 36px;
     margin-right: auto;
     padding: 30px 0 30px 0;
     }
-    &__field{
+    &__field {
     justify-content: space-between;
     }
     &__card {
@@ -138,8 +136,8 @@ export default {
         width: 220px;
         height: 43px;
       }
-    &__pagination{
+    &__pagination {
       margin-top: 5px;
     }
-    }
+}
 </style>

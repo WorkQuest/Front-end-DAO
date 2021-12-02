@@ -25,8 +25,12 @@
                 authorAvatarUrl : require('~/assets/img/app/avatar_empty.png')"
               alt="userAvatar"
               class="user__avatar"
+              @click="toInvestor(discussionAuthor.id)"
             >
-            <span class="user__name">
+            <span
+              class="user__name"
+              @click="toInvestor(discussionAuthor.id)"
+            >
               {{ discussionAuthor
                 ? discussionAuthor.firstName : this.$t('user.nameless') }}
               {{ discussionAuthor ? discussionAuthor.lastName : '' }}
@@ -157,8 +161,12 @@
                 elem.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
               alt="userAvatar"
               class="user__avatar"
+              @click="toInvestor(elem.author.id)"
             >
-            <div class="user__name">
+            <div
+              class="user__name"
+              @click="toInvestor(elem.author.id)"
+            >
               {{ elem.author.firstName ?
                 elem.author.firstName : this.$t('user.nameless') }}
               {{ elem.author.lastName ? elem.author.lastName : '' }}
@@ -309,6 +317,9 @@ export default {
     this.SetLoader(false);
   },
   methods: {
+    toInvestor(authorId) {
+      this.$router.push(`/investors/${authorId}`);
+    },
     totalPages() {
       if (this.rootCommentObjects.comments) {
         return Math.ceil(this.rootCommentObjects.count / this.perPager);
@@ -486,24 +497,26 @@ export default {
     margin-top: 20px;
   }
 }
-.user{
+.user {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  &__avatar{
+  &__avatar {
     flex: 0 0 0 32px;
     width: 32px;
     height: 32px;
     left: 0;
     top: 0;
     border-radius: 50%;
+    cursor: pointer;
   }
-  &__name{
+  &__name {
     @include text-usual;
     color: #1D2127;
     padding: 0 10px 0 10px;
+    cursor: pointer;
   }
-  &__date{
+  &__date {
     font-size: 12px;
     line-height: 130%;
     color: #AAB0B9;

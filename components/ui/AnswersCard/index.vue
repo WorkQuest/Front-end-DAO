@@ -7,8 +7,12 @@
             item.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
           alt="userAvatar"
           class="user__avatar"
+          @click="toInvestor(item.author.id)"
         >
-        <div class="user__name">
+        <div
+          class="user__name"
+          @click="toInvestor(item.author.id)"
+        >
           {{ item.author.firstName ?
             item.author.firstName : this.$t('user.nameless') }}
           {{ item.author.lastName ? item.author.lastName : '' }}
@@ -97,6 +101,9 @@ export default {
     }),
   },
   methods: {
+    toInvestor(authorId) {
+      this.$router.push(`/investors/${authorId}`);
+    },
     async addSubCommentResponse(rootCommentId) {
       const discussionId = this.currentDiscussion.id;
       const payload = {
@@ -143,24 +150,26 @@ export default {
     margin-bottom: 20px;
   }
 }
-.user{
+.user {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  &__avatar{
+  &__avatar {
     flex: 0 0 0 32px;
     width: 32px;
     height: 32px;
     left: 0;
     top: 0;
     border-radius: 50%;
+    cursor: pointer;
   }
-  &__name{
+  &__name {
     @include text-usual;
     color: #1D2127;
     padding: 0 10px 0 10px;
+    cursor: pointer;
   }
-  &__date{
+  &__date {
     font-size: 12px;
     line-height: 130%;
     color: #AAB0B9;
