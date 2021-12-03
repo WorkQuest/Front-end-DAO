@@ -1,3 +1,3 @@
 export default {
-  getSumSubBackendToken: (state) => state.accessTokenBackend || '',
+  getSumSubBackendToken: (state) => state.accessTokenBackend,
 };
