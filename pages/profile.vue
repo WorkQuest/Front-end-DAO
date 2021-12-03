@@ -32,188 +32,188 @@
       >
         {{ $t('profile.title') }}
       </div>
-      <validation-observer v-slot="{handleSubmit}">
-        <div class="profile-cont">
-          <div class="profile-cont__grid-container">
-            <div class="profile-cont__main-data">
-              <div class="profile-cont__avatar avatar">
-                <img
-                  id="userAvatar"
-                  class="avatar__img"
-                  :src="imageData || require('~/assets/img/app/avatar_empty.png')"
-                  :alt="imageData ? 'avatar' : 'empty avatar'"
+      <div class="profile-cont">
+        <div class="profile-cont__grid-container">
+          <div class="profile-cont__main-data">
+            <div class="profile-cont__avatar avatar">
+              <img
+                id="userAvatar"
+                class="avatar__img"
+                :src="imageData || require('~/assets/img/app/avatar_empty.png')"
+                :alt="imageData ? 'avatar' : 'empty avatar'"
+              >
+              <label
+                v-if="isProfileEdit"
+                class="avatar__edit edit"
+              >
+                <span class="edit__icon icon-edit" />
+                <ValidationProvider
+                  v-slot="{ validate }"
+                  class="edit__validator"
+                  rules="required|ext:png,jpeg,jpg"
+                  tag="div"
                 >
-                <label
-                  v-if="isProfileEdit"
-                  class="avatar__edit edit"
-                >
-                  <span class="edit__icon icon-edit" />
-                  <ValidationProvider
-                    v-slot="{ validate }"
-                    class="edit__validator"
-                    rules="required|ext:png,jpeg,jpg"
-                    tag="div"
+                  <input
+                    id="coverUpload"
+                    type="file"
+                    accept="image/*"
+                    @change="processFile($event, validate)"
                   >
-                    <input
-                      id="coverUpload"
-                      type="file"
-                      accept="image/*"
-                      @change="processFile($event, validate)"
+                </ValidationProvider>
+              </label>
+            </div>
+            <div
+              class="profile-cont__status status"
+              :class="{ 'status_verified': localUserData.isVerified }"
+            >
+              {{ $t(`settings.${localUserData.isVerified ? 'verified' : 'notVerified'}`) }}
+              <span class="status__icon icon icon-check_all_big" />
+            </div>
+            <base-field
+              v-for="(cell, i) in nameInputsArr"
+              :key="i"
+              v-model="cell.model"
+              :placeholder="cell.placeholder || $t('settings.nameInput')"
+              :disabled="!isProfileEdit"
+              rules="required"
+              :name="$t('modals.nameField')"
+              mode="icon"
+              mode-error="small"
+            >
+              <template v-slot:left>
+                <span class="icon icon__input icon-user" />
+              </template>
+            </base-field>
+            <base-field
+              v-model="localUserData.additionalInfo.address"
+              :placeholder="address || $t('settings.addressInput')"
+              :disabled="!isProfileEdit"
+              :is-with-loader="true"
+              mode="icon"
+              :name="$t('modals.addressField')"
+              mode-error="small"
+              @focus="changeFocusValue"
+              @input="getPositionData"
+            >
+              <template v-slot:left>
+                <span class="icon icon__input icon-location" />
+              </template>
+              <template v-slot:right-absolute>
+                <div
+                  v-if="isPositionSearch"
+                  class="loader-cont"
+                >
+                  <loader
+                    class="loader-cont__loader"
+                    :is-mini-loader="true"
+                  />
+                </div>
+              </template>
+              <template v-slot:selector>
+                <div
+                  v-if="addresses.length && isGeoInputOnFocus"
+                  class="selector"
+                >
+                  <div class="selector__items">
+                    <div
+                      v-for="(address, i) in addresses"
+                      :key="i"
+                      class="selector__item"
+                      @click="selectAddress(address)"
                     >
-                  </ValidationProvider>
-                </label>
-              </div>
-              <div
-                class="profile-cont__status status"
-                :class="{ 'status_verified': localUserData.isVerified }"
-              >
-                {{ $t(`settings.${localUserData.isVerified ? 'verified' : 'notVerified'}`) }}
-                <span class="status__icon icon icon-check_all_big" />
-              </div>
-              <base-field
-                v-for="(cell, i) in nameInputsArr"
-                :key="i"
-                v-model="cell.model"
-                :placeholder="cell.placeholder || $t('settings.nameInput')"
-                :disabled="!isProfileEdit"
-                rules="required"
-                :name="$t('modals.nameField')"
-                mode="icon"
-                mode-error="small"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-user" />
-                </template>
-              </base-field>
-              <base-field
-                v-model="localUserData.address"
-                :placeholder="address || $t('settings.addressInput')"
-                :disabled="!isProfileEdit"
-                :is-with-loader="true"
-                mode="icon"
-                :name="$t('modals.addressField')"
-                mode-error="small"
-                @focus="changeFocusValue"
-                @input="getPositionData"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-location" />
-                </template>
-                <template v-slot:right-absolute>
-                  <div
-                    v-if="isPositionSearch"
-                    class="loader-cont"
-                  >
-                    <loader
-                      class="loader-cont__loader"
-                      :is-mini-loader="true"
-                    />
-                  </div>
-                </template>
-                <template v-slot:selector>
-                  <div
-                    v-if="addresses.length && isGeoInputOnFocus"
-                    class="selector"
-                  >
-                    <div class="selector__items">
-                      <div
-                        v-for="({formatted}, i) in addresses"
-                        :key="i"
-                        class="selector__item"
-                        @click="selectAddress(formatted)"
-                      >
-                        {{ formatted }}
-                      </div>
+                      {{ address.formatted }}
                     </div>
                   </div>
-                </template>
-              </base-field>
-              <base-field
-                v-model="localUserData.email"
-                :placeholder="localUserData.email || $t('settings.addressInput')"
-                :disabled="!isProfileEdit"
-                mode="icon"
-                rules="required|email"
-                :name="$t('modals.emailField')"
-                mode-error="small"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-mail" />
-                </template>
-              </base-field>
-              <div
-                v-for="cell in phoneInputsArr"
-                :key="cell.id"
-              >
-                <vue-phone-number-input
-                  v-if="isProfileEdit"
-                  v-model="cell.model"
-                  class="input-phone"
-                  error-color="#EB5757"
-                  clearable
-                  show-code-on-list
-                  required
-                  size="lg"
-                />
-                <base-field
-                  v-else
-                  v-model="cell.model"
-                  :placeholder="cell.placeholder || $t('settings.telInput')"
-                  :disabled="true"
-                  is-hide-error
-                  inputmode="numeric"
-                  mode="icon"
-                >
-                  <template v-slot:left>
-                    <span class="icon icon__input icon-phone" />
-                  </template>
-                </base-field>
-              </div>
-            </div>
-            <div class="profile-cont__about about">
-              <div class="about__title">
-                {{ $t('profile.aboutMe') }}
-              </div>
-              <textarea
-                v-model="localUserData.additionalInfo.description"
-                class="about__textarea"
-                :class="{ 'about__textarea_disabled': !isProfileEdit }"
-                :placeholder="$t('profile.aboutMe')"
-                :disabled="!isProfileEdit"
+                </div>
+              </template>
+            </base-field>
+            <base-field
+              v-model="localUserData.email"
+              :placeholder="localUserData.email || $t('settings.addressInput')"
+              :disabled="!isProfileEdit"
+              mode="icon"
+              rules="required|email"
+              :name="$t('modals.emailField')"
+              mode-error="small"
+            >
+              <template v-slot:left>
+                <span class="icon icon__input icon-mail" />
+              </template>
+            </base-field>
+            <div
+              v-for="cell in phoneInputsArr"
+              :key="cell.id"
+            >
+              <vue-phone-number-input
+                v-if="isProfileEdit"
+                v-model="localUserData.additionalInfo.secondMobileNumber"
+                class="input-phone"
+                error-color="#EB5757"
+                clearable
+                show-code-on-list
+                required
+                size="lg"
+                @update="updatedPhone = $event"
               />
-            </div>
-            <div class="profile-cont__social social">
               <base-field
-                v-for="cell in socialInputs"
-                :key="cell.id"
+                v-else
                 v-model="cell.model"
-                :placeholder="cell.placeholder || $t('settings.socialInput')"
-                :disabled="!isProfileEdit"
+                :placeholder="cell.placeholder || $t('settings.telInput')"
+                :disabled="true"
                 is-hide-error
+                inputmode="numeric"
                 mode="icon"
-                type="text"
-                mode-error="small"
               >
                 <template v-slot:left>
-                  <span
-                    class="icon icon__input"
-                    :class="cell.imgClass"
-                  />
+                  <span class="icon icon__input icon-phone" />
                 </template>
               </base-field>
-            </div>
-            <div class="profile-cont__action action">
-              <base-btn
-                mode="lightBlue"
-                class="action__btn"
-                @click="isProfileEdit ? handleSubmit(editUserData) : showModalWarning()"
-              >
-                {{ $t(`profile.${isProfileEdit ? 'save' : 'change'}`) }}
-              </base-btn>
             </div>
           </div>
+          <div class="profile-cont__about about">
+            <div class="about__title">
+              {{ $t('profile.aboutMe') }}
+            </div>
+            <textarea
+              v-model="localUserData.additionalInfo.description"
+              class="about__textarea"
+              :class="{ 'about__textarea_disabled': !isProfileEdit }"
+              :placeholder="$t('profile.aboutMe')"
+              :disabled="!isProfileEdit"
+            />
+          </div>
+          <div class="profile-cont__social social">
+            <base-field
+              v-for="cell in socialInputs"
+              :key="cell.id"
+              v-model="cell.model"
+              :placeholder="cell.placeholder || $t('settings.socialInput')"
+              :disabled="!isProfileEdit"
+              is-hide-error
+              mode="icon"
+              type="text"
+              mode-error="small"
+              @input="handleChangeSocial($event, cell.id)"
+            >
+              <template v-slot:left>
+                <span
+                  class="icon icon__input"
+                  :class="cell.imgClass"
+                />
+              </template>
+            </base-field>
+          </div>
+          <div class="profile-cont__action action">
+            <base-btn
+              mode="lightBlue"
+              class="action__btn"
+              @click="handleClickEditBtn"
+            >
+              {{ $t(`profile.${isProfileEdit ? 'save' : 'change'}`) }}
+            </base-btn>
+          </div>
         </div>
-      </validation-observer>
+      </div>
       <div
         v-if="isProfileEdit"
         class="wq-profile__header"
@@ -264,6 +264,7 @@ export default {
   name: 'Settings',
   data() {
     return {
+      updatedPhone: null,
       isProfileEdit: false,
       isPositionSearch: false,
       isGeoInputOnFocus: false,
@@ -277,6 +278,7 @@ export default {
       socialInputs: [],
       phoneInputsArr: [],
       nameInputsArr: [],
+      coordinates: undefined,
     };
   },
   computed: {
@@ -297,71 +299,89 @@ export default {
     }),
   },
   beforeMount() {
-    const { userData } = this;
+    this.isVerified = !!this.userData.statusKYC;
 
-    this.isVerified = !!userData.statusKYC;
-
-    this.localUserData = JSON.parse(JSON.stringify(userData));
-
-    const {
-      localUserData, firstMobileNumber, secondMobileNumber, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
-    } = this;
-
-    const {
-      instagram, facebook, linkedin, twitter,
-    } = localUserData.additionalInfo.socialNetwork;
-
-    this.socialInputs = [{
-      id: 'instagram',
-      model: instagram,
-      placeholder: userInstagram,
-      imgClass: 'icon-instagram',
-    },
-    {
-      id: 'facebook',
-      model: facebook,
-      placeholder: userFacebook,
-      imgClass: 'icon-facebook',
-    },
-    {
-      id: 'linkedin',
-      model: linkedin,
-      placeholder: userLinkedin,
-      imgClass: 'icon-LinkedIn',
-    },
-    {
-      id: 'twitter',
-      model: twitter,
-      placeholder: userTwitter,
-      imgClass: 'icon-twitter',
-    }];
-
-    this.phoneInputsArr = [{
-      id: 'firstMobileNumber',
-      model: localUserData.firstMobileNumber,
-      placeholder: firstMobileNumber,
-    },
-    {
-      id: 'secondMobileNumber',
-      model: localUserData.secondMobileNumber,
-      placeholder: secondMobileNumber,
-    }];
-
-    this.nameInputsArr = [{
-      model: localUserData.firstName,
-      placeholder: firstName,
-    },
-    {
-      model: localUserData.lastName,
-      placeholder: lastName,
-    }];
+    this.setCurrData();
   },
   mounted() {
     this.SetLoader(false);
   },
   methods: {
+    setCurrData() {
+      this.localUserData = JSON.parse(JSON.stringify(this.userData));
+
+      const {
+        localUserData, firstMobileNumber, secondMobileNumber, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
+      } = this;
+
+      const {
+        instagram, facebook, linkedin, twitter,
+      } = localUserData.additionalInfo.socialNetwork;
+
+      this.socialInputs = [{
+        id: 'instagram',
+        model: instagram,
+        placeholder: userInstagram,
+        imgClass: 'icon-instagram',
+      },
+      {
+        id: 'facebook',
+        model: facebook,
+        placeholder: userFacebook,
+        imgClass: 'icon-facebook',
+      },
+      {
+        id: 'linkedin',
+        model: linkedin,
+        placeholder: userLinkedin,
+        imgClass: 'icon-LinkedIn',
+      },
+      {
+        id: 'twitter',
+        model: twitter,
+        placeholder: userTwitter,
+        imgClass: 'icon-twitter',
+      }];
+
+      // this.phoneInputsArr = [{
+      //   id: 'firstMobileNumber',
+      //   model: localUserData.tempPhone,
+      //   placeholder: firstMobileNumber,
+      // }];
+
+      // if (this.userRole === 'employer') {
+      this.phoneInputsArr = [{
+        id: 'secondMobileNumber',
+        model: localUserData.additionalInfo.secondMobileNumber,
+        placeholder: secondMobileNumber,
+      }];
+      // }
+
+      this.nameInputsArr = [{
+        model: localUserData.firstName,
+        placeholder: firstName,
+      },
+      {
+        model: localUserData.lastName,
+        placeholder: lastName,
+      }];
+    },
+    handleClickEditBtn() {
+      if (this.isProfileEdit) {
+        this.editUserData();
+      } else {
+        this.showModalWarning();
+      }
+    },
+    handleChangeSocial(val, key) {
+      if (!val) this.localUserData.additionalInfo.socialNetwork[key] = null;
+    },
     selectAddress(address) {
-      this.localUserData.address = address;
+      this.localUserData.additionalInfo.address = address.formatted;
+      this.localUserData.location = {
+        longitude: address.lng,
+        latitude: address.lat,
+      };
     },
     changeFocusValue(arg) {
       setTimeout(() => {
@@ -371,7 +391,11 @@ export default {
     getPositionData(address) {
       this.addresses = [];
 
-      if (!address) return;
+      if (!address) {
+        this.localUserData.additionalInfo.address = null;
+        this.localUserData.location = null;
+        return;
+      }
 
       if (!this.geoCode) this.geoCode = new GeoCode('google', { key: process.env.GMAPKEY });
 
@@ -383,7 +407,6 @@ export default {
         try {
           const response = await geoCode.geolookup(address);
           this.addresses = JSON.parse(JSON.stringify(response));
-          this.coordinates = JSON.parse(JSON.stringify({ lng: response[0].lng, lat: response[0].lat }));
           this.isPositionSearch = false;
         } catch (e) {
           console.log(e);
@@ -476,7 +499,15 @@ export default {
       this.$router.push('/sms-verification');
     },
     async editUserData() {
-      const { avatar_change } = this;
+      const {
+        avatarId, firstName, lastName, location, additionalInfo: {
+          secondMobileNumber, address, socialNetwork, description, company, CEO, website,
+        }, priority, workplace, wagePerHour, specializationKeys, educations, workExperiences,
+      } = this.localUserData;
+
+      if (!firstName || !lastName || (secondMobileNumber && !this.updatedPhone?.isValid)) return;
+
+      const { avatar_change, userRole } = this;
 
       if (avatar_change) {
         const { file, data: { url } } = avatar_change;
@@ -495,13 +526,55 @@ export default {
         }
       }
 
-      const payload = {
-        config: this.localUserData,
-        method: `/v1/${userRole}/profile/edit`,
+      let config = {
+        avatarId,
+        firstName,
+        lastName,
+        location,
       };
 
-      await this.$store.dispatch('user/editUserData', payload);
+      const additionalInfo = {
+        address,
+        socialNetwork,
+        description,
+        secondMobileNumber,
+      };
+
+      if (userRole === 'employer') {
+        config = {
+          ...config,
+          additionalInfo: {
+            ...additionalInfo,
+            company,
+            CEO,
+            website,
+          },
+        };
+      } else {
+        config = {
+          ...config,
+          priority,
+          workplace,
+          wagePerHour,
+          specializationKeys,
+          additionalInfo: {
+            ...additionalInfo,
+            skills: [],
+            educations,
+            workExperiences,
+          },
+        };
+      }
+      const method = `/v1/${userRole}/profile/edit`;
+
+      const payload = {
+        config,
+        method,
+      };
+
+      await this.$store.dispatch('user/editProfile', payload);
       this.showModalSave();
+      this.setCurrData();
     },
   },
 };
@@ -521,8 +594,8 @@ export default {
     font-weight: 600;
     font-size: 28px;
     line-height: 36px;
+    margin: 25px 0 20px 0;
 
-    margin-top: 25px;
     &_noMarginTop {
       margin-top: 0;
     }

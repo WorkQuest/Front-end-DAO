@@ -26,11 +26,6 @@ export default {
     commit('setUserRole', response.result);
     return response;
   },
-  async editUserData({ commit }, payload) {
-    const response = await this.$axios.$put('/v1/profile/edit', payload);
-    commit('setUserData', response.result);
-    return response;
-  },
   async logout({ commit }) {
     commit('logOut');
   },
@@ -67,7 +62,8 @@ export default {
   },
   async editProfile({ commit }, { config, method }) {
     try {
-      const { result } = await this.$axios.$post(method, config);
+      const { result } = await this.$axios.$put(method, config);
+      commit('setUserData', result);
       return result;
     } catch (e) {
       return console.log(e);

@@ -16,7 +16,7 @@ export default {
   getUserEducations: (state) => state.userData?.additionalInfo?.educations || '',
   getUserWorkExp: (state) => state.userData?.additionalInfo?.workExperiences || '',
   getUserAddress: (state) => state.userData?.additionalInfo?.address || '',
-  getUserFirstMobileNumber: (state) => state.userData?.additionalInfo?.firstMobileNumber || '',
+  getUserFirstMobileNumber: (state) => state.userData?.tempPhone || '',
   getUserSecondMobileNumber: (state) => state.userData?.additionalInfo?.secondMobileNumber || '',
   getUserEmail: (state) => state.userData?.email || '',
   getUserCEO: (state) => state.userData?.additionalInfo?.CEO || '',
