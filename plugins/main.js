@@ -78,5 +78,8 @@ Vue.mixin({
       };
       this.$store.dispatch('user/setCurrentPosition', payload);
     },
+    formatItem(item, endFromBegining, startToEnd) {
+      return `${item.slice(0, endFromBegining)}...${item.slice(item.length - startToEnd, item.length)}`;
+    },
   },
 });

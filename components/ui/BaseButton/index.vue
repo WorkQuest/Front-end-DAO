@@ -279,7 +279,11 @@ export default {
     }
   }
 }
-
+@include _991 {
+  .base-btn {
+    font-size: 14px;
+  }
+}
 @include _575 {
   .base-btn {
     font-size: 14px;

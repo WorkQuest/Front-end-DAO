@@ -84,6 +84,18 @@
         :items="transactionsData"
         :fields="walletTableFields"
       />
+      <!-- mobile -->
+      <div class="wallet__transactions">
+        <p class="wallet__subtitle">
+          {{ $t('wallet.table.trx') }}
+        </p>
+        <item
+          v-for="(transaction, index) in transactionsData"
+          :key="index"
+          :item="transaction"
+          :is-last="transactionsData[index] === transactionsData[transactionsData.length - 1]"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -120,7 +132,7 @@ export default {
       ],
       transactionsData: [
         {
-          tx_hash: 'sd535sd66sdsd',
+          tx_hash: '0x1c4f3bf7c0c7264a537f13c90b996ca8c0824a216065e000758d5e8d8ae30c9g',
           status: 'Success',
           block: '5267575474',
           timestamp: 'Feb 1, 2021, 21:34',
@@ -129,7 +141,7 @@ export default {
           transaction_fee: '5 WUSD',
         },
         {
-          tx_hash: 'sd535sd66sdsd',
+          tx_hash: '0x1c4f3bf7c0c7264a537f13c90b996ca8c0824a216065e000758d5e8d8ae30c9b',
           status: 'Success',
           block: '5267575474',
           timestamp: 'Feb 1, 2021, 21:34',
@@ -138,7 +150,7 @@ export default {
           transaction_fee: '5 WUSD',
         },
         {
-          tx_hash: 'sd535sd66sdsd',
+          tx_hash: '0x1c4f3bf7c0c7264a537f13c90b996ca8c0824a206065e000758d5e8d8ae30c9b',
           status: 'Success',
           block: '5267575474',
           timestamp: 'Feb 1, 2021, 21:34',
@@ -147,7 +159,7 @@ export default {
           transaction_fee: '5 WUSD',
         },
         {
-          tx_hash: 'sd535sd66sdsd',
+          tx_hash: '0x1c4f3bf7c0c7264a537f13c90b996ca8c0824a216065e000758d5e8d8ae30c9z',
           status: 'Success',
           block: '5267575474',
           timestamp: 'Feb 1, 2021, 21:34',
@@ -156,7 +168,7 @@ export default {
           transaction_fee: '5 WUSD',
         },
         {
-          tx_hash: 'sd535sd66sdsd',
+          tx_hash: '0x1c4f3bf7c0c7264a537f13c90b996ca8c0824a216065e000758d5e8d8ae20c9b',
           status: 'Success',
           block: '5267575474',
           timestamp: 'Feb 1, 2021, 21:34',
@@ -165,7 +177,7 @@ export default {
           transaction_fee: '5 WUSD',
         },
         {
-          tx_hash: 'sd535sd66sdsd',
+          tx_hash: '0x1c4f3bf7c0c7264a637f13c90b996ca8c0824a216065e000758d5e8d8ae30c9b',
           status: 'Success',
           block: '5267575474',
           timestamp: 'Feb 1, 2021, 21:34',
@@ -309,6 +321,9 @@ export default {
       padding: 20px;
     }
   }
+  &__transactions {
+    display: none;
+  }
 }
 
 .address {
@@ -448,6 +463,19 @@ export default {
   }
 }
 @include _767 {
+  .wallet {
+    &__table {
+      display: none;
+    }
+    &__transactions {
+      display: block;
+      background: $white;
+      padding: 20px;
+    }
+    &__subtitle {
+      font-size: 20px;
+    }
+  }
   .card {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -458,11 +486,21 @@ export default {
       font-size: 13px;
     }
   }
+  .wallet {
+    &__header {
+      flex-direction: column;
+    }
+  }
 }
 @include _480 {
   .user {
     &__wallet {
       font-size: 12px;
+    }
+  }
+  .card {
+    &__title {
+      text-shadow: $black800 2px 2px 10px;
     }
   }
 }

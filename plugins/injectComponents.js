@@ -14,6 +14,7 @@ import BaseUploader from '~/components/ui/BaseUploader';
 import BaseImages from '~/components/ui/BaseImages';
 import BasePager from '~/components/ui/BasePager';
 import BaseFiles from '~/components/ui/BaseFiles';
+import Item from '~/components/mobile/TableItem.vue';
 
 Vue.component('ctm-modal', CtmModal);
 Vue.component('ctm-modal-box', CtmModalBox);
@@ -29,3 +30,4 @@ Vue.component('base-uploader', BaseUploader);
 Vue.component('base-images', BaseImages);
 Vue.component('base-files', BaseFiles);
 Vue.component('base-pager', BasePager);
+Vue.component('item', Item);

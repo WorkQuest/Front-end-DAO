@@ -112,6 +112,16 @@
         >
           {{ $t('discussions.add') }}
         </base-btn>
+        <base-btn
+          v-if="!isAddComment"
+          class="heading__btn_mobile"
+          mode="light"
+          @click="addComment"
+        >
+          <span class="heading__btn-text">
+            + {{ $t('discussions.add') }}
+          </span>
+        </base-btn>
       </div>
       <div
         v-if="isAddComment"
@@ -441,6 +451,9 @@ export default {
     height: 43px;
     border: none;
     outline: none;
+    &_mobile {
+      display: none;
+    }
   }
   &__title{
     font-weight: 500;
@@ -732,6 +745,42 @@ export default {
   &__files{
     display: inline-flex;
     flex-direction: row;
+  }
+}
+@include _1199 {
+  .info {
+    &__body {
+      max-width: 100vw;
+      padding: 15px;
+    }
+  }
+}
+@include _767 {
+  .heading{
+    &__btn {
+      display: none;
+      &_mobile {
+        display: block;
+        width: 220px;
+        height: 43px;
+        border: none;
+        outline: none;
+      }
+      &-text {
+        color: $blue;
+        font-weight: 600;
+      }
+    }
+  }
+  .images {}
+}
+@include _480 {
+  .heading {
+    &__btn {
+      &_mobile {
+        width: 120px;
+      }
+    }
   }
 }
 </style>

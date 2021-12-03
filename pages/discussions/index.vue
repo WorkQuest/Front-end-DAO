@@ -207,5 +207,26 @@ export default {
     &__pagination{
       margin-top: 5px;
     }
+}
+@include _1199 {
+  .discussions {
+    padding: 15px;
+  }
+}
+@include _991 {
+  .discussions {
+    max-width: 100vw;
+    &__btn {
+      margin-left: 10px;
     }
+  }
+}
+@include _767 {
+  .discussions {
+    padding: 16px;
+    &__card {
+      grid-template-columns: 1fr;
+    }
+  }
+}
 </style>

@@ -79,7 +79,6 @@ export default {
   }
   &__body {
     margin-top: 30px;
-    max-width: 1180px;
     height: 100%;
   }
 }
@@ -330,6 +329,19 @@ export default {
   .icon {
     &__close {
       bottom: 154px;
+    }
+  }
+}
+@include _767 {
+  .main {
+    &__body {
+      max-width: 100vw;
+      padding: 0 10px;
+    }
+  }
+  .page {
+    &__grid {
+      grid-template-columns: 1fr;
     }
   }
 }

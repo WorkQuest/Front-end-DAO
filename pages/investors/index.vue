@@ -10,12 +10,19 @@
         :is-search="true"
         :placeholder="$t('investors.search')"
       />
-
       <base-table
         class="investors__table"
         :fields="historyTableFields"
         :items="historyTableData"
       />
+      <div class="investors__investors">
+        <item
+          v-for="(investor, index) in historyTableData"
+          :key="index"
+          :item="investor"
+          :is-last="historyTableData[index] === historyTableData[historyTableData.length - 1]"
+        />
+      </div>
       <base-pager
         v-model="pages"
         class="investors__pagination"
@@ -160,6 +167,9 @@ export default {
   &__table{
     margin-bottom: 15px;
   }
+  &__investors {
+      display: none;
+    }
   &__pagination{
     margin-top: 10px;
   }
@@ -180,5 +190,30 @@ export default {
     border-radius: 6px;
   }
 }
-
+@include _1199 {
+  .body {
+    max-width: 100vw;
+    &__title {
+      margin-left: 10px;
+    }
+  }
+}
+@include _767 {
+  .body {
+    max-width: 100vw;
+  }
+  .investors {
+    &__table {
+      display: none;
+    }
+    &__investors {
+      display: block;
+      background: $white;
+      padding: 16px;
+    }
+    &__pagination {
+      margin-right: 10px;
+    }
+  }
+}
 </style>

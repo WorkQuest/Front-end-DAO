@@ -15,6 +15,9 @@
       >
         <span class="table__title">{{ $props.title }}</span>
       </template>
+      <template #cell(tx_hash)="el">
+        <span class="table__grey">{{ formatItem(el.item.tx_hash, 9, 6) }}</span>
+      </template>
       <template #cell(status)="el">
         <span
           v-if="el.item.status === 'Success'"
@@ -205,25 +208,36 @@ export default {
     color: #1D2127!important;
     text-decoration: none!important;
   }
+  @include _1199 {
+    .table {
+       &__row {
+        font-size: 12px !important;
+      }
+      &__header {
+        font-size: 10px !important;
+      }
+    }
+    .btn__delegate {
+      width: 80px !important;
+      font-size: 13px;
+    }
+  }
   @include _991 {
     .table {
       &__row {
-        font-size: 12px;
+        font-size: 10px !important;
       }
       &__header {
-        font-size: 10px;
+        font-size: 8px !important;
       }
+      .btn__delegate {
+      width: 60px !important;
+      font-size: 10px;
     }
-    //thead, tbody tr {
-    //  display:table;
-    //  width: 920px;
-    //  min-width: 710px;
-    //  table-layout:fixed;
-    //}
-    //thead {
-    //  width: calc( 940px - 1em );
-    //  min-width: calc( 710px - 1em );
-    //}
+    }
+    &__copy {
+      font-size: 10px;
+    }
   }
   @include _767 {
     //thead, tbody tr {

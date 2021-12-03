@@ -373,6 +373,7 @@ export default {
   border: 1px solid rgba(0, 0, 0, 0);
   padding: 0 20px;
   width: 100%;
+  white-space: nowrap;
   &:hover {
     background: #FFFFFF;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -481,6 +482,9 @@ export default {
     padding-left: 20px;
     padding-right: 20px;
   }
+   .content {
+    grid-template-columns: repeat(3, 1fr);
+  }
   .menu {
     grid-template-columns: auto auto;
   }
@@ -489,11 +493,17 @@ export default {
   }
 }
 @include _991 {
-  .content {
-    grid-template-columns: repeat(3, 1fr);
+  .menu {
+    justify-content: start;
+    display: flex;
+    &__right {
+      flex-grow: 3;
+    }
   }
-  .menu__right {
-    grid-template-columns: repeat(2, 1fr);
+  .proposals {
+    &__search {
+      width: 100%;
+    }
   }
 }
 @include _767 {
@@ -531,6 +541,11 @@ export default {
     }
     .menu__right {
       grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .card {
+    &__content {
+      width: 80%;
     }
   }
 }

@@ -1,19 +1,21 @@
 <template>
   <div class="proposal">
     <div class="proposal__body">
-      <div class="proposal__back back">
-        <div class="back__container">
-          <nuxt-link
-            class="back__link"
-            to="/proposals"
-          >
-            <span class="back__icon icon-short_left" />
-            {{ $t('proposal.back') }}
-          </nuxt-link>
+      <div class="proposal__header-wrapper">
+        <div class="proposal__back back">
+          <div class="back__container">
+            <nuxt-link
+              class="back__link"
+              to="/proposals"
+            >
+              <span class="back__icon icon-short_left" />
+              {{ $t('proposal.back') }}
+            </nuxt-link>
+          </div>
         </div>
-      </div>
-      <div class="proposal__header">
-        {{ $t('proposal.title') }}
+        <div class="proposal__header">
+          {{ $t('proposal.title') }}
+        </div>
       </div>
       <div class="proposal__content content">
         <div class="proposal__info info content__column">
@@ -199,6 +201,17 @@
           :fields="historyTableFields"
           :items="prepareTableData(historyTableData)"
         />
+        <div class="history__proposals">
+          <p class="history__subtitle">
+            {{ $t('proposal.proposalHistory') }}
+          </p>
+          <item
+            v-for="(proposal, index) in historyTableData"
+            :key="index"
+            :item="proposal"
+            :is-last="historyTableData[index] === historyTableData[historyTableData.length - 1]"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -785,5 +798,73 @@ export default {
   color: #8D96A2;
   border: 1px solid rgba(0, 0, 0, 0);
   min-width: 140px;
+}
+@include _767 {
+  .proposal {
+    &__header {
+      &-wrapper {
+      background: $white;
+      display: grid;
+      padding: 20px;
+      margin-bottom: 20px;
+      }
+    }
+    &__back, &__header {
+      margin: 0;
+    }
+    &__body {
+      margin: 22px 39px;
+    }
+  }
+  .content {
+    grid-template-columns: 1fr;
+    grid-row-gap: 20px;
+  }
+  .history {
+    &__table {
+      display: none;
+    }
+    &__proposals {
+      display: block;
+      background: $white;
+      padding: 20px;
+      margin-top: 15px;
+      border-radius: 6px;
+    }
+    &__subtitle {
+      font-size: 20px;
+    }
+  }
+}
+@include _480 {
+  .proposal {
+    &__body {
+      margin: 22px 0 0 0;
+    }
+  }
+  .content {
+    &__column {
+      @include mobile-container;
+    }
+  }
+  .info{
+    &__transactions {
+      grid-gap: 60px;
+      margin-top: 20px;
+    }
+  }
+  .forum {
+    &__link {
+      padding: 0;
+    }
+  }
+}
+@include _380 {
+  .info{
+    &__transactions {
+      grid-gap: 10px;
+      grid-template-columns: 1fr;
+    }
+  }
 }
 </style>

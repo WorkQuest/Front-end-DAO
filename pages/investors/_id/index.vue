@@ -214,6 +214,17 @@
               :fields="walletTableFields"
             />
           </div>
+          <div class="profile__history">
+            <p class="profile__subtitle">
+              {{ $t('wallet.table.trx') }}
+            </p>
+            <item
+              v-for="(transaction, index) in transactionsData"
+              :key="index"
+              :item="transaction"
+              :is-last="transactionsData[index] === transactionsData[transactionsData.length - 1]"
+            />
+          </div>
         </div>
       </div>
       <base-pager
@@ -438,6 +449,9 @@ export default {
   &__table{
     margin: 15px 0;
   }
+  &__history {
+    display: none;
+  }
 }
 .info {
   &__base {
@@ -593,5 +607,50 @@ export default {
     margin-top: -3px;
   }
 }
-
+@include _767 {
+  .investor {
+    width: 100vw;
+    display: block;
+    margin: 0;
+  }
+  .info {
+    grid-template-rows: 3fr 1fr auto;
+    &__base {
+      grid-template-columns: 1fr;
+    }
+    &__additional {
+      grid-template-columns: 1fr;
+    }
+    &__avatar {
+      height: 100%;
+      width: 370px;
+    }
+  }
+  .action {
+    justify-content: space-around;
+  }
+  .profile {
+    &__table {
+      display: none;
+    }
+    &__history {
+      display: block;
+      background: $white;
+      padding: 16px;
+      margin: 15px 0;
+    }
+    &__subtitle {
+      font-size: 20px;
+    }
+  }
+  .title {
+    margin-left: 15px;
+  }
+}
+@include _575 {
+  .title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
 </style>
