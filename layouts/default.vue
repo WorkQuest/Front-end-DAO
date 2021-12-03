@@ -469,6 +469,8 @@ export default {
   async mounted() {
     this.GetLocation();
     this.localUserData = JSON.parse(JSON.stringify(this.userData));
+
+    await this.$store.dispatch('web3/connectMetamask');
   },
   methods: {
     toRoute(path) {
