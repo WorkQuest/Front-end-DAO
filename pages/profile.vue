@@ -72,7 +72,7 @@
             <base-field
               v-for="(cell, i) in nameInputsArr"
               :key="i"
-              v-model="cell.model"
+              v-model="localUserData[cell.key]"
               :placeholder="cell.placeholder || $t('settings.nameInput')"
               :disabled="!isProfileEdit"
               rules="required"
@@ -185,8 +185,8 @@
           <div class="profile-cont__social social">
             <base-field
               v-for="cell in socialInputs"
-              :key="cell.id"
-              v-model="cell.model"
+              :key="cell.key"
+              v-model="localUserData.additionalInfo.socialNetwork[cell.key]"
               :placeholder="cell.placeholder || $t('settings.socialInput')"
               :disabled="!isProfileEdit"
               is-hide-error
@@ -319,26 +319,22 @@ export default {
       } = localUserData.additionalInfo.socialNetwork;
 
       this.socialInputs = [{
-        id: 'instagram',
-        model: instagram,
+        key: 'instagram',
         placeholder: userInstagram,
         imgClass: 'icon-instagram',
       },
       {
-        id: 'facebook',
-        model: facebook,
+        key: 'facebook',
         placeholder: userFacebook,
         imgClass: 'icon-facebook',
       },
       {
-        id: 'linkedin',
-        model: linkedin,
+        key: 'linkedin',
         placeholder: userLinkedin,
         imgClass: 'icon-LinkedIn',
       },
       {
-        id: 'twitter',
-        model: twitter,
+        key: 'twitter',
         placeholder: userTwitter,
         imgClass: 'icon-twitter',
       }];
@@ -358,10 +354,12 @@ export default {
       // }
 
       this.nameInputsArr = [{
+        key: 'firstName',
         model: localUserData.firstName,
         placeholder: firstName,
       },
       {
+        key: 'lastName',
         model: localUserData.lastName,
         placeholder: lastName,
       }];
@@ -501,11 +499,15 @@ export default {
     async editUserData() {
       const {
         avatarId, firstName, lastName, location, additionalInfo: {
-          secondMobileNumber, address, socialNetwork, description, company, CEO, website,
+          address, socialNetwork, description, company, CEO, website,
         }, priority, workplace, wagePerHour, specializationKeys, educations, workExperiences,
       } = this.localUserData;
 
-      if (!firstName || !lastName || (secondMobileNumber && !this.updatedPhone?.isValid)) return;
+      const { isValid, formatInternational } = this.updatedPhone;
+
+      const secondMobileNumber = formatInternational.replace(/\s/g, '') || '';
+
+      if (!firstName || !lastName || (secondMobileNumber && !isValid)) return;
 
       const { avatar_change, userRole } = this;
 
@@ -514,16 +516,12 @@ export default {
 
         const formData = new FormData();
         formData.append('image', file);
-        try {
-          const response = {
-            url,
-            formData: file,
-            type: file.type,
-          };
-          await this.$store.dispatch('user/setImage', response);
-        } catch (error) {
-          console.log(error);
-        }
+        const response = {
+          url,
+          formData: file,
+          type: file.type,
+        };
+        await this.$store.dispatch('user/setImage', response);
       }
 
       let config = {
@@ -572,8 +570,10 @@ export default {
         method,
       };
 
-      await this.$store.dispatch('user/editProfile', payload);
-      this.showModalSave();
+      const response = await this.$store.dispatch('user/editProfile', payload);
+
+      if (response) this.showModalSave();
+
       this.setCurrData();
     },
   },
