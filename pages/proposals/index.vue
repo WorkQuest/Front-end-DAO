@@ -18,7 +18,6 @@
                 <div class="info__btn-container">
                   <base-btn
                     mode="ver"
-                    :disabled="!isConnected"
                     @click="addProposalModal"
                   >
                     {{ $t('proposals.addProposals') }}
@@ -69,16 +68,22 @@ export default {
     },
   },
   async mounted() {
-    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+    await this.checkConnection();
   },
   methods: {
     isCloseInfo() {
       this.isShowInfo = !this.isShowInfo;
     },
-    addProposalModal() {
+    async addProposalModal() {
+      const ok = await this.checkConnection();
+      if (!ok) return;
       this.ShowModal({
         key: modals.addProposal,
       });
+    },
+    async checkConnection() {
+      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      return this.isConnected;
     },
   },
 };

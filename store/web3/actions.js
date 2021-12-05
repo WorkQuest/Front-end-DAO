@@ -58,7 +58,7 @@ export default {
   },
 
   /* Proposals */
-  async addProposal({ commit }, { address, description }) {
-    return await addProposal(address, description);
+  async addProposal({ commit }, description) {
+    return await addProposal(description);
   },
 };

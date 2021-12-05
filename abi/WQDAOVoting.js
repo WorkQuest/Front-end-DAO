@@ -255,19 +255,9 @@ export default [
   {
     inputs: [
       {
-        internalType: 'address',
-        name: '_recipient',
-        type: 'address',
-      },
-      {
         internalType: 'string',
         name: '_description',
         type: 'string',
-      },
-      {
-        internalType: 'bytes',
-        name: '_byteCode',
-        type: 'bytes',
       },
     ],
     name: 'addProposal',
@@ -341,6 +331,94 @@ export default [
     name: 'executeVoting',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'offset',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'limit',
+        type: 'uint256',
+      },
+    ],
+    name: 'getProposals',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'count',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'offset',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'limit',
+            type: 'uint256',
+          },
+          {
+            components: [
+              {
+                internalType: 'uint256',
+                name: 'id',
+                type: 'uint256',
+              },
+              {
+                internalType: 'address',
+                name: 'proposer',
+                type: 'address',
+              },
+              {
+                internalType: 'uint256',
+                name: 'forVotes',
+                type: 'uint256',
+              },
+              {
+                internalType: 'uint256',
+                name: 'againstVotes',
+                type: 'uint256',
+              },
+              {
+                internalType: 'uint256',
+                name: 'numVoters',
+                type: 'uint256',
+              },
+              {
+                internalType: 'uint256',
+                name: 'proposalExpireTime',
+                type: 'uint256',
+              },
+              {
+                internalType: 'bool',
+                name: 'active',
+                type: 'bool',
+              },
+              {
+                internalType: 'string',
+                name: 'description',
+                type: 'string',
+              },
+            ],
+            internalType: 'struct WQDAOVoting.ProposalInfo[]',
+            name: 'pages',
+            type: 'tuple[]',
+          },
+        ],
+        internalType: 'struct WQDAOVoting.ProposalPages',
+        name: 'page',
+        type: 'tuple',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -559,16 +637,6 @@ export default [
         internalType: 'bool',
         name: 'active',
         type: 'bool',
-      },
-      {
-        internalType: 'address',
-        name: 'recipient',
-        type: 'address',
-      },
-      {
-        internalType: 'bytes',
-        name: 'byteCode',
-        type: 'bytes',
       },
       {
         internalType: 'string',

@@ -99,7 +99,7 @@
                 <base-btn
                   mode="outline"
                   class="uploader__btn"
-                  @click="test"
+                  @click="uploadFile"
                 >
                   {{ $t('meta.addFile') }}
                   <template v-slot:right>
@@ -215,14 +215,10 @@ export default {
       this.pickerValue = Number(this.pickerValue) - 1;
     },
     async addProposal() {
-      // TODO: Где-то нужно вводить адрес контракта голосования
-      const res = await this.$store.dispatch('web3/addProposal', {
-        address: process.env.WQ_TOKEN,
-        description: this.descriptionInput,
-      });
-      console.log(res);
+      const res = await this.$store.dispatch('web3/addProposal', this.descriptionInput);
+      console.log(res, res.msg);
     },
-    test() {
+    uploadFile() {
       console.log('1');
     },
   },

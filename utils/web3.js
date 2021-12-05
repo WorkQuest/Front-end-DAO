@@ -136,10 +136,9 @@ export const disconnect = () => {
 };
 
 /* Proposals */
-export const addProposal = async (address, description) => {
+export const addProposal = async (description) => {
   try {
-    const tempSignature = web3Wallet.eth.sign('addProposal()', address);
-    return await sendTransaction('addProposal', abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [address, description, tempSignature]);
+    return await sendTransaction('addProposal', abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [description]);
   } catch (e) {
     return error(errorCodes.AddProposal, e.message, e);
   }
