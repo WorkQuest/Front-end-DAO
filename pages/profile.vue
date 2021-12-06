@@ -79,6 +79,7 @@
               :name="$t('modals.nameField')"
               mode="icon"
               mode-error="small"
+              class="profile-cont__field"
             >
               <template v-slot:left>
                 <span class="icon icon__input icon-user" />
@@ -92,6 +93,7 @@
               mode="icon"
               :name="$t('modals.addressField')"
               mode-error="small"
+              class="profile-cont__field"
               @focus="changeFocusValue"
               @input="getPositionData"
             >
@@ -135,6 +137,7 @@
               rules="required|email"
               :name="$t('modals.emailField')"
               mode-error="small"
+              class="profile-cont__field"
             >
               <template v-slot:left>
                 <span class="icon icon__input icon-mail" />
@@ -143,6 +146,7 @@
             <div
               v-for="cell in phoneInputsArr"
               :key="cell.id"
+              class="profile-cont__field"
             >
               <vue-phone-number-input
                 v-if="isProfileEdit"
@@ -586,7 +590,6 @@ export default {
   @include main;
   @include text-simple;
   &__body {
-    margin-top: 30px;
     max-width: 1180px;
     height: 100%;
   }
@@ -623,6 +626,7 @@ export default {
   background-color: #0083C7;
   color: #FFFFFF;
   border-radius: 6px;
+  margin-top: 30px;
 
   &__body {
     display: grid;
@@ -656,10 +660,9 @@ export default {
   }
 
   &__image {
-    width: max-content;
     height: 100%;
-
     margin-left: auto;
+    width: auto;
   }
 }
 
@@ -944,6 +947,91 @@ export default {
   &__loader {
     position: absolute !important;
     background: transparent !important;
+  }
+}
+
+@include _1199 {
+  .wq-profile {
+
+    &__body {
+      padding: 0 20px;
+    }
+  }
+}
+
+@include _991 {
+  .banner {
+    &__body {
+      grid-template-columns: 1fr;
+    }
+    &__image {
+      grid-row: 1;
+    }
+  }
+  .profile-cont {
+    &__main-data {
+      grid-template-columns: 151px 1fr;
+    }
+    &__avatar {
+      grid-row: 1/7;
+    }
+    &__status {
+      grid-column: 2;
+    }
+    &__social {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .security {
+    &__password,
+    &__auth {
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+@include _767 {
+  .security {
+    grid-template-columns: 1fr;
+
+    &__password,
+    &__auth {
+      display: flex;
+      justify-items: unset;
+      justify-content: space-between;
+    }
+  }
+}
+
+@include _575 {
+  .profile-cont {
+
+    &__avatar {
+      grid-row: 1;
+      margin-bottom: 17px;
+    }
+
+    &__field {
+      grid-column: 1/3;
+    }
+
+    &__social {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .security {
+    &__password,
+    &__auth {
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+      justify-content: center;
+    }
   }
 }
 
