@@ -813,12 +813,16 @@ export default {
       margin: 0;
     }
     &__body {
-      margin: 22px 39px;
+      margin: 22px 5px;
+      @include mobile-container;
     }
   }
   .content {
     grid-template-columns: 1fr;
     grid-row-gap: 20px;
+    &__column {
+      @include mobile-container;
+    }
   }
   .history {
     &__table {
@@ -835,22 +839,17 @@ export default {
       font-size: 20px;
     }
   }
+  .info{
+    &__transactions {
+      grid-gap: 60px;
+      margin-top: 20px;
+    }
+  }
 }
 @include _480 {
   .proposal {
     &__body {
       margin: 22px 0 0 0;
-    }
-  }
-  .content {
-    &__column {
-      @include mobile-container;
-    }
-  }
-  .info{
-    &__transactions {
-      grid-gap: 60px;
-      margin-top: 20px;
     }
   }
   .forum {

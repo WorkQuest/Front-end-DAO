@@ -407,7 +407,7 @@ export default {
   &__content {
     display: grid;
     grid-template-rows: 0.8fr 0.7fr 1fr 0.5fr;
-    width: 240px;
+    width: 80%;
     padding: 20px 0px;
   }
   &__header {
@@ -494,7 +494,7 @@ export default {
 }
 @include _991 {
   .menu {
-    justify-content: start;
+    justify-content: flex-start;
     display: flex;
     &__right {
       flex-grow: 3;
@@ -504,6 +504,9 @@ export default {
     &__search {
       width: 100%;
     }
+  }
+  .content {
+    grid-gap: 10px;
   }
 }
 @include _767 {
@@ -531,22 +534,22 @@ export default {
       display: flex;
       flex-direction: column;
       grid-template-columns: auto;
+      &__right {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      &__drop {
+        width: 100vw;
+      }
     }
     .menu__left {
       display: flex;
-      flex-direction: column;
     }
     .content {
       grid-template-columns: 1fr;
     }
-    .menu__right {
-      grid-template-columns: repeat(2, 1fr);
-    }
   }
-  .card {
-    &__content {
-      width: 80%;
-    }
-  }
+  .dd::v-deep .dd__btn {
+        padding: 0 10px;
+      }
 }
 </style>

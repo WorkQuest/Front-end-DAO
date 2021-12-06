@@ -459,7 +459,7 @@ export default {
     }
   }
   .table {
-    width: 1180px;
+    width: 100%;
   }
 }
 @include _767 {

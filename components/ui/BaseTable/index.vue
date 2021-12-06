@@ -224,6 +224,7 @@ export default {
   }
   @include _991 {
     .table {
+      width: 99%;
       &__row {
         font-size: 10px !important;
       }

@@ -1325,7 +1325,6 @@ export default {
     width: 100vw;
   }
 }
-@include _991 {}
 @include _767 {
   .header {
      &__links {
@@ -1342,11 +1341,14 @@ export default {
       display: flex;
       flex-direction: column-reverse;
     }
-    &__menu {
+    &__menu-inside {
       display: grid;
       grid-template-columns: 1fr 1fr;
       grid-gap: 20px;
       margin: 30px 0;
+    }
+    &__subtitle {
+      display: none;
     }
   }
   .links {
