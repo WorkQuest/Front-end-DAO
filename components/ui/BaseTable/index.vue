@@ -40,7 +40,7 @@
           class=" table__link"
         >
           <img
-            src="~/assets/img/ui/avatar.svg"
+            :src="el.item.avatar || require('~/assets/img/app/avatar_empty.png')"
             alt="userAvatar"
             class="table__avatar"
           >

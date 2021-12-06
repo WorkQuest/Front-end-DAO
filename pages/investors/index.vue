@@ -12,12 +12,14 @@
       />
 
       <base-table
+        v-if="investors.length"
         class="investors__table"
         :fields="historyTableFields"
-        :items="historyTableData"
+        :items="investors"
       />
       <base-pager
-        v-model="pages"
+        v-if="investorsCount"
+        v-model="currPage"
         class="investors__pagination"
         :total-pages="totalPages"
       />
@@ -27,13 +29,18 @@
 
 <script>
 
+import { mapGetters } from 'vuex';
+
 export default {
 
   data() {
     return {
+      filter: {
+        limit: 20,
+        offset: 0,
+      },
       search: '',
-      pages: 1,
-      totalPages: 5,
+      currPage: 1,
       historyTableFields: [
         {
           key: 'avatar', label: this.$t('investors.table.name'),
@@ -45,7 +52,7 @@ export default {
           key: 'investorAddress', label: this.$t('investors.table.address'),
         },
         {
-          key: 'copy', label: '',
+          key: 'copy', label: '', sortable: true,
         },
         {
           key: 'stake', label: this.$t('investors.table.stake'), sortable: true,
@@ -63,87 +70,41 @@ export default {
           key: 'delegate', label: '',
         },
       ],
-      historyTableData: [
-        {
-          avatar: '',
-          name: 'user@gmail.com',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 1,
-        },
-        {
-          avatar: '',
-          name: 'Main Node',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 2,
-        },
-        {
-          avatar: '',
-          name: 'Turing',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 3,
-
-        },
-        {
-          avatar: '',
-          name: 'user@gmail.com',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 4,
-        },
-        {
-          avatar: '',
-          name: 'Spacebot',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 5,
-        },
-        {
-          avatar: '',
-          name: 'user@gmail.com',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 6,
-        },
-        {
-          avatar: '',
-          name: 'user@gmail.com',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 7,
-        },
-      ],
     };
+  },
+  computed: {
+    ...mapGetters({
+      investors: 'investors/getInvestorsList',
+      investorsCount: 'investors/getInvestorsCount',
+    }),
+    totalPages() {
+      const { investorsCount, filter: { limit } } = this;
+
+      return Math.ceil(investorsCount / limit);
+    },
+  },
+  watch: {
+    async currPage() {
+      const { currPage, filter: { limit } } = this;
+
+      this.filter.offset = (currPage - 1) * limit;
+
+      this.SetLoader(true);
+      await this.getInvestors();
+      this.SetLoader(false);
+    },
+  },
+  beforeMount() {
+    this.getInvestors();
+  },
+  methods: {
+    async getInvestors() {
+      const config = {
+        params: this.filter,
+      };
+
+      await this.$store.dispatch('investors/getInvestors', config);
+    },
   },
 };
 </script>
@@ -153,7 +114,7 @@ export default {
   @include main;
   @include text-simple;
   &__body {
-    margin: 30px 0 0px 0px;
+    margin-top: 30px;
     max-width: 1180px;
     height: 100%;
   }
