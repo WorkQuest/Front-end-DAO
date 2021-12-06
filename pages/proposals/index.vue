@@ -44,6 +44,7 @@ import { mapGetters } from 'vuex';
 import proposalCards from '~/components/app/Cards/proposalCards';
 import modals from '~/store/modals/modals';
 import { Chains } from '~/utils/enums';
+import { getProposals } from '~/utils/web3';
 
 export default {
   name: 'Proposals',

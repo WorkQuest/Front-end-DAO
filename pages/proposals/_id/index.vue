@@ -62,7 +62,7 @@
               {{ $t('proposal.description') }}
             </div>
             <div class="description__value">
-              {{ descriptionValue }}
+              {{ description }}
             </div>
           </div>
           <div class="info__forum forum">
@@ -140,14 +140,14 @@
               <base-btn
                 mode="delete"
                 class="btn__votes btn__votes_size"
-                @click="onVote('NO')"
+                @click="toDelegate(false)"
               >
                 {{ $t('proposal.no') }}
               </base-btn>
               <base-btn
                 mode="approve"
                 class="btn__votes btn__votes_size btn__votes_green"
-                @click="onVote('YES')"
+                @click="toDelegate(true)"
               >
                 {{ $t('proposal.yes') }}
               </base-btn>
@@ -206,6 +206,9 @@
 
 <script>
 import moment from 'moment';
+import { mapGetters } from 'vuex';
+import { Chains } from '~/utils/enums';
+import modals from '~/store/modals/modals';
 
 export default {
   data() {
@@ -282,76 +285,29 @@ export default {
           name: 'some_doc2.pdf',
           size: '1.5mb',
           img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '3',
-          type: 'doc',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '4',
-          type: 'img',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '5',
-          type: 'img',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '6',
-          type: 'img',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '7',
-          type: 'img',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
         },
       ],
-      hash: '11400714819323198485',
-      descriptionValue: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid animi, ea exercitationem fugit incidunt nesciunt nisi non officiis optio quaerat rem similique suscipit. Ab ad asperiores, commodi consequatur cum delectus distinctio eaque fugiat impedit iste laborum laudantium maxime nam odio perspiciatis quibusdam quisquam ratione sequi suscipit ullam vel veritatis voluptate.',
+      hash: 'what  here?',
+      description: null,
       results: {
         percents: {
-          yes: '65',
-          no: '35',
+          yes: 0,
+          no: 0,
         },
         votes: {
-          yes: 10,
-          no: 2,
+          yes: 0,
+          no: 0,
         },
         isVoted: false,
         vote: 'YES',
       },
-      cards: [
-        {
-          voting: 1,
-          status: 0,
-          date: `${moment('20210520', 'YYYYMMDD').format('ll')} - ${moment().format('ll')}`,
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: `${moment('20210520', 'YYYYMMDD').format('ll')} - ${moment().format('ll')}`,
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 2,
-          date: `${moment('20210520', 'YYYYMMDD').format('ll')} - ${moment().format('ll')}`,
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-      ],
       isDescending: true,
     };
   },
   computed: {
+    ...mapGetters({
+      isConnected: 'web3/getWalletIsConnected',
+    }),
     sortingClass() {
       return [
         { 'icon-Sorting_descending': this.isDescending },
@@ -359,14 +315,48 @@ export default {
       ];
     },
   },
-  mounted() {
+  async mounted() {
+    this.SetLoader(true);
+    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+    if (!this.isConnected) return;
+
     const URLString = document.URL;
     this.idCard = parseInt(URLString.split('/').slice(-1)[0], 10);
-    const card = this.cards[this.idCard - 1];
-    this.voting = card.voting;
-    this.status = card.status;
-    this.date = card.date;
-    this.about = card.about;
+
+    const res = await this.$store.dispatch('web3/getProposalInfoById', this.idCard);
+    if (!res.ok) return;
+    const { result } = res.result;
+
+    console.log(result); // del
+
+    const {
+      forVotes, againstVotes, active, description, startTime,
+    } = result;
+
+    this.results.votes.no = againstVotes;
+    this.results.votes.yes = forVotes;
+
+    const sumVotes = againstVotes + forVotes;
+    if (sumVotes <= 0) {
+      this.results.percents.yes = 0;
+      this.results.percents.no = 0;
+    } else {
+      if (forVotes > 0) {
+        this.results.percents.yes = Math.ceil((forVotes / sumVotes) * 10) / 10;
+      } else this.results.percents.yes = 0;
+      if (againstVotes > 0) {
+        this.results.percents.no = Math.ceil((againstVotes / sumVotes) * 10) / 10;
+      } else this.results.percents.no = 0;
+    }
+
+    const start = this.$moment(new Date(startTime * 1000));
+    this.voting = this.idCard;
+    this.status = active ? 0 : 1;
+    this.date = `${start.format('ll')} - ${start.add(1, 'M').format('ll')}`;
+    this.description = description;
+    this.about = '*TITLE from back*';
+
+    this.SetLoader(false);
   },
   methods: {
     cardsStatusColor(idx) {
@@ -404,9 +394,39 @@ export default {
           return newData;
       }
     },
-    onVote(value) {
+    async toDelegate(value) {
+      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      if (!this.isConnected) return;
+
+      const account = await this.$store.dispatch('web3/getAccount');
+      const [delegated, voteThreshold] = await Promise.all([
+        this.$store.dispatch('web3/getVotes', account.address),
+        this.$store.dispatch('web3/getVoteThreshold'),
+      ]);
+      console.log(delegated.result, voteThreshold.result, 'em');
+      await this.$store.dispatch('modals/show', {
+        key: modals.delegate,
+        investorAddress: account.address,
+        min: voteThreshold.result,
+        callback: async () => this.onVote(value),
+      });
+    },
+    async onVote(value) {
+      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      if (!this.isConnected) return;
+
+      console.log('vote: ', value);
+      this.SetLoader(true);
+      const res = await this.$store.dispatch('web3/doVote', { id: this.idCard, value });
+      if (!res.ok) {
+        this.SetLoader(false);
+        return;
+      }
+
+      console.log('do vote res:', res);
       this.results.isVoted = true;
       this.results.vote = value;
+      this.SetLoader(false);
     },
   },
 };

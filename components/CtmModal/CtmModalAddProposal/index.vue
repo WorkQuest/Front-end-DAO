@@ -4,7 +4,7 @@
     :title="$t('modals.addProposal')"
   >
     <div class="addProposal__content content">
-      <validation-observer v-slot="{handleSubmit, validated, passed, invalid}">
+      <validation-observer v-slot="{handleSubmit, valid}">
         <div class="content__voting">
           <div class="content__field">
             <base-field
@@ -34,16 +34,20 @@
         <div class="content__field field">
           <div class="content-field__description description">
             <label
-              for="descriptionInput"
+              for="description"
               class="description__header"
             >
               {{ $t('modals.description') }}
             </label>
-            <textarea
-              id="descriptionInput"
-              v-model="descriptionInput"
-              class="description__textarea"
-            />
+            <validation-provider rules="required">
+              <textarea
+                id="description"
+                v-model="descriptionInput"
+                class="description__textarea"
+                name="description"
+                maxLength="2000"
+              />
+            </validation-provider>
           </div>
         </div>
         <div class="content__field field">
@@ -55,6 +59,7 @@
               :is-show-download="false"
               rules="required|alpha_num"
               :name="$t('modals.recepientAddressField')"
+              @remove="removeDocument"
             >
               <template v-slot:actionButton>
                 <input
@@ -67,7 +72,7 @@
                 <base-btn
                   mode="outline"
                   class="uploader__btn"
-                  @click="uploadFile"
+                  @click="$refs.fileUpload.click()"
                 >
                   {{ $t('meta.addFile') }}
                   <template v-slot:right>
@@ -88,7 +93,7 @@
           </base-btn>
           <base-btn
             class="action__add"
-            :disabled="invalid"
+            :disabled="!valid"
             @click="handleSubmit(addProposal)"
           >
             {{ $t('meta.addProposal') }}
@@ -116,15 +121,6 @@ export default {
       documents: [],
       docsLimit: 10,
       imagesLimit: 10,
-      /* documents: [
-        {
-          id: '1',
-          type: 'doc',
-          name: 'some_document1.pdf',
-          size: '1.2mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        },
-      ], */
     };
   },
   computed: {
@@ -150,11 +146,16 @@ export default {
       this.pickerValue = Number(this.pickerValue) - 1;
     },
     async addProposal() {
+      this.SetLoader(true);
       const res = await this.$store.dispatch('web3/addProposal', this.descriptionInput);
-      console.log(res, res.msg);
+      console.log(res);
+      if (res.ok) {
+        this.close();
+      }
+      this.SetLoader(false);
     },
-    uploadFile() {
-      this.$refs.fileUpload.click();
+    removeDocument(id) {
+      this.documents = this.documents.filter((item) => item.id !== id);
     },
     handleFileSelected(e) {
       if (!e.target.files[0]) return;
@@ -171,23 +172,21 @@ export default {
       const { size, name } = file;
       const sizeKb = size / 1000;
       const sizeMb = sizeKb / 1000;
-
+      if (sizeMb > 20) return; // more 20mb
       let fileSize;
       if (sizeMb < 0.1) {
         fileSize = `${Math.round(sizeKb * 10) / 10}kb`;
       } else {
         fileSize = `${Math.round(sizeMb * 10) / 10}mb`;
       }
-      if (fileSize > 100) return; // more 100mb
       this.documents.push({
         id: this.fileId,
-        img: URL.createObjectURL(event.target.files[0]),
+        img: URL.createObjectURL(file),
         type,
         file,
         name,
         size: fileSize,
       });
-      console.log(file);
       this.fileId += 1;
     },
   },

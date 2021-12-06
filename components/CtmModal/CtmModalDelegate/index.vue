@@ -6,7 +6,7 @@
     <div class="delegate__content content">
       <div class="content__adress adress">
         <label
-          for="invsetorAdress"
+          for="investorAddress"
           class="adress__label"
         >{{ $t('modals.investorAddress') }}</label>
         <base-field
@@ -31,7 +31,8 @@
             id="tokensNumber"
             v-model="tokensAmount"
             class="footer__body"
-            :placeholder="$t('modals.placeholder')"
+            placeholder="1000"
+            :rules="`required${min}`"
           />
           <base-btn
             class="footer__maximum"
@@ -44,6 +45,7 @@
       </div>
       <base-btn
         class="delegate__done"
+        @click="delegate"
       >
         {{ $t('modals.delegate') }}
       </base-btn>
@@ -54,25 +56,50 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
+import { Chains } from '~/utils/enums';
 
 export default {
   name: 'Delegate',
   data() {
     return {
       tokensAmount: '',
+      balance: 0,
     };
   },
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
+      isConnected: 'web3/getWalletIsConnected',
     }),
+    min() {
+      return this.options?.min ? `|min_value:${this.options.min}` : '';
+    },
+  },
+  async mounted() {
+    const res = await this.$store.dispatch('web3/getBalance');
+    if (res.ok) {
+      this.balance = res.result;
+    }
   },
   methods: {
-    hide() {
+    close() {
       this.CloseModal();
     },
     maxDelegate() {
-      this.tokensAmount = this.options.stake;
+      this.tokensAmount = this.balance;
+    },
+    async delegate() {
+      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      if (!this.isConnected) return;
+
+      this.SetLoader(true);
+      const res = await this.$store.dispatch('web3/delegate', { address: this.options.investorAddress, amount: this.tokensAmount });
+      console.log('DELEGATE RES', res);
+      if (res.ok && this.options.callback) {
+        // await this.options.callback();
+      }
+      this.SetLoader(false);
+      this.close();
     },
   },
 };
@@ -80,7 +107,7 @@ export default {
 
 <style lang="scss" scoped>
 .delegate {
-  max-width: 450px !important;
+  max-width: 480px !important;
   &__content {
     padding: 20px 28px 30px 28px!important;
   }

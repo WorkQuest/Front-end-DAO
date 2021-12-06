@@ -1,5 +1,10 @@
 export default [
   {
+    inputs: [],
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -272,19 +277,6 @@ export default [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'admin',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [
       {
         internalType: 'uint256',
@@ -373,11 +365,6 @@ export default [
                 type: 'uint256',
               },
               {
-                internalType: 'address',
-                name: 'proposer',
-                type: 'address',
-              },
-              {
                 internalType: 'uint256',
                 name: 'forVotes',
                 type: 'uint256',
@@ -394,8 +381,18 @@ export default [
               },
               {
                 internalType: 'uint256',
-                name: 'proposalExpireTime',
+                name: 'startTime',
                 type: 'uint256',
+              },
+              {
+                internalType: 'uint256',
+                name: 'expireTime',
+                type: 'uint256',
+              },
+              {
+                internalType: 'address',
+                name: 'proposer',
+                type: 'address',
               },
               {
                 internalType: 'bool',
@@ -535,6 +532,16 @@ export default [
         name: '_voteToken',
         type: 'address',
       },
+      {
+        internalType: 'uint256',
+        name: '_minimumQuorum',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_votingPeriod',
+        type: 'uint256',
+      },
     ],
     name: 'initialize',
     outputs: [],
@@ -630,7 +637,12 @@ export default [
       },
       {
         internalType: 'uint256',
-        name: 'proposalExpireTime',
+        name: 'startTime',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'expireTime',
         type: 'uint256',
       },
       {
@@ -679,6 +691,32 @@ export default [
       },
     ],
     name: 'revokeRole',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'setProposalThreshold',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'setVoteThreshold',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

@@ -74,12 +74,9 @@ export default {
   },
   methods: {
     deleteFile(id) {
-      // TODO: emit up
-      // this.files = this.files.filter((file) => file.id !== id);
+      this.$emit('remove', id);
     },
-    download(id) {
-      // console.log('download file', id);
-    },
+    download(id) {},
   },
 };
 </script>

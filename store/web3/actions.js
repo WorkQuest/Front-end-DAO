@@ -6,7 +6,7 @@ import {
   getAccount,
   addProposal,
   getChainIdByChain,
-  goToChain,
+  goToChain, getProposals, getProposalInfoById, doVote, delegate, getBalance, getVoteThreshold, getVotes,
 } from '~/utils/web3';
 import modals from '~/store/modals/modals';
 
@@ -57,8 +57,31 @@ export default {
     return getAccount();
   },
 
+  /* WQToken */
+  async getBalance() {
+    return await getBalance();
+  },
+  async delegate({ commit }, { address, amount }) {
+    return await delegate(address, amount);
+  },
+
   /* Proposals */
   async addProposal({ commit }, description) {
     return await addProposal(description);
+  },
+  async getProposals({ commit }, { offset, limit }) {
+    return await getProposals(offset, limit);
+  },
+  async getProposalInfoById({ commit }, id) {
+    return await getProposalInfoById(id);
+  },
+  async doVote({ commit }, { id, value }) {
+    return await doVote(id, value);
+  },
+  async getVoteThreshold() { // minimum delegate amount
+    return await getVoteThreshold();
+  },
+  async getVotes({ commit }, address) { // delegated to address
+    return await getVotes(address);
   },
 };

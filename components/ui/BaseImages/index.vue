@@ -47,15 +47,13 @@ export default {
   },
   methods: {
     onIconClick(id) {
-      // if (this.isShowDownload) this.downloadImage(id);
-      // else this.deleteImage(id);
+      if (this.isShowDownload) this.downloadImage(id);
+      else this.deleteImage(id);
     },
     deleteImage(id) {
-      // this.images = this.images.filter((item) => item.id !== id);
+      this.$emit('remove', id);
     },
-    downloadImage(id) {
-      // console.log(`download Image ${id}`);
-    },
+    downloadImage(id) {},
   },
 };
 </script>
@@ -78,14 +76,21 @@ export default {
   &__img {
     width: 100%;
     height: 100%;
+    object-fit: cover;
   }
 
   &__size {
     display: none;
-    left: 4px;
-    bottom: 2px;
+    position: absolute;
+    left: 2px;
+    bottom: 1px;
     color: #FFFFFF;
     font-size: 12px;
+    font-weight: 500;
+  }
+
+  &:hover .image__size {
+    display: block !important;
   }
 
   &__icon {
@@ -103,10 +108,6 @@ export default {
     padding: 10px 0 0 10px;
   }
 
-  &:hover .size {
-    display: block;
-  }
-
   &:hover .icon {
     display: block;
     position: absolute;
@@ -116,7 +117,7 @@ export default {
   }
 
   &:hover .image__img {
-    filter: brightness(70%);
+    filter: brightness(60%);
   }
 }
 </style>

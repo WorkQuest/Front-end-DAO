@@ -18,6 +18,7 @@
       <base-images
         :items="images"
         :is-show-download="isShowDownload"
+        @remove="remove"
       />
       <slot name="actionButton" />
     </div>
@@ -29,10 +30,12 @@
         :items="files"
         :is-show-download="isShowDownload"
         :is-show-empty="isShowEmpty"
+        @remove="remove"
       />
       <base-images
         :items="images"
         :is-show-download="isShowDownload"
+        @remove="remove"
       />
       <slot name="actionButton" />
     </div>
@@ -65,6 +68,11 @@ export default {
     },
     images() {
       return this.items.filter((item) => item.type === 'img');
+    },
+  },
+  methods: {
+    remove(id) {
+      this.$emit('remove', id);
     },
   },
 };

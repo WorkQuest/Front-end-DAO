@@ -1,13 +1,21 @@
 // eslint-disable-next-line import/prefer-default-export
 export const errorCodes = Object.freeze({
+  ProviderIsNull: -1,
   WrongChainId: 0,
   MetamaskIsNotInstalled: 1,
   ConnectToMetamaskError: 2,
   FetchContractData: 3,
 
   // Proposals
-  AddProposal: 100,
-  VoteProposal: 101,
+  AddProposal: 100, // Добавить пропосал
+  GetAllProposals: 101, // Получение всех пропосолов
+  GetProposal: 102, //  Получить инфу о пропосоле
+  VoteProposal: 103, // Голосовать за пропосал
+  GetVoteThreshold: 104, // Минимальная сумма для голоса
+
+  GetBalance: 200, // Баланс WQT на адресе
+  Delegate: 201, // Делегирование
+  GetVotes: 202, // Делегировано адресу
 });
 
 export const ChainsId = {
