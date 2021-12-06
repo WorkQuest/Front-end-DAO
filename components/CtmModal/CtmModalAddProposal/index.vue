@@ -16,48 +16,6 @@
               :name="$t('modals.votingTopicField')"
             />
           </div>
-          <div class="content__field field">
-            <div class="field__picker picker">
-              <label
-                for="runtime__picker"
-                class="picker__header"
-              >
-                {{ $t('modals.numberOfVotes') }}
-              </label>
-              <div
-                id="runtime__picker"
-                class="picker__container"
-              >
-                <div class="btn__container btn__left">
-                  <button
-                    v-if="pickerValue > 0"
-                    class="picker__btn"
-                    @click="prevValue"
-                  >
-                    <span class="icon icon__caret icon-caret_left" />
-                  </button>
-                </div>
-                <div class="picker__body">
-                  <base-field
-                    v-model="pickerValue"
-                    type="number"
-                    value="Number"
-                    class="picker__field"
-                    text-align="center"
-                    is-hide-error
-                  />
-                </div>
-                <div class="btn__container btn__right">
-                  <button
-                    class="picker__btn"
-                    @click="addValue()"
-                  >
-                    <span class="icon icon__caret icon-caret_right" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
         <div class="content__dates">
           <div class="content__field">
@@ -66,8 +24,11 @@
               {{ votingStartInput }}
             </div>
           </div>
-          <div class="content__field date-field">
-            {{ votingEndInput }}
+          <div class="content__field">
+            {{ $t('modals.votingEnd') }}
+            <div class="date-field">
+              {{ votingEndInput }}
+            </div>
           </div>
         </div>
         <div class="content__field field">
@@ -96,6 +57,13 @@
               :name="$t('modals.recepientAddressField')"
             >
               <template v-slot:actionButton>
+                <input
+                  ref="fileUpload"
+                  class="uploader__btn_hidden"
+                  type="file"
+                  accept="image/*, .doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, .pdf"
+                  @change="handleFileSelected($event)"
+                >
                 <base-btn
                   mode="outline"
                   class="uploader__btn"
@@ -120,7 +88,7 @@
           </base-btn>
           <base-btn
             class="action__add"
-            :disabled="validated || passed || invalid "
+            :disabled="invalid"
             @click="handleSubmit(addProposal)"
           >
             {{ $t('meta.addProposal') }}
@@ -144,52 +112,19 @@ export default {
       votingStartInput: '',
       votingEndInput: '',
       descriptionInput: '',
-      documents0: [],
-      documents: [
+      fileId: 0,
+      documents: [],
+      docsLimit: 10,
+      imagesLimit: 10,
+      /* documents: [
         {
           id: '1',
           type: 'doc',
           name: 'some_document1.pdf',
           size: '1.2mb',
           img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '2',
-          type: 'doc',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '3',
-          type: 'doc',
-          name: 'some_docum2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '4',
-          type: 'img',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '5',
-          type: 'img',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '6',
-          type: 'img',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '7',
-          type: 'img',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
         },
-      ],
+      ], */
     };
   },
   computed: {
@@ -219,7 +154,41 @@ export default {
       console.log(res, res.msg);
     },
     uploadFile() {
-      console.log('1');
+      this.$refs.fileUpload.click();
+    },
+    handleFileSelected(e) {
+      if (!e.target.files[0]) return;
+      const file = e.target.files[0];
+      const type = file.type.split('/').shift() === 'image' ? 'img' : 'doc';
+
+      if (type === 'img' && this.documents.filter((item) => item.type === 'img').length >= this.imagesLimit) {
+        return;
+      }
+      if (type === 'doc' && this.documents.filter((item) => item.type === 'doc').length >= this.docsLimit) {
+        return;
+      }
+
+      const { size, name } = file;
+      const sizeKb = size / 1000;
+      const sizeMb = sizeKb / 1000;
+
+      let fileSize;
+      if (sizeMb < 0.1) {
+        fileSize = `${Math.round(sizeKb * 10) / 10}kb`;
+      } else {
+        fileSize = `${Math.round(sizeMb * 10) / 10}mb`;
+      }
+      if (fileSize > 100) return; // more 100mb
+      this.documents.push({
+        id: this.fileId,
+        img: URL.createObjectURL(event.target.files[0]),
+        type,
+        file,
+        name,
+        size: fileSize,
+      });
+      console.log(file);
+      this.fileId += 1;
     },
   },
 };
@@ -237,10 +206,7 @@ export default {
 
 .content {
   &__voting {
-    display: grid;
-    grid-template-columns: 3fr 1fr;
-    align-items: flex-start;
-    grid-gap: 25px;
+    width: 100%;
   }
   &__dates {
     display: grid;
@@ -349,6 +315,9 @@ export default {
     width: 162px !important;
     margin-left: auto;
     margin-top: 15px;
+    &_hidden {
+      display: none;
+    }
   }
 }
 

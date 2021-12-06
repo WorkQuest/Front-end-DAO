@@ -59,11 +59,13 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      files: this.items.filter((item) => item.type === 'doc'),
-      images: this.items.filter((item) => item.type === 'img'),
-    };
+  computed: {
+    files() {
+      return this.items.filter((item) => item.type === 'doc');
+    },
+    images() {
+      return this.items.filter((item) => item.type === 'img');
+    },
   },
 };
 </script>

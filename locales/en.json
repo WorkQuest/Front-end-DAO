@@ -404,7 +404,7 @@
     "votingTopic": "Voting topic",
     "votingTopicField": "voting topic",
     "numberOfVotes": "Number of Votes",
-    "votingStart": "Voting Start",
+    "votingStart": "Voting start",
     "votingStartField": "voting start",
     "undelegate": "Undelegate",
     "shure": "Are you shure to undelegate {n}?",

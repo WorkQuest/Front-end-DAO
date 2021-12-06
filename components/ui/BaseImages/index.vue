@@ -3,7 +3,7 @@
     class="images"
   >
     <div
-      v-for="(item, i) in images"
+      v-for="(item, i) in items"
       :id="i"
       :key="i"
       class="images__image image"
@@ -13,6 +13,9 @@
         alt=""
         class="image__img"
       >
+      <span class="image__size">
+        {{ item.size }}
+      </span>
       <span
         class="image__icon icon"
         :class="classIcon"
@@ -34,11 +37,6 @@ export default {
       default: true,
     },
   },
-  data() {
-    return {
-      images: this.items,
-    };
-  },
   computed: {
     classIcon() {
       return [
@@ -49,14 +47,14 @@ export default {
   },
   methods: {
     onIconClick(id) {
-      if (this.isShowDownload) this.downloadImage(id);
-      else this.deleteImage(id);
+      // if (this.isShowDownload) this.downloadImage(id);
+      // else this.deleteImage(id);
     },
     deleteImage(id) {
-      this.images = this.images.filter((item) => item.id !== id);
+      // this.images = this.images.filter((item) => item.id !== id);
     },
     downloadImage(id) {
-      console.log(`download Image ${id}`);
+      // console.log(`download Image ${id}`);
     },
   },
 };
@@ -65,20 +63,29 @@ export default {
 <style lang="scss" scoped>
 .images {
   display: inline-flex;
+  flex-wrap: wrap;
 }
 
 .image {
+  position: relative;
   overflow: hidden;
   height: 90px;
   width: 90px;
   border-radius: 6px;
   margin-right: 20px;
-  position: relative;
   margin-top: 15px;
 
   &__img {
     width: 100%;
     height: 100%;
+  }
+
+  &__size {
+    display: none;
+    left: 4px;
+    bottom: 2px;
+    color: #FFFFFF;
+    font-size: 12px;
   }
 
   &__icon {
@@ -94,6 +101,10 @@ export default {
     font-size: 25px;
 
     padding: 10px 0 0 10px;
+  }
+
+  &:hover .size {
+    display: block;
   }
 
   &:hover .icon {

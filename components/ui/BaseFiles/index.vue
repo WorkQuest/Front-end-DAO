@@ -3,7 +3,7 @@
     class="files"
   >
     <div
-      v-for="(item, i) in files"
+      v-for="(item, i) in items"
       :key="i"
       class="files__file file"
     >
@@ -43,7 +43,7 @@
       </div>
     </div>
     <div
-      v-if="!files.length && isShowEmpty"
+      v-if="!items.length && isShowEmpty"
       class="files__empty"
     >
       {{ $t('proposal.noFiles') }}
@@ -72,17 +72,13 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      files: this.items,
-    };
-  },
   methods: {
     deleteFile(id) {
-      this.files = this.files.filter((file) => file.id !== id);
+      // TODO: emit up
+      // this.files = this.files.filter((file) => file.id !== id);
     },
     download(id) {
-      console.log('download file', id);
+      // console.log('download file', id);
     },
   },
 };
