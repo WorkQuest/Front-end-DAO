@@ -182,7 +182,7 @@
             <base-btn
               class="bottom__btn"
               mode="blue"
-              @click="toggleShow(elem.id) && getSubComments(elem.id);"
+              @click="subCommentsToggle(elem.id)"
             >
               {{ !isShow ? $t('discussions.show') : $t('discussions.hide') }}
             </base-btn>
@@ -210,7 +210,7 @@
           <!--          TODO: Нужна связь с rootComments-->
           <div v-if="isShow && subComments.count > 0">
             <answers-card
-              v-for="(item) in subComments.comments"
+              v-for="(item) in filterSubComments(elem.id)"
               :key="item.id"
               :item="item"
               class="comment__replays"
@@ -262,6 +262,7 @@ export default {
       perPager: 4,
       rootCommentObjects: {},
       rootCommentArray: [],
+      filteredSubComments: [],
       totalPagesValue: 1,
       discussionId: '',
       isFavorite: false,
@@ -315,6 +316,17 @@ export default {
     this.SetLoader(false);
   },
   methods: {
+    subCommentsToggle(rootCommentId) {
+      this.getSubComments(rootCommentId);
+      this.toggleShow(rootCommentId);
+    },
+    async toggleShow(rootCommentId) {
+      return !!rootCommentId;
+    },
+    filterSubComments(rootCommentId) {
+      const subComments = this.subComments.comments;
+      return subComments.filter((subComment) => subComment.rootCommentId === rootCommentId);
+    },
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
     },
@@ -357,9 +369,6 @@ export default {
       await this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
       this.isAddComment = false;
       this.subCommentInput = '';
-    },
-    async toggleShow() {
-      this.isShow = !this.isShow;
     },
     toggleDiscussion() {
       if (this.isLiked) {
