@@ -86,7 +86,7 @@
                 <span
                   :class="{'bottom__like_choosen' : isLiked}"
                   class="icon-heart_fill bottom__like"
-                  @click="!isLiked ? likeDiscussion : dislikeDiscussion"
+                  @click="toggleDiscussion()"
                 />
               </button>
               <div class="bottom__counter bottom__counter_right">
@@ -196,12 +196,10 @@
                 {{ elem.amountSubComments }}
               </div>
               <button class="bottom__like">
-                <!--                TODO: Заменить переменную-->
                 <span
                   :class="{'bottom__like_choosen' : isVote}"
                   class="icon-heart_fill bottom__like"
-                  @click="!isVote ?
-                    addLikeOnComment(elem.id) : deleteLikeOnComment(elem.id)"
+                  @click="toggleLikeOnComment(elem.id)"
                 />
               </button>
               <div class="bottom__counter bottom__counter_right">
@@ -363,6 +361,13 @@ export default {
     async toggleShow() {
       this.isShow = !this.isShow;
     },
+    toggleDiscussion() {
+      if (this.isLiked) {
+        this.dislikeDiscussion();
+      } else {
+        this.likeDiscussion();
+      }
+    },
     async dislikeDiscussion() {
       this.isLiked = false;
       await this.$store.dispatch('discussions/deleteLikeOnDiscussion', this.discussionId);
@@ -372,6 +377,14 @@ export default {
       this.isLiked = true;
       await this.$store.dispatch('discussions/addLikeOnDiscussion', this.discussionId);
       await this.getCurrentDiscussion();
+    },
+    async toggleLikeOnComment(commentId) {
+      if (this.isVote) {
+        await this.deleteLikeOnComment(commentId);
+      } else {
+        await this.addLikeOnComment(commentId);
+      }
+      await this.getRootComments();
     },
     async addLikeOnComment(commentId) {
       this.isVote = true;
