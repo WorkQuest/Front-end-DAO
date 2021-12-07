@@ -132,9 +132,8 @@
             <base-field
               v-model="localUserData.email"
               :placeholder="localUserData.email || $t('settings.addressInput')"
-              :disabled="!isProfileEdit"
+              disabled
               mode="icon"
-              rules="required|email"
               :name="$t('modals.emailField')"
               mode-error="small"
               class="profile-cont__field"
