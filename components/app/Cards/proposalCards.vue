@@ -407,8 +407,8 @@ export default {
   &__content {
     display: grid;
     grid-template-rows: 0.8fr 0.7fr 1fr 0.5fr;
-    width: 80%;
-    padding: 20px 0px;
+    width: 100%;
+    padding: 20px;
   }
   &__header {
     display: flex;
@@ -518,7 +518,7 @@ export default {
   }
   .search {
     grid-template-columns: auto auto;
-    padding: 0 10px;
+    // margin: 0 10px;
     grid-gap: 10px;
     &__toggle {
       display: none;

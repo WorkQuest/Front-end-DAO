@@ -231,6 +231,7 @@ export default {
     display: grid;
     &__separator {
         border: none;
+        padding-bottom: 0;
     }
     &__hash {
       font-weight: 600;

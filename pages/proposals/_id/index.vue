@@ -715,6 +715,9 @@ export default {
   &__table {
     margin-top: 15px;
   }
+  &__proposals {
+    display: none;
+  }
 }
 
 .menu {
@@ -799,11 +802,21 @@ export default {
   border: 1px solid rgba(0, 0, 0, 0);
   min-width: 140px;
 }
+@include _991 {
+  .content {
+    grid-template-columns: 1fr;
+    grid-row-gap: 20px;
+  }
+  .proposal {
+    &__body {
+      margin: 30px 30px 0 30px;
+    }
+  }
+}
 @include _767 {
   .proposal {
     &__header {
       &-wrapper {
-      background: $white;
       display: grid;
       padding: 20px;
       margin-bottom: 20px;
@@ -818,8 +831,6 @@ export default {
     }
   }
   .content {
-    grid-template-columns: 1fr;
-    grid-row-gap: 20px;
     &__column {
       @include mobile-container;
     }

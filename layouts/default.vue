@@ -729,7 +729,7 @@ export default {
       bottom: 0;
       right: 0;
       left: 0;
-      z-index: 9999;
+      z-index: 100;
     }
     &__content {
       height: 100%;
@@ -1230,47 +1230,47 @@ export default {
       height: 40px;
       transition: all 0.5s;
       &_twitter {
-        background-image: url('~assets/img/social/footer_twitter.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_twitter.svg')
       }
       &_twitter:hover {
-        background-image: url('~assets/img/social/footer_twitter_active.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_twitter_active.svg')
       }
       &_youtube {
-        background-image: url('~assets/img/social/footer_youtube.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_youtube.svg')
       }
       &_youtube:hover {
-        background-image: url('~assets/img/social/footer_youtube_active.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_youtube_active.svg')
       }
       &_reddit {
-        background-image: url('~assets/img/social/footer_reddit.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_reddit.svg')
       }
       &_reddit:hover {
-        background-image: url('~assets/img/social/footer_reddit_active.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_reddit_active.svg')
       }
       &_facebook {
-        background-image: url('~assets/img/social/footer_facebook.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_facebook.svg')
       }
       &_facebook:hover {
-        background-image: url('~assets/img/social/footer_facebook_active.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_facebook_active.svg')
       }
       &_linkedin {
-        background-image: url('~assets/img/social/footer_linkedin.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_linkedin.svg')
       }
       &_linkedin:hover {
-        background-image: url('~assets/img/social/footer_linkedin_active.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_linkedin_active.svg')
       }
       &_instagram {
-        background-image: url('~assets/img/social/footer_instagram.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_instagram.svg')
       }
       &_instagram:hover {
-        background-image: url('~assets/img/social/footer_instagram_active.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_instagram_active.svg')
       }
       &_telegram {
-        background-image: url('~assets/img/social/footer_telegram.svg');
+        background: center / contain no-repeat url('~assets/img/social/footer_telegram.svg');
         border-radius: 4px;
       }
       &_telegram:hover {
-        background-image: url('~assets/img/social/footer_telegram_active.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_telegram_active.svg')
       }
     }
   &__store {
@@ -1355,6 +1355,11 @@ export default {
     display: flex;
     flex-direction: column-reverse;
     gap: 20px;
+  }
+  .template {
+    &__main {
+      padding-bottom: 20px;
+    }
   }
 }
 @include _575 {

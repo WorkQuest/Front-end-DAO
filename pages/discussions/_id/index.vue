@@ -115,7 +115,7 @@
         <base-btn
           v-if="!isAddComment"
           class="heading__btn_mobile"
-          mode="light"
+          mode="transparent"
           @click="addComment"
         >
           <span class="heading__btn-text">
@@ -757,6 +757,7 @@ export default {
 }
 @include _767 {
   .heading{
+    margin-left: 15px;
     &__btn {
       display: none;
       &_mobile {
@@ -772,7 +773,31 @@ export default {
       }
     }
   }
-  .images {}
+  .info {
+    &__body {
+      padding: 0;
+    }
+    &__header,
+    &__title {
+      margin-left: 15px;
+    }
+    &__pagination {
+      margin: 0 15px;
+    }
+  }
+  .footer {
+    &__chain {
+      padding: 0 5px;
+    }
+  }
+  .response {
+    &__footer {
+      justify-content: space-between;
+    }
+    &__btn {
+      margin: 0;
+    }
+  }
 }
 @include _480 {
   .heading {

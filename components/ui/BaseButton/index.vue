@@ -76,6 +76,7 @@ export default {
         { 'base-btn_lightBlue': mode === 'lightBlue' },
         { 'base-btn_lightRed': mode === 'lightRed' },
         { 'base-btn_copy icon-copy': mode === 'copy' },
+        { 'base-btn_transparent': mode === 'transparent' },
       ];
     },
   },
@@ -277,6 +278,9 @@ export default {
     &:hover {
       background: $black100;
     }
+  }
+  &_transparent {
+    background: transparent;
   }
 }
 @include _991 {
