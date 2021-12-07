@@ -37,6 +37,7 @@
     "@nuxtjs/eslint-config": "^3.1.0",
     "@nuxtjs/eslint-module": "^2.0.0",
     "@nuxtjs/style-resources": "^1.0.0",
+    "@sumsub/websdk": "^1.2.1",
     "babel-eslint": "^10.1.0",
     "dotenv": "^8.6.0",
     "eslint": "^7.24.0",

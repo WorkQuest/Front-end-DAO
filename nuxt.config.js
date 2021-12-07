@@ -83,6 +83,8 @@ export default {
     },
   },
   env: {
+    PROD: process.env.PROD,
     BASE_URL: process.env.BASE_URL,
+    SECRET_SUMSUB: process.env.SECRET_SUMSUB,
   },
 };
