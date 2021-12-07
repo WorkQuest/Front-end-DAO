@@ -107,7 +107,7 @@
                 >
                   <loader
                     class="loader-cont__loader"
-                    :is-mini-loader="true"
+                    is-mini-loader
                   />
                 </div>
               </template>
@@ -342,6 +342,8 @@ export default {
         placeholder: userTwitter,
         imgClass: 'icon-twitter',
       }];
+
+      // TODO add verif phone number
 
       // this.phoneInputsArr = [{
       //   id: 'firstMobileNumber',
