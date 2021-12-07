@@ -559,7 +559,7 @@ export default {
           priority,
           workplace,
           wagePerHour,
-          specializationKeys,
+          specializationKeys: specializationKeys || [],
           additionalInfo: {
             ...additionalInfo,
             skills: [],
