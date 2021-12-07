@@ -390,6 +390,11 @@ export default [
                 type: 'uint256',
               },
               {
+                internalType: 'uint256',
+                name: 'blockNumber',
+                type: 'uint256',
+              },
+              {
                 internalType: 'address',
                 name: 'proposer',
                 type: 'address',
@@ -643,6 +648,11 @@ export default [
       {
         internalType: 'uint256',
         name: 'expireTime',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'blockNumber',
         type: 'uint256',
       },
       {

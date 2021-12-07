@@ -207,6 +207,7 @@
 <script>
 import moment from 'moment';
 import { mapGetters } from 'vuex';
+import BigNumber from 'bignumber.js';
 import { Chains } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 
@@ -320,8 +321,7 @@ export default {
     await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
     if (!this.isConnected) return;
 
-    const URLString = document.URL;
-    this.idCard = parseInt(URLString.split('/').slice(-1)[0], 10);
+    this.idCard = this.$route.params.id;
 
     const res = await this.$store.dispatch('web3/getProposalInfoById', this.idCard);
     if (!res.ok) return;
@@ -330,29 +330,39 @@ export default {
     console.log(result); // del
 
     const {
-      forVotes, againstVotes, active, description, startTime,
+      forVotes, againstVotes, active, description, startTime, expireTime,
     } = result;
 
-    this.results.votes.no = againstVotes;
-    this.results.votes.yes = forVotes;
+    const yes = +(new BigNumber(forVotes).shiftedBy(-18));
+    const no = +(new BigNumber(againstVotes).shiftedBy(-18));
 
-    const sumVotes = againstVotes + forVotes;
+    this.results.votes.yes = yes;
+    this.results.votes.no = no;
+
+    const sumVotes = no + yes;
     if (sumVotes <= 0) {
       this.results.percents.yes = 0;
       this.results.percents.no = 0;
+    } else if (no - yes === no) {
+      this.results.percents.yes = 0;
+      this.results.percents.no = 100;
+    } else if (yes - no === yes) {
+      this.results.percents.yes = 100;
+      this.results.percents.no = 0;
     } else {
-      if (forVotes > 0) {
-        this.results.percents.yes = Math.ceil((forVotes / sumVotes) * 10) / 10;
+      if (yes > 0) {
+        this.results.percents.yes = Math.ceil((yes / sumVotes) * 10) / 10;
       } else this.results.percents.yes = 0;
-      if (againstVotes > 0) {
-        this.results.percents.no = Math.ceil((againstVotes / sumVotes) * 10) / 10;
+      if (no > 0) {
+        this.results.percents.no = Math.ceil((no / sumVotes) * 10) / 10;
       } else this.results.percents.no = 0;
     }
 
-    const start = this.$moment(new Date(startTime * 1000));
+    const start = this.$moment(new Date(startTime * 1000)).format('lll');
+    const end = this.$moment(new Date(expireTime * 1000)).format('lll');
     this.voting = this.idCard;
     this.status = active ? 0 : 1;
-    this.date = `${start.format('ll')} - ${start.add(1, 'M').format('ll')}`;
+    this.date = `${start} - ${end}`;
     this.description = description;
     this.about = '*TITLE from back*';
 
@@ -404,12 +414,16 @@ export default {
         this.$store.dispatch('web3/getVoteThreshold'),
       ]);
       console.log(delegated.result, voteThreshold.result, 'em');
-      await this.$store.dispatch('modals/show', {
-        key: modals.delegate,
-        investorAddress: account.address,
-        min: voteThreshold.result,
-        callback: async () => this.onVote(value),
-      });
+      if (delegated.result <= voteThreshold.result) {
+        await this.$store.dispatch('modals/show', {
+          key: modals.delegate,
+          investorAddress: account.address,
+          min: voteThreshold.result,
+          callback: async () => this.onVote(value),
+        });
+      } else {
+        await this.onVote(value);
+      }
     },
     async onVote(value) {
       await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);

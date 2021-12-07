@@ -171,7 +171,7 @@ export const getBalance = async () => {
 export const delegate = async (address, amount) => {
   try {
     const value = new BigNumber(amount).shiftedBy(18).toString();
-    const res = await sendTransaction('delegate', abi.WQToken, address, [address, value]);
+    const res = await sendTransaction('delegate', abi.WQToken, process.env.WQ_TOKEN, [address, value]);
     return success(res);
   } catch (e) {
     return error(errorCodes.Delegate, e.message, e);

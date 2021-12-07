@@ -63,7 +63,7 @@
             </div>
           </div>
           <div class="card__date">
-            {{ card.date }}
+            {{ $moment(new Date(card.dateStart)).format('ll') }} - {{ $moment(new Date(card.dateEnd)).format('ll') }}
           </div>
           <div class="card__about">
             {{ card.about }}
@@ -209,10 +209,10 @@ export default {
       console.log(cards);
       // eslint-disable-next-line no-restricted-syntax
       for (const item of cards) {
-        const start = this.$moment(new Date(item.startTime * 1000));
         this.cards.push({
           voting: item.id,
-          date: `${start.format('ll')} - ${start.add(1, 'M').format('ll')}`,
+          dateStart: item.startTime * 1000,
+          dateEnd: item.expireTime * 1000,
           about: item.description,
           status: item.active ? 0 : 1,
         });

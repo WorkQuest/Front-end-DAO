@@ -4,51 +4,55 @@
     :title="$t('modals.delegate')"
   >
     <div class="delegate__content content">
-      <div class="content__adress adress">
-        <label
-          for="investorAddress"
-          class="adress__label"
-        >{{ $t('modals.investorAddress') }}</label>
-        <base-field
-          id="invsetorAdress"
-          disabled
-          :value="options.investorAddress"
-          class="adress__body"
-        >
-          {{ options.investorAddress }}
-        </base-field>
-      </div>
-      <div class="content__tokens tokens">
-        <div class="tokens__title">
-          {{ $t('modals.tokensNumber') }}
-        </div>
-        <label
-          for="tokensNumber"
-          class="tokens__title_grey"
-        >{{ $t('modals.tokensDelegated') }}</label>
-        <div class="tokens__footer footer">
+      <validation-observer v-slot="{handleSubmit, valid}">
+        <div class="content__adress adress">
+          <label
+            for="investorAddress"
+            class="adress__label"
+          >{{ $t('modals.investorAddress') }}</label>
           <base-field
-            id="tokensNumber"
-            v-model="tokensAmount"
-            class="footer__body"
-            placeholder="1000"
-            :rules="`required${min}`"
-          />
-          <base-btn
-            class="footer__maximum"
-            mode="lightBlue"
-            @click="maxDelegate"
+            id="invsetorAdress"
+            disabled
+            :value="options.investorAddress"
+            class="adress__body"
           >
-            {{ $t('modals.max') }}
-          </base-btn>
+            {{ options.investorAddress }}
+          </base-field>
         </div>
-      </div>
-      <base-btn
-        class="delegate__done"
-        @click="delegate"
-      >
-        {{ $t('modals.delegate') }}
-      </base-btn>
+        <div class="content__tokens tokens">
+          <div class="tokens__title">
+            {{ $t('modals.tokensNumber') }}
+          </div>
+          <label
+            for="tokensNumber"
+            class="tokens__title_grey"
+          >{{ $t('modals.tokensDelegated') }}</label>
+          <div class="tokens__footer footer">
+            <base-field
+              id="tokensNumber"
+              v-model="tokensAmount"
+              class="footer__body"
+              placeholder="1000"
+              :name="$t('modals.tokensNumber')"
+              :rules="`required${min}`"
+            />
+            <base-btn
+              class="footer__maximum"
+              mode="lightBlue"
+              @click="maxDelegate"
+            >
+              {{ $t('modals.max') }}
+            </base-btn>
+          </div>
+        </div>
+        <base-btn
+          class="delegate__done"
+          :disabled="!valid"
+          @click="handleSubmit(delegate)"
+        >
+          {{ $t('modals.delegate') }}
+        </base-btn>
+      </validation-observer>
     </div>
   </ctm-modal-box>
 </template>
@@ -96,7 +100,8 @@ export default {
       const res = await this.$store.dispatch('web3/delegate', { address: this.options.investorAddress, amount: this.tokensAmount });
       console.log('DELEGATE RES', res);
       if (res.ok && this.options.callback) {
-        // await this.options.callback();
+        const voteRes = await this.options.callback();
+        console.log('Vote res:', voteRes);
       }
       this.SetLoader(false);
       this.close();
