@@ -227,3 +227,11 @@ export const getVoteThreshold = async () => {
     return error(errorCodes.GetVoteThreshold, e.message, e);
   }
 };
+export const getReceipt = async (id, accountAddress) => {
+  try {
+    const res = await fetchContractData('getReceipt', abi.WQDAOVoting, process.env.WQ_DAO_Voting, [id, accountAddress]);
+    return success();
+  } catch (e) {
+    return error(errorCodes.GetReceipt, e.message, e);
+  }
+};

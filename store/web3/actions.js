@@ -6,7 +6,7 @@ import {
   getAccount,
   addProposal,
   getChainIdByChain,
-  goToChain, getProposals, getProposalInfoById, doVote, delegate, getBalance, getVoteThreshold, getVotes,
+  goToChain, getProposals, getProposalInfoById, doVote, delegate, getBalance, getVoteThreshold, getVotes, getReceipt,
 } from '~/utils/web3';
 import modals from '~/store/modals/modals';
 
@@ -83,5 +83,8 @@ export default {
   },
   async getVotes({ commit }, address) { // delegated to address
     return await getVotes(address);
+  },
+  async getReceipt({ commit }, { id, accountAddress }) {
+    return await getReceipt(id, accountAddress);
   },
 };

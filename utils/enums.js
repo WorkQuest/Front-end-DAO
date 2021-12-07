@@ -12,6 +12,7 @@ export const errorCodes = Object.freeze({
   GetProposal: 102, //  Получить инфу о пропосоле
   VoteProposal: 103, // Голосовать за пропосал
   GetVoteThreshold: 104, // Минимальная сумма для голоса
+  GetReceipt: 105, // Получить квитанцию
 
   GetBalance: 200, // Баланс WQT на адресе
   Delegate: 201, // Делегирование
