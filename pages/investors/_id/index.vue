@@ -508,7 +508,42 @@ export default {
 
 @include _1199 {
   .investor {
-    margin: 0 20px 0 20px;
+    padding: 0 20px;
+  }
+}
+
+@include _991 {
+  .profile {
+    &__main-data {
+      grid-template-columns: 151px 1fr;
+    }
+    &__avatar {
+      grid-row: 1/7;
+    }
+    &__status {
+      grid-column: 2;
+    }
+    &__social {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+@include _575 {
+  .profile {
+
+    &__avatar {
+      grid-row: 1;
+      margin-bottom: 17px;
+    }
+
+    &__main-inp-cont {
+      grid-column: 1/3;
+    }
+
+    &__social {
+      grid-template-columns: 1fr;
+    }
   }
 }
 
