@@ -7,6 +7,9 @@ export default {
       list: users,
     };
   },
+  setInvestor(state, user) {
+    state.investor = user;
+  },
 
   setOldTokens(state, { access, refresh }) {
     state.tokens.access = access;

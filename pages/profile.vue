@@ -862,9 +862,6 @@ export default {
   &__container {
     display: flex;
     flex-direction: column;
-    & div:first-child {
-      //margin-bottom: 15px;
-    }
   }
 }
 

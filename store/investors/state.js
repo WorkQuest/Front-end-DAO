@@ -3,6 +3,7 @@ export default () => ({
     list: [],
     count: 0,
   },
+  investor: null,
 
   tokens: {
     access: '',

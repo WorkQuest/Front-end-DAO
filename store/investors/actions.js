@@ -1,6 +1,5 @@
 export default {
   async getInvestors({ commit }, config) {
-    console.log(config);
     try {
       const { result } = await this.$axios.$get('/v1/profile/employers', config);
       result.users.forEach((user) => {
@@ -13,6 +12,16 @@ export default {
         user.delegate = 'Delegate';
       });
       commit('setInvestors', result);
+    } catch (e) {
+      console.log(e);
+    }
+  },
+  async getInvestorData({ commit }, userId) {
+    try {
+      const { result } = await this.$axios.$get(`/v1/profile/${userId}`);
+      result.secondMobileNumber = result.additionalInfo.secondMobileNumber;
+
+      commit('setInvestor', result);
     } catch (e) {
       console.log(e);
     }

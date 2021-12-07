@@ -1,6 +1,9 @@
 <template>
   <div class="investor">
-    <div class="investor__profile">
+    <div
+      v-if="investor"
+      class="investor__profile"
+    >
       <div class="investor__header header">
         <nuxt-link
           to="/investors"
@@ -33,161 +36,72 @@
       </div>
       <div class="investor__profile profile">
         <div class="profile__body">
-          <div class="profile__info info">
-            <div class="info__base">
-              <div class="info__avatar avatar">
+          <div class="profile__grid-container">
+            <div class="profile__main-data">
+              <div class="profile__avatar avatar">
                 <img
                   id="userAvatar"
                   class="avatar__img"
-                  src="~/assets/img/ui/avatar.svg"
+                  :src="investor.avatar || require('~/assets/img/app/avatar_empty.png')"
                   alt=""
                 >
               </div>
-              <div class="info__contacts contacts">
-                <div
-                  class="contacts__status status"
-                >
-                  {{ $t('settings.verifiсated') }}
-                  <span class="status__icon icon icon-check_all_big" />
-                </div>
-                <base-field
-                  class="contacts__name"
-                  :is-hide-error="true"
-                  mode="iconWhite"
-                  :disabled="true"
-                  :value="$t('settings.nameInput')"
-                >
-                  <template v-slot:left>
-                    <span class="icon contacts__icon icon-user" />
-                  </template>
-                </base-field>
-                <base-field
-                  class="contacts__name"
-                  :is-hide-error="true"
-                  mode="iconWhite"
-                  :disabled="true"
-                  :value="$t('settings.lastNameInput') "
-                >
-                  <template v-slot:left>
-                    <span class="icon contacts__icon icon-user" />
-                  </template>
-                </base-field>
+              <div class="profile__status status">
+                {{ $t('settings.verifiсated') }}
+                <span class="icon input-icon input-icon__check icon-check_all_big" />
               </div>
-              <div class="info__contacts contacts">
-                <div />
+              <div
+                v-for="input in mainDataArr"
+                :key="input.key"
+                class="profile__main-inp-cont"
+              >
                 <base-field
                   class="contacts__name"
                   :is-hide-error="true"
                   mode="iconWhite"
                   :disabled="true"
-                  :value="$t('settings.addressInput')"
+                  :value="investor[input.key]"
+                  :placeholder="$t('investor.notFilled')"
                 >
                   <template v-slot:left>
-                    <span class="icon contacts__icon icon-location" />
-                  </template>
-                </base-field>
-                <base-field
-                  class="contacts__name"
-                  :is-hide-error="true"
-                  mode="iconWhite"
-                  :disabled="true"
-                  :value="$t('settings.telInput')"
-                >
-                  <template v-slot:left>
-                    <span class="icon contacts__icon icon-phone" />
-                  </template>
-                </base-field>
-              </div>
-              <div class="info__contacts contacts">
-                <div />
-                <base-field
-                  class="contacts__name"
-                  :value="$t('settings.addressInput')"
-                  :disabled="true"
-                  :is-hide-error="true"
-                  mode="iconWhite"
-                >
-                  <template v-slot:left>
-                    <span class="icon contacts__icon icon-mail" />
-                  </template>
-                </base-field>
-                <base-field
-                  class="contacts__name"
-                  :is-hide-error="true"
-                  :value="$t('settings.telInput')"
-                  mode="iconWhite"
-                  :disabled="true"
-                >
-                  <template v-slot:left>
-                    <span class="icon contacts__icon icon-phone" />
+                    <span
+                      class="icon input-icon"
+                      :class="input.icon"
+                    />
                   </template>
                 </base-field>
               </div>
             </div>
-            <div class="info__additional">
-              <div class="info__about about">
-                <div class="about__title">
-                  {{ $t('workers.aboutMe') }}
-                </div>
-                <textarea
-                  id="textarea"
-                  class="about__textarea"
-                  :title="'test'"
-                  :disabled="true"
-                  :placeholder="profileDescription"
-                />
+            <div class="profile__about about">
+              <div class="about__title">
+                {{ $t('workers.aboutMe') }}
               </div>
-              <div class="info__social social">
-                <div class="social__container ">
-                  <base-field
-                    class="social__network"
-                    :disabled="true"
-                    :is-hide-error="true"
-                    mode="iconWhite"
-                    :value="$t('settings.socialInput')"
-                  >
-                    <template v-slot:left>
-                      <span class="icon social__icon icon-instagram" />
-                    </template>
-                  </base-field>
-
-                  <base-field
-                    class="social__network"
-                    :value="$t('settings.socialInput')"
-                    :is-hide-error="true"
-                    mode="iconWhite"
-                    :disabled="true"
-                  >
-                    <template v-slot:left>
-                      <span class="icon social__icon icon-twitter" />
-                    </template>
-                  </base-field>
-                </div>
-                <div class="social__container">
-                  <base-field
-                    class="social__network"
-                    :is-hide-error="true"
-                    :value="$t('settings.socialInput')"
-                    mode="iconWhite"
-                    :disabled="true"
-                  >
-                    <template v-slot:left>
-                      <span class="icon social__icon icon-LinkedIn" />
-                    </template>
-                  </base-field>
-                  <base-field
-                    class="social__network"
-                    :value="$t('settings.socialInput')"
-                    :is-hide-error="true"
-                    mode="iconWhite"
-                    :disabled="true"
-                  >
-                    <template v-slot:left>
-                      <span class="icon social__icon icon-facebook" />
-                    </template>
-                  </base-field>
-                </div>
-              </div>
+              <textarea
+                id="textarea"
+                class="about__textarea"
+                :title="'test'"
+                :disabled="true"
+                :placeholder="investor.additionalInfo.description || $t('investor.notFilled')"
+              />
+            </div>
+            <div class="profile__social social">
+              <base-field
+                v-for="input in socialInputsArr"
+                :key="input.key"
+                class="social__network"
+                :disabled="true"
+                :is-hide-error="true"
+                mode="iconWhite"
+                :value="investor.additionalInfo.socialNetwork[input.key]"
+                :placeholder="$t('investor.notFilled')"
+              >
+                <template v-slot:left>
+                  <span
+                    class="icon input-icon"
+                    :class="input.icon"
+                  />
+                </template>
+              </base-field>
             </div>
             <div class="info__action action">
               <base-btn
@@ -226,17 +140,16 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
 
 export default {
-
   data() {
     return {
-      profileDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus dolor purus non enim praesent elementum facilisis leo, vel',
+      userId: this.$route.params.id,
       investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
       stake: '126,613,276',
       name: 'user@gmail.com',
-      isDescending: true,
       pages: 1,
       totalPages: 5,
       walletTableFields: [
@@ -318,22 +231,63 @@ export default {
           transaction_fee: '5 WUSD',
         },
       ],
-      userInfo: {
-        userWallet: '123t2323t23t3t23t23t3g45h45234',
-        cardClosed: false,
-        userBalance: '1234567',
-        currency: 'WUSD',
-        usd: '124.12',
-        userCards: [
-          '1234 1234 1234 1234',
-        ],
-      },
     };
   },
-  async mounted() {
+  computed: {
+    ...mapGetters({
+      investor: 'investors/getInvestorData',
+    }),
+    mainDataArr() {
+      return [{
+        key: 'firstName',
+        icon: 'icon-user',
+      },
+      {
+        key: 'lastName',
+        icon: 'icon-user',
+      },
+      {
+        key: 'location',
+        icon: 'icon-location',
+      },
+      {
+        key: 'email',
+        icon: 'icon-mail',
+      },
+      {
+        key: 'secondMobileNumber',
+        icon: 'icon-phone',
+      }];
+    },
+    socialInputsArr() {
+      return [{
+        key: 'instagram',
+        icon: 'icon-instagram',
+      },
+      {
+        key: 'twitter',
+        icon: 'icon-twitter',
+      },
+      {
+        key: 'linkedin',
+        icon: 'icon-LinkedIn',
+      },
+      {
+        key: 'facebook',
+        icon: 'icon-facebook',
+      }];
+    },
+  },
+  async beforeMount() {
+    await this.getInvestorData();
+  },
+  mounted() {
     this.SetLoader(false);
   },
   methods: {
+    async getInvestorData() {
+      await this.$store.dispatch('investors/getInvestorData', this.userId);
+    },
     openModalDelegate() {
       this.ShowModal({
         key: modals.delegate,
@@ -370,7 +324,11 @@ export default {
   @include main;
   @include text-simple;
   color: #1D2127;
-  &__pagination{
+  &__profile {
+    width: 100%;
+    max-width: 1180px;
+  }
+  &__pagination {
     margin-top: 10px;
   }
   &__header {
@@ -380,7 +338,8 @@ export default {
     font-size: 16px;
   }
 }
-.title{
+
+.title {
   display: flex;
   justify-content: space-between;
   &__name{
@@ -389,17 +348,20 @@ export default {
     line-height: 36px;
   }
 }
-.panel{
+
+.panel {
   text-align: center;
   display: table;
 
-  &__copy{
+  &__copy {
     background: #F7F8FA;
+
+    &:hover{
+      background: #F7F8FA;
+    }
   }
-  &__copy:hover{
-    background: #F7F8FA;
-  }
-  &__address{
+
+  &__address {
     font-weight: 500;
     font-size: 16px;
     display: table-cell;
@@ -408,16 +370,6 @@ export default {
   }
 }
 
-@include _1199 {
-  .investor {
-    margin: 0 20px 0 20px;
-    &__info {
-      display: flex;
-      flex-direction: column-reverse;
-    }
-
-  }
-}
 .profile {
   @include main;
   @include text-simple;
@@ -425,80 +377,60 @@ export default {
     max-width: 1180px;
     height: 100%;
   }
-  &__info {
+  &__grid-container {
     display: grid;
-    grid-template-rows: 151px 1fr 43px;
-    grid-gap: 20px;
-    margin-top: 15px;
+    gap: 20px;
     padding: 20px;
-
     background: #FFFFFF;
     border-radius: 6px;
+    margin-top: 15px;
   }
-  &__table{
-    margin: 15px 0;
-  }
-}
-.info {
-  &__base {
+  &__main-data {
     display: grid;
-    grid-template-columns: 151px repeat(3, 1fr);
-    grid-gap: 20px;
+    gap: 20px;
+    grid-template-columns: 151px repeat(2, 1fr);
   }
-
   &__avatar {
-    width: 100%;
     height: 151px;
     border-radius: 6px;
     overflow: hidden;
+    grid-column: 1;
+    grid-row: 1/5;
   }
-
-  &__contacts {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-
-  &__additional {
+  &__status{
+    grid-column: 2/4;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 20px;
+    grid-template-columns: repeat(2, max-content);
+    gap: 10px;
+    align-items: center;
+    width: fit-content;
+    height: 34px;
+    padding: 0 13px;
+    background: rgba(0, 131, 199, 0.1);
+    color: #0083C7;
+    border-radius: 36px;
+    font-size: 14px;
   }
 
   &__social {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  &__table {
+    margin: 15px 0;
   }
 }
 
 .contacts {
 
-  & div:first-child {
-    margin-bottom: 10px;
-  }
-
-  & div:last-child {
-    margin-top: 15px;
-  }
-
-  &__input {
-    width: 100%;
-  }
-
   &__name{
-    color: #1D2127!important;
-  }
-  &__icon {
-    font-size: 23px;
-    color: #0083C7;
-    line-height: 36px;
+    color: #1D2127 !important;
   }
 }
+
 .avatar {
-  &:hover .edit {
-    opacity: 1;
-  }
+
   &__img {
     width: 100%;
     height: 100%;
@@ -509,14 +441,16 @@ export default {
 .about {
   display: flex;
   flex-direction: column;
+
   &__title {
     color: #1D2127;
     font-size: 16px;
     line-height: 21px;
     margin-bottom: 5px;
   }
+
   &__textarea {
-    height: 100%;
+    height: 86px;
     padding: 10px 10px 0 10px;
     border-radius: 6px;
     resize: none;
@@ -524,44 +458,38 @@ export default {
     line-height: 18.2px;
     background-color: #FFFFFF;
     border: 1px solid #F7F8FA;
+
     &::placeholder {
       color: #1D2127;
     }
   }
 }
 
-.social {
-  &__container {
-    display: flex;
-    flex-direction: column;
-
-    & div:first-child {
-      margin-bottom: 15px;
-    }
-  }
-
-  &__icon {
-    font-size: 23px;
-    color: #0083C7;
-    line-height: 36px;
-  }
+.input-icon {
+  font-size: 23px;
+  color: #0083C7;
+  line-height: 36px;
 }
+
 .action {
   display: flex;
   justify-content: flex-end;
+
   &__undelegate {
     max-width: 240px;
   }
+
   &__delegate {
     @extend .action__undelegate;
     margin-left: 20px;
   }
 }
 
-.link{
+.link {
   display: flex;
   align-items: center;
   text-decoration: none;
+
   &__text {
     font-size: 18px;
     line-height: 130%;
@@ -569,28 +497,18 @@ export default {
     align-items: center;
     color: #4C5767;
   }
+
   &__arrow {
-    margin: 6px 10px 6px 0px;
+    margin: 6px 10px 6px 0;
     color:  #4C5767;
     font-size: 25px;
     cursor: pointer;
   }
 }
-.status {
-  display: flex;
-  max-width: max-content;
-  height: 34px;
-  padding: 8px 13px;
-  background: rgba(0, 131, 199, 0.1);
-  color: #0083C7;
-  border-radius: 36px;
-  font-size: 14px;
-  line-height: 18px;
-  &__icon {
-    font-size: 23px;
-    color: #0083C7;
-    margin-left: 10px;
-    margin-top: -3px;
+
+@include _1199 {
+  .investor {
+    margin: 0 20px 0 20px;
   }
 }
 

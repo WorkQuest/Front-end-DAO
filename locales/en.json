@@ -950,5 +950,8 @@
       "voting": "Voting power"
     },
     "profile": "Investor Profile"
+  },
+  "investor": {
+    "notFilled": "Not filled"
   }
  }
