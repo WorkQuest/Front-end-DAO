@@ -435,7 +435,11 @@
     "twitterField": "twitter address",
     "workQuestField": "workQuest address",
     "facebookField": "facebook address",
-    "send": "Send"
+    "send": "Send",
+    "imageLoadedSuccessful": "Image loaded successful",
+    "pleasePressSaveButton": "Please press save button",
+    "saved": "Saved",
+    "userDataHasBeenSaved": "User data has been saved"
   },
   "ui": {
     "workers": "Workers",

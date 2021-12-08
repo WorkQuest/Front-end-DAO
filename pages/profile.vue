@@ -1,54 +1,46 @@
 <template>
   <div class="wq-profile">
-    <validation-observer v-slot="{handleSubmit}">
-      <div class="wq-profile__body">
-        <div
-          v-if="!localUserData.isVerified"
-          class="wq-profile__banner banner"
-        >
-          <transition name="fade-fast">
-            <div class="banner__body">
-              <div class="banner__container">
-                <div class="banner__title">
-                  {{ $t('settings.addInfo') }}
-                </div>
-                <div class="banner__subtitle">
-                  {{ $t('settings.alsoRating') }}
-                </div>
-                <div class="banner__verification">
-                  <base-btn mode="ver">
-                    {{ $t('settings.getVerification') }}
-                  </base-btn>
-                </div>
+    <div class="wq-profile__body">
+      <div
+        v-if="!localUserData.isVerified"
+        class="wq-profile__banner banner"
+      >
+        <transition name="fade-fast">
+          <div class="banner__body">
+            <div class="banner__container">
+              <div class="banner__title">
+                {{ $t('settings.addInfo') }}
               </div>
-              <div class="banner__image">
-                <img src="~/assets/img/ui/goldStatus.svg">
+              <div class="banner__subtitle">
+                {{ $t('settings.alsoRating') }}
+              </div>
+              <div class="banner__verification">
+                <base-btn mode="ver">
+                  {{ $t('settings.getVerification') }}
+                </base-btn>
               </div>
             </div>
-          </transition>
-        </div>
-        <div
-          class="wq-profile__header"
-          :class="{ 'wq-profile__header_noMarginTop': localUserData.isVerified }"
-        >
-          {{ $t('profile.title') }}
-        </div>
-        <div class="wq-profile__info info">
-          <div class="info__base">
-            <div class="info__avatar avatar">
+            <div class="banner__image">
+              <img src="~/assets/img/ui/goldStatus.svg">
+            </div>
+          </div>
+        </transition>
+      </div>
+      <div
+        class="wq-profile__header"
+        :class="{ 'wq-profile__header_noMarginTop': localUserData.isVerified }"
+      >
+        {{ $t('profile.title') }}
+      </div>
+      <div class="profile-cont">
+        <div class="profile-cont__grid-container">
+          <div class="profile-cont__main-data">
+            <div class="profile-cont__avatar avatar">
               <img
-                v-if="imageData"
                 id="userAvatar"
                 class="avatar__img"
-                :src="imageData"
-                alt=""
-              >
-              <img
-                v-else
-                id="userAvatarTwo"
-                class="avatar__img"
-                src="~/assets/img/app/avatar_empty.png"
-                alt="empty avatar"
+                :src="imageData || require('~/assets/img/app/avatar_empty.png')"
+                :alt="imageData ? 'avatar' : 'empty avatar'"
               >
               <label
                 v-if="isProfileEdit"
@@ -70,352 +62,397 @@
                 </ValidationProvider>
               </label>
             </div>
-
-            <div class="info__contacts contacts">
-              <div
-                class="contacts__status status"
-                :class="{ 'status_verified': localUserData.isVerified }"
-              >
-                {{ localUserData.isVerified ? $t('settings.verified') : $t('settings.notVerified') }}
-                <span class="status__icon icon icon-check_all_big" />
-              </div>
-
-              <base-field
-                v-if="firstName"
-                v-model="localUserData.firstName"
-                :placeholder="firstName || $t('settings.nameInput')"
-                :disabled="!isProfileEdit"
-                rules="required|alpha_num"
-                :name="$t('modals.nameField')"
-                mode="icon"
-                mode-error="small"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-user" />
-                </template>
-              </base-field>
-              <base-field
-                v-if="lastName"
-                v-model="localUserData.lastName"
-                :placeholder="$t('settings.lastNameInput')"
-                :disabled="!isProfileEdit"
-                rules="required|alpha_num"
-                :name="$t('modals.lastNameField')"
-                mode="icon"
-                mode-error="small"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-user" />
-                </template>
-              </base-field>
+            <div
+              class="profile-cont__status status"
+              :class="{ 'status_verified': localUserData.isVerified }"
+            >
+              {{ $t(`settings.${localUserData.isVerified ? 'verified' : 'notVerified'}`) }}
+              <span class="status__icon icon icon-check_all_big" />
             </div>
-            <div class="info__contacts contacts">
-              <div class="info__space" />
-              <base-field
-                v-model="localUserData.address"
-                :placeholder="address || $t('settings.addressInput')"
-                :disabled="!isProfileEdit"
-                mode="icon"
-                :name="$t('modals.addressField')"
-                mode-error="small"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-location" />
-                </template>
-              </base-field>
-              <base-field
-                v-model="localUserData.firstMobileNumber"
-                :placeholder="firstMobileNumber || $t('settings.telInput')"
-                :disabled="!isProfileEdit"
-                type="tel"
-                inputmode="numeric"
-                rules="required|telephone|max:15"
-                :name="$t('modals.firstMobileField')"
-                mode="icon"
-                mode-error="small"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-phone" />
-                </template>
-              </base-field>
-            </div>
-            <div class="info__contacts contacts">
-              <div class="info__space" />
-              <base-field
-                v-model="localUserData.userEmail"
-                :placeholder="userEmail || $t('settings.addressInput')"
-                :disabled="!isProfileEdit"
-                mode="icon"
-                rules="required|email"
-                :name="$t('modals.emailField')"
-                mode-error="small"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-mail" />
-                </template>
-              </base-field>
-              <base-field
-                v-model="localUserData.secondMobileNumber"
-                :name="$t('modals.secondMobileField')"
-                :placeholder="secondMobileNumber || $t('settings.telInput')"
-                :disabled="!isProfileEdit"
-                type="tel"
-                inputmode="numeric"
-                rules="telephone|max:15"
-                mode="icon"
-                mode-error="small"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-phone" />
-                </template>
-              </base-field>
-            </div>
-          </div>
-          <div class="info__additional">
-            <div class="info__about about">
-              <div class="about__title">
-                {{ $t('profile.aboutMe') }}
-              </div>
-              <textarea
-                id="textarea"
-                v-model="localUserData.additionalInfo.description"
-                class="about__textarea"
-                :class="{ 'about__textarea_disabled': !isProfileEdit }"
-                :placeholder="$t('profile.aboutMe')"
-                :disabled="!isProfileEdit"
+            <base-field
+              v-for="(cell, i) in nameInputsArr"
+              :key="i"
+              v-model="localUserData[cell.key]"
+              :placeholder="cell.placeholder || $t('settings.nameInput')"
+              :disabled="!isProfileEdit"
+              rules="required"
+              :name="$t('modals.nameField')"
+              mode="icon"
+              mode-error="small"
+              class="profile-cont__field"
+            >
+              <template v-slot:left>
+                <span class="icon icon__input icon-user" />
+              </template>
+            </base-field>
+            <base-field
+              v-model="localUserData.additionalInfo.address"
+              :placeholder="address || $t('settings.addressInput')"
+              :disabled="!isProfileEdit"
+              :is-with-loader="true"
+              mode="icon"
+              :name="$t('modals.addressField')"
+              mode-error="small"
+              class="profile-cont__field"
+              @focus="changeFocusValue"
+              @input="getPositionData"
+            >
+              <template v-slot:left>
+                <span class="icon icon__input icon-location" />
+              </template>
+              <template v-slot:right-absolute>
+                <div
+                  v-if="isPositionSearch"
+                  class="loader-cont"
+                >
+                  <loader
+                    class="loader-cont__loader"
+                    is-mini-loader
+                  />
+                </div>
+              </template>
+              <template v-slot:selector>
+                <div
+                  v-if="addresses.length && isGeoInputOnFocus"
+                  class="selector"
+                >
+                  <div class="selector__items">
+                    <div
+                      v-for="(address, i) in addresses"
+                      :key="i"
+                      class="selector__item"
+                      @click="selectAddress(address)"
+                    >
+                      {{ address.formatted }}
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </base-field>
+            <base-field
+              v-model="localUserData.email"
+              :placeholder="localUserData.email || $t('settings.addressInput')"
+              disabled
+              mode="icon"
+              :name="$t('modals.emailField')"
+              mode-error="small"
+              class="profile-cont__field"
+            >
+              <template v-slot:left>
+                <span class="icon icon__input icon-mail" />
+              </template>
+            </base-field>
+            <div
+              v-for="cell in phoneInputsArr"
+              :key="cell.id"
+              class="profile-cont__field"
+            >
+              <vue-phone-number-input
+                v-if="isProfileEdit"
+                v-model="localUserData.additionalInfo.secondMobileNumber"
+                class="input-phone"
+                error-color="#EB5757"
+                clearable
+                show-code-on-list
+                required
+                size="lg"
+                @update="updatedPhone = $event"
               />
-            </div>
-            <div class="info__social social">
               <base-field
-                v-model="localUserData.additionalInfo.socialNetwork.instagram"
-                :name="$t('modals.instagramField')"
-                :placeholder="userInstagram || $t('settings.socialInput')"
-                :disabled="!isProfileEdit"
+                v-else
+                v-model="cell.model"
+                :placeholder="cell.placeholder || $t('settings.telInput')"
+                :disabled="true"
+                is-hide-error
+                inputmode="numeric"
                 mode="icon"
-                type="text"
-                mode-error="small"
               >
                 <template v-slot:left>
-                  <span class="icon icon__input icon-instagram" />
-                </template>
-              </base-field>
-              <base-field
-                v-model="localUserData.additionalInfo.socialNetwork.twitter"
-                :name="$t('modals.twitterField')"
-                :placeholder="userTwitter || $t('settings.socialInput')"
-                :disabled="!isProfileEdit"
-                mode="icon"
-                type="text"
-                mode-error="small"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-twitter" />
-                </template>
-              </base-field>
-              <base-field
-                v-model="localUserData.additionalInfo.socialNetwork.linkedin"
-                :name="$t('modals.linkedInField')"
-                :placeholder="userLinkedin || $t('settings.socialInput')"
-                :disabled="!isProfileEdit"
-                mode="icon"
-                type="text"
-                mode-error="small"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-LinkedIn" />
-                </template>
-              </base-field>
-              <base-field
-                v-model="localUserData.additionalInfo.socialNetwork.facebook"
-                :name="$t('modals.facebookField')"
-                :placeholder="userFacebook || $t('settings.socialInput')"
-                :disabled="!isProfileEdit"
-                mode="icon"
-                type="text"
-                mode-error="small"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-facebook" />
+                  <span class="icon icon__input icon-phone" />
                 </template>
               </base-field>
             </div>
           </div>
-          <div class="info__action action">
-            <base-btn
-              v-if="isProfileEdit"
-              mode="lightBlue"
-              class="action__save"
-              @click="handleSubmit(editUserData())"
-            >
-              {{ $t('profile.save') }}
-            </base-btn>
-            <base-btn
-              v-else
-              mode="lightBlue"
-              class="action__change"
-              @click="showModalWarning()"
-            >
-              {{ $t('profile.change') }}
-            </base-btn>
-          </div>
-        </div>
-        <div
-          v-if="isProfileEdit"
-          class="wq-profile__header"
-        >
-          {{ $t('profile.security') }}
-        </div>
-        <div
-          v-if="isProfileEdit"
-          class="wq-profile__security security"
-        >
-          <div class="security__password">
-            <div class="security__title">
-              {{ $t('profile.changePass') }}
+          <div class="profile-cont__about about">
+            <div class="about__title">
+              {{ $t('profile.aboutMe') }}
             </div>
-            <base-btn
-              class="security__btn"
-              mode="lightBlue"
-              @click="modalChangePassword()"
-            >
-              {{ $t('profile.change') }}
-            </base-btn>
+            <textarea
+              v-model="localUserData.additionalInfo.description"
+              class="about__textarea"
+              :class="{ 'about__textarea_disabled': !isProfileEdit }"
+              :placeholder="$t('profile.aboutMe')"
+              :disabled="!isProfileEdit"
+            />
           </div>
-          <div class="security__auth">
-            <div class="security__title">
-              {{ $t('profile.2FA') }}
-            </div>
-            <base-btn
-              class="security__btn"
-              mode="lightBlue"
-              @click="modalTwoFAAuth()"
+          <div class="profile-cont__social social">
+            <base-field
+              v-for="cell in socialInputs"
+              :key="cell.key"
+              v-model="localUserData.additionalInfo.socialNetwork[cell.key]"
+              :placeholder="cell.placeholder || $t('settings.socialInput')"
+              :disabled="!isProfileEdit"
+              is-hide-error
+              mode="icon"
+              type="text"
+              mode-error="small"
+              @input="handleChangeSocial($event, cell.id)"
             >
-              {{ $t('profile.switchOn') }}
+              <template v-slot:left>
+                <span
+                  class="icon icon__input"
+                  :class="cell.imgClass"
+                />
+              </template>
+            </base-field>
+          </div>
+          <div class="profile-cont__action action">
+            <base-btn
+              mode="lightBlue"
+              class="action__btn"
+              @click="handleClickEditBtn"
+            >
+              {{ $t(`profile.${isProfileEdit ? 'save' : 'change'}`) }}
             </base-btn>
           </div>
         </div>
       </div>
-    </validation-observer>
+      <div
+        v-if="isProfileEdit"
+        class="wq-profile__header"
+      >
+        {{ $t('profile.security') }}
+      </div>
+      <div
+        v-if="isProfileEdit"
+        class="wq-profile__security security"
+      >
+        <div class="security__password">
+          <div class="security__title">
+            {{ $t('profile.changePass') }}
+          </div>
+          <base-btn
+            class="security__btn"
+            mode="lightBlue"
+            @click="modalChangePassword()"
+          >
+            {{ $t('profile.change') }}
+          </base-btn>
+        </div>
+        <div class="security__auth">
+          <div class="security__title">
+            {{ $t('profile.2FA') }}
+          </div>
+          <base-btn
+            class="security__btn"
+            mode="lightBlue"
+            @click="modalTwoFAAuth()"
+          >
+            {{ $t('profile.switchOn') }}
+          </base-btn>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 
 import { mapGetters } from 'vuex';
+import { GeoCode } from 'geo-coder';
 import modals from '~/store/modals/modals';
+import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 
 export default {
   name: 'Settings',
   data() {
     return {
+      updatedPhone: null,
+      isProfileEdit: false,
+      isPositionSearch: false,
+      isGeoInputOnFocus: false,
+      addresses: [],
+      geoCode: null,
+      delay: 0,
       sms: false,
-      allRegisterUser: false,
-      allPeopleInInternet: false,
-      onlyWhenSubmitedWork: false,
-      onlyUrgentProposals: false,
-      onlyInplemention: false,
-      onlyReadyForExecution: false,
-      allRegisteredUsers: false,
       isVerified: false,
-      localUserData: {
-        avatarId: null,
-        firstName: null,
-        lastName: null,
-        userEmail: null,
-        firstMobileNumber: null,
-        secondMobileNumber: null,
-        address: null,
-        additionalInfo: {
-          description: null,
-          skills: [],
-          educations: [],
-          workExperiences: [],
-          CEO: null,
-          company: null,
-          website: null,
-          socialNetwork: {
-            instagram: null,
-            twitter: null,
-            linkedin: null,
-            facebook: null,
-            workQuest: null,
-          },
-        },
-      },
-      avatar_change: {
-        data: {},
-        file: {},
-      },
+      localUserData: null,
+      avatar_change: null,
+      socialInputs: [],
+      phoneInputsArr: [],
+      nameInputsArr: [],
+      coordinates: undefined,
     };
   },
   computed: {
     ...mapGetters({
-      tags: 'ui/getTags',
       userRole: 'user/getUserRole',
       userData: 'user/getUserData',
       firstName: 'user/getFirstName',
       lastName: 'user/getLastName',
       address: 'user/getUserAddress',
-      company: 'user/getUserCompany',
-      userCEO: 'user/getUserCEO',
-      userDesc: 'user/getUserDesc',
-      userWorkExp: 'user/getUserWorkExp',
-      userEducations: 'user/getUserEducations',
-      userWebsite: 'user/getUserWebsite',
       userInstagram: 'user/getUserInstagram',
       userTwitter: 'user/getUserTwitter',
       userLinkedin: 'user/getUserLinkedin',
       userFacebook: 'user/getUserFacebook',
       userEmail: 'user/getUserEmail',
-      userWorkQuest: 'user/getUserWorkQuest',
       firstMobileNumber: 'user/getUserFirstMobileNumber',
       secondMobileNumber: 'user/getUserSecondMobileNumber',
       imageData: 'user/getImageData',
-      additionalInfo: 'user/getAdditionalInfo',
-      isProfileEdit: 'user/isProfileEdit',
     }),
   },
-  async mounted() {
-    this.SetLoader(true);
-    this.isVerified = Boolean(this.userData.statusKYC);
-    this.localUserData = {
-      avatarId: this.userData.avatarId,
-      firstName: this.userData.firstName,
-      lastName: this.userData.lastName,
-      userEmail: this.userEmail,
-      firstMobileNumber: this.firstMobileNumber,
-      secondMobileNumber: this.secondMobileNumber,
-      address: this.address,
-      additionalInfo: JSON.parse(JSON.stringify(this.userData.additionalInfo)),
-    };
+  beforeMount() {
+    this.isVerified = !!this.userData.statusKYC;
+
+    this.setCurrData();
+  },
+  mounted() {
     this.SetLoader(false);
   },
   methods: {
-    // eslint-disable-next-line consistent-return
+    setCurrData() {
+      this.localUserData = JSON.parse(JSON.stringify(this.userData));
+
+      const {
+        localUserData, firstMobileNumber, secondMobileNumber, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
+      } = this;
+
+      const {
+        instagram, facebook, linkedin, twitter,
+      } = localUserData.additionalInfo.socialNetwork;
+
+      this.socialInputs = [{
+        key: 'instagram',
+        placeholder: userInstagram,
+        imgClass: 'icon-instagram',
+      },
+      {
+        key: 'facebook',
+        placeholder: userFacebook,
+        imgClass: 'icon-facebook',
+      },
+      {
+        key: 'linkedin',
+        placeholder: userLinkedin,
+        imgClass: 'icon-LinkedIn',
+      },
+      {
+        key: 'twitter',
+        placeholder: userTwitter,
+        imgClass: 'icon-twitter',
+      }];
+
+      // TODO add verif phone number
+
+      // this.phoneInputsArr = [{
+      //   id: 'firstMobileNumber',
+      //   model: localUserData.tempPhone,
+      //   placeholder: firstMobileNumber,
+      // }];
+
+      // if (this.userRole === 'employer') {
+      this.phoneInputsArr = [{
+        id: 'secondMobileNumber',
+        model: localUserData.additionalInfo.secondMobileNumber,
+        placeholder: secondMobileNumber,
+      }];
+      // }
+
+      this.nameInputsArr = [{
+        key: 'firstName',
+        model: localUserData.firstName,
+        placeholder: firstName,
+      },
+      {
+        key: 'lastName',
+        model: localUserData.lastName,
+        placeholder: lastName,
+      }];
+    },
+    handleClickEditBtn() {
+      if (this.isProfileEdit) {
+        this.editUserData();
+      } else {
+        this.showModalWarning();
+      }
+    },
+    handleChangeSocial(val, key) {
+      if (!val) this.localUserData.additionalInfo.socialNetwork[key] = null;
+    },
+    selectAddress(address) {
+      this.localUserData.additionalInfo.address = address.formatted;
+      this.localUserData.location = {
+        longitude: address.lng,
+        latitude: address.lat,
+      };
+    },
+    changeFocusValue(arg) {
+      setTimeout(() => {
+        this.isGeoInputOnFocus = arg;
+      }, 300);
+    },
+    getPositionData(address) {
+      this.addresses = [];
+
+      if (!address) {
+        this.localUserData.additionalInfo.address = null;
+        this.localUserData.location = null;
+        return;
+      }
+
+      if (!this.geoCode) this.geoCode = new GeoCode('google', { key: process.env.GMAPKEY });
+
+      const { geoCode } = this;
+
+      this.isPositionSearch = true;
+
+      this.setDelay(async () => {
+        try {
+          const response = await geoCode.geolookup(address);
+          this.addresses = JSON.parse(JSON.stringify(response));
+          this.isPositionSearch = false;
+        } catch (e) {
+          console.log(e);
+          this.isPositionSearch = false;
+        }
+      }, 500);
+    },
+    setDelay(f, t) {
+      clearTimeout(this.delay);
+      this.delay = setTimeout(f, t);
+    },
     async processFile(e, validate) {
-      const isValid = await validate(e);
       const file = e.target.files[0];
+      if (!file) return;
+      const isValid = await validate(e);
+
       if (isValid.valid) {
         const MAX_SIZE = 20e6; // макс размер - тут 2мб
-        if (!file) {
-          return false;
-        }
 
         const reader = new FileReader();
         reader.readAsDataURL(file);
 
-        this.avatar_change.data = await this.$store.dispatch('user/imageType', { contentType: file.type });
-        this.avatar_change.file = file;
-        let output = document.getElementById('userAvatar');
-        if (!output) {
-          output = document.getElementById('userAvatarTwo');
+        const { ok, result } = await this.$store.dispatch('user/imageType', { contentType: file.type });
+
+        if (!ok) {
+          this.avatar_change = null;
+          return;
         }
-        output.src = URL.createObjectURL(file);
-        // eslint-disable-next-line func-names
-        output.onload = function () {
-          URL.revokeObjectURL(output.src);
+
+        this.avatar_change = {
+          data: result,
+          file,
         };
-        this.showModalImageOk();
+
+        this.localUserData.avatarId = result.mediaId;
+
+        const output = document.getElementById('userAvatar');
+        output.src = URL.createObjectURL(file);
+        output.onload = () => {
+          URL.revokeObjectURL(output.src);
+          this.showModalImageOk();
+        };
+
         reader.onerror = (evt) => {
           console.error(evt);
         };
@@ -425,22 +462,26 @@ export default {
       this.ShowModal({
         key: modals.status,
         img: require('~/assets/img/ui/questAgreed.svg'),
-        title: 'Image loaded successful',
-        subtitle: 'Please press save button',
+        title: this.$t('modals.imageLoadedSuccessful'),
+        subtitle: this.$t('modals.pleasePressSaveButton'),
       });
     },
     showModalSave() {
+      this.isProfileEdit = false;
+
       this.ShowModal({
         key: modals.status,
         img: require('~/assets/img/ui/questAgreed.svg'),
-        title: 'Saved',
-        subtitle: 'User data has been saved',
+        title: this.$t('modals.saved'),
+        subtitle: this.$t('modals.userDataHasBeenSaved'),
       });
-      this.$store.dispatch('user/changeProfile', false);
     },
     showModalWarning() {
       this.ShowModal({
         key: modals.warning,
+        callback: () => {
+          this.isProfileEdit = true;
+        },
       });
     },
     modalChangePassword() {
@@ -460,62 +501,85 @@ export default {
       this.sms = !this.sms;
       this.$router.push('/sms-verification');
     },
-    transitionToChange() {
-      this.$router.push('/profile?v=change');
-      this.isProfileEdit = true;
-    },
     async editUserData() {
-      console.log('edit');
-      const formData = new FormData();
-      formData.append('image', this.avatar_change.file);
-      try {
-        if (this.avatar_change.data.ok) {
-          const data = {
-            url: this.avatar_change.data.result.url,
-            formData: this.avatar_change.file,
-            type: this.avatar_change.file.type,
-          };
-          await this.$store.dispatch('user/setImage', data);
-        }
-      } catch (error) {
-        console.log(error);
+      const {
+        avatarId, firstName, lastName, location, additionalInfo: {
+          address, socialNetwork, description, company, CEO, website,
+        }, priority, workplace, wagePerHour, userSpecializations, educations, workExperiences,
+      } = this.localUserData;
+
+      const { isValid, formatInternational } = this.updatedPhone;
+
+      const secondMobileNumber = formatInternational.replace(/\s/g, '') || '';
+
+      if (!firstName || !lastName || (secondMobileNumber && !isValid)) return;
+
+      const { avatar_change, userRole } = this;
+
+      if (avatar_change) {
+        const { file, data: { url } } = avatar_change;
+
+        const formData = new FormData();
+        formData.append('image', file);
+        const response = {
+          url,
+          formData: file,
+          type: file.type,
+        };
+        await this.$store.dispatch('user/setImage', response);
       }
-      let payload = {};
-      const checkAvatarID = this.avatar_change.data.ok ? this.avatar_change.data.result.mediaId : this.userData.avatarId;
-      if (this.userRole === 'employer') {
-        payload = {
-          ...this.localUserData,
-          avatarId: checkAvatarID,
+
+      let config = {
+        avatarId,
+        firstName,
+        lastName,
+        location,
+      };
+
+      const additionalInfo = {
+        address,
+        socialNetwork,
+        description,
+        secondMobileNumber,
+      };
+
+      if (userRole === 'employer') {
+        config = {
+          ...config,
           additionalInfo: {
-            ...this.localUserData.additionalInfo,
-            ...{
-              educations: undefined,
-              workExperiences: undefined,
-              skills: undefined,
-            },
+            ...additionalInfo,
+            company,
+            CEO,
+            website,
           },
         };
       } else {
-        payload = {
-          ...this.localUserData,
-          avatarId: checkAvatarID,
+        config = {
+          ...config,
+          priority,
+          workplace,
+          wagePerHour,
+          specializationKeys: userSpecializations.map((spec) => spec.path),
           additionalInfo: {
-            ...this.localUserData.additionalInfo,
-            ...{
-              company: undefined,
-              CEO: undefined,
-              website: undefined,
-            },
+            ...additionalInfo,
+            skills: [],
+            educations,
+            workExperiences,
           },
         };
       }
-      console.log('qq');
-      try {
-        await this.$store.dispatch('user/editUserData', payload);
-        this.showModalSave();
-      } catch (e) {
-        console.log(e);
-      }
+      const method = `/v1/${userRole}/profile/edit`;
+
+      const payload = {
+        config,
+        method,
+      };
+
+      const response = await this.$store.dispatch('user/editProfile', payload);
+
+      if (response) this.showModalSave();
+
+      this.setCurrData();
     },
   },
 };
@@ -527,7 +591,6 @@ export default {
   @include main;
   @include text-simple;
   &__body {
-    margin-top: 30px;
     max-width: 1180px;
     height: 100%;
   }
@@ -535,8 +598,8 @@ export default {
     font-weight: 600;
     font-size: 28px;
     line-height: 36px;
+    margin: 25px 0 20px 0;
 
-    margin-top: 25px;
     &_noMarginTop {
       margin-top: 0;
     }
@@ -564,6 +627,7 @@ export default {
   background-color: #0083C7;
   color: #FFFFFF;
   border-radius: 6px;
+  margin-top: 30px;
 
   &__body {
     display: grid;
@@ -597,10 +661,46 @@ export default {
   }
 
   &__image {
-    width: max-content;
     height: 100%;
-
     margin-left: auto;
+    width: auto;
+  }
+}
+
+.profile-cont {
+  background-color: #fff;
+  border-radius: 6px;
+
+  &__grid-container {
+    display: grid;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  &__main-data {
+    display: grid;
+    gap: 20px;
+    row-gap: 3px;
+    grid-template-columns: 151px repeat(2, 1fr);
+  }
+
+  &__avatar {
+    height: 151px;
+    border-radius: 6px;
+    overflow: hidden;
+    grid-column: 1;
+    grid-row: 1/5;
+  }
+
+  &__status{
+    grid-column: 2/4;
+    margin-bottom: 15px;
+  }
+
+  &__social {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
   }
 }
 
@@ -609,13 +709,6 @@ export default {
     display: grid;
     grid-template-columns: 151px repeat(3, 1fr);
     grid-gap: 20px;
-  }
-
-  &__avatar {
-    width: 100%;
-    height: 151px;
-    border-radius: 6px;
-    overflow: hidden;
   }
 
   &__contacts {
@@ -630,15 +723,6 @@ export default {
     grid-gap: 20px;
     height: 100%;
   }
-
-  &__social {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    grid-column-gap: 20px;
-    grid-row-gap: 5px;
-    height: 100%;
-  }
   &__space{
     height: 44px;
   }
@@ -647,9 +731,6 @@ export default {
 .contacts {
   &__input {
     width: 100%;
-  }
-  &__status{
-    margin-bottom: 10px;
   }
 }
 
@@ -791,11 +872,8 @@ export default {
 .action {
   display: flex;
   justify-content: flex-end;
-  &__save {
+  &__btn {
     max-width: 250px;
-  }
-  &__change {
-    @extend .action__save;
   }
 }
 
@@ -833,81 +911,156 @@ export default {
     line-height: 36px;
   }
 }
+
+.selector {
+  @include box;
+  width: 100%;
+  z-index: 140;
+  &_hide {
+    display: none;
+  }
+  &__items {
+    background: #FFFFFF;
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+  &__item {
+    @include text-simple;
+    padding: 15px 20px;
+    background: #FFFFFF;
+    font-weight: 500;
+    font-size: 16px;
+    color: $black800;
+    cursor: pointer;
+    transition: .3s;
+    &:hover {
+      background: #F3F7FA;
+    }
+  }
+}
+
+.loader-cont {
+  height: 20px;
+  width: 20px;
+  position: relative;
+
+  &__loader {
+    position: absolute !important;
+    background: transparent !important;
+  }
+}
+
+@include _1199 {
+  .wq-profile {
+
+    &__body {
+      padding: 0 20px;
+    }
+  }
+}
+
 @include _991 {
-  .wq-profile {
-    &__info {
-      grid-template-rows: 1fr auto auto;
-    }
-    &__body {
-      margin: 0 10px;
-      max-width: 100vw;
-    }
-  }
-  .info {
-    width: 100vw;
-    &__base {
-      grid-template-columns: 1fr 1fr;
-      grid-column-gap: 20px;
-      grid-row-gap: 5px;
-    }
-    &__avatar {
-      width: 200px;
-      height: 200px;
-      margin-bottom: 10px;
-    }
-    &__space {
-      display: none;
-    }
-    &__additional {
-      grid-template-columns: 1fr;
-    }
-  }
-  .security {
-    justify-content: space-around;
-    grid-template-columns: 374px 374px;
-  }
-}
-@include _767 {
-  .wq-profile {
-    &__info {
-      grid-template-rows: 1fr auto auto;
-    }
-    &__security {
-      grid-template-columns: 1fr;
-    }
-    &__body {
-      margin: 0;
-    }
-    &__header {
-      margin-left: 15px;
-    }
-  }
-  .info {
-    &__base {
-      grid-template-columns: 1fr;
-      grid-gap: 0px;
-    }
-    &__avatar {
-      width: 200px;
-      height: 200px;
-      margin-bottom: 10px;
-    }
-    &__space {
-      display: none;
-    }
-    &__additional {
-      grid-template-columns: 1fr;
-    }
-  }
-  .action {
-    justify-content: center;
-  }
-}
-@include _480 {
   .banner {
-    &__image {
-      display: none;
+    &__body {
+      grid-template-columns: 1fr;
     }
+    &__image {
+      grid-row: 1;
+    }
+  }
+  .profile-cont {
+    &__main-data {
+      grid-template-columns: 151px 1fr;
+    }
+    &__avatar {
+      grid-row: 1/7;
+    }
+    &__status {
+      grid-column: 2;
+    }
+    &__social {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .security {
+    &__password,
+    &__auth {
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+@include _767 {
+  .security {
+    grid-template-columns: 1fr;
+
+    &__password,
+    &__auth {
+      display: flex;
+      justify-items: unset;
+      justify-content: space-between;
+    }
+  }
+}
+
+@include _575 {
+  .profile-cont {
+
+    &__avatar {
+      grid-row: 1;
+      margin-bottom: 17px;
+    }
+
+    &__field {
+      grid-column: 1/3;
+    }
+
+    &__social {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .security {
+    &__password,
+    &__auth {
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+</style>
+
+<style lang="scss">
+.input-phone {
+  input {
+    background-color: #F7F8FA !important;
+    border: unset !important;
+    height: 46px !important;
+    min-height: 46px !important;
+
+    &:focus {
+      background-color: #FFFFFF !important;
+      border: 1px solid #0083C7 !important;
+    }
+  }
+
+  .country-selector__input {
+    border-top-left-radius: 6px !important;
+    border-bottom-left-radius: 6px !important;
+  }
+
+  .input-tel__input {
+    border-top-right-radius: 6px !important;
+    border-bottom-right-radius: 6px !important;
+    border-left: 1px solid #ccc !important;
   }
 }
 </style>
