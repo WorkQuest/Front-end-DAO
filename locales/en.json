@@ -559,7 +559,8 @@
       "date": "Date",
       "address": "Address",
       "vote": "Vote"
-    }
+    },
+    "proposalExpired": "Proposal expired"
   },
   "settings": {
     "description": "And you are beautiful",

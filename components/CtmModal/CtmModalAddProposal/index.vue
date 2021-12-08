@@ -128,6 +128,11 @@ export default {
       isConnected: 'web3/getWalletIsConnected',
     }),
   },
+  watch: {
+    isConnected() {
+      this.close();
+    },
+  },
   async mounted() {
     if (!this.isConnected) await this.$store.dispatch('web3/checkMetamaskStatus');
 

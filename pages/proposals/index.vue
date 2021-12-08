@@ -44,7 +44,6 @@ import { mapGetters } from 'vuex';
 import proposalCards from '~/components/app/Cards/proposalCards';
 import modals from '~/store/modals/modals';
 import { Chains } from '~/utils/enums';
-import { getProposals } from '~/utils/web3';
 
 export default {
   name: 'Proposals',
@@ -68,23 +67,41 @@ export default {
       // const rightChain = await this.$store.dispatch('web3/chainIsCompareToCurrent', Chains.ETHEREUM);
     },
   },
-  async mounted() {
-    await this.checkConnection();
-  },
   methods: {
     isCloseInfo() {
       this.isShowInfo = !this.isShowInfo;
     },
     async addProposalModal() {
-      const ok = await this.checkConnection();
-      if (!ok) return;
+      this.SetLoader(true);
+      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      if (!this.isConnected) return;
+
+      const account = await this.$store.dispatch('web3/getAccount');
+      const [delegated, proposalThreshold] = await Promise.all([
+        this.$store.dispatch('web3/getVotes', account.address),
+        this.$store.dispatch('web3/getProposalThreshold'),
+      ]);
+      console.log(+delegated.result, +proposalThreshold.result);
+      this.SetLoader(false);
+      if (+delegated.result < +proposalThreshold.result) {
+        await this.$store.dispatch('main/showToast', {
+          title: 'Add proposal error', // TODO: to localization
+          text: `You must have delegated at least ${proposalThreshold.result} WQT. Delegated now: ${delegated.result} WQT.`,
+        });
+        await this.$store.dispatch('modals/show', {
+          key: modals.delegate,
+          investorAddress: account.address,
+          min: +proposalThreshold.result,
+          callback: () => this.showAddProposal(),
+        });
+      } else {
+        this.showAddProposal();
+      }
+    },
+    showAddProposal() {
       this.ShowModal({
         key: modals.addProposal,
       });
-    },
-    async checkConnection() {
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      return this.isConnected;
     },
   },
 };

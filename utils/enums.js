@@ -11,12 +11,15 @@ export const errorCodes = Object.freeze({
   GetAllProposals: 101, // Получение всех пропосолов
   GetProposal: 102, //  Получить инфу о пропосоле
   VoteProposal: 103, // Голосовать за пропосал
-  GetVoteThreshold: 104, // Минимальная сумма для голоса
-  GetReceipt: 105, // Получить квитанцию
+  GetVoteThreshold: 104, // Минимальная делигированная сумма для голоса
+  GetProposalThreshold: 105, // Минимальная делигированная сумма для создания пропосола
+  GetReceipt: 106, // Получить квитанцию
+  ExecuteVoting: 107,
 
   GetBalance: 200, // Баланс WQT на адресе
   Delegate: 201, // Делегирование
   GetVotes: 202, // Делегировано адресу
+  Undelegate: 202,
 });
 
 export const ChainsId = {

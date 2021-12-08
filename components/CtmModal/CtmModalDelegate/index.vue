@@ -59,8 +59,8 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import modals from '~/store/modals/modals';
 import { Chains } from '~/utils/enums';
+import modals from '~/store/modals/modals';
 
 export default {
   name: 'Delegate',
@@ -79,6 +79,11 @@ export default {
       return this.options?.min ? `|min_value:${this.options.min}` : '';
     },
   },
+  watch: {
+    isConnected() {
+      this.close();
+    },
+  },
   async mounted() {
     const res = await this.$store.dispatch('web3/getBalance');
     if (res.ok) {
@@ -95,16 +100,24 @@ export default {
     async delegate() {
       await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
       if (!this.isConnected) return;
-
+      const { callback } = this.options;
       this.SetLoader(true);
       const res = await this.$store.dispatch('web3/delegate', { address: this.options.investorAddress, amount: this.tokensAmount });
-      console.log('DELEGATE RES', res);
-      if (res.ok && this.options.callback) {
-        const voteRes = await this.options.callback();
-        console.log('Vote res:', voteRes);
-      }
       this.SetLoader(false);
-      this.close();
+      if (res.ok) {
+        await this.$store.dispatch('main/showToast', {
+          title: 'Delegate',
+          text: `Delegated ${this.tokensAmount} WQT`,
+        });
+        await this.close();
+        if (callback) await callback();
+      } else if (res.msg.includes('Not enough balance to delegate')) {
+        await this.$store.dispatch('modals/show', {
+          key: modals.status,
+          title: 'Delegate error', // TODO: to localization
+          subtitle: 'Not enough balance to delegate',
+        });
+      }
     },
   },
 };
