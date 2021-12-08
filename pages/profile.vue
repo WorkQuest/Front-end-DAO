@@ -559,7 +559,7 @@ export default {
           priority,
           workplace,
           wagePerHour,
-          specializationKeys: userSpecializations || [],
+          specializationKeys: userSpecializations.map((spec) => spec.path),
           additionalInfo: {
             ...additionalInfo,
             skills: [],
