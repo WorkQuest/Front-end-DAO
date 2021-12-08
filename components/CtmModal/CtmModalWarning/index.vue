@@ -43,18 +43,13 @@ export default {
     ...mapGetters({
       options: 'modals/getOptions',
     }),
-    modalBody() {
-      return [
-        this.$t('modals.lorem'),
-      ];
-    },
   },
   methods: {
     cancel() {
       this.CloseModal();
     },
     change() {
-      this.$store.dispatch('user/changeProfile', true);
+      this.options.callback();
       this.CloseModal();
     },
   },
