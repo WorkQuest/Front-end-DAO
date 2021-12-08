@@ -505,7 +505,7 @@ export default {
       const {
         avatarId, firstName, lastName, location, additionalInfo: {
           address, socialNetwork, description, company, CEO, website,
-        }, priority, workplace, wagePerHour, specializationKeys, educations, workExperiences,
+        }, priority, workplace, wagePerHour, userSpecializations, educations, workExperiences,
       } = this.localUserData;
 
       const { isValid, formatInternational } = this.updatedPhone;
@@ -559,7 +559,7 @@ export default {
           priority,
           workplace,
           wagePerHour,
-          specializationKeys: specializationKeys || [],
+          specializationKeys: userSpecializations || [],
           additionalInfo: {
             ...additionalInfo,
             skills: [],
