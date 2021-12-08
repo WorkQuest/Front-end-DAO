@@ -793,6 +793,7 @@ export default {
   .response {
     &__footer {
       justify-content: space-between;
+      gap: 5px;
     }
     &__btn {
       margin: 0;

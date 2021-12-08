@@ -612,6 +612,9 @@ export default {
     width: 100vw;
     display: block;
     margin: 0;
+    &__header {
+      margin-left: 15px;
+    }
   }
   .info {
     grid-template-rows: 3fr 1fr auto;
@@ -623,7 +626,7 @@ export default {
     }
     &__avatar {
       height: 100%;
-      width: 370px;
+      width: 340px;
     }
   }
   .action {

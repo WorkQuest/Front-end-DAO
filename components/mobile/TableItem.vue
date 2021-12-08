@@ -229,6 +229,11 @@ export default {
     border-bottom: 1px solid $black100;
     grid-template-columns: 1fr 1fr;
     display: grid;
+    &__link {
+      &:hover {
+        text-decoration: none;
+      }
+    }
     &__separator {
         border: none;
         padding-bottom: 0;

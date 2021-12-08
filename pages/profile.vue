@@ -875,6 +875,12 @@ export default {
     &__security {
       grid-template-columns: 1fr;
     }
+    &__body {
+      margin: 0;
+    }
+    &__header {
+      margin-left: 15px;
+    }
   }
   .info {
     &__base {
@@ -892,6 +898,9 @@ export default {
     &__additional {
       grid-template-columns: 1fr;
     }
+  }
+  .action {
+    justify-content: center;
   }
 }
 @include _480 {
