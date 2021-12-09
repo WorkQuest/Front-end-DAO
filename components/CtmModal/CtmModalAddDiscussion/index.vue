@@ -116,9 +116,10 @@ export default {
 
 <style lang="scss" scoped>
 .add-discussion {
+  width:  630px;
   &__content{
     padding: 30px 28px;
-    width:  630px;
+    width:  100%;
     background-color: $white;
     border-radius: 6px;
   }
@@ -126,7 +127,7 @@ export default {
     margin-bottom: 10px;
   }
   &__field{
-    width:  574px!important;
+    width:  444px!important;
     height: 46px!important;
     background: #F3F7FA!important;
     justify-content: center;
@@ -134,7 +135,7 @@ export default {
     border-radius: 6px;
   }
   &__body {
-    width: 574px;
+    width: 444px;
     height: 174px;
     background: #F7F7FA;
     border-radius: 6px;
@@ -194,7 +195,7 @@ export default {
   .add-discussion {
     width: 500px !important;
     &__content{
-      width: 500px;
+      width: 100%;
     }
     &__field, &__body {
       width: 440px !important;
@@ -203,9 +204,6 @@ export default {
 }
 @include _575 {
   .add-discussion {
-    &__content{
-      width: 480px;
-    }
     &__field, &__body {
       width: 435px !important;
     }
@@ -214,9 +212,6 @@ export default {
 @include _480 {
   .add-discussion {
     max-width: 380px !important;
-    &__content{
-      width: 365px;
-    }
     &__field, &__body {
       width: 300px !important;
     }
@@ -225,9 +220,6 @@ export default {
 @include _380 {
   .add-discussion {
     max-width: 350px !important;
-    &__content{
-      width: 335px;
-    }
     &__field, &__body {
       width: 285px !important;
     }

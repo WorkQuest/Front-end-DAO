@@ -618,6 +618,7 @@ export default {
   }
   &__chain{
     display: flex;
+    padding: 0 10px;
     width: 40px;
     height: 40px;
     background: #F7F8FA;
@@ -630,6 +631,7 @@ export default {
   }
   &__arrow{
     display: flex;
+    padding: 0 10px;
     width: 40px;
     height: 40px;
     background: #F7F8FA;
@@ -783,11 +785,6 @@ export default {
     }
     &__pagination {
       margin: 0 15px;
-    }
-  }
-  .footer {
-    &__chain {
-      padding: 0 5px;
     }
   }
   .response {

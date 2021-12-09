@@ -336,6 +336,9 @@ export default {
   &__pagination{
     margin-top: 20px;
   }
+  &__body {
+    margin-top: 20px;
+  }
 }
 .menu {
   display: grid;

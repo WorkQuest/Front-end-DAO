@@ -441,7 +441,7 @@ export default {
     grid-template-rows: 151px 1fr 43px;
     grid-gap: 20px;
     margin-top: 15px;
-    padding: 20px;
+    padding: 15px;
 
     background: #FFFFFF;
     border-radius: 6px;
@@ -613,7 +613,7 @@ export default {
     display: block;
     margin: 0;
     &__header {
-      margin-left: 15px;
+      margin: 15px 10px;
     }
   }
   .info {
@@ -647,7 +647,7 @@ export default {
     }
   }
   .title {
-    margin-left: 15px;
+    margin: 0 15px;
   }
 }
 @include _575 {

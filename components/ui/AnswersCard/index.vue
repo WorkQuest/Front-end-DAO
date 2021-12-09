@@ -138,6 +138,7 @@ export default {
 }
 .bottom {
   display: flex;
+  gap: 10px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -190,6 +191,7 @@ export default {
   }
   &__chain{
     display: flex;
+    padding: 0 10px;
     width: 40px;
     height: 40px;
     background: #F7F8FA;
@@ -202,6 +204,7 @@ export default {
   }
   &__arrow{
     display: flex;
+    padding: 0 10px;
     width: 40px;
     height: 40px;
     background: #F7F8FA;

@@ -305,6 +305,7 @@ export default {
     &__copy {
       display: inline-block !important;
       width: 15px !important;
+      height: 100% !important;
     }
   }
 </style>

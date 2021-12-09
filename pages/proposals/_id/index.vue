@@ -431,7 +431,7 @@ export default {
   @include text-simple;
 
   &__body {
-    margin-top: 30px;
+    margin: 30px 15px 0 15px;
     max-width: 1180px;
     height: 100%;
   }
@@ -807,11 +807,6 @@ export default {
     grid-template-columns: 1fr;
     grid-row-gap: 20px;
   }
-  .proposal {
-    &__body {
-      margin: 30px 30px 0 30px;
-    }
-  }
 }
 @include _767 {
   .proposal {
@@ -819,7 +814,6 @@ export default {
       &-wrapper {
       display: grid;
       padding: 20px;
-      margin-bottom: 20px;
       }
     }
     &__back, &__header {
@@ -842,7 +836,7 @@ export default {
     &__proposals {
       display: block;
       background: $white;
-      padding: 20px;
+      padding: 20px 15px;
       margin-top: 15px;
       border-radius: 6px;
     }
@@ -868,8 +862,6 @@ export default {
       padding: 0;
     }
   }
-}
-@include _380 {
   .info{
     &__transactions {
       grid-gap: 10px;

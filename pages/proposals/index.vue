@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <div class="main__body">
+    <div class="main__body main__body_large">
       <div
         class="quests__top"
         :class="[{'top-disabled': isShowInfo === false}]"
@@ -72,14 +72,12 @@ export default {
   &-white {
     @include main;
     background: $white;
-    background: #FFFFFF;
     margin: 0 0 20px 0;
     border-radius: 6px;
     justify-content: center;
   }
-  &__body {
-    margin-top: 30px;
-    height: 100%;
+  &__body_large {
+    margin: 30px 15px 0 15px;
   }
 }
 .page {
@@ -335,8 +333,7 @@ export default {
 @include _767 {
   .main {
     &__body {
-      max-width: 100vw;
-      padding: 0 10px;
+      max-width: calc(100vw - 30px);
     }
   }
   .page {

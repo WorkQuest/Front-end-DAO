@@ -366,6 +366,28 @@
                 </div>
               </div>
             </div>
+            <div class="footer__bottom bottom">
+              <div class="bottom__left">
+                <div class="bottom__rights">
+                  <div class="bottom__text bottom__text_rights">
+                    © WorkQuest {{ new Date().getFullYear() }}
+                  </div>
+                  <div class="bottom__text bottom__text_rights">
+                    {{ $t('ui.footer.rights') }}
+                  </div>
+                </div>
+              </div>
+              <div class="bottom__right">
+                <div class="bottom__links">
+                  <div class="bottom__link">
+                    {{ $t('layout.links.terms') }}
+                  </div>
+                  <div class="bottom__link">
+                    {{ $t('layout.links.privacy') }}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <!-- /footer -->
@@ -605,7 +627,6 @@ export default {
       justify-self: flex-end;
       padding: 16px 20px 0 0;
     }
-    &__container {}
   }
   &__links {
     display: none;
@@ -861,7 +882,6 @@ export default {
     grid-gap: 10px;
   }
   &__info {
-    //grid-template-rows: repeat(2, auto);
     grid-gap: 5px;
     display: grid;
     text-align: left;
@@ -1183,11 +1203,12 @@ export default {
 }
 .footer {
   margin: 0 auto;
-  padding: 32px 0;
+  padding-top: 32px;
   width: 1180px;
   &__content {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    margin-bottom: 15px;
   }
   &__logo {
     display: flex;
@@ -1279,7 +1300,43 @@ export default {
     }
   }
 }
-
+.bottom {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid $black100;
+    height: 72px;
+    align-items: center;
+  &__links {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    grid-gap: 20px;
+  }
+  &__link {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 130%;
+    color: $blue;
+    cursor: pointer;
+  }
+  &__text {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    &_rights {
+      font-size: 14px;
+      line-height: 130%;
+      color: $black500;
+    }
+  }
+  &__rights {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    grid-gap: 20px;
+  }
+}
 .ctm-menu {
   &__toggle {
     display: none;
@@ -1290,11 +1347,6 @@ export default {
 @include _1500 {}
 @include _1300 {}
 @include _1199 {
-  .ctm-menu {
-    &__toggle {
-      display: flex;
-    }
-  }
   .header {
     &__button_menu {
       display: flex;
@@ -1321,11 +1373,16 @@ export default {
     }
   }
   .footer {
-    padding: 32px 10px;
+    padding: 32px 15px 0 15px;
     width: 100vw;
   }
 }
 @include _767 {
+  .ctm-menu {
+    &__toggle {
+      display: flex;
+    }
+  }
   .header {
      &__links {
       display: none;
@@ -1384,16 +1441,7 @@ export default {
   }
   .footer {
     &__bottom {
-      display: grid;
-    }
-    &__left {
-      grid-column: 1/2;
-    }
-    &__rights {
-      grid-column: 1/2;
-    }
-    &__rights {
-      display: flex;
+      justify-content: space-between;
     }
     &__links {
       display: flex;
@@ -1409,6 +1457,13 @@ export default {
       &_links {
         grid-template-columns: 1fr;
       }
+    }
+  }
+  .bottom {
+     &__links, &__rights {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
     }
   }
 }
