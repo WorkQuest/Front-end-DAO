@@ -20,6 +20,7 @@ export default {
   async createDiscussion({ commit }, payload) {
     try {
       const response = await this.$axios.$post('/v1/discussion/create', payload);
+      commit('setCurrentDiscussion', response.result);
       return response.result;
     } catch (e) {
       return console.log(e);

@@ -99,16 +99,25 @@ export default {
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
+      currentDiscussion: 'discussions/getCurrentDiscussion',
     }),
   },
   methods: {
-    createDiscussion() {
+    async getCurrentDiscussion() {
+      await this.$store.dispatch('discussions/getCurrentDiscussion', this.currentDiscussion.id);
+    },
+    goToCurrentDiscussion() {
+      this.$router.push(`/discussions/${this.currentDiscussion.id}`);
+    },
+    async createDiscussion() {
       const payload = {
         title: this.title,
         description: this.discussion,
         medias: [],
       };
-      this.$store.dispatch('discussions/createDiscussion', payload);
+      await this.$store.dispatch('discussions/createDiscussion', payload);
+      await this.getCurrentDiscussion();
+      this.goToCurrentDiscussion();
       this.hide();
     },
     hide() {

@@ -14,7 +14,7 @@
         {{ item.author.firstName ? item.author.firstName : this.$t('user.nameless') }} {{ item.author.lastName ? item.author.lastName : '' }}
       </span>
       <button class="user__star">
-        <!--        TODO: Нет на бэке добавить в избраное дискуссию-->
+        <!--        TODO: Добавить в избраное дискуссию-->
         <img
           v-if="!isFavorite"
           src="~assets/img/ui/star_simple.svg"
