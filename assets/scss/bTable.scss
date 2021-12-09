@@ -46,12 +46,12 @@ td{
   padding: 12px 20px!important;
 }
 
-@include _991 {
+@include _1199 {
   td {
     padding: 10px 0 !important;
     &:first-child {
-      padding: 5px !important;
-      width: 55px !important;
+      padding-left: 15px !important;
+      width: 60px !important;
     }
     &:last-child {
       padding-right: 0 !important;

@@ -211,7 +211,7 @@ export default {
   @include _1199 {
     .table {
        &__row {
-        font-size: 12px !important;
+        font-size: 13px !important;
       }
       &__header {
         font-size: 10px !important;
@@ -240,25 +240,13 @@ export default {
       font-size: 10px;
     }
   }
-  @include _767 {
-    //thead, tbody tr {
-    //  display:table;
-    //  width: 700px;
-    //  min-width: 540px;
-    //  table-layout:fixed;
-    //}
-    //thead {
-    //  width: calc( 700px - 1em );
-    //  min-width: calc( 540px - 1em );
-    //}
-  }
   &__copy{
     color:#0083C7;
     font-size: 25px;
   }
   &__avatar{
-    width: 40px!important;
-    height: 40px!important;
+    width: 30px!important;
+    height: 30px!important;
     border-radius: 50%;
     margin: 0!important;
     text-align: center;

@@ -771,16 +771,15 @@ export default {
   overflow-x: hidden;
 }
 .template {
-  min-height: 100vh;
   background: #F7F8FA;
   &__content {
     display: grid;
     grid-template-rows: 72px 1fr 256px;
-    min-height: 100vh;
+    min-height: calc(100vh - 102px);
   }
   &__main {
     display: grid;
-    padding-bottom: 80px;
+    padding-bottom: 20px;
     transition: 1s;
     width: 100%;
     max-width: 100vw;
@@ -1352,13 +1351,17 @@ export default {
       display: flex;
     }
     &__body {
-      margin: 0 20px 0 20px;
+      max-width: calc(100vw - 30px);
+      margin: 0 15px;
     }
     &__button {
       &_profile {
         display: none;
       }
     }
+  }
+  .bottom {
+    width: calc(100vw - 30px);
   }
 }
 @include _991 {

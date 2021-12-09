@@ -439,7 +439,7 @@ export default {
 
 @include _1199 {
   .wallet {
-    margin: 0 20px 0 20px;
+    margin: 0 15px;
     &__info {
       display: flex;
       flex-direction: column-reverse;
@@ -471,6 +471,7 @@ export default {
       display: block;
       background: $white;
       padding: 20px;
+      border-radius: 6px;
     }
     &__subtitle {
       font-size: 20px;

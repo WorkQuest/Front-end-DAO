@@ -210,7 +210,7 @@ export default {
 }
 @include _1199 {
   .discussions {
-    padding: 15px;
+    padding: 20px 15px;
   }
 }
 @include _991 {
@@ -223,7 +223,6 @@ export default {
 }
 @include _767 {
   .discussions {
-    padding: 16px;
     &__card {
       grid-template-columns: 1fr;
     }

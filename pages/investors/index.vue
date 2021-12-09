@@ -171,7 +171,7 @@ export default {
       display: none;
     }
   &__pagination{
-    margin-top: 10px;
+    margin: 10px 15px 0 0;
   }
 }
 
