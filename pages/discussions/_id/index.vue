@@ -15,11 +15,9 @@
       <div class="info__title">
         {{ $t('discussions.infoTitle') }}
       </div>
-      <div
-        class="info__field"
-      >
+      <div class="info__field">
         <div class="info__discussion discussion">
-          <div class=" discussion__user user">
+          <div class="discussion__user user">
             <img
               :src="authorAvatarUrl ?
                 authorAvatarUrl : require('~/assets/img/app/avatar_empty.png')"
@@ -49,19 +47,17 @@
             {{ currentDiscussion.title }}
           </div>
           <div class="discussion__date">
-            {{ $moment( currentDiscussion.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
+            {{ $moment(currentDiscussion.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
           </div>
           <div class="discussion__subtitle">
             {{ $t('discussions.files') }}
           </div>
-          <div class="discussion__filesUploader filesUploader">
-            <base-uploader
-              class="files__container"
-              type="all"
-              :items="documents"
-              :is-show-empty="true"
-            />
-          </div>
+          <base-uploader
+            class="discussion__uploader"
+            type="all"
+            :items="documents"
+            :is-show-empty="true"
+          />
           <div class="discussion__description description">
             <hr class="discussion__line">
             <div class="description__title">
@@ -71,27 +67,25 @@
               {{ currentDiscussion.description }}
             </div>
           </div>
-          <div class="discussion__bottom bottom">
-            <div class="bottom__footer">
-              <div class="bottom__comment">
-                <img
-                  src="~assets/img/ui/comment.svg"
-                  alt=""
-                >
-              </div>
-              <div class="bottom__counter">
-                {{ currentDiscussion.amountComments }}
-              </div>
-              <button class="bottom__like">
-                <span
-                  :class="{'bottom__like_choosen' : isLiked}"
-                  class="icon-heart_fill bottom__like"
-                  @click="toggleDiscussion()"
-                />
-              </button>
-              <div class="bottom__counter bottom__counter_right">
-                {{ currentDiscussion.amountLikes }}
-              </div>
+          <div class="discussion__bottom bottom bottom__footer">
+            <div class="bottom__comment">
+              <img
+                src="~assets/img/ui/comment.svg"
+                alt=""
+              >
+            </div>
+            <div class="bottom__counter">
+              {{ currentDiscussion.amountComments }}
+            </div>
+            <button class="bottom__like">
+              <span
+                :class="{'bottom__like_chosen' : isLiked}"
+                class="icon-heart_fill bottom__like"
+                @click="toggleDiscussion()"
+              />
+            </button>
+            <div class="bottom__counter bottom__counter_right">
+              {{ currentDiscussion.amountLikes }}
             </div>
           </div>
         </div>
@@ -578,7 +572,7 @@ export default {
     &:hover {
       color: #0083C7;
     }
-    &_choosen {
+    &_chosen {
       color: #0083C7;
       &:hover {
         color: #E9EDF2;
