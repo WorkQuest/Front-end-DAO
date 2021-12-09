@@ -42,18 +42,16 @@
           {{ $t('discussions.cancel') }}
         </base-btn>
         <div class="bottom__panel">
-          <button class="bottom__like">
+          <base-btn
+            class="bottom__like"
+            mode="like"
+          >
             <span
-              v-if="!isVote"
+              :class="{'bottom__like_choosen': isVote}"
               class="icon-heart_fill bottom__like"
-              @click="addLikeOnComment(item.id)"
+              @click="!isVote ? addLikeOnComment(item.id) : deleteLikeOnComment(item.id)"
             />
-            <span
-              v-else
-              class="icon-heart_fill bottom__like bottom__like_choosen"
-              @click="deleteLikeOnComment(item.id)"
-            />
-          </button>
+          </base-btn>
           <div class="bottom__counter bottom__counter_right">
             {{ item.amountLikes }}
           </div>

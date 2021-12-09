@@ -58,6 +58,7 @@ export default {
         { 'base-btn_disabled': disabled },
         { 'base-btn_light': mode === 'light' },
         { 'base-btn_outline': mode === 'outline' },
+        { 'base-btn_like': mode === 'like' },
         { 'base-btn_borderless-left': mode === 'borderless-left' },
         { 'base-btn_borderless-right': mode === 'borderless-right' },
         { 'base-btn_tag': mode === 'tag' },
@@ -110,6 +111,12 @@ export default {
   border-radius: 6px;
   &:hover {
     background: #103D7C;
+  }
+  &_like {
+    background: transparent;
+    &:hover {
+      background: transparent;
+    }
   }
   &_black {
     background: $black800;
@@ -172,7 +179,7 @@ export default {
     background-color: transparent;
     color: $blue;
   }
-  &_blue{
+  &_blue {
     background-color: transparent;
     color: $blue;
     &:hover {
@@ -181,7 +188,7 @@ export default {
       transition: .3s;
     }
   }
-  &_lightBlue{
+  &_lightBlue {
     background-color: $white;
     color: $blue ;
     border: 0.5px solid  #e6f7ff;
@@ -189,7 +196,7 @@ export default {
       background-color: #e6f7ff;
     }
   }
-  &_lightRed{
+  &_lightRed {
     background-color: $white;
     color: #DF3333 ;
     border: 0.5px solid rgba(223, 51, 51, 0.1);;
@@ -238,7 +245,7 @@ export default {
       color: $blue;
     }
   }
-  &_copy{
+  &_copy {
     background: #FFFFFF;
     color: $blue;
     font-size: 25px;

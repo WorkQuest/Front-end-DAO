@@ -207,7 +207,6 @@
               </div>
             </div>
           </div>
-          <!--          TODO: Нужна связь с rootComments-->
           <div v-if="isShow && subComments.count > 0">
             <answers-card
               v-for="(item) in filterSubComments(elem.id)"
@@ -321,6 +320,7 @@ export default {
       this.toggleShow(rootCommentId);
     },
     async toggleShow(rootCommentId) {
+      this.isShow = !this.isShow;
       return !!rootCommentId;
     },
     filterSubComments(rootCommentId) {
@@ -574,8 +574,15 @@ export default {
     margin-top: 5px;
     color: #E9EDF2;
     font-size: 22px;
-    &_choosen{
+    transition: 0.5s;
+    &:hover {
       color: #0083C7;
+    }
+    &_choosen {
+      color: #0083C7;
+      &:hover {
+        color: #E9EDF2;
+      }
     }
   }
   &__comment {
