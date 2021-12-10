@@ -1368,6 +1368,9 @@ export default {
     &__btn {
       display: none !important;
     }
+    &__right {
+      margin-left: 10px;
+    }
   }
   .template {
     &__content {
