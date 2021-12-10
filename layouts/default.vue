@@ -766,12 +766,13 @@ export default {
   }
 }
 .primary {
-  height: 100vh;
+  min-height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
 .template {
   background: #F7F8FA;
+  min-height: calc(100vh - 72px);
   &__content {
     display: grid;
     grid-template-rows: 72px 1fr 256px;
@@ -787,6 +788,7 @@ export default {
   &__footer {
     background: $white;
     width: 100%;
+    min-height: 353px;
   }
 }
 .notify {
@@ -1364,6 +1366,12 @@ export default {
   }
 }
 @include _991 {
+  .template {
+    min-height: 100vh;
+    &__content {
+      min-height: 100vh;
+    }
+  }
   .header {
     &__btn {
       display: none !important;
