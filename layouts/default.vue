@@ -1370,6 +1370,7 @@ export default {
     }
     &__right {
       margin-left: 10px;
+      grid-gap: 5px;
     }
   }
   .template {
