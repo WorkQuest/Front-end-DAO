@@ -1347,6 +1347,7 @@ export default {
 @include _1300 {}
 @include _1199 {
   .header {
+    max-width: 100vw;
     &__button_menu {
       display: flex;
     }
@@ -1354,14 +1355,12 @@ export default {
       max-width: calc(100vw - 30px);
       margin: 0 15px;
     }
-    &__button {
-      &_profile {
-        display: none;
-      }
-    }
   }
   .bottom {
     width: calc(100vw - 30px);
+  }
+  .footer {
+    padding-left: 15px;
   }
 }
 @include _991 {
@@ -1388,6 +1387,9 @@ export default {
   }
   .header {
      &__links {
+      display: none;
+    }
+    &__button_profile {
       display: none;
     }
   }
