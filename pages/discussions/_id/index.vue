@@ -68,24 +68,26 @@
             </div>
           </div>
           <div class="discussion__bottom bottom bottom__footer">
-            <div class="bottom__comment">
-              <img
-                src="~assets/img/ui/comment.svg"
-                alt=""
-              >
-            </div>
-            <div class="bottom__counter">
-              {{ currentDiscussion.amountComments }}
-            </div>
-            <button class="bottom__like">
-              <span
-                :class="{'bottom__like_chosen' : isLiked}"
-                class="icon-heart_fill bottom__like"
-                @click="toggleDiscussion"
-              />
-            </button>
-            <div class="bottom__counter bottom__counter_right">
-              {{ currentDiscussion.amountLikes }}
+            <div class="bottom__footer">
+              <div class="bottom__comment">
+                <img
+                  src="~assets/img/ui/comment.svg"
+                  alt=""
+                >
+              </div>
+              <div class="bottom__counter">
+                {{ currentDiscussion.amountComments }}
+              </div>
+              <button class="bottom__like">
+                <span
+                  :class="{'bottom__like_chosen' : isLiked}"
+                  class="icon-heart_fill bottom__like"
+                  @click="toggleDiscussion"
+                />
+              </button>
+              <div class="bottom__counter bottom__counter_right">
+                {{ currentDiscussion.amountLikes }}
+              </div>
             </div>
           </div>
         </div>
@@ -137,7 +139,7 @@
       </div>
       <div
         v-if="rootComments.count === 0"
-        class="info__comment comment"
+        class="info__comment comment "
       >
         <div class="comment__field">
           {{ $t('discussions.comments.noComments') }}
@@ -178,7 +180,7 @@
               mode="blue"
               @click="subCommentsToggle(elem.id)"
             >
-              {{ !isShow ? $t('discussions.show') : $t('discussions.hide') }}
+              {{ checkRootCommentIdArray(elem.id) ? $t('discussions.hide') : $t('discussions.show') }}
             </base-btn>
             <div class="bottom__panel">
               <img
@@ -201,7 +203,16 @@
               </div>
             </div>
           </div>
-          <div v-if="isShow && subComments.count > 0">
+          <div
+            v-if="checkRootCommentIdArray(elem.id) && subComments.count === 0"
+            class="comment comment__container"
+          >
+            <span class="comment__text">{{ $t('discussions.comments.noComments') }}</span>
+          </div>
+          <div
+            v-if="checkRootCommentIdArray(elem.id) && subComments.count > 0"
+            class="comment comment__container"
+          >
             <answers-card
               v-for="(item) in filterSubComments(elem.id)"
               :key="item.id"
@@ -210,7 +221,7 @@
             />
           </div>
           <base-btn
-            v-if="isShow"
+            v-if="checkRootCommentIdArray(elem.id) && subComments.count > 0"
             mode="blue"
             class="comment__btn"
           >
@@ -251,6 +262,7 @@ export default {
   },
   data() {
     return {
+      rootCommentIdArray: [],
       page: 1,
       perPager: 4,
       rootCommentObjects: {},
@@ -261,7 +273,6 @@ export default {
       isFavorite: false,
       isLiked: false,
       isAddComment: false,
-      isShow: false,
       isChoosen: false,
       isVote: false,
       opinion: '',
@@ -313,9 +324,22 @@ export default {
       this.getSubComments(rootCommentId);
       this.toggleShow(rootCommentId);
     },
+    checkRootCommentIdArray(rootCommentId) {
+      return this.rootCommentIdArray.length > 0 && this.rootCommentIdArray.includes(rootCommentId);
+    },
     async toggleShow(rootCommentId) {
-      this.isShow = !this.isShow;
-      return !!rootCommentId;
+      if (this.rootCommentIdArray.length === 0) {
+        this.rootCommentIdArray.push(rootCommentId);
+        return true;
+      }
+      if (this.rootCommentIdArray.length === 1 && this.rootCommentIdArray.includes(rootCommentId)) {
+        this.rootCommentIdArray.shift();
+      }
+      if (this.rootCommentIdArray.length === 1 && !this.rootCommentIdArray.includes(rootCommentId)) {
+        this.rootCommentIdArray.shift();
+        this.rootCommentIdArray.push(rootCommentId);
+      }
+      return false;
     },
     filterSubComments(rootCommentId) {
       const subComments = this.subComments.comments;
