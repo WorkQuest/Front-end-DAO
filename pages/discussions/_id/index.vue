@@ -329,17 +329,13 @@ export default {
     },
     async toggleShow(rootCommentId) {
       if (this.rootCommentIdArray.length === 0) {
-        this.rootCommentIdArray.push(rootCommentId);
-        return true;
-      }
-      if (this.rootCommentIdArray.length === 1 && this.rootCommentIdArray.includes(rootCommentId)) {
+        this.rootCommentIdArray.push(rootCommentId); return true;
+      } if (this.rootCommentIdArray.length === 1 && this.rootCommentIdArray.includes(rootCommentId)) {
         this.rootCommentIdArray.shift();
-      }
-      if (this.rootCommentIdArray.length === 1 && !this.rootCommentIdArray.includes(rootCommentId)) {
+      } if (this.rootCommentIdArray.length === 1 && !this.rootCommentIdArray.includes(rootCommentId)) {
         this.rootCommentIdArray.shift();
         this.rootCommentIdArray.push(rootCommentId);
-      }
-      return false;
+      } return false;
     },
     filterSubComments(rootCommentId) {
       const subComments = this.subComments.comments;
