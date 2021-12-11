@@ -43,6 +43,19 @@ export default {
       return console.log(e);
     }
   },
+  async changeLikeOnDiscussion({ commit }, { id, method }) {
+    try {
+      if (method === 'delete') {
+        const response = await this.$axios.$delete(`/v1/discussion/${id}/like`);
+        return response.result;
+      }
+      const response = await this.$axios.$post(`/v1/discussion/${id}/like`);
+      return response.result;
+    } catch (e) {
+      return console.log(e);
+    }
+  },
+  // TODO: Удалить методы
   async deleteLikeOnDiscussion({ commit }, discussionId) {
     try {
       const response = await this.$axios.$delete(`/v1/discussion/${discussionId}/like`);

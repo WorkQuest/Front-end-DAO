@@ -81,7 +81,7 @@
               <span
                 :class="{'bottom__like_chosen' : isLiked}"
                 class="icon-heart_fill bottom__like"
-                @click="toggleDiscussion()"
+                @click="toggleDiscussion"
               />
             </button>
             <div class="bottom__counter bottom__counter_right">
@@ -364,22 +364,14 @@ export default {
       this.isAddComment = false;
       this.subCommentInput = '';
     },
-    toggleDiscussion() {
-      if (this.isLiked) {
-        this.dislikeDiscussion();
-      } else {
-        this.likeDiscussion();
-      }
+    likeDiscussionMethod() {
+      if (!this.isLiked) return 'post';
+      return 'delete';
     },
-    async dislikeDiscussion() {
-      this.isLiked = false;
-      await this.$store.dispatch('discussions/deleteLikeOnDiscussion', this.discussionId);
-      await this.getCurrentDiscussion();
-    },
-    async likeDiscussion() {
-      this.isLiked = true;
-      await this.$store.dispatch('discussions/addLikeOnDiscussion', this.discussionId);
-      await this.getCurrentDiscussion();
+    async toggleDiscussion() {
+      await this.$store.dispatch('discussions/changeLikeOnDiscussion', { id: this.discussionId, method: this.likeDiscussionMethod() });
+      await this.$store.dispatch('discussions/getCurrentDiscussion', this.discussionId);
+      this.isLiked = !this.isLiked;
     },
     async toggleLikeOnComment(commentId) {
       if (this.isVote) {
@@ -409,7 +401,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .info {
-  &__body{
+  &__body {
   justify-content: center;
   max-width: 1180px;
   margin: 0 auto;
@@ -417,11 +409,11 @@ export default {
   height: 100%;
   @include _1024;
   }
-  &__header{
+  &__header {
     margin: 20px 0 0 0;
     justify-content: left;
   }
-  &__heading{
+  &__heading {
     margin: 30px 0 20px 0;
   }
   &__title {
@@ -434,21 +426,21 @@ export default {
   &__field {
     justify-content: space-between;
   }
-  &__discussion{
+  &__discussion {
     width: 100%;
     height: 100%;
     background: #FFFFFF;
     border-radius: 8px;
     padding: 20px 20px 0 20px;
   }
-  &__footer{
+  &__footer {
     margin-top: 20px;
   }
-  &__pagination{
+  &__pagination {
     margin-top: 5px;
   }
 }
-.heading{
+.heading {
   display: flex;
   justify-content: space-between;
   &__btn {
@@ -457,14 +449,14 @@ export default {
     border: none;
     outline: none;
   }
-  &__title{
+  &__title {
     font-weight: 500;
     font-size: 24px;
     line-height: 32px;
     color: #1D2127;
   }
 }
-.link{
+.link {
   display: flex;
   align-items: center;
   text-decoration: none;
@@ -482,8 +474,8 @@ export default {
     cursor: pointer;
   }
 }
-.comment{
-  &__field{
+.comment {
+  &__field {
     width: 100%;
     height: 100%;
     background: #fff;
@@ -491,7 +483,7 @@ export default {
     padding: 20px;
     margin-bottom: 15px;
   }
-  &__description{
+  &__description {
     @include text-usual;
     color: #7C838D;
     align-self: stretch;
@@ -509,7 +501,7 @@ export default {
     margin-left: auto;
     margin-right: auto;
   }
-  &__footer{
+  &__footer {
     margin-top: 20px;
   }
 }
@@ -605,9 +597,9 @@ export default {
     margin-right: 7px;
   }
 }
-.footer{
+.footer {
   display: flex;
-  &__input{
+  &__input {
     @include text-usual;
     width: 1040px;
     height: 40px;
@@ -617,7 +609,7 @@ export default {
     padding: 10px 20px 10px 15px;
     margin: 0 10px 0 10px;
   }
-  &__comment{
+  &__comment {
     @include text-usual;
     width: 1090px;
     height: 40px;
@@ -627,7 +619,7 @@ export default {
     padding: 10px 20px 10px 15px;
     margin: 0 0 0 10px;
   }
-  &__chain{
+  &__chain {
     display: flex;
     width: 40px;
     height: 40px;
@@ -639,7 +631,7 @@ export default {
     font-size: 25px;
     cursor: pointer;
   }
-  &__arrow{
+  &__arrow {
     display: flex;
     width: 40px;
     height: 40px;
@@ -668,44 +660,44 @@ export default {
   &__line {
     margin-top: 20px;
   }
-  &__subtitle{
+  &__subtitle {
     font-weight: 600;
     font-size: 18px;
     line-height: 130%;
   }
-  &__block{
+  &__block {
     margin: 10px 0 20px 0;
   }
-  &__filesUploader{
+  &__filesUploader {
     margin: 0 0 20px 0 !important;
   }
-  &__bottom{
+  &__bottom {
     padding-bottom: 10px;
   }
 }
 
-.block{
+.block {
   display: inline-flex;
   align-items: center;
   cursor: pointer;
-  &__icon{
+  &__icon {
     margin: 0 16px 0 0;
   }
-  &__name{
+  &__name {
     font-size: 16px;
     line-height: 145%;
     color: #282F39;
     margin-right: 8px;
   }
-  &__size{
+  &__size {
     font-size: 13px;
     line-height: 130%;
     color: #A7AEB9;
   }
-  &__file{
+  &__file {
     margin: 0 10px 0 8px;
   }
-  &__close{
+  &__close {
     height: 33px;
     width: 33px;
     margin-right: 13px;
@@ -728,31 +720,31 @@ export default {
     margin: 20px 0 10px 0;
   }
 }
-.response{
-  &__field{
+.response {
+  &__field {
       background: #FFFFFF;
       border-radius: 8px;
       padding: 20px;
       margin: 20px 0 20px 0;
   }
-  &__title{
+  &__title {
     font-weight: 500;
     font-size: 18px;
     line-height: 130%;
   }
-  &__footer{
+  &__footer {
     margin-top: 20px;
     display: flex;
     justify-content: flex-end;
   }
-  &__btn{
+  &__btn {
     width: 220px;
     height: 43px;
     margin-left: 20px;
     outline: none;
   }
 }
-.filesUploader{
+.filesUploader {
   &__files{
     display: inline-flex;
     flex-direction: row;

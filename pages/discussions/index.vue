@@ -9,6 +9,7 @@
         <base-field
           v-model="search"
           class="discussions__search"
+          :is-hide-error="true"
           :is-search="true"
           :placeholder="$t('discussions.seacrhField')"
         />
