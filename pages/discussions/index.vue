@@ -5,13 +5,13 @@
         {{ $t('discussions.title') }}
       </div>
       <div class="discussions__header">
-        <!--        TODO: Добавить поиск-->
         <base-field
           v-model="search"
           class="discussions__search"
           :is-hide-error="true"
           :is-search="true"
           :placeholder="$t('discussions.seacrhField')"
+          @input="discussionFilter"
         />
         <base-btn
           class="discussions__btn"
@@ -63,8 +63,8 @@ export default {
   watch: {
     async page() {
       this.SetLoader(true);
-      const additionalValue = `limit=${this.perPager}&offset=${(this.page - 1) * this.perPager}&${this.search}`;
-      await this.getDiscussions(additionalValue);
+      const payload = `limit=${this.perPager}&offset=${(this.page - 1) * this.perPager}&q=${this.search}`;
+      await this.getDiscussions(payload);
       this.SetLoader(false);
     },
   },
@@ -75,14 +75,26 @@ export default {
     this.SetLoader(false);
   },
   methods: {
+    async discussionFilter() {
+      this.SetLoader(true);
+      if (this.search) {
+        const payload = `limit=${this.perPager}&offset=${(this.page - 1) * this.perPager}&q=${this.search}`;
+        await this.getDiscussions(payload);
+      } else if (!this.search) {
+        const payload = `limit=${this.perPager}&offset=${(this.page - 1) * this.perPager}`;
+        await this.getDiscussions(payload);
+      }
+      this.SetLoader(false);
+    },
     totalPages() {
       if (this.discussionObjects.discussions) {
         return Math.ceil(this.discussionObjects.count / this.perPager);
       }
       return 0;
     },
-    async getDiscussions(additionalValue) {
-      this.discussionObjects = await this.$store.dispatch('discussions/getDiscussions', additionalValue);
+    async getDiscussions(payload) {
+      // payload += `&q=${this.search || ''}`;
+      this.discussionObjects = await this.$store.dispatch('discussions/getDiscussions', payload);
       this.totalPagesValue = this.totalPages();
     },
     openModalAddDiscussion() {
