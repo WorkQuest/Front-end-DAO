@@ -1,5 +1,6 @@
 import Vue from 'vue';
 
+import VuePhoneNumberInput from 'vue-phone-number-input';
 import CtmModal from '~/components/CtmModal';
 import CtmModalBox from '~/components/CtmModal/CtmModalBox';
 import Loader from '~/components/ui/Loader';
@@ -29,3 +30,4 @@ Vue.component('base-uploader', BaseUploader);
 Vue.component('base-images', BaseImages);
 Vue.component('base-files', BaseFiles);
 Vue.component('base-pager', BasePager);
+Vue.component('vue-phone-number-input', VuePhoneNumberInput);

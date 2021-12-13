@@ -16,7 +16,7 @@ export default {
   getUserEducations: (state) => state.userData?.additionalInfo?.educations || '',
   getUserWorkExp: (state) => state.userData?.additionalInfo?.workExperiences || '',
   getUserAddress: (state) => state.userData?.additionalInfo?.address || '',
-  getUserFirstMobileNumber: (state) => state.userData?.additionalInfo?.firstMobileNumber || '',
+  getUserFirstMobileNumber: (state) => state.userData?.tempPhone || '',
   getUserSecondMobileNumber: (state) => state.userData?.additionalInfo?.secondMobileNumber || '',
   getUserEmail: (state) => state.userData?.email || '',
   getUserCEO: (state) => state.userData?.additionalInfo?.CEO || '',
@@ -26,5 +26,4 @@ export default {
   getUserLinkedin: (state) => state.userData?.additionalInfo?.socialNetwork?.linkedin || '',
   getUserFacebook: (state) => state.userData?.additionalInfo?.socialNetwork?.facebook || '',
   getUserWorkQuest: (state) => state.userData?.additionalInfo?.socialNetwork?.workQuest || '',
-  isProfileEdit: (state) => state.isProfileEdit,
 };
