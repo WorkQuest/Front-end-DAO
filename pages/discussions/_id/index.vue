@@ -270,6 +270,7 @@ export default {
       rootCommentIdArray: [],
       page: 1,
       perPager: 4,
+      isAddComment: false,
       rootCommentObjects: {},
       rootCommentArray: [],
       filteredSubComments: [],
@@ -337,13 +338,19 @@ export default {
     },
     async toggleShow(rootCommentId) {
       if (this.rootCommentIdArray.length === 0) {
-        this.rootCommentIdArray.push(rootCommentId); return true;
+        this.rootCommentIdArray.push(rootCommentId);
+        return true;
       } if (this.rootCommentIdArray.length === 1 && this.rootCommentIdArray.includes(rootCommentId)) {
         this.rootCommentIdArray.shift();
+        return false;
       } if (this.rootCommentIdArray.length === 1 && !this.rootCommentIdArray.includes(rootCommentId)) {
         this.rootCommentIdArray.shift();
         this.rootCommentIdArray.push(rootCommentId);
-      } return false;
+        return true;
+      }
+      await this.getSubComments(rootCommentId);
+      await this.filterSubComments(rootCommentId);
+      return false;
     },
     filterSubComments(rootCommentId) {
       const subComments = this.subComments.comments;
@@ -402,13 +409,10 @@ export default {
     },
     async toggleLikeOnComment(comment) {
       if (comment && Object.keys(comment.commentLikes).length === 0) {
-        console.log(1);
         await this.$store.dispatch('discussions/addLikeOnComment', comment.id);
       } else if (comment && Object.keys(comment.commentLikes).length > 0) {
-        console.log(2);
         await this.$store.dispatch('discussions/deleteLikeOnComment', comment.id);
       }
-      console.log(3);
       await this.getRootComments();
     },
     addComment() {

@@ -47,9 +47,9 @@
             mode="like"
           >
             <span
-              :class="{'bottom__like_choosen': isVote}"
+              :class="{'bottom__like_choosen': item.commentLikes.length > 0}"
               class="icon-heart_fill bottom__like"
-              @click="!isVote ? addLikeOnComment(item.id) : deleteLikeOnComment(item.id)"
+              @click="toggleLikeOnComment(item)"
             />
           </base-btn>
           <div class="bottom__counter bottom__counter_right">
@@ -89,7 +89,6 @@ export default {
   data() {
     return {
       isReply: false,
-      isVote: false,
       subCommentInput: '',
     };
   },
@@ -112,13 +111,13 @@ export default {
       await this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
       this.isReply = false;
     },
-    async addLikeOnComment(commentId) {
-      this.isVote = true;
-      await this.$store.dispatch('discussions/addLikeOnComment', commentId);
-    },
-    async deleteLikeOnComment(commentId) {
-      this.isVote = false;
-      await this.$store.dispatch('discussions/deleteLikeOnComment', commentId);
+    async toggleLikeOnComment(comment) {
+      if (comment && Object.keys(comment.commentLikes).length === 0) {
+        await this.$store.dispatch('discussions/addLikeOnComment', comment.id);
+      } else if (comment && Object.keys(comment.commentLikes).length > 0) {
+        await this.$store.dispatch('discussions/deleteLikeOnComment', comment.id);
+      }
+      await this.$store.dispatch('discussions/getUsersSubCommentsOnComment', comment.id);
     },
     toggleReply() {
       this.isReply = !this.isReply;
@@ -129,21 +128,21 @@ export default {
 </script>
 <style lang="scss" scoped>
 
-.answers{
-  &__field{
+.answers {
+  &__field {
     width: 1080px;
     background: #FFFFFF;
     border-radius: 8px;
     padding: 20px 40px 0 20px;
     margin: 20px 20px 15px 80px;
   }
-  &__description{
+  &__description {
     @include text-usual;
     color: #7C838D;
     align-self: stretch;
     margin: 20px 0 25px 0;
   }
-  &__footer{
+  &__footer {
     margin-top: 20px;
     margin-bottom: 20px;
   }
@@ -198,8 +197,15 @@ export default {
     margin-top: 5px;
     color: #E9EDF2;
     font-size: 22px;
-    &_choosen{
+    transition: 0.5s;
+    &:hover {
       color: #0083C7;
+    }
+    &_choosen {
+      color: #0083C7;
+      &:hover {
+        color: #E9EDF2;
+      }
     }
   }
   &__counter {
@@ -213,9 +219,9 @@ export default {
     }
   }
 }
-.footer{
+.footer {
   display: flex;
-  &__input{
+  &__input {
     @include text-usual;
     width: 1040px;
     height: 40px;
@@ -225,7 +231,7 @@ export default {
     padding: 10px 20px 10px 15px;
     margin: 0 10px 20px 10px;
   }
-  &__chain{
+  &__chain {
     display: flex;
     width: 40px;
     height: 40px;
@@ -237,7 +243,7 @@ export default {
     font-size: 25px;
     cursor: pointer;
   }
-  &__arrow{
+  &__arrow {
     display: flex;
     width: 40px;
     height: 40px;

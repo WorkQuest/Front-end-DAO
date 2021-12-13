@@ -203,8 +203,15 @@ export default {
       margin-top: 5px;
       color: #E9EDF2;
       font-size: 22px;
+      transition: 0.5s;
+      &:hover {
+        color: #0083C7;
+      }
       &_choosen {
         color: #0083C7;
+        &:hover {
+          color: #E9EDF2;
+        }
       }
     }
     &__arrow {
@@ -238,12 +245,12 @@ export default {
   text-align: center;
   align-items: center;
   text-decoration: none;
-  &__text{
+  &__text {
   margin: 7px 14px 7px 10px;
   font-size: 16px;
   line-height: 130%;
   }
-  &__arrow{
+  &__arrow {
     margin-top: 4px;
     font-size: 25px;
     color: #0083C7;
