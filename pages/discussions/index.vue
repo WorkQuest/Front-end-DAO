@@ -22,6 +22,10 @@
       </div>
       <div class="discussions__field">
         <div class="discussions__card">
+          <div v-if="discussions.length === 0">
+            <!--            TODO: Добавить в локализацию-->
+            No discussions found! Please change your request...
+          </div>
           <discussion-card
             v-for="(item, i) in discussions"
             :key="i"
@@ -30,10 +34,10 @@
         </div>
       </div>
       <base-pager
-        v-if="totalPagesValue > 1"
+        v-if="totalPages > 1"
         v-model="page"
         class="discussions__pagination"
-        :total-pages="totalPagesValue"
+        :total-pages="totalPages"
       />
     </div>
   </div>
@@ -52,18 +56,24 @@ export default {
       page: 1,
       perPager: 8,
       discussionObjects: {},
-      totalPagesValue: 1,
     };
   },
   computed: {
     ...mapGetters({
       discussions: 'discussions/getDiscussions',
     }),
+    totalPages() {
+      if (this.discussionObjects.discussions) {
+        return Math.ceil(this.discussionObjects.count / this.perPager);
+      }
+      return 0;
+    },
   },
   watch: {
     async page() {
       this.SetLoader(true);
-      const payload = `limit=${this.perPager}&offset=${(this.page - 1) * this.perPager}&q=${this.search}`;
+      let payload = `limit=${this.perPager}&offset=${(this.page - 1) * this.perPager}`;
+      payload += this.search.trim().length ? `&q=${this.search}` : '';
       await this.getDiscussions(payload);
       this.SetLoader(false);
     },
@@ -71,31 +81,18 @@ export default {
   async mounted() {
     this.SetLoader(true);
     await this.getDiscussions();
-    this.totalPages();
     this.SetLoader(false);
   },
   methods: {
     async discussionFilter() {
       this.SetLoader(true);
-      if (this.search) {
-        const payload = `limit=${this.perPager}&offset=${(this.page - 1) * this.perPager}&q=${this.search}`;
-        await this.getDiscussions(payload);
-      } else if (!this.search) {
-        const payload = `limit=${this.perPager}&offset=${(this.page - 1) * this.perPager}`;
-        await this.getDiscussions(payload);
-      }
+      let payload = `limit=${this.perPager}&offset=${(this.page - 1) * this.perPager}`;
+      payload = this.search.trim().length ? `&q=${this.search}` : '';
+      await this.getDiscussions(payload);
       this.SetLoader(false);
     },
-    totalPages() {
-      if (this.discussionObjects.discussions) {
-        return Math.ceil(this.discussionObjects.count / this.perPager);
-      }
-      return 0;
-    },
     async getDiscussions(payload) {
-      // payload += `&q=${this.search || ''}`;
       this.discussionObjects = await this.$store.dispatch('discussions/getDiscussions', payload);
-      this.totalPagesValue = this.totalPages();
     },
     openModalAddDiscussion() {
       this.ShowModal({

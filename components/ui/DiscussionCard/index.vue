@@ -2,7 +2,7 @@
   <div class="discussion">
     <div class="discussion__user user">
       <img
-        :src="item.author.avatar.url ? item.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
+        :src="authorAvatarSrc(item)"
         alt="userAvatar"
         class="user__avatar"
         @click="toInvestor(item.author.id)"
@@ -11,19 +11,12 @@
         class="user__name"
         @click="toInvestor(item.author.id)"
       >
-        {{ item.author.firstName ? item.author.firstName : this.$t('user.nameless') }} {{ item.author.lastName ? item.author.lastName : '' }}
+        {{ authorFirstName(item) }} {{ authorLastName(item) }}
       </span>
       <button class="user__star">
         <img
-          v-if="!item.star"
-          src="~assets/img/ui/star_simple.svg"
-          alt="simpleStar"
-          @click="toggleFavorite(item.id)"
-        >
-        <img
-          v-if="item.star"
-          src="~assets/img/ui/star_checked.svg"
-          alt="checkedStar"
+          :src="favoriteStarSrc(item)"
+          :alt="favoriteStarAlt(item)"
           @click="toggleFavorite(item.id)"
         >
       </button>
@@ -95,6 +88,26 @@ export default {
     };
   },
   methods: {
+    favoriteStarSrc(item) {
+      if (item.star) return require('~/assets/img/ui/star_simple.svg');
+      return require('~/assets/img/ui/star_checked.svg');
+    },
+    favoriteStarAlt(item) {
+      if (item.star) return 'checkedStar';
+      return 'simpleStar';
+    },
+    authorAvatarSrc(item) {
+      if (item.author && item.author.avatar.url) return item.author.avatar.url;
+      return require('~/assets/img/app/avatar_empty.png');
+    },
+    authorFirstName(item) {
+      if (item.author && item.author.firstName) return item.author.firstName;
+      return this.$t('user.nameless');
+    },
+    authorLastName(item) {
+      if (item.author && item.author.lastName) return item.author.lastName;
+      return '';
+    },
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
     },

@@ -3,8 +3,7 @@
     <div class="answers__field">
       <div class="answers__user user">
         <img
-          :src="item.author.avatar ?
-            item.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
+          :src="authorAvatarSrc(item)"
           alt="userAvatar"
           class="user__avatar"
           @click="toInvestor(item.author.id)"
@@ -13,9 +12,8 @@
           class="user__name"
           @click="toInvestor(item.author.id)"
         >
-          {{ item.author.firstName ?
-            item.author.firstName : this.$t('user.nameless') }}
-          {{ item.author.lastName ? item.author.lastName : '' }}
+          {{ authorFirstName(item) }}
+          {{ authorLastName(item) }}
         </div>
         <div class="user__date">
           {{ $moment(item.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
@@ -98,6 +96,18 @@ export default {
     }),
   },
   methods: {
+    authorAvatarSrc(item) {
+      if (item.author && item.author.avatar.url) return item.author.avatar.url;
+      return require('~/assets/img/app/avatar_empty.png');
+    },
+    authorFirstName(item) {
+      if (item.author && item.author.firstName) return item.author.firstName;
+      return this.$t('user.nameless');
+    },
+    authorLastName(item) {
+      if (item.author && item.author.lastName) return item.author.lastName;
+      return '';
+    },
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
     },

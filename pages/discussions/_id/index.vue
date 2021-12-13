@@ -19,8 +19,7 @@
         <div class="info__discussion discussion">
           <div class="discussion__user user">
             <img
-              :src="authorAvatarUrl ?
-                authorAvatarUrl : require('~/assets/img/app/avatar_empty.png')"
+              :src="authorAvatarSrc()"
               alt="userAvatar"
               class="user__avatar"
               @click="toInvestor(discussionAuthor.id)"
@@ -29,21 +28,13 @@
               class="user__name"
               @click="toInvestor(discussionAuthor.id)"
             >
-              {{ discussionAuthor
-                ? discussionAuthor.firstName : this.$t('user.nameless') }}
-              {{ discussionAuthor ? discussionAuthor.lastName : '' }}
+              {{ authorFirstName() }}
+              {{ authorLastName() }}
             </span>
             <button class="user__star">
               <img
-                v-if="!currentDiscussion.star"
-                src="~assets/img/ui/star_simple.svg"
-                alt="simpleStar"
-                @click="toggleFavorite(currentDiscussion.id)"
-              >
-              <img
-                v-if="currentDiscussion.star"
-                src="~assets/img/ui/star_checked.svg"
-                alt="checkedStar"
+                :src="favoriteStarSrc(currentDiscussion)"
+                :alt="favoriteStarAlt(currentDiscussion)"
                 @click="toggleFavorite(currentDiscussion.id)"
               >
             </button>
@@ -135,7 +126,7 @@
             </base-btn>
             <base-btn
               class="response__btn"
-              @click="addRootCommentResponse()"
+              @click="addRootCommentResponse"
             >
               {{ $t('discussions.add') }}
             </base-btn>
@@ -158,8 +149,7 @@
         <div class="comment__field">
           <div class="comment__user user">
             <img
-              :src="elem.author.avatar ?
-                elem.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
+              :src="authorAvatarSrc(elem)"
               alt="userAvatar"
               class="user__avatar"
               @click="toInvestor(elem.author.id)"
@@ -168,9 +158,8 @@
               class="user__name"
               @click="toInvestor(elem.author.id)"
             >
-              {{ elem.author.firstName ?
-                elem.author.firstName : this.$t('user.nameless') }}
-              {{ elem.author.lastName ? elem.author.lastName : '' }}
+              {{ authorFirstName(elem) }}
+              {{ authorLastName(elem) }}
             </div>
             <div class="user__date">
               {{ $moment(elem.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
@@ -321,6 +310,29 @@ export default {
     this.SetLoader(false);
   },
   methods: {
+    authorAvatarSrc(elem) {
+      if (elem.author && elem.author.avatar) return elem.author.avatar.url;
+      if (this.authorAvatarUrl) return this.authorAvatarUrl;
+      return require('~/assets/img/app/avatar_empty.png');
+    },
+    authorFirstName(elem) {
+      if (elem.author && elem.author.firstName) return elem.author.firstName;
+      if (this.discussionAuthor) return this.discussionAuthor.firstName;
+      return this.$t('user.nameless');
+    },
+    authorLastName(elem) {
+      if (elem.author && elem.author.lastName) return elem.author.lastName;
+      if (this.discussionAuthor) return this.discussionAuthor.lastName;
+      return '';
+    },
+    favoriteStarSrc(item) {
+      if (item.star) return require('~/assets/img/ui/star_simple.svg');
+      return require('~/assets/img/ui/star_checked.svg');
+    },
+    favoriteStarAlt(item) {
+      if (item.star) return 'checkedStar';
+      return 'simpleStar';
+    },
     async toggleFavorite(discussionId) {
       if (this.currentDiscussion && this.currentDiscussion.star) {
         await this.$store.dispatch('discussions/deleteStarOnDiscussion', discussionId);
