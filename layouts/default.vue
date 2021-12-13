@@ -766,17 +766,17 @@ export default {
   }
 }
 .primary {
-  min-height: 100vh;
+  height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
 .template {
   background: #F7F8FA;
-  min-height: calc(100vh - 72px);
+  min-height: 100vh;
   &__content {
     display: grid;
-    grid-template-rows: 72px 1fr 256px;
-    min-height: calc(100vh - 102px);
+    grid-template-rows: 72px 1fr 352px;
+    min-height: 100vh;
   }
   &__main {
     display: grid;
