@@ -311,17 +311,17 @@ export default {
   },
   methods: {
     authorAvatarSrc(elem) {
-      if (elem.author && elem.author.avatar) return elem.author.avatar.url;
+      if (elem && elem.author.avatar) return elem.author.avatar.url;
       if (this.authorAvatarUrl) return this.authorAvatarUrl;
       return require('~/assets/img/app/avatar_empty.png');
     },
     authorFirstName(elem) {
-      if (elem.author && elem.author.firstName) return elem.author.firstName;
+      if (elem && elem.author.firstName) return elem.author.firstName;
       if (this.discussionAuthor) return this.discussionAuthor.firstName;
       return this.$t('user.nameless');
     },
     authorLastName(elem) {
-      if (elem.author && elem.author.lastName) return elem.author.lastName;
+      if (elem && elem.author.lastName) return elem.author.lastName;
       if (this.discussionAuthor) return this.discussionAuthor.lastName;
       return '';
     },

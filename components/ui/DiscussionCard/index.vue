@@ -89,23 +89,23 @@ export default {
   },
   methods: {
     favoriteStarSrc(item) {
-      if (item.star) return require('~/assets/img/ui/star_simple.svg');
+      if (item && item.star) return require('~/assets/img/ui/star_simple.svg');
       return require('~/assets/img/ui/star_checked.svg');
     },
     favoriteStarAlt(item) {
-      if (item.star) return 'checkedStar';
+      if (item && item.star) return 'checkedStar';
       return 'simpleStar';
     },
     authorAvatarSrc(item) {
-      if (item.author && item.author.avatar.url) return item.author.avatar.url;
+      if (item && item.author.avatar.url) return item.author.avatar.url;
       return require('~/assets/img/app/avatar_empty.png');
     },
     authorFirstName(item) {
-      if (item.author && item.author.firstName) return item.author.firstName;
+      if (item && item.author.firstName) return item.author.firstName;
       return this.$t('user.nameless');
     },
     authorLastName(item) {
-      if (item.author && item.author.lastName) return item.author.lastName;
+      if (item && item.author.lastName) return item.author.lastName;
       return '';
     },
     toInvestor(authorId) {
