@@ -1,4 +1,20 @@
 export default {
+  async setStarOnDiscussion({ commit }, discussionId) {
+    try {
+      const response = await this.$axios.$post(`/v1/discussion/${discussionId}/star`);
+      return response.result;
+    } catch (e) {
+      return console.log(e);
+    }
+  },
+  async deleteStarOnDiscussion({ commit }, discussionId) {
+    try {
+      const response = await this.$axios.$delete(`/v1/discussion/${discussionId}/star`);
+      return response.result;
+    } catch (e) {
+      return console.log(e);
+    }
+  },
   async getDiscussions({ commit }, additionalValue) {
     try {
       const response = await this.$axios.$get(`/v1/discussions?${additionalValue || 'limit=8'}`);
@@ -38,18 +54,6 @@ export default {
     try {
       const response = await this.$axios.$get(`/v1/discussion/comment/${commentId}/sub-comments`);
       commit('setUsersSubCommentsOnComment', response.result);
-      return response.result;
-    } catch (e) {
-      return console.log(e);
-    }
-  },
-  async changeLikeOnDiscussion({ commit }, { id, method }) {
-    try {
-      if (method === 'delete') {
-        const response = await this.$axios.$delete(`/v1/discussion/${id}/like`);
-        return response.result;
-      }
-      const response = await this.$axios.$post(`/v1/discussion/${id}/like`);
       return response.result;
     } catch (e) {
       return console.log(e);

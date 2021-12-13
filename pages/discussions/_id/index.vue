@@ -35,11 +35,16 @@
             </span>
             <button class="user__star">
               <img
-                :src="!isFavorite
-                  ? require('~/assets/img/ui/star_simple.svg')
-                  : require('~/assets/img/ui/star_checked.svg')"
-                :alt="!isFavorite ? 'simpleStar' : 'favoriteStar'"
-                @click="toggleFavorite"
+                v-if="!currentDiscussion.star"
+                src="~assets/img/ui/star_simple.svg"
+                alt="simpleStar"
+                @click="toggleFavorite(currentDiscussion.id)"
+              >
+              <img
+                v-if="currentDiscussion.star"
+                src="~assets/img/ui/star_checked.svg"
+                alt="checkedStar"
+                @click="toggleFavorite(currentDiscussion.id)"
               >
             </button>
           </div>
@@ -80,9 +85,9 @@
               </div>
               <button class="bottom__like">
                 <span
-                  :class="{'bottom__like_chosen' : isLiked}"
+                  :class="{'bottom__like_chosen' : currentDiscussion.liked}"
                   class="icon-heart_fill bottom__like"
-                  @click="toggleDiscussion"
+                  @click="toggleLikeOnDiscussion(discussionId)"
                 />
               </button>
               <div class="bottom__counter bottom__counter_right">
@@ -193,9 +198,9 @@
               </div>
               <button class="bottom__like">
                 <span
-                  :class="{'bottom__like_choosen' : isVote}"
+                  :class="{'bottom__like_chosen' : elem.commentLikes.length > 0 }"
                   class="icon-heart_fill bottom__like"
-                  @click="toggleLikeOnComment(elem.id)"
+                  @click="toggleLikeOnComment(elem)"
                 />
               </button>
               <div class="bottom__counter bottom__counter_right">
@@ -270,11 +275,6 @@ export default {
       filteredSubComments: [],
       totalPagesValue: 1,
       discussionId: '',
-      isFavorite: false,
-      isLiked: false,
-      isAddComment: false,
-      isChoosen: false,
-      isVote: false,
       opinion: '',
       subCommentInput: '',
       documents: [
@@ -320,6 +320,14 @@ export default {
     this.SetLoader(false);
   },
   methods: {
+    async toggleFavorite(discussionId) {
+      if (this.currentDiscussion && this.currentDiscussion.star) {
+        await this.$store.dispatch('discussions/deleteStarOnDiscussion', discussionId);
+      } else if (this.currentDiscussion && !this.currentDiscussion.star) {
+        await this.$store.dispatch('discussions/setStarOnDiscussion', discussionId);
+      }
+      await this.getCurrentDiscussion();
+    },
     subCommentsToggle(rootCommentId) {
       this.getSubComments(rootCommentId);
       this.toggleShow(rootCommentId);
@@ -384,33 +392,24 @@ export default {
       this.isAddComment = false;
       this.subCommentInput = '';
     },
-    likeDiscussionMethod() {
-      if (!this.isLiked) return 'post';
-      return 'delete';
-    },
-    async toggleDiscussion() {
-      await this.$store.dispatch('discussions/changeLikeOnDiscussion', { id: this.discussionId, method: this.likeDiscussionMethod() });
-      await this.$store.dispatch('discussions/getCurrentDiscussion', this.discussionId);
-      this.isLiked = !this.isLiked;
-    },
-    async toggleLikeOnComment(commentId) {
-      if (this.isVote) {
-        await this.deleteLikeOnComment(commentId);
-      } else {
-        await this.addLikeOnComment(commentId);
+    async toggleLikeOnDiscussion(discussionId) {
+      if (this.currentDiscussion && this.currentDiscussion.liked) {
+        await this.$store.dispatch('discussions/deleteLikeOnDiscussion', discussionId);
+      } else if (this.currentDiscussion && !this.currentDiscussion.liked) {
+        await this.$store.dispatch('discussions/addLikeOnDiscussion', discussionId);
       }
+      await this.getCurrentDiscussion();
+    },
+    async toggleLikeOnComment(comment) {
+      if (comment && Object.keys(comment.commentLikes).length === 0) {
+        console.log(1);
+        await this.$store.dispatch('discussions/addLikeOnComment', comment.id);
+      } else if (comment && Object.keys(comment.commentLikes).length > 0) {
+        console.log(2);
+        await this.$store.dispatch('discussions/deleteLikeOnComment', comment.id);
+      }
+      console.log(3);
       await this.getRootComments();
-    },
-    async addLikeOnComment(commentId) {
-      this.isVote = true;
-      await this.$store.dispatch('discussions/addLikeOnComment', commentId);
-    },
-    async deleteLikeOnComment(commentId) {
-      this.isVote = false;
-      await this.$store.dispatch('discussions/deleteLikeOnComment', commentId);
-    },
-    toggleFavorite() {
-      this.isFavorite = !this.isFavorite;
     },
     addComment() {
       this.isAddComment = !this.isAddComment;

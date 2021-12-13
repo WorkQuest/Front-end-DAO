@@ -14,18 +14,17 @@
         {{ item.author.firstName ? item.author.firstName : this.$t('user.nameless') }} {{ item.author.lastName ? item.author.lastName : '' }}
       </span>
       <button class="user__star">
-        <!--        TODO: Добавить в избраное дискуссию-->
         <img
-          v-if="!isFavorite"
+          v-if="!item.star"
           src="~assets/img/ui/star_simple.svg"
           alt="simpleStar"
-          @click="toggleFavorite"
+          @click="toggleFavorite(item.id)"
         >
         <img
-          v-else
+          v-if="item.star"
           src="~assets/img/ui/star_checked.svg"
           alt="checkedStar"
-          @click="toggleFavorite"
+          @click="toggleFavorite(item.id)"
         >
       </button>
     </div>
@@ -93,16 +92,19 @@ export default {
   data() {
     return {
       isHovering: false,
-      isFavorite: false,
-      isLiked: false,
     };
   },
   methods: {
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
     },
-    toggleFavorite() {
-      this.isFavorite = !this.isFavorite;
+    async toggleFavorite(discussionId) {
+      if (this.item && this.item.star) {
+        await this.$store.dispatch('discussions/deleteStarOnDiscussion', discussionId);
+      } else if (this.item && !this.item.star) {
+        await this.$store.dispatch('discussions/setStarOnDiscussion', discussionId);
+      }
+      await this.getDiscussions();
     },
     cropTxt(str) {
       const maxLength = 80;
