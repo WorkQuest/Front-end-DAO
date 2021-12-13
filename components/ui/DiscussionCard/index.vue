@@ -70,14 +70,9 @@
         </div>
         <button class="bottom__like">
           <span
-            v-if="!isLiked"
             class="icon-heart_fill bottom__like"
-            @click="likeDiscussion(item.id)"
-          />
-          <span
-            v-else
-            class="icon-heart_fill bottom__like bottom__like_choosen"
-            @click="dislikeDiscussion(item.id)"
+            :class="{'bottom__like_choosen': item.liked}"
+            @click="toggleLikeOnDiscussion(item.id)"
           />
         </button>
         <div class="bottom__counter bottom__counter_right">
@@ -117,14 +112,12 @@ export default {
     async getDiscussions() {
       await this.$store.dispatch('discussions/getDiscussions');
     },
-    async dislikeDiscussion(discussionId) {
-      this.isLiked = false;
-      await this.$store.dispatch('discussions/deleteLikeOnDiscussion', discussionId);
-      await this.getDiscussions();
-    },
-    async likeDiscussion(discussionId) {
-      this.isLiked = true;
-      await this.$store.dispatch('discussions/addLikeOnDiscussion', discussionId);
+    async toggleLikeOnDiscussion(discussionId) {
+      if (this.item && this.item.liked) {
+        await this.$store.dispatch('discussions/deleteLikeOnDiscussion', discussionId);
+      } else if (this.item && !this.item.liked) {
+        await this.$store.dispatch('discussions/addLikeOnDiscussion', discussionId);
+      }
       await this.getDiscussions();
     },
   },
