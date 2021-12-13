@@ -41,22 +41,26 @@ export default {
       const applicantEmail = this.userData.email;
       const applicantPhone = this.userData.phone;
 
-      const snsWebSdkInstance = snsWebSdk.Builder('https://test-api.sumsub.com', 'basic-kyc')
-        .withAccessToken(accessToken, () => {
-        })
-        .withConf({
-          lang: 'en',
-          email: applicantEmail,
-          phone: applicantPhone, // if available
-          onMessage: (type, payload) => {
-            console.log('WebSDK onMessage', type, payload);
-          },
-          onError: (error) => {
-            console.log('WebSDK onError', error);
-          },
-        }).build();
+      try {
+        const snsWebSdkInstance = snsWebSdk.Builder('https://test-api.sumsub.com', 'basic-kyc')
+          .withAccessToken(accessToken, () => {
+          })
+          .withConf({
+            lang: 'en',
+            email: applicantEmail,
+            phone: applicantPhone, // if available
+            onMessage: (type, payload) => {
+              console.log('WebSDK onMessage', type, payload);
+            },
+            onError: (error) => {
+              console.log('WebSDK onError', error);
+            },
+          }).build();
 
-      snsWebSdkInstance.launch('#sumsub-websdk-container');
+        snsWebSdkInstance.launch('#sumsub-websdk-container');
+      } catch (e) {
+        console.error('Error with snsWebSdkInstance. ', e);
+      }
     },
   },
 };
