@@ -47,7 +47,7 @@
             mode="like"
           >
             <span
-              :class="{'bottom__like_choosen': item.commentLikes.length > 0}"
+              :class="{'bottom__like_chosen': item.commentLikes.length > 0}"
               class="icon-heart_fill bottom__like"
               @click="toggleLikeOnComment(item)"
             />
@@ -201,7 +201,7 @@ export default {
     &:hover {
       color: #0083C7;
     }
-    &_choosen {
+    &_chosen {
       color: #0083C7;
       &:hover {
         color: #E9EDF2;
