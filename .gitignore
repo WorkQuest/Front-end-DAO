@@ -8,3 +8,4 @@ backup
 .env-example
 /package-lock.json
 .DS_Store
+.vscode

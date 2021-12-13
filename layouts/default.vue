@@ -1366,6 +1366,12 @@ export default {
   }
 }
 @include _991 {
+  .template {
+    min-height: 100vh;
+    &__content {
+      min-height: 100vh;
+    }
+  }
   .header {
     &__btn {
       display: none !important;
@@ -1373,6 +1379,11 @@ export default {
     &__right {
       margin-left: 10px;
       grid-gap: 5px;
+    }
+  }
+  .template {
+    &__content {
+      grid-template-rows: 72px 1fr auto;
     }
   }
   .footer {
