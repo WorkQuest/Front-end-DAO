@@ -7,3 +7,9 @@ export default {
   WQToken,
   WQDAOVoting,
 };
+
+export const abiNames = {
+  ERC20: 'ERC20',
+  WQToken: 'WQToken',
+  WQDAOVoting: 'WQDAOVoting',
+};

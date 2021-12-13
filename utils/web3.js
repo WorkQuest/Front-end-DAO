@@ -1,6 +1,6 @@
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
-import abi from '~/abi/index';
+import abi, { abiNames } from '~/abi/index';
 import { success, error } from '~/utils/success-error';
 import { Chains, ChainsId, errorCodes } from '~/utils/enums';
 
@@ -68,13 +68,33 @@ export const goToChain = async (chain) => {
   }
 };
 
-const sendTransaction = async (_method, _abi, _address, params) => {
+const contractInstances = {
+  [+ChainsId.ETH_MAIN]: {},
+  [+ChainsId.ETH_TEST]: {},
+};
+export const getContractInstance = (abiName, _abi, _address) => {
+  if (contractInstances[account.chainId][abiName + _address]) return contractInstances[account.chainId][abiName + _address];
+  try {
+    if (!web3Wallet) {
+      console.error('web3Wallet is null!');
+      return error(errorCodes.ProviderIsNull, 'web3Wallet is null');
+    }
+    const inst = new web3Wallet.eth.Contract(_abi, _address);
+    contractInstances[account.chainId][abiName + _address] = inst;
+    return inst;
+  } catch (e) {
+    console.error('getContractInstance:', e.message);
+    return null;
+  }
+};
+
+const sendTransaction = async (_method, abiName, _abi, _address, params) => {
   if (!web3Wallet) {
     console.error('Provider is null!');
     return error(errorCodes.ProviderIsNull, 'Provider is null');
   }
+  const inst = getContractInstance(abiName, _abi, _address);
   const accountAddress = account.address;
-  const inst = new web3Wallet.eth.Contract(_abi, _address);
   const data = inst.methods[_method].apply(this, params).encodeABI();
 
   const gasPrice = await web3Wallet.eth.getGasPrice();
@@ -89,6 +109,7 @@ const sendTransaction = async (_method, _abi, _address, params) => {
   });
 };
 
+// TODO: проверить работоспособность методы выше. если везде все окей - вырезать
 // export const sendTransaction = async (_method, _abi, _address, payload) => {
 //   if (!web3Wallet) {
 //     console.error('Provider is null!');
@@ -111,14 +132,10 @@ const sendTransaction = async (_method, _abi, _address, params) => {
 //   return await web3Wallet.eth.sendTransaction(transactionData);
 // };
 
-export const fetchContractData = async (_method, _abi, _address, _params, _provider = web3Wallet) => {
+export const fetchContractData = async (_method, abiName, _abi, _address, _params) => {
   try {
-    if (!_provider) {
-      console.error('Provider is null!');
-      return error(errorCodes.ProviderIsNull, 'Provider is null');
-    }
-    const Contract = new _provider.eth.Contract(_abi, _address);
-    const res = await Contract.methods[_method].apply(this, _params).call();
+    const inst = getContractInstance(abiName, _abi, _address);
+    const res = await inst.methods[_method].apply(this, _params).call();
     return success(res);
   } catch (e) {
     console.error('fetch data: ', e.message);
@@ -149,7 +166,7 @@ export const connectToMetamask = async () => {
     }
     web3Wallet = new Web3(ethereum);
     const chainId = await web3Wallet.eth.net.getId();
-    await ethereum.enable();
+    await ethereum.request({ method: 'eth_requestAccounts' });
     if (isProd() && ![1, 56].includes(+chainId)) {
       return error(errorCodes.WrongChainId, 'Wrong blockchain in metamask', 'Current site work on mainnet. Please change network.');
     }
@@ -180,7 +197,7 @@ export const disconnect = () => {
 export const getBalance = async () => {
   try {
     const decimals = await token.getDecimals();
-    const { result } = await fetchContractData('balanceOf', abi.WQToken, token.address, [account.address]);
+    const { result } = await fetchContractData('balanceOf', abiNames.WQToken, abi.WQToken, token.address, [account.address]);
     return success(new BigNumber(result).shiftedBy(-decimals).toString());
   } catch (e) {
     return error(errorCodes.GetBalance, e.message, e);
@@ -190,7 +207,7 @@ export const delegate = async (address, amount) => {
   try {
     const decimals = await token.getDecimals();
     const value = new BigNumber(amount).shiftedBy(+decimals).toString();
-    const res = await sendTransaction('delegate', abi.WQToken, token.address, [address, value]);
+    const res = await sendTransaction('delegate', abiNames.WQToken, abi.WQToken, token.address, [address, value]);
     return success(res);
   } catch (e) {
     return error(errorCodes.Delegate, e.message, e);
@@ -198,7 +215,7 @@ export const delegate = async (address, amount) => {
 };
 export const undelegate = async () => {
   try {
-    const res = await sendTransaction('undelegate', abi.WQToken, token.address);
+    const res = await sendTransaction('undelegate', abiNames.WQToken, abi.WQToken, token.address);
     return success(res);
   } catch (e) {
     return error(errorCodes.Undelegate, e.message, e);
@@ -207,7 +224,7 @@ export const undelegate = async () => {
 export const getVotes = async (address) => {
   try {
     const decimals = await token.getDecimals();
-    const { result } = await fetchContractData('getVotes', abi.WQToken, token.address, [address]);
+    const { result } = await fetchContractData('getVotes', abiNames.WQToken, abi.WQToken, token.address, [address]);
     return success(new BigNumber(result).shiftedBy(-decimals).toString());
   } catch (e) {
     return error(errorCodes.GetVotes, e.message, e);
@@ -217,7 +234,7 @@ export const getVotes = async (address) => {
 /* Proposals */
 export const addProposal = async (description) => {
   try {
-    const res = await sendTransaction('addProposal', abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [description.toString()]);
+    const res = await sendTransaction('addProposal', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [description.toString()]);
     return success(res);
   } catch (e) {
     return error(errorCodes.AddProposal, e.message, e);
@@ -225,7 +242,7 @@ export const addProposal = async (description) => {
 };
 export const getProposals = async (offset, limit) => { // TODO: delete later (как добавится бэк - дергать с него)
   try {
-    const { result } = await fetchContractData('getProposals', abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [offset, limit]);
+    const { result } = await fetchContractData('getProposals', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [offset, limit]);
     return success(result);
   } catch (e) {
     return error(errorCodes.GetAllProposals, e.message, e);
@@ -233,7 +250,7 @@ export const getProposals = async (offset, limit) => { // TODO: delete later (к
 };
 export const getProposalInfoById = async (id) => {
   try {
-    const res = await fetchContractData('proposals', abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [id]);
+    const res = await fetchContractData('proposals', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [id]);
     return success(res);
   } catch (e) {
     return error(errorCodes.GetProposal, e.message, e);
@@ -241,7 +258,7 @@ export const getProposalInfoById = async (id) => {
 };
 export const doVote = async (id, value) => {
   try {
-    const res = await sendTransaction('doVote', abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [id, value]);
+    const res = await sendTransaction('doVote', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [id, value]);
     return success(res);
   } catch (e) {
     return error(errorCodes.VoteProposal, e.message, e);
@@ -250,7 +267,7 @@ export const doVote = async (id, value) => {
 export const getProposalThreshold = async () => {
   try {
     const decimals = await token.getDecimals();
-    const { result } = await fetchContractData('proposalThreshold', abi.WQDAOVoting, process.env.WQ_DAO_VOTING);
+    const { result } = await fetchContractData('proposalThreshold', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING);
     return success(new BigNumber(result).shiftedBy(-decimals).toString());
   } catch (e) {
     return error(errorCodes.GetProposalThreshold, e.message, e);
@@ -259,7 +276,7 @@ export const getProposalThreshold = async () => {
 export const getVoteThreshold = async () => {
   try {
     const decimals = await token.getDecimals();
-    const { result } = await fetchContractData('voteThreshold', abi.WQDAOVoting, process.env.WQ_DAO_VOTING);
+    const { result } = await fetchContractData('voteThreshold', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING);
     return success(new BigNumber(result).shiftedBy(-decimals).toString());
   } catch (e) {
     return error(errorCodes.GetVoteThreshold, e.message, e);
@@ -267,7 +284,7 @@ export const getVoteThreshold = async () => {
 };
 export const getReceipt = async (id, accountAddress) => {
   try {
-    const { result } = await fetchContractData('getReceipt', abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [+id, accountAddress]);
+    const { result } = await fetchContractData('getReceipt', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [+id, accountAddress]);
     return success(result);
   } catch (e) {
     return error(errorCodes.GetReceipt, e.message, e);
@@ -275,7 +292,7 @@ export const getReceipt = async (id, accountAddress) => {
 };
 export const executeVoting = async (id) => {
   try {
-    const res = await sendTransaction('executeVoting', abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [id]);
+    const res = await sendTransaction('executeVoting', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [id]);
     return success(res);
   } catch (e) {
     return error(errorCodes.ExecuteVoting, e.message, e);
