@@ -5,16 +5,16 @@
   >
     <div class="delegate__content content">
       <validation-observer v-slot="{handleSubmit, valid}">
-        <div class="content__adress adress">
+        <div class="content__address address">
           <label
             for="investorAddress"
-            class="adress__label"
+            class="address__label"
           >{{ $t('modals.investorAddress') }}</label>
           <base-field
             id="invsetorAdress"
             disabled
             :value="options.investorAddress"
-            class="adress__body"
+            class="address__body"
           >
             {{ options.investorAddress }}
           </base-field>
@@ -114,8 +114,8 @@ export default {
       } else if (res.msg.includes('Not enough balance to delegate')) {
         await this.$store.dispatch('modals/show', {
           key: modals.status,
-          title: 'Delegate error', // TODO: to localization
-          subtitle: 'Not enough balance to delegate',
+          title: this.$t('errors.delegate.title'),
+          subtitle: this.$t('errors.delegate.notEnoughBalance'),
         });
       }
     },
@@ -151,7 +151,7 @@ export default {
     height: 46px!important;
   }
 }
-.adress{
+.address{
   &__label{
     @include text-usual;
     color: #1D2127;

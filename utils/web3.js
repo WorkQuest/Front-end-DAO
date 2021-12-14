@@ -132,7 +132,7 @@ export const fetchContractData = async (_method, abiName, _abi, _address, _param
     const res = await inst.methods[_method].apply(this, _params).call();
     return success(res);
   } catch (e) {
-    console.error('fetch data: ', e.message);
+    console.error('fetch data: [', _method, ']', e.message);
     return error(errorCodes.FetchContractData, '', e);
   }
 };
@@ -293,13 +293,19 @@ export const executeVoting = async (id) => {
   }
 };
 
-export const testRole = async (id) => {
+export const getChairpersonHash = async () => {
   try {
-    const res = await fetchContractData('CHAIRPERSON_ROLE', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING);
-    console.log(res);
-    // return success(res);
+    const { result } = await fetchContractData('CHAIRPERSON_ROLE', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING);
+    return success(result);
   } catch (e) {
-    console.log(e);
-    // return error(errorCodes.ExecuteVoting, e.message, e);
+    return error(errorCodes.GetChairpersonHash, e.message, e);
+  }
+};
+export const hasRole = async (roleHash) => {
+  try {
+    const { result } = await fetchContractData('hasRole', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [roleHash, account.address]);
+    return success(result);
+  } catch (e) {
+    return error(errorCodes.HasRole, e.message, e);
   }
 };

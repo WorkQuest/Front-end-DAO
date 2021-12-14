@@ -18,7 +18,7 @@
       <div class="proposal__content content">
         <div class="proposal__info info content__column">
           <div class="info__top info__top_blue">
-            <span>{{ `Voting #${voting}` }}</span>
+            <span>{{ `Voting #${idCard}` }}</span>
             <span
               class="info__status"
               :class="cardsStatusColor(status)"
@@ -26,7 +26,7 @@
           </div>
           <div class="info__header header">
             <div class="header__title">
-              <span>{{ about }}</span>
+              <span>{{ title }}</span>
             </div>
             <div class="header__subtitle">
               <span>{{ $moment(dateStart).format('lll') }} - {{ $moment(dateEnd).format('lll') }}</span>
@@ -37,6 +37,7 @@
               <div class="hash__title">
                 {{ $t('proposal.hashTitle') }}
               </div>
+              <!-- TODO: route to etherscan rinkeby/mainnet tx created hash from api -->
               <nuxt-link
                 to="/proposals/1"
                 class="hash__value"
@@ -133,11 +134,18 @@
             <div class="buttons__header">
               {{ $t('proposal.proposalIsExpired') }}
             </div>
-            <div v-if="!isVoted && timeIsExpired">
+            <base-btn
+              v-if="!isActive && isChairperson"
+              class="results__finish"
+              @click="executeVoting"
+            >
+              {{ $t('proposal.executeVoting') }}
+            </base-btn>
+            <div
+              v-if="!isVoted && timeIsExpired && !isChairperson"
+              class="results__finish"
+            >
               {{ $t('proposal.proposalIsExpired') }}
-              <base-btn @click="finishProposal">
-                Execute proposal
-              </base-btn>
             </div>
             <div
               v-else-if="!isVoted"
@@ -213,10 +221,8 @@
 <script>
 import moment from 'moment';
 import { mapGetters } from 'vuex';
-import BigNumber from 'bignumber.js';
-import { Chains } from '~/utils/enums';
+import { proposalStatuses, Chains } from '~/utils/enums';
 import modals from '~/store/modals/modals';
-import { testRole } from '~/utils/web3';
 
 export default {
   data() {
@@ -268,31 +274,18 @@ export default {
           vote: false,
         },
       ],
-      idCard: '',
-      voting: '',
-      status: '',
+      idCard: null,
+      status: 0,
       dateStart: '',
       dateEnd: '',
-      about: '',
-      ddValues: [
-        this.$t('proposal.ui.yes'),
-        this.$t('proposal.ui.no'),
-        this.$t('proposal.ui.allProposals'),
-      ],
-      ddValue: 2,
-      documents0: [],
+      title: '',
+      ddValue: 0,
       documents: [
         // {
         //   id: '1',
         //   type: 'doc',
         //   name: 'some_document1.pdf',
         //   size: '1.2mb',
-        //   img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        // }, {
-        //   id: '2',
-        //   type: 'doc',
-        //   name: 'some_doc2.pdf',
-        //   size: '1.5mb',
         //   img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
         // },
       ],
@@ -311,13 +304,22 @@ export default {
       isVoted: false,
       vote: null,
       isDescending: true,
-      isFirstLoading: true,
+      isActive: true,
     };
   },
   computed: {
     ...mapGetters({
       isConnected: 'web3/getWalletIsConnected',
+      isChairperson: 'web3/isChairpersonRole',
+      cards: 'proposals/cards',
     }),
+    ddValues() {
+      return [
+        this.$t('proposal.ui.all'),
+        this.$t('proposal.ui.yes'),
+        this.$t('proposal.ui.no'),
+      ];
+    },
     sortingClass() {
       return [
         { 'icon-Sorting_descending': this.isDescending },
@@ -330,70 +332,97 @@ export default {
   },
   watch: {
     async isConnected(newVal) {
-      if (!this.isFirstLoading && newVal) await this.loadCard();
+      if (!newVal) return;
+      this.SetLoader(true);
+      await this.checkRole();
+      this.SetLoader(false);
     },
   },
   async mounted() {
     this.SetLoader(true);
-    this.idCard = this.$route.params.id;
-    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-    if (!this.isConnected) return;
-    await this.loadCard();
-    this.isFirstLoading = false;
+    this.idCard = +this.$route.params.id;
+    if (this.isConnected) {
+      await this.checkRole();
+    }
+
+    let card = null;
+    for (let i = 0; i < this.cards.length; i += 1) {
+      if (this.cards[i].id === this.idCard) {
+        card = this.cards[i];
+        break;
+      }
+    }
+    if (card === null) {
+      // TODO: load from api
+      this.title = 'NOT FOUND';
+      this.SetLoader(false);
+      return; // todo: del later
+    }
+    this.status = card.status;
+    this.title = card.title;
+    this.description = card.description;
+    // this.results = {}
     this.SetLoader(false);
   },
   methods: {
-    async finishProposal() {
-      await testRole();
+    async checkRole() { // TODO: remove check chairperson and move logic to admin panel
+      await this.$store.dispatch('web3/isChairpersonRole');
     },
-    async loadCard() {
-      const [proposalRes] = await Promise.all([
-        this.$store.dispatch('web3/getProposalInfoById', this.idCard),
-        this.getReceipt(),
-      ]);
-      if (!proposalRes.ok) return;
-      const { result } = proposalRes.result;
-
-      const {
-        forVotes, againstVotes, active, description, startTime, expireTime,
-      } = result;
-
-      const yes = +(new BigNumber(forVotes).shiftedBy(-18));
-      const no = +(new BigNumber(againstVotes).shiftedBy(-18));
-
-      this.results.votes.yes = yes;
-      this.results.votes.no = no;
-
-      const sumVotes = no + yes;
-      if (sumVotes <= 0) {
-        this.results.percents.yes = 0;
-        this.results.percents.no = 0;
-      } else if (no - yes === no) {
-        this.results.percents.yes = 0;
-        this.results.percents.no = 100;
-      } else if (yes - no === yes) {
-        this.results.percents.yes = 100;
-        this.results.percents.no = 0;
-      } else {
-        if (yes > 0) {
-          // Math.floor((yes * 10000) / sumVotes) / 100;
-          this.results.percents.yes = +(new BigNumber((yes * 100) / sumVotes).decimalPlaces(1).toString());
-        } else this.results.percents.yes = 0;
-        if (no > 0) {
-          // Math.floor((no * 10000) / sumVotes) / 100;
-          this.results.percents.no = +(new BigNumber((no * 100) / sumVotes).decimalPlaces(1).toString());
-        } else this.results.percents.no = 0;
-      }
-
-      const start = new Date(startTime * 1000);
-      const end = new Date(expireTime * 1000);
-      this.voting = this.idCard;
-      this.status = active ? 0 : 1;
-      this.dateStart = start;
-      this.dateEnd = end;
-      this.description = description;
-      this.about = '*TITLE from back*';
+    async executeVoting() {
+      this.SetLoader(true);
+      if (!this.isChairperson) return;
+      await this.$store.dispatch('web3/executeVoting', this.idCard);
+      // todo: update info from event
+      this.SetLoader(false);
     },
+    // async loadCard() {
+    //   const [proposalRes] = await Promise.all([
+    //     this.$store.dispatch('web3/getProposalInfoById', this.idCard),
+    //     this.getReceipt(),
+    //   ]);
+    //   if (!proposalRes.ok) return;
+    //   const { result } = proposalRes.result;
+    //   console.log(result);
+    //   const {
+    //     forVotes, againstVotes, active, defeated, succeded, description, startTime, expireTime,
+    //   } = result;
+    //   const yes = +(new BigNumber(forVotes).shiftedBy(-18));
+    //   const no = +(new BigNumber(againstVotes).shiftedBy(-18));
+    //   this.results.votes.yes = yes;
+    //   this.results.votes.no = no;
+    //   const sumVotes = no + yes; // TODO: оставить код расчета голосов
+    //   if (sumVotes <= 0) {
+    //     this.results.percents.yes = 0;
+    //     this.results.percents.no = 0;
+    //   } else if (no - yes === no) {
+    //     this.results.percents.yes = 0;
+    //     this.results.percents.no = 100;
+    //   } else if (yes - no === yes) {
+    //     this.results.percents.yes = 100;
+    //     this.results.percents.no = 0;
+    //   } else {
+    //     if (yes > 0) {
+    //       this.results.percents.yes = +(new BigNumber((yes * 100) / sumVotes).decimalPlaces(1).toString());
+    //     } else this.results.percents.yes = 0;
+    //     if (no > 0) {
+    //       this.results.percents.no = +(new BigNumber((no * 100) / sumVotes).decimalPlaces(1).toString());
+    //     } else this.results.percents.no = 0;
+    //   }
+    //   const start = new Date(startTime * 1000);
+    //   const end = new Date(expireTime * 1000);
+    //   this.isActive = active;
+    //   if (active) {
+    //     this.status = 0;
+    //   } else if (defeated) {
+    //     this.status = 3;
+    //   } else {
+    //     this.status = succeded ? 2 : 1;
+    //   }
+    //   this.dateStart = start;
+    //   this.dateEnd = end;
+    //   this.description = description;
+    //   this.title = '*TITLE from back*';
+    // },
     async getReceipt() {
       const { address } = await this.$store.dispatch('web3/getAccount');
       const res = await this.$store.dispatch('web3/getReceipt', { id: this.idCard, accountAddress: address });
@@ -405,17 +434,19 @@ export default {
     },
     cardsStatusColor(idx) {
       const statusClass = {
-        0: 'info__status_pending',
-        1: 'info__status_rejected',
-        2: 'info__status_accepted',
+        [proposalStatuses.PENDING]: 'info__status_pending',
+        [proposalStatuses.REJECTED]: 'info__status_rejected',
+        [proposalStatuses.ACCEPTED]: 'info__status_accepted',
+        [proposalStatuses.CANCELLED]: 'info__status_cancelled',
       };
       return statusClass[idx] || 'None';
     },
     getPriority(index) {
       const priority = {
-        0: this.$t('proposals.cards.status.pending'),
-        1: this.$t('proposals.cards.status.rejected'),
-        2: this.$t('proposals.cards.status.accepted'),
+        [proposalStatuses.PENDING]: this.$t('proposals.cards.status.pending'),
+        [proposalStatuses.REJECTED]: this.$t('proposals.cards.status.rejected'),
+        [proposalStatuses.ACCEPTED]: this.$t('proposals.cards.status.accepted'),
+        [proposalStatuses.CANCELLED]: this.$t('proposals.cards.status.cancelled'),
       };
       return priority[index] || 'None';
     },
@@ -465,8 +496,7 @@ export default {
     },
     async onVote(value) {
       this.SetLoader(true);
-      await this.loadCard(); // TODO: check better case than update data before vote
-      if (this.timeIsExpired) {
+      if (this.timeIsExpired || this.$moment().isAfter(this.$moment(this.endTime))) { // TODO: как-то проверить вышло ли время! (чек второй)
         await this.$store.dispatch('main/showToast', {
           title: this.$t('proposal.voteError'),
           text: this.$t('proposal.errors.votingTimeIsExpired'),
@@ -581,15 +611,17 @@ export default {
       background-color: #f6f8fa;
       color: #AAB0B9;
     }
-
     &_rejected {
       background-color: #fcebeb;
-      color: #DF3333;
+      color: $red;
     }
-
-    &_accepted {
+    &_accepted{
       background-color: #f6f8fa;
-      color: #22CC14;
+      color: $green;
+    }
+    &_cancelled {
+      background-color: $grey;
+      color: $shade700;
     }
 
     &_disabled {
@@ -704,6 +736,9 @@ export default {
     font-size: 16px;
     line-height: 130%;
     color: #1D2127;
+    margin-bottom: 15px;
+  }
+  &__finish {
     margin-bottom: 15px;
   }
 }

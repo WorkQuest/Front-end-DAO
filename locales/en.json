@@ -409,7 +409,7 @@
     "undelegate": "Undelegate",
     "shure": "Are you shure to undelegate {n}?",
     "delegate": "Delegate",
-    "investorAddress": "Investor adress",
+    "investorAddress": "Investor address",
     "tokensNumber": "Tokens Number",
     "tokensDelegated": "Enter number of tokens that will be delegated",
     "max": "Maximum",
@@ -527,7 +527,8 @@
       "status": {
         "pending": "Pending",
         "rejected": "Rejected",
-        "accepted": "Accepted"
+        "accepted": "Accepted",
+        "cancelled": "Cancelled"
       }
     }
   },
@@ -548,7 +549,7 @@
     "voted": "Voted",
     "ui": {
       "addTime": "Added time",
-      "allProposals": "All proposals",
+      "all": "All",
       "yes": "Yes",
       "no": "No"
     },
@@ -560,6 +561,7 @@
       "address": "Address",
       "vote": "Vote"
     },
+    "executeVoting": "Execute voting",
     "proposalIsExpired": "Proposal is expired",
     "errors": {
       "addProposal": "Add proposal error",
@@ -920,7 +922,11 @@
     "faq5": "How is the average annual return (APR) calculated?"
   },
   "errors": {
-    "incorrectPass" : "Oops, something went wrong. Check the data and try again."
+    "incorrectPass" : "Oops, something went wrong. Check the data and try again.",
+    "delegate": {
+      "title": "Delegate error",
+      "notEnoughBalance": "Not enough balance to delegate"
+    }
   },
   "discussions": {
   "title": "Discussions",

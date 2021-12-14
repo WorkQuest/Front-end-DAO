@@ -15,23 +15,34 @@ export const errorCodes = Object.freeze({
   GetProposalThreshold: 105, // Минимальная делигированная сумма для создания пропосола
   GetReceipt: 106, // Получить квитанцию
   ExecuteVoting: 107,
+  GetChairpersonHash: 110,
+  HasRole: 111,
 
   GetBalance: 200, // Баланс WQT на адресе
   Delegate: 201, // Делегирование
   GetVotes: 202, // Делегировано адресу
   Undelegate: 202,
+
+  axiosFetchError: 5000,
 });
 
-export const ChainsId = {
+export const ChainsId = Object.freeze({
   ETH_MAIN: '0x1',
   ETH_TEST: '0x4',
-};
+});
 
-export const Chains = {
+export const Chains = Object.freeze({
   ETHEREUM: 'ETH',
-};
+});
 
-export const NativeTokenSymbolByChainId = {
+export const NativeTokenSymbolByChainId = Object.freeze({
   [+ChainsId.ETH_MAIN]: 'ETH',
   [+ChainsId.ETH_TEST]: 'ETH',
-};
+});
+
+export const proposalStatuses = Object.freeze({
+  PENDING: 0,
+  REJECTED: 1,
+  ACCEPTED: 2,
+  CANCELLED: 3,
+});

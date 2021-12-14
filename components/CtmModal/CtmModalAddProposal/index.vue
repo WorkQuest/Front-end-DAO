@@ -12,7 +12,7 @@
               v-model="votingTopicInput"
               :placeholder="$t('modals.votingTopic')"
               :label="$t('modals.votingTopic')"
-              rules="required|maxLength=200"
+              rules="required|max:100|min:3"
               :name="$t('modals.votingTopicField')"
             />
           </div>
@@ -39,15 +39,19 @@
             >
               {{ $t('modals.description') }}
             </label>
-            <!-- TODO: max length to rules -->
-            <validation-provider rules="required">
+            <validation-provider
+              v-slot="{ errors }"
+              rules="required|max:2000|min:50"
+            >
               <textarea
                 id="description"
                 v-model="descriptionInput"
                 class="description__textarea"
                 name="description"
-                maxLength="2000"
               />
+              <div class="description__error">
+                {{ errors[0] }}
+              </div>
             </validation-provider>
           </div>
         </div>
@@ -311,6 +315,12 @@ export default {
       background: #FFFFFF;
       border: 1px solid #0083C7;
     }
+  }
+
+  &__error {
+    color: #F82727;
+    font-size: 12px;
+    min-height: 23px;
   }
 }
 

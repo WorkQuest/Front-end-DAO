@@ -50,14 +50,14 @@
           <div class="card__header">
             <div class="card__header_top">
               <div class="card__header_left">
-                <span>Voting #{{ card.voting }}</span>
+                <span>Voting #{{ card.id }}</span>
               </div>
               <div class="card__header_right">
                 <div class="card__status">
                   <span
                     class="card__status"
                     :class="cardsStatusColor(card.status)"
-                  >{{ getPriority(card.status) }}</span>
+                  >{{ priority[card.status] || 'None' }}</span>
                 </div>
               </div>
             </div>
@@ -66,14 +66,13 @@
             {{ $moment(new Date(card.dateStart)).format('ll') }} - {{ $moment(new Date(card.dateEnd)).format('ll') }}
           </div>
           <div class="card__about">
-            {{ card.about }}
+            {{ card.title }}
           </div>
           <div class="btn__container">
             <div class="btn__wrapper">
               <nuxt-link
-                v-if="card.status===0"
                 class="btn__link"
-                :to="`/proposals/${card.voting}`"
+                :to="`/proposals/${card.id}`"
               >
                 <base-btn
                   mode="outline"
@@ -82,14 +81,6 @@
                   {{ $t('meta.open') }}
                 </base-btn>
               </nuxt-link>
-              <base-btn
-                v-else
-                mode="outline"
-                class="message__action"
-                :disabled="true"
-              >
-                {{ $t('proposal.voted') }}
-              </base-btn>
             </div>
           </div>
         </div>
@@ -107,7 +98,7 @@
 <script>
 
 import { mapGetters } from 'vuex';
-import { Chains } from '~/utils/enums';
+import { Chains, proposalStatuses } from '~/utils/enums';
 
 export default {
   name: 'ProposalCards',
@@ -122,19 +113,11 @@ export default {
       isDescending: true,
       cardsLimit: 12,
       ddValue: 2,
-      cards: [
-        // {
-        //   voting: 1,
-        //   status: 0,
-        //   date: 'Jan 01, 2021 - Mar 01, 2021',
-        //   about: 'Lorem ipsum dolor sit amet, consectetur',
-        // },
-      ],
     };
   },
   computed: {
     ...mapGetters({
-      isConnected: 'web3/getWalletIsConnected',
+      cards: 'proposals/cards',
     }),
     ddValues() {
       return [
@@ -156,32 +139,29 @@ export default {
         { 'icon-Sorting_ascending': !this.isDescending },
       ];
     },
+    priority() {
+      return {
+        [proposalStatuses.PENDING]: this.$t('proposals.cards.status.pending'),
+        [proposalStatuses.REJECTED]: this.$t('proposals.cards.status.rejected'),
+        [proposalStatuses.ACCEPTED]: this.$t('proposals.cards.status.accepted'),
+        [proposalStatuses.CANCELLED]: this.$t('proposals.cards.status.cancelled'),
+      };
+    },
   },
   async mounted() {
     this.SetLoader(true);
-    await this.checkConnection();
-    if (this.isConnected) await this.loadPage(1);
+    // await this.loadPage(1); // TODO: вернуть
     this.SetLoader(false);
   },
   methods: {
-    showDetails() {
-      this.$router.push('/proposals/1');
-    },
     cardsStatusColor(idx) {
       const statusClass = {
-        0: 'card__status_pending',
-        1: 'card__status_rejected',
-        2: 'card__status_accepted',
+        [proposalStatuses.PENDING]: 'card__status_pending',
+        [proposalStatuses.REJECTED]: 'card__status_rejected',
+        [proposalStatuses.ACCEPTED]: 'card__status_accepted',
+        [proposalStatuses.CANCELLED]: 'card__status_cancelled',
       };
       return statusClass[idx] || 'None';
-    },
-    getPriority(index) {
-      const priority = {
-        0: this.$t('proposals.cards.status.pending'),
-        1: this.$t('proposals.cards.status.rejected'),
-        2: this.$t('proposals.cards.status.accepted'),
-      };
-      return priority[index] || 'None';
     },
     async searchProposals() {
       if (this.timeoutIdSearch) {
@@ -192,31 +172,12 @@ export default {
         await this.loadPage(1);
       }, 500);
     },
-    async checkConnection() {
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-    },
     async loadPage(page) {
-      if (this.isConnected) {
-        const res = await this.$store.dispatch('web3/getProposals', { limit: 10, offset: 10 * (page - 1) });
-        if (!res.ok) return;
-        const { count, pages } = res.result;
-        this.totalPages = +count / this.cardsLimit;
-        this.prepareCards(pages);
-      }
-    },
-    // TODO: переделать на получение с бэка
-    prepareCards(cards) {
-      console.log(cards);
-      // eslint-disable-next-line no-restricted-syntax
-      for (const item of cards) {
-        this.cards.push({
-          voting: item.id,
-          dateStart: item.startTime * 1000,
-          dateEnd: item.expireTime * 1000,
-          about: item.description,
-          status: item.active ? 0 : 1,
-        });
-      }
+      await this.$store.dispatch('proposals/getProposals', {
+        limit: this.cardsLimit,
+        offset: (this.currentPage - 1) * this.cardsLimit,
+        search: this.search,
+      });
     },
   },
 };
@@ -388,7 +349,6 @@ export default {
     height: 24px;
     display: flex;
     padding: 0 4px;
-    align-items: center;
     border-radius: 3px;
     &_pending {
       background-color: #f6f8fa;
@@ -396,11 +356,15 @@ export default {
     }
     &_rejected {
       background-color: #fcebeb;
-      color: #DF3333;
+      color: $red;
     }
     &_accepted{
       background-color: #f6f8fa;
-      color: #22CC14;
+      color: $green;
+    }
+    &_cancelled {
+      background-color: $grey;
+      color: $shade700;
     }
     &_disabled {
       display: none;
