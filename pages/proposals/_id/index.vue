@@ -135,6 +135,9 @@
             </div>
             <div v-if="!isVoted && timeIsExpired">
               {{ $t('proposal.proposalIsExpired') }}
+              <base-btn @click="finishProposal">
+                Execute proposal
+              </base-btn>
             </div>
             <div
               v-else-if="!isVoted"
@@ -213,6 +216,7 @@ import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import { Chains } from '~/utils/enums';
 import modals from '~/store/modals/modals';
+import { testRole } from '~/utils/web3';
 
 export default {
   data() {
@@ -339,6 +343,9 @@ export default {
     this.SetLoader(false);
   },
   methods: {
+    async finishProposal() {
+      await testRole();
+    },
     async loadCard() {
       const [proposalRes] = await Promise.all([
         this.$store.dispatch('web3/getProposalInfoById', this.idCard),

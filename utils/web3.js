@@ -66,18 +66,18 @@ export const goToChain = async (chain) => {
   }
 };
 
-const contractInstances = {
-  [+ChainsId.ETH_MAIN]: {},
-  [+ChainsId.ETH_TEST]: {},
-};
+const contractInstances = {};
 export const getContractInstance = (abiName, _abi, _address) => {
-  if (contractInstances[account.chainId][abiName + _address]) return contractInstances[account.chainId][abiName + _address];
+  if (contractInstances[account.chainId] && contractInstances[account.chainId][abiName + _address]) {
+    return contractInstances[account.chainId][abiName + _address];
+  }
   try {
     if (!web3Wallet) {
       console.error('web3Wallet is null!');
       return error(errorCodes.ProviderIsNull, 'web3Wallet is null');
     }
     const inst = new web3Wallet.eth.Contract(_abi, _address);
+    if (!contractInstances[account.chainId]) contractInstances[account.chainId] = {};
     contractInstances[account.chainId][abiName + _address] = inst;
     return inst;
   } catch (e) {
@@ -290,5 +290,16 @@ export const executeVoting = async (id) => {
     return success(res);
   } catch (e) {
     return error(errorCodes.ExecuteVoting, e.message, e);
+  }
+};
+
+export const testRole = async (id) => {
+  try {
+    const res = await fetchContractData('CHAIRPERSON_ROLE', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING);
+    console.log(res);
+    // return success(res);
+  } catch (e) {
+    console.log(e);
+    // return error(errorCodes.ExecuteVoting, e.message, e);
   }
 };
