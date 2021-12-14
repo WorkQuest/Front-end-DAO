@@ -32,6 +32,7 @@ export default {
     '@nuxtjs/eslint-module',
     '@nuxtjs/dotenv',
     '@nuxtjs/color-mode',
+    '@nuxtjs/moment',
   ],
   styleResources: {
     scss: ['./assets/scss/resources.scss'],
@@ -84,5 +85,8 @@ export default {
   },
   env: {
     BASE_URL: process.env.BASE_URL,
+
+    WQ_TOKEN: process.env.WQ_TOKEN,
+    WQ_DAO_VOTING: process.env.WQ_DAO_VOTING,
   },
 };
