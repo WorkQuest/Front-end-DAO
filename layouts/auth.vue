@@ -35,7 +35,14 @@ export default {
   computed: {
     ...mapGetters({
       isLoading: 'main/getIsLoading',
+      access: 'user/accessToken',
+      refresh: 'user/refreshToken',
     }),
+  },
+  created() {
+    if (this.access || this.refresh || localStorage.getItem('access') || localStorage.getItem('refresh')) {
+      this.$router.push('/proposals');
+    }
   },
   methods: {
     toMain() {
