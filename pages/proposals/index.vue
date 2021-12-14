@@ -85,8 +85,8 @@ export default {
       this.SetLoader(false);
       if (+delegated.result < +proposalThreshold.result) {
         await this.$store.dispatch('main/showToast', {
-          title: 'Add proposal error', // TODO: to localization
-          text: `You must have delegated at least ${proposalThreshold.result} WQT. Delegated now: ${delegated.result} WQT.`,
+          title: this.$t('proposal.errors.addProposal'),
+          text: this.$t('proposal.notEnoughFunds', { a: proposalThreshold.result, b: delegated.result }), // `You must have delegated at least ${proposalThreshold.result} WQT. Delegated now: ${delegated.result} WQT.`,
         });
         await this.$store.dispatch('modals/show', {
           key: modals.delegate,

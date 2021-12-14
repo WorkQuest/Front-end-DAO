@@ -562,6 +562,7 @@
     },
     "proposalIsExpired": "Proposal is expired",
     "errors": {
+      "addProposal": "Add proposal error",
       "voteError": "Voting error",
       "votingTimeIsExpired": "Voting time is expired",
       "notEnoughFunds": "You must have delegated at least {a} WQT. Delegated: {b} WQT."

@@ -44,8 +44,6 @@ export const getChainIdByChain = (chain) => {
   switch (chain) {
     case Chains.ETHEREUM:
       return isProd() ? ChainsId.ETH_MAIN : ChainsId.ETH_TEST;
-    case Chains.BINANCE:
-      return isProd() ? ChainsId.BSC_MAIN : ChainsId.BSC_TEST;
     default:
       throw error(-1, `wrong chain name: ${chain}`);
   }
@@ -131,7 +129,6 @@ const sendTransaction = async (_method, abiName, _abi, _address, params) => {
 export const fetchContractData = async (_method, abiName, _abi, _address, _params) => {
   try {
     const inst = getContractInstance(abiName, _abi, _address);
-    console.log(inst, abiName, _method);
     const res = await inst.methods[_method].apply(this, _params).call();
     return success(res);
   } catch (e) {
