@@ -107,7 +107,7 @@
                 >
                   <loader
                     class="loader-cont__loader"
-                    :is-mini-loader="true"
+                    is-mini-loader
                   />
                 </div>
               </template>
@@ -132,9 +132,8 @@
             <base-field
               v-model="localUserData.email"
               :placeholder="localUserData.email || $t('settings.addressInput')"
-              :disabled="!isProfileEdit"
+              disabled
               mode="icon"
-              rules="required|email"
               :name="$t('modals.emailField')"
               mode-error="small"
               class="profile-cont__field"
@@ -343,6 +342,8 @@ export default {
         imgClass: 'icon-twitter',
       }];
 
+      // TODO add verif phone number
+
       // this.phoneInputsArr = [{
       //   id: 'firstMobileNumber',
       //   model: localUserData.tempPhone,
@@ -504,7 +505,7 @@ export default {
       const {
         avatarId, firstName, lastName, location, additionalInfo: {
           address, socialNetwork, description, company, CEO, website,
-        }, priority, workplace, wagePerHour, specializationKeys, educations, workExperiences,
+        }, priority, workplace, wagePerHour, userSpecializations, educations, workExperiences,
       } = this.localUserData;
 
       const { isValid, formatInternational } = this.updatedPhone;
@@ -558,7 +559,7 @@ export default {
           priority,
           workplace,
           wagePerHour,
-          specializationKeys,
+          specializationKeys: userSpecializations.map((spec) => spec.path),
           additionalInfo: {
             ...additionalInfo,
             skills: [],
