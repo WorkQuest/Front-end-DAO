@@ -423,12 +423,6 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.sr-only {
-  display: none;
-}
-</style>
-
 <style lang="scss" scoped>
 .proposal {
   @include main;
@@ -717,6 +711,7 @@ export default {
 
 .history {
   &__table {
+    position: relative;
     margin-top: 15px;
   }
   &__proposals {
