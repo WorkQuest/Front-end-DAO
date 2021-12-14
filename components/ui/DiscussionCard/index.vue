@@ -89,8 +89,8 @@ export default {
   },
   methods: {
     favoriteStarSrc(item) {
-      if (item && item.star) return require('~/assets/img/ui/star_simple.svg');
-      return require('~/assets/img/ui/star_checked.svg');
+      if (item && item.star) return require('~/assets/img/ui/star_checked.svg');
+      return require('~/assets/img/ui/star_simple.svg');
     },
     favoriteStarAlt(item) {
       if (item && item.star) return 'checkedStar';
@@ -113,9 +113,9 @@ export default {
     },
     async toggleFavorite(discussionId) {
       if (this.item && this.item.star) {
-        await this.$store.dispatch('discussions/deleteStarOnDiscussion', discussionId);
-      } else if (this.item && !this.item.star) {
-        await this.$store.dispatch('discussions/setStarOnDiscussion', discussionId);
+        await this.$store.dispatch('discussions/toggleStarOnDiscussion', { id: discussionId, like: false });
+      } if (this.item && !this.item.star) {
+        await this.$store.dispatch('discussions/toggleStarOnDiscussion', { id: discussionId, like: true });
       }
       await this.getDiscussions();
     },
@@ -128,10 +128,11 @@ export default {
       await this.$store.dispatch('discussions/getDiscussions');
     },
     async toggleLikeOnDiscussion(discussionId) {
+      console.log(this.item.liked);
       if (this.item && this.item.liked) {
-        await this.$store.dispatch('discussions/deleteLikeOnDiscussion', discussionId);
-      } else if (this.item && !this.item.liked) {
-        await this.$store.dispatch('discussions/addLikeOnDiscussion', discussionId);
+        await this.$store.dispatch('discussions/toggleLikeOnDiscussion', { id: discussionId, like: false });
+      } if (this.item && !this.item.liked) {
+        await this.$store.dispatch('discussions/toggleLikeOnDiscussion', { id: discussionId, like: true });
       }
       await this.getDiscussions();
     },

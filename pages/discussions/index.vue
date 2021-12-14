@@ -23,8 +23,7 @@
       <div class="discussions__field">
         <div class="discussions__card">
           <div v-if="discussions.length === 0">
-            <!--            TODO: Добавить в локализацию-->
-            No discussions found! Please change your request...
+            {{ $t('discussions.noDiscussions') }}
           </div>
           <discussion-card
             v-for="(item, i) in discussions"

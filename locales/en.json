@@ -923,6 +923,7 @@
     "incorrectPass" : "Oops, something went wrong. Check the data and try again."
   },
   "discussions": {
+    "noDiscussions": "No discussions found! Please change your request...",
     "comments": {
       "noComments": "There is no comments!"
     },

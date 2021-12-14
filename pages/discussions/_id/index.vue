@@ -174,7 +174,7 @@
               mode="blue"
               @click="subCommentsToggle(elem.id)"
             >
-              {{ checkRootCommentIdArray(elem.id) ? $t('discussions.hide') : $t('discussions.show') }}
+              {{ rootCommentIdArray.includes(elem.id) ? $t('discussions.hide') : $t('discussions.show') }}
             </base-btn>
             <div class="bottom__panel">
               <img
@@ -198,13 +198,13 @@
             </div>
           </div>
           <div
-            v-if="checkRootCommentIdArray(elem.id) && subComments.count === 0"
+            v-if="rootCommentIdArray.includes(elem.id) && subComments.count === 0"
             class="comment comment__container"
           >
             <span class="comment__text">{{ $t('discussions.comments.noComments') }}</span>
           </div>
           <div
-            v-if="checkRootCommentIdArray(elem.id) && subComments.count > 0"
+            v-if="rootCommentIdArray.includes(elem.id) && subComments.count > 0"
             class="comment comment__container"
           >
             <answers-card
@@ -215,12 +215,13 @@
             />
           </div>
           <base-btn
-            v-if="checkRootCommentIdArray(elem.id) && subComments.count > 0"
+            v-if="rootCommentIdArray.includes(elem.id) && subComments.count > 0"
             mode="blue"
             class="comment__btn"
           >
             {{ $t('discussions.more') }}
           </base-btn>
+          <!--          TODO: Вынести в отдельный компонент-->
           <div class="comment__footer footer">
             <span class="class= icon-link footer__chain" />
             <input
@@ -326,27 +327,16 @@ export default {
       return '';
     },
     favoriteStarSrc(item) {
-      if (item.star) return require('~/assets/img/ui/star_simple.svg');
-      return require('~/assets/img/ui/star_checked.svg');
+      if (item.star) return require('~/assets/img/ui/star_checked.svg');
+      return require('~/assets/img/ui/star_simple.svg');
     },
     favoriteStarAlt(item) {
       if (item.star) return 'checkedStar';
       return 'simpleStar';
     },
-    async toggleFavorite(discussionId) {
-      if (this.currentDiscussion && this.currentDiscussion.star) {
-        await this.$store.dispatch('discussions/deleteStarOnDiscussion', discussionId);
-      } else if (this.currentDiscussion && !this.currentDiscussion.star) {
-        await this.$store.dispatch('discussions/setStarOnDiscussion', discussionId);
-      }
-      await this.getCurrentDiscussion();
-    },
     subCommentsToggle(rootCommentId) {
       this.getSubComments(rootCommentId);
       this.toggleShow(rootCommentId);
-    },
-    checkRootCommentIdArray(rootCommentId) {
-      return this.rootCommentIdArray.length > 0 && this.rootCommentIdArray.includes(rootCommentId);
     },
     async toggleShow(rootCommentId) {
       if (this.rootCommentIdArray.length === 0) {
@@ -411,19 +401,27 @@ export default {
       this.isAddComment = false;
       this.subCommentInput = '';
     },
+    async toggleFavorite(discussionId) {
+      if (this.currentDiscussion && this.currentDiscussion.star) {
+        await this.$store.dispatch('discussions/toggleStarOnDiscussion', { id: discussionId, like: false });
+      } if (this.currentDiscussion && !this.currentDiscussion.star) {
+        await this.$store.dispatch('discussions/toggleStarOnDiscussion', { id: discussionId, like: true });
+      }
+      await this.getCurrentDiscussion();
+    },
     async toggleLikeOnDiscussion(discussionId) {
       if (this.currentDiscussion && this.currentDiscussion.liked) {
-        await this.$store.dispatch('discussions/deleteLikeOnDiscussion', discussionId);
-      } else if (this.currentDiscussion && !this.currentDiscussion.liked) {
-        await this.$store.dispatch('discussions/addLikeOnDiscussion', discussionId);
+        await this.$store.dispatch('discussions/toggleLikeOnDiscussion', { id: discussionId, like: false });
+      } if (this.currentDiscussion && !this.currentDiscussion.liked) {
+        await this.$store.dispatch('discussions/toggleLikeOnDiscussion', { id: discussionId, like: true });
       }
       await this.getCurrentDiscussion();
     },
     async toggleLikeOnComment(comment) {
-      if (comment && Object.keys(comment.commentLikes).length === 0) {
-        await this.$store.dispatch('discussions/addLikeOnComment', comment.id);
-      } else if (comment && Object.keys(comment.commentLikes).length > 0) {
-        await this.$store.dispatch('discussions/deleteLikeOnComment', comment.id);
+      if (comment && Object.keys(comment.commentLikes).length > 0) {
+        await this.$store.dispatch('discussions/toggleLikeOnComment', { id: comment.id, like: false });
+      } if (comment && Object.keys(comment.commentLikes).length === 0) {
+        await this.$store.dispatch('discussions/toggleLikeOnComment', { id: comment.id, like: true });
       }
       await this.getRootComments();
     },

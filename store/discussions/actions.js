@@ -1,20 +1,4 @@
 export default {
-  async setStarOnDiscussion({ commit }, discussionId) {
-    try {
-      const response = await this.$axios.$post(`/v1/discussion/${discussionId}/star`);
-      return response.result;
-    } catch (e) {
-      return console.log(e);
-    }
-  },
-  async deleteStarOnDiscussion({ commit }, discussionId) {
-    try {
-      const response = await this.$axios.$delete(`/v1/discussion/${discussionId}/star`);
-      return response.result;
-    } catch (e) {
-      return console.log(e);
-    }
-  },
   async getDiscussions({ commit }, additionalValue) {
     try {
       const response = await this.$axios.$get(`/v1/discussions?${additionalValue || 'limit=8'}`);
@@ -59,18 +43,34 @@ export default {
       return console.log(e);
     }
   },
-  // TODO: Удалить методы
-  async deleteLikeOnDiscussion({ commit }, discussionId) {
+
+  async toggleLikeOnComment({ commit }, { id, like }) {
     try {
-      const response = await this.$axios.$delete(`/v1/discussion/${discussionId}/like`);
+      let response = '';
+      if (like) response = await this.$axios.$post(`/v1/discussion/comment/${id}/like`);
+      else response = await this.$axios.$delete(`/v1/discussion/comment/${id}/like`);
       return response.result;
     } catch (e) {
       return console.log(e);
     }
   },
-  async addLikeOnDiscussion({ commit }, discussionId) {
+
+  async toggleStarOnDiscussion({ commit }, { id, like }) {
     try {
-      const response = await this.$axios.$post(`/v1/discussion/${discussionId}/like`);
+      let response = '';
+      if (like) response = await this.$axios.$post(`/v1/discussion/${id}/star`);
+      else response = await this.$axios.$delete(`/v1/discussion/${id}/star`);
+      return response.result;
+    } catch (e) {
+      return console.log(e);
+    }
+  },
+
+  async toggleLikeOnDiscussion({ commit }, { id, like }) {
+    try {
+      let response = '';
+      if (like) response = await this.$axios.$post(`/v1/discussion/${id}/like`);
+      else response = await this.$axios.$delete(`/v1/discussion/${id}/like`);
       return response.result;
     } catch (e) {
       return console.log(e);
@@ -85,22 +85,7 @@ export default {
       return console.log(e);
     }
   },
-  async addLikeOnComment({ commit }, commentId) {
-    try {
-      const response = await this.$axios.$post(`/v1/discussion/comment/${commentId}/like`);
-      return response.result;
-    } catch (e) {
-      return console.log(e);
-    }
-  },
-  async deleteLikeOnComment({ commit }, commentId) {
-    try {
-      const response = await this.$axios.$delete(`/v1/discussion/comment/${commentId}/like`);
-      return response.result;
-    } catch (e) {
-      return console.log(e);
-    }
-  },
+
   // TODO: Интегрировать методы
   async getPeopleListWhoLikeDiscussion({ commit }, discussionId) {
     try {
