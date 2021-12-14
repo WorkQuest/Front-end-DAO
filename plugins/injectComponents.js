@@ -15,9 +15,13 @@ import BaseUploader from '~/components/ui/BaseUploader';
 import BaseImages from '~/components/ui/BaseImages';
 import BasePager from '~/components/ui/BasePager';
 import BaseFiles from '~/components/ui/BaseFiles';
-import SubCommentField from '~/components/app/Pages/Discussions/SubCommentField.vue';
+import RootCommentField from '~/components/app/Pages/Discussions/RootCommentField.vue';
+import RootCommentLevel from '~/components/app/Pages/Discussions/RootCommentLevel.vue';
+import SubCommentLevel from '~/components/app/Pages/Discussions/SubCommentLevel.vue';
 
-Vue.component('sub-comment-field', SubCommentField);
+Vue.component('root-comment-field', RootCommentField);
+Vue.component('sub-comment-level', SubCommentLevel);
+Vue.component('root-comment-level', RootCommentLevel);
 Vue.component('ctm-modal', CtmModal);
 Vue.component('ctm-modal-box', CtmModalBox);
 Vue.component('Header', Header);

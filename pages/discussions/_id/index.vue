@@ -197,31 +197,12 @@
               </div>
             </div>
           </div>
-          <div
-            v-if="rootCommentIdArray.includes(elem.id) && subComments.count === 0"
-            class="comment comment__container"
-          >
-            <span class="comment__text">{{ $t('discussions.comments.noComments') }}</span>
-          </div>
-          <div
-            v-if="rootCommentIdArray.includes(elem.id) && subComments.count > 0"
-            class="comment comment__container"
-          >
-            <answers-card
-              v-for="(item) in filterSubComments(elem.id)"
-              :key="item.id"
-              :item="item"
-              class="comment__replays"
-            />
-          </div>
-          <base-btn
-            v-if="rootCommentIdArray.includes(elem.id) && subComments.count > 0"
-            mode="blue"
-            class="comment__btn"
-          >
-            {{ $t('discussions.more') }}
-          </base-btn>
-          <sub-comment-field :elem="elem" />
+          <root-comment-level
+            :elem="elem"
+            :sub-comments="subComments"
+            :root-comment-id-array="rootCommentIdArray"
+          />
+          <root-comment-field :elem="elem" />
         </div>
       </div>
       <base-pager
@@ -237,12 +218,8 @@
 <script>
 
 import { mapGetters } from 'vuex';
-import answersCard from '~/components/ui/AnswersCard';
 
 export default {
-  components: {
-    answersCard,
-  },
   data() {
     return {
       rootCommentIdArray: [],
@@ -341,10 +318,6 @@ export default {
       await this.getSubComments(rootCommentId);
       await this.filterSubComments(rootCommentId);
       return false;
-    },
-    filterSubComments(rootCommentId) {
-      const subComments = this.subComments.comments;
-      return subComments.filter((subComment) => subComment.rootCommentId === rootCommentId);
     },
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);

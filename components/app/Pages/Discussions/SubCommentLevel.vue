@@ -77,6 +77,7 @@
 import { mapGetters } from 'vuex';
 
 export default {
+  name: 'SubCommentLevel',
   props: {
     item: {
       type: Object,
