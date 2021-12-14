@@ -13,10 +13,10 @@
           <base-field
             id="invsetorAdress"
             disabled
-            :value="options.investorAddress"
+            :value="accountAddress.address"
             class="adress__body"
           >
-            {{ options.investorAddress }}
+            {{ accountAddress.address }}
           </base-field>
         </div>
         <div class="content__tokens tokens">
@@ -33,6 +33,7 @@
               v-model="tokensAmount"
               class="footer__body"
               placeholder="1000"
+              :type="'number'"
               :name="$t('modals.tokensNumber')"
               :rules="`required${min}`"
             />
@@ -68,6 +69,7 @@ export default {
     return {
       tokensAmount: '',
       balance: 0,
+      accountAddress: '',
     };
   },
   computed: {
@@ -85,6 +87,7 @@ export default {
     },
   },
   async mounted() {
+    this.accountAddress = await this.$store.dispatch('web3/getAccount');
     const res = await this.$store.dispatch('web3/getBalance');
     if (res.ok) {
       this.balance = res.result;
@@ -102,7 +105,7 @@ export default {
       if (!this.isConnected) return;
       const { callback } = this.options;
       this.SetLoader(true);
-      const res = await this.$store.dispatch('web3/delegate', { address: this.options.investorAddress, amount: this.tokensAmount });
+      const res = await this.$store.dispatch('web3/delegate', { address: this.accountAddress.address, amount: this.tokensAmount });
       this.SetLoader(false);
       if (res.ok) {
         await this.$store.dispatch('main/showToast', {

@@ -15,7 +15,7 @@ import {
   getVoteThreshold,
   getVotes,
   getReceipt,
-  getProposalThreshold, executeVoting,
+  getProposalThreshold, executeVoting, undelegate,
 } from '~/utils/web3';
 import modals from '~/store/modals/modals';
 
@@ -72,6 +72,9 @@ export default {
   },
   async delegate({ commit }, { address, amount }) {
     return await delegate(address, amount);
+  },
+  async undelegate({ commit }) {
+    return await undelegate();
   },
 
   /* Proposals */

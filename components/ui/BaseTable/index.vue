@@ -40,7 +40,7 @@
           class=" table__link"
         >
           <img
-            :src="el.item.avatar || require('~/assets/img/app/avatar_empty.png')"
+            :src="(el.item.avatar && el.item.avatar.url) ? el.item.avatar.url : require('~/assets/img/app/avatar_empty.png')"
             alt="userAvatar"
             class="table__avatar"
           >
@@ -67,6 +67,7 @@
         <base-btn
           mode="lightRed"
           class="btn__delegate"
+          :disabled="userData.id !== el.item.id"
           :class="delegateClass(el)"
           @click="openModalUndelegate(el)"
         >
@@ -76,6 +77,7 @@
       <template #cell(delegate)="el">
         <base-btn
           mode="lightBlue"
+          :disabled="userData.id !== el.item.id"
           class="btn__delegate"
           @click="openModalDelegate(el)"
         >
@@ -100,6 +102,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
 
 export default {
@@ -121,6 +124,11 @@ export default {
   data() {
     return {
     };
+  },
+  computed: {
+    ...mapGetters({
+      userData: 'user/getUserData',
+    }),
   },
   methods: {
     voteClass(el) {
