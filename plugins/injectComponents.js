@@ -15,7 +15,9 @@ import BaseUploader from '~/components/ui/BaseUploader';
 import BaseImages from '~/components/ui/BaseImages';
 import BasePager from '~/components/ui/BasePager';
 import BaseFiles from '~/components/ui/BaseFiles';
+import SubCommentField from '~/components/app/Pages/Discussions/SubCommentField.vue';
 
+Vue.component('sub-comment-field', SubCommentField);
 Vue.component('ctm-modal', CtmModal);
 Vue.component('ctm-modal-box', CtmModalBox);
 Vue.component('Header', Header);

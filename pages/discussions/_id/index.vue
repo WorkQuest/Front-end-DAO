@@ -221,19 +221,7 @@
           >
             {{ $t('discussions.more') }}
           </base-btn>
-          <!--          TODO: Вынести в отдельный компонент-->
-          <div class="comment__footer footer">
-            <span class="class= icon-link footer__chain" />
-            <input
-              v-model="subCommentInput"
-              class="footer__input"
-              :placeholder="$t('discussions.input')"
-            >
-            <span
-              class="class= icon-send footer__arrow"
-              @click="addSubCommentResponse(elem.id)"
-            />
-          </div>
+          <sub-comment-field :elem="elem" />
         </div>
       </div>
       <base-pager
@@ -389,17 +377,6 @@ export default {
       this.isAddComment = false;
       this.opinion = '';
       await this.getRootComments();
-    },
-    async addSubCommentResponse(rootCommentId) {
-      const discussionId = this.currentDiscussion.id;
-      const payload = {
-        rootCommentId,
-        text: this.subCommentInput,
-        medias: [],
-      };
-      await this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
-      this.isAddComment = false;
-      this.subCommentInput = '';
     },
     async toggleFavorite(discussionId) {
       if (this.currentDiscussion && this.currentDiscussion.star) {
