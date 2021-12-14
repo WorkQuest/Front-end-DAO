@@ -131,10 +131,10 @@
           </div>
           <div class="results__buttons buttons">
             <div class="buttons__header">
-              {{ $t('proposal.voteForProposal') }}
+              {{ $t('proposal.proposalIsExpired') }}
             </div>
-            <div v-if="timeIsExpired">
-              {{ $t('proposal.proposalExpired') }}
+            <div v-if="!isVoted && timeIsExpired">
+              {{ $t('proposal.proposalIsExpired') }}
             </div>
             <div
               v-else-if="!isVoted"
@@ -391,7 +391,6 @@ export default {
       const { address } = await this.$store.dispatch('web3/getAccount');
       const res = await this.$store.dispatch('web3/getReceipt', { id: this.idCard, accountAddress: address });
       if (res.ok && res.result) {
-        console.log('receipt', res.result);
         const { hasVoted, support } = res.result;
         this.isVoted = hasVoted;
         this.vote = support;
@@ -444,8 +443,8 @@ export default {
       console.log(+delegated.result, +voteThreshold.result);
       if (+delegated.result < +voteThreshold.result) {
         await this.$store.dispatch('main/showToast', {
-          title: 'Vote error', // TODO: to localization
-          text: `You must have delegated at least ${voteThreshold.result} WQT. Delegated now: ${delegated.result} WQT.`,
+          title: this.$t('proposal.errors.voteError'),
+          text: this.$tc('proposal.errors.notEnoughFunds', { a: voteThreshold.result, b: delegated.result }),
         });
         await this.$store.dispatch('modals/show', {
           key: modals.delegate,
@@ -458,9 +457,18 @@ export default {
       }
     },
     async onVote(value) {
+      this.SetLoader(true);
+      await this.loadCard(); // TODO: check better case
+      if (this.timeIsExpired) {
+        await this.$store.dispatch('main/showToast', {
+          title: this.$t('proposal.voteError'),
+          text: this.$t('proposal.errors.votingTimeIsExpired'),
+        });
+        this.SetLoader(false);
+        return;
+      }
       await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
       if (!this.isConnected) return;
-      this.SetLoader(true);
       const res = await this.$store.dispatch('web3/doVote', { id: this.idCard, value });
       if (!res.ok) {
         await this.loadCard();

@@ -89,10 +89,6 @@ export const getContractInstance = (abiName, _abi, _address) => {
 };
 
 const sendTransaction = async (_method, abiName, _abi, _address, params) => {
-  if (!web3Wallet) {
-    console.error('Provider is null!');
-    return error(errorCodes.ProviderIsNull, 'Provider is null');
-  }
   const inst = getContractInstance(abiName, _abi, _address);
   const accountAddress = account.address;
   const data = inst.methods[_method].apply(this, params).encodeABI();
@@ -135,6 +131,7 @@ const sendTransaction = async (_method, abiName, _abi, _address, params) => {
 export const fetchContractData = async (_method, abiName, _abi, _address, _params) => {
   try {
     const inst = getContractInstance(abiName, _abi, _address);
+    console.log(inst, abiName, _method);
     const res = await inst.methods[_method].apply(this, _params).call();
     return success(res);
   } catch (e) {
@@ -149,7 +146,7 @@ const token = {
   async getDecimals() {
     if (this._decimals) return this._decimals;
     if (web3Wallet) {
-      const { result } = await fetchContractData('decimals', abi.WQToken, this.address);
+      const { result } = await fetchContractData('decimals', abiNames.WQToken, abi.WQToken, this.address);
       this._decimals = result;
       return result;
     }

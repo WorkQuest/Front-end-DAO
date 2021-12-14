@@ -12,7 +12,7 @@
               v-model="votingTopicInput"
               :placeholder="$t('modals.votingTopic')"
               :label="$t('modals.votingTopic')"
-              rules="required"
+              rules="required|maxLength=200"
               :name="$t('modals.votingTopicField')"
             />
           </div>
@@ -39,6 +39,7 @@
             >
               {{ $t('modals.description') }}
             </label>
+            <!-- TODO: max length to rules -->
             <validation-provider rules="required">
               <textarea
                 id="description"
