@@ -425,6 +425,12 @@ export default {
 };
 </script>
 
+<style lang="scss">
+.sr-only {
+  display: none;
+}
+</style>
+
 <style lang="scss" scoped>
 .proposal {
   @include main;
@@ -455,6 +461,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    height: max-content;
   }
 
   &__history {
