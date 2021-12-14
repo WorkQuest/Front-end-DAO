@@ -38,7 +38,4 @@ export default {
   setImage(state, data) {
     state.userData.avatar.url = data;
   },
-  changeProfile(state, data) {
-    state.isProfileEdit = data;
-  },
 };
