@@ -47,6 +47,12 @@ export default [
       },
       {
         indexed: false,
+        internalType: 'uint256',
+        name: 'nonce',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
         internalType: 'address',
         name: 'proposer',
         type: 'address',
@@ -284,6 +290,11 @@ export default [
   {
     inputs: [
       {
+        internalType: 'uint256',
+        name: 'nonce',
+        type: 'uint256',
+      },
+      {
         internalType: 'string',
         name: '_description',
         type: 'string',
@@ -386,6 +397,11 @@ export default [
               {
                 internalType: 'uint256',
                 name: 'id',
+                type: 'uint256',
+              },
+              {
+                internalType: 'uint256',
+                name: 'nonce',
                 type: 'uint256',
               },
               {
@@ -652,6 +668,11 @@ export default [
       {
         internalType: 'uint256',
         name: 'id',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'nonce',
         type: 'uint256',
       },
       {

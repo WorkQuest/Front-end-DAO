@@ -4,7 +4,7 @@
     :title="$t('modals.addProposal')"
   >
     <div class="addProposal__content content">
-      <validation-observer v-slot="{handleSubmit, valid}">
+      <validation-observer v-slot="{ handleSubmit, valid }">
         <div class="content__voting">
           <div class="content__field">
             <base-field
@@ -41,7 +41,7 @@
             </label>
             <validation-provider
               v-slot="{ errors }"
-              rules="required|max:2000|min:50"
+              rules="required|max:2000|min:20"
             >
               <textarea
                 id="description"
@@ -112,13 +112,13 @@
 <script>
 
 import { mapGetters } from 'vuex';
+import { Chains } from '~/utils/enums';
 
 export default {
   name: 'ModalAddProposal',
   data() {
     return {
       votingTopicInput: '',
-      pickerValue: '0',
       votingStartInput: '',
       votingEndInput: '',
       descriptionInput: '',
@@ -139,6 +139,7 @@ export default {
     },
   },
   async mounted() {
+    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
     if (!this.isConnected) await this.$store.dispatch('web3/checkMetamaskStatus');
 
     const start = this.$moment();
@@ -149,19 +150,23 @@ export default {
     close() {
       this.CloseModal();
     },
-    addValue(el) {
-      this.pickerValue = Number(this.pickerValue) + 1;
-    },
-    prevValue(el) {
-      this.pickerValue = Number(this.pickerValue) - 1;
-    },
     async addProposal() {
       this.SetLoader(true);
+      this.descriptionInput = this.descriptionInput.trim();
+      this.votingTopicInput = this.votingTopicInput.trim();
       const res = await this.$store.dispatch('web3/addProposal', this.descriptionInput);
+      // TODO: загрузить картинки и доки!
       console.log(res);
       if (res.ok) {
+        // await this.$store.dispatch('proposals/createProposal', {
+        //   title: this.votingTopicInput,
+        //   description: this.description,
+        //   nonceId: res.nonce,
+        //   proposer: res.proposer,
+        //   documents: [...],
+        // });
         this.close();
-      }
+      } // todo: else show error?
       this.SetLoader(false);
     },
     removeDocument(id) {

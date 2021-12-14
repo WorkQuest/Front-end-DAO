@@ -1,11 +1,14 @@
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
+import UUID from 'uuid-int';
 import abi, { abiNames } from '~/abi/index';
 import { success, error } from '~/utils/success-error';
 import { Chains, ChainsId, errorCodes } from '~/utils/enums';
 
 BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN });
 BigNumber.config({ EXPONENTIAL_AT: 60 });
+
+const generator = UUID(Math.ceil(Math.random() * 10));
 
 const account = {
   address: null,
@@ -228,7 +231,10 @@ export const getVotes = async (address) => {
 /* Proposals */
 export const addProposal = async (description) => {
   try {
-    const res = await sendTransaction('addProposal', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [description.toString()]);
+    const nonce = generator.uuid();
+    const res = await sendTransaction('addProposal', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [nonce.toString(), description.toString()]);
+    res.nonce = nonce;
+    res.proposer = account.address;
     return success(res);
   } catch (e) {
     return error(errorCodes.AddProposal, e.message, e);
