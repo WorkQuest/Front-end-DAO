@@ -162,8 +162,8 @@
                 mode="outline"
                 class="btn__voted"
                 :class="[
-                  {'btn__voted_green': vote },
-                  {'btn__voted_red': !vote },
+                  {'btn__voted_green': vote === true },
+                  {'btn__voted_red': vote === false },
                 ]"
               >
                 {{ $t('proposal.youVoted') }} {{ vote ? $t('proposal.yes') : $t('proposal.no') }}
@@ -449,7 +449,7 @@ export default {
         await this.$store.dispatch('modals/show', {
           key: modals.delegate,
           investorAddress: account.address,
-          min: +voteThreshold.result - +delegated.result,
+          min: +voteThreshold.result,
           callback: async () => this.onVote(value),
         });
       } else {
@@ -458,7 +458,7 @@ export default {
     },
     async onVote(value) {
       this.SetLoader(true);
-      await this.loadCard(); // TODO: check better case
+      await this.loadCard(); // TODO: check better case than update data before vote
       if (this.timeIsExpired) {
         await this.$store.dispatch('main/showToast', {
           title: this.$t('proposal.voteError'),

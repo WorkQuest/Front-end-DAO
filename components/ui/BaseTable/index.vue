@@ -60,7 +60,7 @@
           class="btn__vote"
           :class="voteClass(el)"
         >
-          {{ el.item.vote }}
+          {{ el.item.vote ? $t('proposal.yes') : $t('proposal.no') }}
         </base-btn>
       </template>
       <template #cell(undelegate)="el">
@@ -125,8 +125,8 @@ export default {
   methods: {
     voteClass(el) {
       return [
-        { btn__vote_green: el.item.vote === 'YES' },
-        { btn__vote_red: el.item.vote === 'NO' },
+        { btn__vote_green: el.item.vote === true },
+        { btn__vote_red: el.item.vote === false },
       ];
     },
     delegateClass(el) {
