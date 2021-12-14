@@ -82,52 +82,50 @@
           </div>
         </div>
         <div class="proposal__results results content__column">
-          <div>
-            <div class="results__header">
-              {{ $t('proposal.results') }}
-            </div>
-            <div class="results__bar bar">
-              <div class="bar">
-                <div class="bar__result result">
-                  <div class="result__name">
-                    {{ $t('proposal.yes') }}
-                  </div>
-                  <div class="result__percent">
-                    {{ `${results.percents.yes}%` }}
-                  </div>
+          <div class="results__header">
+            {{ $t('proposal.results') }}
+          </div>
+          <div class="results__bar bar">
+            <div class="bar">
+              <div class="bar__result result">
+                <div class="result__name">
+                  {{ $t('proposal.yes') }}
                 </div>
-                <div class="bar__line">
-                  <div class="bar__line_gray">
-                    <div
-                      class="bar__line_green"
-                      :style="`width: ${results.percents.yes}%`"
-                    />
-                  </div>
-                </div>
-                <div class="bar__votes">
-                  {{ results.votes.yes }} {{ $t('proposal.votes') }}
+                <div class="result__percent">
+                  {{ `${results.percents.yes}%` }}
                 </div>
               </div>
-              <div class="bar">
-                <div class="bar__result result">
-                  <div class="result__name">
-                    {{ $t('proposal.no') }}
-                  </div>
-                  <div class="result__percent">
-                    {{ `${results.percents.no}%` }}
-                  </div>
+              <div class="bar__line">
+                <div class="bar__line_gray">
+                  <div
+                    class="bar__line_green"
+                    :style="`width: ${results.percents.yes}%`"
+                  />
                 </div>
-                <div class="bar__line">
-                  <div class="bar__line_gray">
-                    <div
-                      class="bar__line_red"
-                      :style="`width: ${results.percents.no}%`"
-                    />
-                  </div>
+              </div>
+              <div class="bar__votes">
+                {{ results.votes.yes }} {{ $t('proposal.votes') }}
+              </div>
+            </div>
+            <div class="bar">
+              <div class="bar__result result">
+                <div class="result__name">
+                  {{ $t('proposal.no') }}
                 </div>
-                <div class="bar__votes">
-                  {{ results.votes.no }} {{ $t('proposal.votes') }}
+                <div class="result__percent">
+                  {{ `${results.percents.no}%` }}
                 </div>
+              </div>
+              <div class="bar__line">
+                <div class="bar__line_gray">
+                  <div
+                    class="bar__line_red"
+                    :style="`width: ${results.percents.no}%`"
+                  />
+                </div>
+              </div>
+              <div class="bar__votes">
+                {{ results.votes.no }} {{ $t('proposal.votes') }}
               </div>
             </div>
           </div>
@@ -458,9 +456,9 @@ export default {
   }
 
   &__results {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: grid;
+    grid-template-rows: repeat(3, auto);
+    height: max-content;
   }
 
   &__history {
