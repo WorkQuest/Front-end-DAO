@@ -93,9 +93,6 @@ export default {
       await this.getInvestors();
       this.SetLoader(false);
     },
-    usersData() {
-      this.SetLoader(false);
-    },
     search() {
       this.filter.q = this.search;
       clearTimeout(this.timout);
