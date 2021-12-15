@@ -81,28 +81,37 @@
           {{ $t('signIn.loginWith') }}
         </div>
         <div class="auth__icons">
-          <button class="auth__btn auth__btn_wq">
+          <button
+            class="auth__btn auth__btn_workQuest"
+            @click="showSignWorkQuest()"
+          >
             <img
               src="~assets/img/app/logo.svg"
-              alt="Work Quest"
-              class="auth__btn__picture"
-            >
-            <img
-              src="~assets/img/app/logo_white.svg"
-              alt="Work Quest"
-              class="auth__btn__image"
+              alt="WorkQuest"
             >
           </button>
-          <button class="auth__btn auth__btn_google">
+          <button
+            class="auth__btn auth__btn_google"
+            @click="redirectSocialLink('google')"
+          >
             <span class="icon-google" />
           </button>
-          <button class="auth__btn auth__btn_twitter">
+          <button
+            class="auth__btn auth__btn_twitter"
+            @click="redirectSocialLink('twitter')"
+          >
             <span class="icon-twitter" />
           </button>
-          <button class="auth__btn auth__btn_facebook">
+          <button
+            class="auth__btn auth__btn_facebook"
+            @click="redirectSocialLink('facebook')"
+          >
             <span class="icon-facebook" />
           </button>
-          <button class="auth__btn auth__btn_LinkedIn">
+          <button
+            class="auth__btn auth__btn_LinkedIn"
+            @click="redirectSocialLink('linkedin')"
+          >
             <span class="icon-LinkedIn" />
           </button>
         </div>
@@ -159,6 +168,14 @@ export default {
       } catch (e) {
         console.log(e);
       }
+    },
+    async redirectSocialLink(socialNetwork) {
+      window.location = `${process.env.BASE_URL}v1/auth/login/${socialNetwork}`;
+    },
+    showSignWorkQuest() {
+      this.ShowModal({
+        key: modals.signWorkQuest,
+      });
     },
     showRestoreModal() {
       this.ShowModal({
