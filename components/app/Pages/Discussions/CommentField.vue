@@ -24,11 +24,11 @@
           {{ $moment(data.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
         </div>
       </div>
-      <div class="answers__description">
+      <div class="comment__description">
         {{ data.text }}
       </div>
       <div
-        class="answers__bottom bottom"
+        class="comment__bottom bottom"
       >
         <base-btn
           v-if="level !== 5"
@@ -38,14 +38,14 @@
         >
           {{ !isReply ? $t('discussions.reply') : $t('discussions.cancel') }}
         </base-btn>
-        <base-btn
-          v-if="data.amountSubComments > 0"
-          class="bottom__btn"
-          mode="blue"
-          @click="switchCommentLevel(data, level)"
-        >
-          {{ data ? $t('discussions.hide') : $t('discussions.show') }}
-        </base-btn>
+        <!--        <base-btn-->
+        <!--          v-if="data.amountSubComments > 0"-->
+        <!--          class="bottom__btn"-->
+        <!--          mode="blue"-->
+        <!--          @click="switchCommentLevel(data, level)"-->
+        <!--        >-->
+        <!--          {{ data ? $t('discussions.hide') : $t('discussions.show') }}-->
+        <!--        </base-btn>-->
         <div class="bottom__panel">
           <base-btn
             class="bottom__like"
@@ -176,7 +176,7 @@ export default {
     @include text-usual;
     color: #7C838D;
     align-self: stretch;
-    margin: 20px 0 25px 0;
+    margin: 25px 0 25px 0;
   }
   &__footer {
     margin-top: 20px;
