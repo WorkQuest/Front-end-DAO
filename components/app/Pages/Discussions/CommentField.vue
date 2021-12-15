@@ -106,6 +106,7 @@ export default {
   },
   methods: {
     authorAvatarSrc(item) {
+      console.log(this.data);
       if (item && item.author.avatar.url) return item.author.avatar.url;
       return require('~/assets/img/app/avatar_empty.png');
     },
