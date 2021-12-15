@@ -59,7 +59,7 @@
           <div class="field__documents">
             <base-uploader
               class="uploader"
-              type="all"
+              type="files"
               :items="documents"
               :is-show-download="false"
               rules="required|alpha_num"
@@ -71,7 +71,7 @@
                   ref="fileUpload"
                   class="uploader__btn_hidden"
                   type="file"
-                  accept="image/*, .doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, .pdf"
+                  accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, .pdf"
                   @change="handleFileSelected($event)"
                 >
                 <base-btn

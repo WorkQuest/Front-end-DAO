@@ -126,7 +126,11 @@ export default {
   }
 
   &__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: 16px;
+    width: 70%;
     color: #282F39;
     margin-left: 8px;
   }
