@@ -89,13 +89,14 @@
         <p class="wallet__subtitle">
           {{ $t('wallet.table.trx') }}
         </p>
-        <item
+        <mobile-table-item
           v-for="(transaction, index) in transactionsData"
           :key="index"
           :item="transaction"
           :is-last="transactionsData[index] === transactionsData[transactionsData.length - 1]"
         />
       </div>
+      <!-- /mobile -->
     </div>
   </div>
 </template>

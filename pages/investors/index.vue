@@ -16,7 +16,7 @@
         :items="historyTableData"
       />
       <div class="investors__investors">
-        <item
+        <mobile-table-item
           v-for="(investor, index) in historyTableData"
           :key="index"
           :item="investor"

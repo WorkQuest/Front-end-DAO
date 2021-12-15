@@ -313,38 +313,11 @@
                   </p>
                   <div class="links__links">
                     <a
-                      class="links__social links__social_twitter"
-                      href="https://twitter.com/workquest_co"
-                      target="_blank"
-                    />
-                    <a
-                      class="links__social links__social_youtube"
-                      href="https://www.youtube.com/channel/UCpQTdOMynXejrRTVf4ksKPA"
-                      target="_blank"
-                    />
-                    <a
-                      class="links__social links__social_reddit"
-                      href="https://www.reddit.com/user/WorkQuest_co"
-                      target="_blank"
-                    />
-                    <a
-                      class="links__social links__social_facebook"
-                      href="https://m.facebook.com/WorkQuestOfficial/"
-                      target="_blank"
-                    />
-                    <a
-                      class="links__social links__social_linkedin"
-                      href="https://www.linkedin.com/company/workquestofficial"
-                      target="_blank"
-                    />
-                    <a
-                      class="links__social links__social_instagram"
-                      href="https://www.instagram.com/workquestofficial/"
-                      target="_blank"
-                    />
-                    <a
-                      class="links__social links__social_telegram"
-                      href="https://t.me/WorkQuest"
+                      v-for="(link, i) in socialLinks"
+                      :key="i"
+                      class="links__social"
+                      :class="`links__social_${link.class}`"
+                      :href="link.url"
                       target="_blank"
                     />
                   </div>

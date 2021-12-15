@@ -10,7 +10,7 @@
     >
       {{ $t('wallet.table.txHash') }}
       <span class="item__info_large">
-        {{ formatItem(item.tx_hash, 9, 6) }}
+        {{ cutString(item.tx_hash, 9, 6) }}
       </span>
     </div>
     <div
@@ -19,7 +19,7 @@
     >
       {{ $t('proposal.table.hash') }}
       <span class="item__info_large">
-        {{ formatItem(item.hash, 9, 6) }}
+        {{ cutString(item.hash, 9, 6) }}
       </span>
     </div>
     <p
@@ -111,7 +111,7 @@
     >
       {{ $t('proposal.table.address') }}
       <span class="item__info">
-        {{ formatItem(item.address || item.investorAddress, 9, 6) }}
+        {{ cutString(item.address || item.investorAddress, 9, 6) }}
         <base-btn
           v-if="item.investorAddress"
           v-clipboard:copy="item.investorAddress"

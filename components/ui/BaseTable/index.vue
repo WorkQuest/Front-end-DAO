@@ -16,7 +16,7 @@
         <span class="table__title">{{ $props.title }}</span>
       </template>
       <template #cell(tx_hash)="el">
-        <span class="table__grey">{{ formatItem(el.item.tx_hash, 9, 6) }}</span>
+        <span class="table__grey">{{ cutString(el.item.tx_hash, 9, 6) }}</span>
       </template>
       <template #cell(status)="el">
         <span

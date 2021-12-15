@@ -199,17 +199,19 @@
           :fields="historyTableFields"
           :items="prepareTableData(historyTableData)"
         />
+        <!-- mobile -->
         <div class="history__proposals">
           <p class="history__subtitle">
             {{ $t('proposal.proposalHistory') }}
           </p>
-          <item
+          <mobile-table-item
             v-for="(proposal, index) in historyTableData"
             :key="index"
             :item="proposal"
             :is-last="historyTableData[index] === historyTableData[historyTableData.length - 1]"
           />
         </div>
+        <!-- /mobile -->
       </div>
     </div>
   </div>

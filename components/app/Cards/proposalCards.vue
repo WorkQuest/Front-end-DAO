@@ -521,7 +521,6 @@ export default {
   }
   .search {
     grid-template-columns: auto auto;
-    // margin: 0 10px;
     grid-gap: 10px;
     &__toggle {
       display: none;
