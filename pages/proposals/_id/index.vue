@@ -288,13 +288,6 @@ export default {
           size: '1.2mb',
           img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
         },
-        {
-          id: '2',
-          type: 'img',
-          name: 'some_img.png',
-          size: '20mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        },
       ],
       hash: '',
       description: null,
@@ -354,7 +347,7 @@ export default {
 
     let card = null;
     for (let i = 0; i < this.cards.length; i += 1) {
-      if (this.cards[i].id === this.idCard) {
+      if (this.cards[i].proposalId === this.idCard) {
         card = this.cards[i];
         break;
       }

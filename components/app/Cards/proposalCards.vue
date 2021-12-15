@@ -50,7 +50,7 @@
           <div class="card__header">
             <div class="card__header_top">
               <div class="card__header_left">
-                <span>Voting #{{ card.id }}</span>
+                <span>Voting #{{ card.proposalId }}</span>
               </div>
               <div class="card__header_right">
                 <div class="card__status">
@@ -72,7 +72,7 @@
             <div class="btn__wrapper">
               <nuxt-link
                 class="btn__link"
-                :to="`/proposals/${card.id}`"
+                :to="`/proposals/${card.proposalId}`"
               >
                 <base-btn
                   mode="outline"
