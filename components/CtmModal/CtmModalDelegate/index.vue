@@ -108,11 +108,11 @@ export default {
       const res = await this.$store.dispatch('web3/delegate', { address: this.accountAddress.address, amount: this.tokensAmount });
       this.SetLoader(false);
       if (res.ok) {
+        await this.close();
         await this.$store.dispatch('main/showToast', {
           title: 'Delegate',
           text: `Delegated ${this.tokensAmount} WQT`,
         });
-        await this.close();
         if (callback) await callback();
       } else if (res.msg.includes('Not enough balance to delegate')) {
         await this.$store.dispatch('modals/show', {

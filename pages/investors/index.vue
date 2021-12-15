@@ -106,15 +106,12 @@ export default {
   },
   async mounted() {
     await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-    if (!this.isConnected) return;
-    const account = await this.$store.dispatch('web3/getAccount');
   },
   beforeDestroy() {
     clearTimeout(this.timout);
   },
   methods: {
     async getInvestors() {
-      console.log('work');
       await this.$store.dispatch('user/getAllUserData', this.filter);
     },
   },

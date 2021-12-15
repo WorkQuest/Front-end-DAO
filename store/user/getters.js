@@ -27,4 +27,5 @@ export default {
   getUserFacebook: (state) => state.userData?.additionalInfo?.socialNetwork?.facebook || '',
   getUserWorkQuest: (state) => state.userData?.additionalInfo?.socialNetwork?.workQuest || '',
   getAllUsers: (state) => state.usersData,
+  getSpecialUserData: (state) => state.specialUserData,
 };

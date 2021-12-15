@@ -67,7 +67,7 @@
         <base-btn
           mode="lightRed"
           class="btn__delegate"
-          :disabled="userData.id !== el.item.id"
+          :disabled="!myProfile(el.item.id)"
           :class="delegateClass(el)"
           @click="openModalUndelegate(el)"
         >
@@ -77,7 +77,7 @@
       <template #cell(delegate)="el">
         <base-btn
           mode="lightBlue"
-          :disabled="userData.id !== el.item.id"
+          :disabled="!myProfile(el.item.id)"
           class="btn__delegate"
           @click="openModalDelegate(el)"
         >
@@ -131,6 +131,9 @@ export default {
     }),
   },
   methods: {
+    myProfile(id) {
+      return this.userData.id === id;
+    },
     voteClass(el) {
       return [
         { btn__vote_green: el.item.vote === 'YES' },

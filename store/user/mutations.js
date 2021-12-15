@@ -19,6 +19,9 @@ export default {
   setUsersData(state, data) {
     state.usersData = data;
   },
+  setSpecialUserData(state, data) {
+    state.specialUserData = data;
+  },
   setUserRole(state, data) {
     state.userRole = data;
   },

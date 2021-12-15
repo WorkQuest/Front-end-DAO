@@ -89,27 +89,24 @@ export default {
       this.CloseModal();
     },
     async undelegate() {
-      console.log('click start');
       await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      console.log();
       if (!this.isConnected) return;
       const { callback } = this.options;
       this.SetLoader(true);
       const res = await this.$store.dispatch('web3/undelegate');
-      console.log(res);
       this.SetLoader(false);
       if (res.ok) {
+        await this.hide();
         await this.$store.dispatch('main/showToast', {
           title: 'Undelegate',
           text: `Undelegate ${this.tokensAmount} WQT`,
         });
-        await this.hide();
         if (callback) await callback();
-      } else if (res.msg.includes('Not enough balance to delegate')) {
+      } else if (res.msg.includes('Not enough balance to undelegate')) {
         await this.$store.dispatch('modals/show', {
           key: modals.status,
-          title: 'Delegate error', // TODO: to localization
-          subtitle: 'Not enough balance to delegate',
+          title: 'Undelegate error', // TODO: to localization
+          subtitle: 'Not enough balance to undelegate',
         });
       }
     },

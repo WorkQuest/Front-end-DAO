@@ -3,6 +3,7 @@ export default () => ({
     access: '',
     refresh: '',
   },
+  specialUserData: {},
   userData: {},
   usersData: {
     list: [],

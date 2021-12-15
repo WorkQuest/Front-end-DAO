@@ -42,7 +42,7 @@
                 <img
                   id="userAvatar"
                   class="avatar__img"
-                  :src="investor.avatar || require('~/assets/img/app/avatar_empty.png')"
+                  :src="(investor.avatar && investor.avatar.url) ? investor.avatar.url : require('~/assets/img/app/avatar_empty.png')"
                   alt=""
                 >
               </div>
@@ -60,7 +60,7 @@
                   :is-hide-error="true"
                   mode="iconWhite"
                   :disabled="true"
-                  :value="investor[input.key]"
+                  :value="investor.additionalInfo ? (input.key === 'location' ? investor.additionalInfo.address : investor[input.key]) : ''"
                   :placeholder="$t('investor.notFilled')"
                 >
                   <template v-slot:left>
@@ -81,7 +81,7 @@
                 class="about__textarea"
                 :title="'test'"
                 :disabled="true"
-                :placeholder="investor.additionalInfo.description || $t('investor.notFilled')"
+                :placeholder="investor.additionalInfo ? (investor.additionalInfo.description || $t('investor.notFilled')) : ''"
               />
             </div>
             <div class="profile__social social">
@@ -92,7 +92,7 @@
                 :disabled="true"
                 :is-hide-error="true"
                 mode="iconWhite"
-                :value="investor.additionalInfo.socialNetwork[input.key]"
+                :value="investor.additionalInfo ? investor.additionalInfo.socialNetwork[input.key] : ''"
                 :placeholder="$t('investor.notFilled')"
               >
                 <template v-slot:left>
@@ -107,6 +107,7 @@
               <base-btn
                 mode="lightRed"
                 class="action__undelegate"
+                :disabled="!isMyProfile()"
                 @click="openModalUndelegate"
               >
                 {{ $t('modals.undelegate') }}
@@ -114,6 +115,7 @@
               <base-btn
                 mode="lightBlue"
                 class="action__delegate"
+                :disabled="!isMyProfile()"
                 @click="openModalDelegate"
               >
                 {{ $t('modals.delegate') }}
@@ -142,10 +144,12 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
+import { Chains } from '~/utils/enums';
 
 export default {
   data() {
     return {
+      investor: {},
       userId: this.$route.params.id,
       investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
       stake: '126,613,276',
@@ -235,7 +239,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      investor: 'investors/getInvestorData',
+      userData: 'user/getUserData',
     }),
     mainDataArr() {
       return [{
@@ -281,12 +285,20 @@ export default {
   async beforeMount() {
     await this.getInvestorData();
   },
-  mounted() {
-    this.SetLoader(false);
+  async mounted() {
+    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
   },
   methods: {
     async getInvestorData() {
-      await this.$store.dispatch('investors/getInvestorData', this.userId);
+      console.log(this.isMyProfile());
+      if (this.isMyProfile()) {
+        this.investor = this.userData;
+      } else {
+        this.investor = await this.$store.dispatch('user/getSpecialUserData', this.userId);
+      }
+    },
+    isMyProfile() {
+      return this.userData.id === this.userId;
     },
     openModalDelegate() {
       this.ShowModal({
@@ -299,7 +311,7 @@ export default {
       this.ShowModal({
         key: modals.undelegate,
         stake: this.stake,
-        name: this.name,
+        name: `${this.investor.firstName} ${this.investor.lastName}`,
       });
     },
     ClipboardSuccessHandler(value) {

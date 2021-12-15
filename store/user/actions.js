@@ -21,6 +21,11 @@ export default {
     commit('setUserData', response.result);
     return response;
   },
+  async getSpecialUserData({ commit }, id) {
+    const response = await this.$axios.$get(`/v1/profile/${id}`);
+    commit('setSpecialUserData', response.result);
+    return response.result;
+  },
   async getAllUserData({ commit }, config) {
     try {
       const query = config.q ? `limit=${config.limit}&offset=${config.offset}&q=${config.q}` : `limit=${config.limit}&offset=${config.offset}`;
