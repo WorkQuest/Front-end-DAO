@@ -4,6 +4,10 @@ export default () => ({
     refresh: '',
   },
   userData: {},
+  usersData: {
+    list: [],
+    count: 0,
+  },
   currentUserPosition: null,
   userRole: {},
   userDataPassword: {},

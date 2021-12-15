@@ -21,6 +21,31 @@ export default {
     commit('setUserData', response.result);
     return response;
   },
+  async getAllUserData({ commit }, config) {
+    try {
+      const query = config.q ? `limit=${config.limit}&offset=${config.offset}&q=${config.q}` : `limit=${config.limit}&offset=${config.offset}`;
+      const { result } = await this.$axios.$get(`/v1/profile/users?${query}`);
+      let userName = '';
+      result.users.forEach((user) => {
+        userName = `${user.firstName || ''} ${user.lastName || ''}`;
+        if (userName.length > 16) {
+          user.name = userName.substring(0, userName.length - (userName.length - 16));
+          user.name += '...';
+        } else {
+          user.name = userName;
+        }
+        user.investorAddress = '0xnf8o29837hrvbn42o37hsho3b74thb3';
+        user.stake = '126,613,276';
+        user.slots = '147';
+        user.voting = '127 millions';
+        user.undelegate = 'Undelegate';
+        user.delegate = 'Delegate';
+      });
+      commit('setUsersData', result);
+    } catch (e) {
+      console.log(e);
+    }
+  },
   async setUserRole({ commit }) {
     const response = await this.$axios.$post('/v1/profile/set-role');
     commit('setUserRole', response.result);

@@ -29,7 +29,7 @@
               <span>{{ about }}</span>
             </div>
             <div class="header__subtitle">
-              <span>{{ date }}</span>
+              <span>{{ $moment(dateStart).format('lll') }} - {{ $moment(dateEnd).format('lll') }}</span>
             </div>
           </div>
           <div class="info__transactions transactions">
@@ -62,7 +62,7 @@
               {{ $t('proposal.description') }}
             </div>
             <div class="description__value">
-              {{ descriptionValue }}
+              {{ description }}
             </div>
           </div>
           <div class="info__forum forum">
@@ -131,23 +131,26 @@
           </div>
           <div class="results__buttons buttons">
             <div class="buttons__header">
-              {{ $t('proposal.voteForProposal') }}
+              {{ $t('proposal.proposalIsExpired') }}
+            </div>
+            <div v-if="!isVoted && timeIsExpired">
+              {{ $t('proposal.proposalIsExpired') }}
             </div>
             <div
-              v-if="!results.isVoted"
+              v-else-if="!isVoted"
               class="buttons__container"
             >
               <base-btn
                 mode="delete"
                 class="btn__votes btn__votes_size"
-                @click="onVote('NO')"
+                @click="toDelegate(false)"
               >
                 {{ $t('proposal.no') }}
               </base-btn>
               <base-btn
                 mode="approve"
                 class="btn__votes btn__votes_size btn__votes_green"
-                @click="onVote('YES')"
+                @click="toDelegate(true)"
               >
                 {{ $t('proposal.yes') }}
               </base-btn>
@@ -159,11 +162,11 @@
                 mode="outline"
                 class="btn__voted"
                 :class="[
-                  {'btn__voted_green': results.vote === 'YES' },
-                  {'btn__voted_red': results.vote === 'NO' },
+                  {'btn__voted_green': vote },
+                  {'btn__voted_red': !vote },
                 ]"
               >
-                {{ $t('proposal.youVoted') }} {{ results.vote === 'YES' ? $t('proposal.yes') : $t('proposal.no') }}
+                {{ $t('proposal.youVoted') }} {{ vote ? $t('proposal.yes') : $t('proposal.no') }}
               </base-btn>
             </div>
           </div>
@@ -206,6 +209,10 @@
 
 <script>
 import moment from 'moment';
+import { mapGetters } from 'vuex';
+import BigNumber from 'bignumber.js';
+import { Chains } from '~/utils/enums';
+import modals from '~/store/modals/modals';
 
 export default {
   data() {
@@ -233,34 +240,35 @@ export default {
           hash: '11400714819323198485',
           date: moment('20210615', 'YYYYMMDD').format('ll'),
           address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
-          vote: 'YES',
+          vote: true,
         },
         {
           number: '2',
           hash: '11400714819323198485',
           date: moment('20210720', 'YYYYMMDD').format('ll'),
           address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
-          vote: 'YES',
+          vote: true,
         },
         {
           number: '3',
           hash: '11400714819323198485',
           date: moment('20210617', 'YYYYMMDD').format('ll'),
           address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
-          vote: 'NO',
+          vote: false,
         },
         {
           number: '4',
           hash: '11400714819323198485',
           date: moment('20210520', 'YYYYMMDD').format('ll'),
           address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
-          vote: 'NO',
+          vote: false,
         },
       ],
       idCard: '',
       voting: '',
       status: '',
-      date: '',
+      dateStart: '',
+      dateEnd: '',
       about: '',
       ddValues: [
         this.$t('proposal.ui.yes'),
@@ -270,105 +278,124 @@ export default {
       ddValue: 2,
       documents0: [],
       documents: [
-        {
-          id: '1',
-          type: 'doc',
-          name: 'some_document1.pdf',
-          size: '1.2mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '2',
-          type: 'doc',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '3',
-          type: 'doc',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '4',
-          type: 'img',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '5',
-          type: 'img',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '6',
-          type: 'img',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '7',
-          type: 'img',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        },
+        // {
+        //   id: '1',
+        //   type: 'doc',
+        //   name: 'some_document1.pdf',
+        //   size: '1.2mb',
+        //   img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        // }, {
+        //   id: '2',
+        //   type: 'doc',
+        //   name: 'some_doc2.pdf',
+        //   size: '1.5mb',
+        //   img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        // },
       ],
-      hash: '11400714819323198485',
-      descriptionValue: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid animi, ea exercitationem fugit incidunt nesciunt nisi non officiis optio quaerat rem similique suscipit. Ab ad asperiores, commodi consequatur cum delectus distinctio eaque fugiat impedit iste laborum laudantium maxime nam odio perspiciatis quibusdam quisquam ratione sequi suscipit ullam vel veritatis voluptate.',
+      hash: '',
+      description: null,
       results: {
         percents: {
-          yes: '65',
-          no: '35',
+          yes: 0,
+          no: 0,
         },
         votes: {
-          yes: 10,
-          no: 2,
+          yes: 0,
+          no: 0,
         },
-        isVoted: false,
-        vote: 'YES',
       },
-      cards: [
-        {
-          voting: 1,
-          status: 0,
-          date: `${moment('20210520', 'YYYYMMDD').format('ll')} - ${moment().format('ll')}`,
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: `${moment('20210520', 'YYYYMMDD').format('ll')} - ${moment().format('ll')}`,
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 2,
-          date: `${moment('20210520', 'YYYYMMDD').format('ll')} - ${moment().format('ll')}`,
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-      ],
+      isVoted: false,
+      vote: null,
       isDescending: true,
+      isFirstLoading: true,
     };
   },
   computed: {
+    ...mapGetters({
+      isConnected: 'web3/getWalletIsConnected',
+    }),
     sortingClass() {
       return [
         { 'icon-Sorting_descending': this.isDescending },
         { 'icon-Sorting_ascending': !this.isDescending },
       ];
     },
+    timeIsExpired() {
+      return this.$moment().isAfter(this.$moment(this.dateEnd));
+    },
   },
-  mounted() {
-    const URLString = document.URL;
-    this.idCard = parseInt(URLString.split('/').slice(-1)[0], 10);
-    const card = this.cards[this.idCard - 1];
-    this.voting = card.voting;
-    this.status = card.status;
-    this.date = card.date;
-    this.about = card.about;
+  watch: {
+    async isConnected(newVal) {
+      if (!this.isFirstLoading && newVal) await this.loadCard();
+    },
+  },
+  async mounted() {
+    this.SetLoader(true);
+    this.idCard = this.$route.params.id;
+    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+    if (!this.isConnected) return;
+    await this.loadCard();
+    this.isFirstLoading = false;
+    this.SetLoader(false);
   },
   methods: {
+    async loadCard() {
+      const [proposalRes] = await Promise.all([
+        this.$store.dispatch('web3/getProposalInfoById', this.idCard),
+        this.getReceipt(),
+      ]);
+      if (!proposalRes.ok) return;
+      const { result } = proposalRes.result;
+
+      const {
+        forVotes, againstVotes, active, description, startTime, expireTime,
+      } = result;
+
+      const yes = +(new BigNumber(forVotes).shiftedBy(-18));
+      const no = +(new BigNumber(againstVotes).shiftedBy(-18));
+
+      this.results.votes.yes = yes;
+      this.results.votes.no = no;
+
+      const sumVotes = no + yes;
+      if (sumVotes <= 0) {
+        this.results.percents.yes = 0;
+        this.results.percents.no = 0;
+      } else if (no - yes === no) {
+        this.results.percents.yes = 0;
+        this.results.percents.no = 100;
+      } else if (yes - no === yes) {
+        this.results.percents.yes = 100;
+        this.results.percents.no = 0;
+      } else {
+        if (yes > 0) {
+          // Math.floor((yes * 10000) / sumVotes) / 100;
+          this.results.percents.yes = +(new BigNumber((yes * 100) / sumVotes).decimalPlaces(1).toString());
+        } else this.results.percents.yes = 0;
+        if (no > 0) {
+          // Math.floor((no * 10000) / sumVotes) / 100;
+          this.results.percents.no = +(new BigNumber((no * 100) / sumVotes).decimalPlaces(1).toString());
+        } else this.results.percents.no = 0;
+      }
+
+      const start = new Date(startTime * 1000);
+      const end = new Date(expireTime * 1000);
+      this.voting = this.idCard;
+      this.status = active ? 0 : 1;
+      this.dateStart = start;
+      this.dateEnd = end;
+      this.description = description;
+      this.about = '*TITLE from back*';
+    },
+    async getReceipt() {
+      const { address } = await this.$store.dispatch('web3/getAccount');
+      const res = await this.$store.dispatch('web3/getReceipt', { id: this.idCard, accountAddress: address });
+      if (res.ok && res.result) {
+        const { hasVoted, support } = res.result;
+        this.isVoted = hasVoted;
+        this.vote = support;
+      }
+    },
     cardsStatusColor(idx) {
       const statusClass = {
         0: 'info__status_pending',
@@ -397,16 +424,59 @@ export default {
       });
       switch (this.ddValue) {
         case 0:
-          return newData.filter((item) => item.vote === 'YES');
+          return newData.filter((item) => item.vote);
         case 1:
-          return newData.filter((item) => item.vote === 'NO');
+          return newData.filter((item) => !item.vote);
         default:
           return newData;
       }
     },
-    onVote(value) {
-      this.results.isVoted = true;
-      this.results.vote = value;
+    async toDelegate(value) {
+      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      if (!this.isConnected) return;
+
+      const account = await this.$store.dispatch('web3/getAccount');
+      const [delegated, voteThreshold] = await Promise.all([
+        this.$store.dispatch('web3/getVotes', account.address),
+        this.$store.dispatch('web3/getVoteThreshold'),
+      ]);
+      console.log(+delegated.result, +voteThreshold.result);
+      if (+delegated.result < +voteThreshold.result) {
+        await this.$store.dispatch('main/showToast', {
+          title: this.$t('proposal.errors.voteError'),
+          text: this.$tc('proposal.errors.notEnoughFunds', { a: voteThreshold.result, b: delegated.result }),
+        });
+        await this.$store.dispatch('modals/show', {
+          key: modals.delegate,
+          investorAddress: account.address,
+          min: +voteThreshold.result - +delegated.result,
+          callback: async () => this.onVote(value),
+        });
+      } else {
+        await this.onVote(value);
+      }
+    },
+    async onVote(value) {
+      this.SetLoader(true);
+      await this.loadCard(); // TODO: check better case
+      if (this.timeIsExpired) {
+        await this.$store.dispatch('main/showToast', {
+          title: this.$t('proposal.voteError'),
+          text: this.$t('proposal.errors.votingTimeIsExpired'),
+        });
+        this.SetLoader(false);
+        return;
+      }
+      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      if (!this.isConnected) return;
+      const res = await this.$store.dispatch('web3/doVote', { id: this.idCard, value });
+      if (!res.ok) {
+        await this.loadCard();
+        this.SetLoader(false);
+        return;
+      }
+      await this.loadCard();
+      this.SetLoader(false);
     },
   },
 };
@@ -680,6 +750,7 @@ export default {
   &__percent {
     width: 29px;
     color: #7C838D;
+    margin-right: 10px;
   }
 }
 

@@ -4,55 +4,63 @@
     :title="$t('modals.delegate')"
   >
     <div class="delegate__content content">
-      <div class="content__adress adress">
-        <label
-          for="invsetorAdress"
-          class="adress__label"
-        >{{ $t('modals.investorAddress') }}</label>
-        <base-field
-          id="invsetorAdress"
-          disabled
-          :value="options.investorAddress"
-          class="adress__body"
-        >
-          {{ options.investorAddress }}
-        </base-field>
-      </div>
-      <div class="content__tokens tokens">
-        <div class="tokens__title">
-          {{ $t('modals.tokensNumber') }}
-        </div>
-        <label
-          for="tokensNumber"
-          class="tokens__title_grey"
-        >{{ $t('modals.tokensDelegated') }}</label>
-        <div class="tokens__footer footer">
+      <validation-observer v-slot="{handleSubmit, valid}">
+        <div class="content__adress adress">
+          <label
+            for="investorAddress"
+            class="adress__label"
+          >{{ $t('modals.investorAddress') }}</label>
           <base-field
-            id="tokensNumber"
-            v-model="tokensAmount"
-            class="footer__body"
-            :placeholder="$t('modals.placeholder')"
-          />
-          <base-btn
-            class="footer__maximum"
-            mode="lightBlue"
-            @click="maxDelegate"
+            id="invsetorAdress"
+            disabled
+            :value="accountAddress.address"
+            class="adress__body"
           >
-            {{ $t('modals.max') }}
-          </base-btn>
+            {{ accountAddress.address }}
+          </base-field>
         </div>
-      </div>
-      <base-btn
-        class="delegate__done"
-      >
-        {{ $t('modals.delegate') }}
-      </base-btn>
+        <div class="content__tokens tokens">
+          <div class="tokens__title">
+            {{ $t('modals.tokensNumber') }}
+          </div>
+          <label
+            for="tokensNumber"
+            class="tokens__title_grey"
+          >{{ $t('modals.tokensDelegated') }}</label>
+          <div class="tokens__footer footer">
+            <base-field
+              id="tokensNumber"
+              v-model="tokensAmount"
+              class="footer__body"
+              placeholder="1000"
+              :type="'number'"
+              :name="$t('modals.tokensNumber')"
+              :rules="`required${min}`"
+            />
+            <base-btn
+              class="footer__maximum"
+              mode="lightBlue"
+              @click="maxDelegate"
+            >
+              {{ $t('modals.max') }}
+            </base-btn>
+          </div>
+        </div>
+        <base-btn
+          class="delegate__done"
+          :disabled="!valid"
+          @click="handleSubmit(delegate)"
+        >
+          {{ $t('modals.delegate') }}
+        </base-btn>
+      </validation-observer>
     </div>
   </ctm-modal-box>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
+import { Chains } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 
 export default {
@@ -60,19 +68,59 @@ export default {
   data() {
     return {
       tokensAmount: '',
+      balance: 0,
+      accountAddress: '',
     };
   },
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
+      isConnected: 'web3/getWalletIsConnected',
     }),
+    min() {
+      return this.options?.min ? `|min_value:${this.options.min}` : '';
+    },
+  },
+  watch: {
+    isConnected() {
+      this.close();
+    },
+  },
+  async mounted() {
+    this.accountAddress = await this.$store.dispatch('web3/getAccount');
+    const res = await this.$store.dispatch('web3/getBalance');
+    if (res.ok) {
+      this.balance = res.result;
+    }
   },
   methods: {
-    hide() {
+    close() {
       this.CloseModal();
     },
     maxDelegate() {
-      this.tokensAmount = this.options.stake;
+      this.tokensAmount = this.balance;
+    },
+    async delegate() {
+      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      if (!this.isConnected) return;
+      const { callback } = this.options;
+      this.SetLoader(true);
+      const res = await this.$store.dispatch('web3/delegate', { address: this.accountAddress.address, amount: this.tokensAmount });
+      this.SetLoader(false);
+      if (res.ok) {
+        await this.$store.dispatch('main/showToast', {
+          title: 'Delegate',
+          text: `Delegated ${this.tokensAmount} WQT`,
+        });
+        await this.close();
+        if (callback) await callback();
+      } else if (res.msg.includes('Not enough balance to delegate')) {
+        await this.$store.dispatch('modals/show', {
+          key: modals.status,
+          title: 'Delegate error', // TODO: to localization
+          subtitle: 'Not enough balance to delegate',
+        });
+      }
     },
   },
 };
@@ -80,7 +128,7 @@ export default {
 
 <style lang="scss" scoped>
 .delegate {
-  max-width: 450px !important;
+  max-width: 480px !important;
   &__content {
     padding: 20px 28px 30px 28px!important;
   }

@@ -38,6 +38,7 @@ export default {
     ...mapGetters({
       options: 'modals/getOptions',
     }),
+
   },
   methods: {
     hide() {

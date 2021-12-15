@@ -12,7 +12,6 @@
           v-for="(dot, i) in ['', '', '', '', '', '']"
           :key="i"
           class="sk-chase-dot"
-          :class="{'sk-chase-dot_small' : isMiniLoader}"
         />
       </div>
     </div>
@@ -84,11 +83,6 @@ export default {
   left: 0;
   top: 0;
   animation: sk-chase-dot 2.0s infinite ease-in-out both;
-
-  &_small {
-    //width: 50%;
-    //height: 50%;
-  }
 }
 
 .sk-chase-dot:before {

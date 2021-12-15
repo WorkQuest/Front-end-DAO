@@ -10,15 +10,14 @@
         :is-search="true"
         :placeholder="$t('investors.search')"
       />
-
       <base-table
-        v-if="investors.length"
+        v-if="usersData.count !== 0"
         class="investors__table"
         :fields="historyTableFields"
-        :items="investors"
+        :items="usersData.users"
       />
       <base-pager
-        v-if="investorsCount"
+        v-if="usersData.count > filter.limit"
         v-model="currPage"
         class="investors__pagination"
         :total-pages="totalPages"
@@ -30,6 +29,7 @@
 <script>
 
 import { mapGetters } from 'vuex';
+import { Chains } from '~/utils/enums';
 
 export default {
 
@@ -38,6 +38,8 @@ export default {
       filter: {
         limit: 20,
         offset: 0,
+        q: '',
+        timout: '',
       },
       search: '',
       currPage: 1,
@@ -74,13 +76,11 @@ export default {
   },
   computed: {
     ...mapGetters({
-      investors: 'investors/getInvestorsList',
-      investorsCount: 'investors/getInvestorsCount',
+      usersData: 'user/getAllUsers',
+      isConnected: 'web3/getWalletIsConnected',
     }),
     totalPages() {
-      const { investorsCount, filter: { limit } } = this;
-
-      return Math.ceil(investorsCount / limit);
+      return Math.ceil(this.usersData.count / this.filter.limit);
     },
   },
   watch: {
@@ -93,17 +93,29 @@ export default {
       await this.getInvestors();
       this.SetLoader(false);
     },
+    search() {
+      this.filter.q = this.search;
+      clearTimeout(this.timout);
+      this.timout = setTimeout(() => {
+        this.getInvestors();
+      }, 1000);
+    },
   },
   beforeMount() {
     this.getInvestors();
   },
+  async mounted() {
+    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+    if (!this.isConnected) return;
+    const account = await this.$store.dispatch('web3/getAccount');
+  },
+  beforeDestroy() {
+    clearTimeout(this.timout);
+  },
   methods: {
     async getInvestors() {
-      const config = {
-        params: this.filter,
-      };
-
-      await this.$store.dispatch('investors/getInvestors', config);
+      console.log('work');
+      await this.$store.dispatch('user/getAllUserData', this.filter);
     },
   },
 };
