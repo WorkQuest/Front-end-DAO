@@ -497,9 +497,12 @@ export default {
     margin: 20px 0 25px 0;
   }
   &__btn {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    width: 100px;
     height: 43px;
     color: #ffffff;
     font-family: 'Inter', sans-serif;
