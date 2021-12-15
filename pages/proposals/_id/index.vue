@@ -281,13 +281,20 @@ export default {
       title: '',
       ddValue: 0,
       documents: [
-        // {
-        //   id: '1',
-        //   type: 'doc',
-        //   name: 'some_document1.pdf',
-        //   size: '1.2mb',
-        //   img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        // },
+        {
+          id: '1',
+          type: 'doc',
+          name: 'some_document1.pdf',
+          size: '1.2mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        },
+        {
+          id: '2',
+          type: 'img',
+          name: 'some_img.png',
+          size: '20mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        },
       ],
       hash: '',
       description: null,

@@ -92,8 +92,8 @@ export default {
   },
 
   /* Proposals */
-  async addProposal({ commit }, description) {
-    return await addProposal(description);
+  async addProposal({ commit }, description, nonceId) {
+    return await addProposal(description, nonceId);
   },
   async getProposals({ commit }, { offset, limit }) {
     return await getProposals(offset, limit);

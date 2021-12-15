@@ -65,4 +65,17 @@ export default {
   async changeProfile({ commit }, payload) {
     commit('changeProfile', payload);
   },
+
+  async getUploadFileLink({ commit }, config) {
+    const { result } = await this.$axios.$post('/v1/storage/get-upload-link', config);
+    return result;
+  },
+  async uploadFile({ commit }, payload) {
+    await this.$axios.$put(payload.url, payload.data, {
+      headers: {
+        'Content-Type': type,
+        'x-amz-acl': 'public-read',
+      },
+    });
+  },
 };
