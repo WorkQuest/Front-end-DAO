@@ -73,7 +73,7 @@ export default {
   async uploadFile({ commit }, payload) {
     await this.$axios.$put(payload.url, payload.data, {
       headers: {
-        'Content-Type': type,
+        'Content-Type': payload.data.contentType,
         'x-amz-acl': 'public-read',
       },
     });
