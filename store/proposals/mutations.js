@@ -1,4 +1,7 @@
 export default {
+  setProposalThreshold(state, payload) {
+    state.proposalThreshold = payload;
+  },
   setCards(state, payload) {
     state.cards = payload;
   },

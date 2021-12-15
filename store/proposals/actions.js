@@ -1,4 +1,7 @@
 export default {
+  setProposalThreshold({ commit }, payload) {
+    commit('setProposalThreshold', payload);
+  },
   async createProposal({ commit }, payload) {
     try {
       await this.$axios.$post('', payload);

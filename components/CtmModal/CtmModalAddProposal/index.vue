@@ -112,7 +112,7 @@
 <script>
 
 import { mapGetters } from 'vuex';
-import { Chains } from '~/utils/enums';
+import { Chains, errorCodes } from '~/utils/enums';
 
 export default {
   name: 'ModalAddProposal',
@@ -133,15 +133,7 @@ export default {
       isConnected: 'web3/getWalletIsConnected',
     }),
   },
-  watch: {
-    isConnected() {
-      this.close();
-    },
-  },
   async mounted() {
-    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-    if (!this.isConnected) await this.$store.dispatch('web3/checkMetamaskStatus');
-
     const start = this.$moment();
     this.votingStartInput = this.$moment(start).format('DD/MM/YYYY');
     this.votingEndInput = this.$moment(start).add(1, 'M').format('DD/MM/YYYY');
@@ -151,6 +143,8 @@ export default {
       this.CloseModal();
     },
     async addProposal() {
+      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      if (!this.isConnected) return;
       this.SetLoader(true);
       this.descriptionInput = this.descriptionInput.trim();
       this.votingTopicInput = this.votingTopicInput.trim();

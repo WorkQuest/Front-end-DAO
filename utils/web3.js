@@ -63,7 +63,11 @@ export const goToChain = async (chain) => {
     return { ok: true };
   } catch (e) {
     if (typeof window.ethereum !== 'undefined') {
-      showToast('Switch chain error:', `${e.message}`, 'danger');
+      if (e.message.indexOf('wallet_switchEthereumChain') !== -1) { // eth_requestAccounts
+        showToast('Switch chain error', 'Please select network in metamask', 'danger');
+      } else {
+        showToast('Switch chain error', `${e.message}`, 'danger');
+      }
     }
     return error(500, 'switch chain error', e);
   }
@@ -90,7 +94,7 @@ export const getContractInstance = (abiName, _abi, _address) => {
 };
 
 const sendTransaction = async (_method, abiName, _abi, _address, params) => {
-  const inst = getContractInstance(abiName, _abi, _address);
+  const inst = await getContractInstance(abiName, _abi, _address);
   const accountAddress = account.address;
   const data = inst.methods[_method].apply(this, params).encodeABI();
 
@@ -174,6 +178,9 @@ export const connectToMetamask = async () => {
     account.chainId = chainId;
     return success(account);
   } catch (e) {
+    if (e.message.indexOf('eth_requestAccounts') !== -1) {
+      showToast('Metamask connection', 'Please open metamask to connect', 'danger');
+    }
     return error(errorCodes.ConnectToMetamaskError, '', e);
   }
 };

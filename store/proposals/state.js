@@ -1,4 +1,5 @@
 export default () => ({
+  proposalThreshold: null,
   cards: [
     {
       id: 1,
@@ -32,7 +33,9 @@ export default () => ({
   ],
   cardsCount: 4, // TODO: reset data
   filters: {
-    sort: null,
     lastPage: 1,
+    search: '',
+    sortVoteStatus: 2,
+    isDescending: true,
   },
 });

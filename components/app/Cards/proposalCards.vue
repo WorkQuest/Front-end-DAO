@@ -104,7 +104,6 @@ export default {
   name: 'ProposalCards',
   data() {
     return {
-      totalPages: 0,
       tab: 1,
       currentPage: 1,
       pages: 1,
@@ -118,7 +117,12 @@ export default {
   computed: {
     ...mapGetters({
       cards: 'proposals/cards',
+      cardsCount: 'proposals/cardsCount',
+      prevFilters: 'proposals/filters',
     }),
+    totalPages() {
+      return Math.ceil(this.cardsCount / this.cardsLimit);
+    },
     ddValues() {
       return [
         this.$t('proposals.ui.yes'),
@@ -148,10 +152,37 @@ export default {
       };
     },
   },
+  // watch: {
+  //   async currentPage(newVal) {
+  //     await this.loadPage(newVal);
+  //   },
+  //   async search(newVal) {
+  //     if (newVal) await this.loadPage(1);
+  //   },
+  //   async ddValue(newVal) {
+  //     await this.loadPage(1);
+  //   },
+  //   async isDescending(newVal, prevVal) {
+  //     if (newVal !== prevVal) await this.loadPage(1);
+  //   },
+  // },
   async mounted() {
-    this.SetLoader(true);
-    // await this.loadPage(1); // TODO: вернуть
-    this.SetLoader(false);
+    // this.lastPage = this.prevFilters.lastPage || 1;
+    // this.search = this.prevFilters.search || '';
+    // this.ddValue = this.prevFilters.sortVoteStatus || 2;
+    // this.isDescending = this.prevFilters.isDescending || true;
+    // TODO: вернуть
+    // this.SetLoader(true);
+    // await this.loadPage(1);
+    // this.SetLoader(false);
+  },
+  beforeDestroy() {
+    this.$store.dispatch('proposals/updateFilters', {
+      lastPage: this.currentPage,
+      search: this.search,
+      sortVoteStatus: this.ddValue,
+      isDescending: this.isDescending,
+    });
   },
   methods: {
     cardsStatusColor(idx) {
@@ -177,6 +208,7 @@ export default {
         limit: this.cardsLimit,
         offset: (this.currentPage - 1) * this.cardsLimit,
         search: this.search,
+        // TODO: передать оставшиеся фильтры
       });
     },
   },

@@ -15,48 +15,65 @@ import {
   getVoteThreshold,
   getVotes,
   getReceipt,
-  getProposalThreshold, executeVoting, isChairpersonRole, getChairpersonHash, hasRole,
+  getProposalThreshold, executeVoting, getChairpersonHash, hasRole,
 } from '~/utils/web3';
 import modals from '~/store/modals/modals';
+import { error, success } from '~/utils/success-error';
+import { errorCodes } from '~/utils/enums';
 
 export default {
   async chainIsCompareToCurrent({ dispatch }, chain) {
     return +getChainIdByChain(chain) === +getAccount().chainId;
   },
-  async goToChain({ commit }, { chain }) {
+  async goToChain({ commit }, chain) {
     return await goToChain(chain);
   },
-  async checkMetamaskStatus({ getters, dispatch }, chain) {
-    if (!getters.getWalletIsConnected) {
-      if (typeof window.ethereum === 'undefined') {
-        this.ShowModal({
-          key: modals.status,
-          img: '~assets/img/ui/cardHasBeenAdded.svg',
-          title: 'Please install Metamask!',
-          subtitle: 'Please click install...',
-          button: 'Install',
-          type: 'installMetamask',
-        });
-      } else {
-        const connected = await dispatch('connectMetamask');
-        if (connected) await dispatch('goToChain', { chain });
-      }
+  async checkMetamaskStatus({ getters, dispatch, commit }, chain) {
+    if (typeof window.ethereum === 'undefined') {
+      this.ShowModal({
+        key: modals.status,
+        // img: '~assets/img/ui/cardHasBeenAdded.svg',
+        title: 'Please install Metamask!',
+        subtitle: 'Please click install...',
+        button: 'Install',
+        type: 'installMetamask',
+      });
+      return error(errorCodes.MetamaskIsNotInstalled);
     }
+    const connectionRes = await dispatch('connectMetamask');
+    if (connectionRes?.code === errorCodes.WrongChainId) {
+      if (!chain) return success();
+      const rightChain = await dispatch('chainIsCompareToCurrent', chain);
+      if (rightChain) {
+        return success();
+      }
+      const switchChainRes = await dispatch('goToChain', chain);
+      if (switchChainRes.ok) {
+        await dispatch('connectMetamask');
+        return success();
+      }
+      commit('setWalletIsConnected', false);
+      return error(errorCodes.WrongChainId);
+    }
+    if (connectionRes.ok) {
+      commit('setWalletIsConnected', true);
+      return success();
+    }
+    return error(connectionRes.code);
   },
-  async connectMetamask({ commit, dispatch }, isReconnection = false) {
+  async connectMetamask({ commit, dispatch }) {
     const connectRes = await connectToMetamask();
     if (connectRes.ok) {
       commit('setWalletIsConnected', true);
       if (!getIsHandlingStatus()) {
         handleMetamaskStatus(() => { dispatch('reconnectMetamask'); });
       }
-      return true;
     }
-    return false;
+    return connectRes;
   },
   async reconnectMetamask({ dispatch }) {
     await dispatch('disconnect');
-    await dispatch('connectMetamask', true);
+    await dispatch('connectMetamask');
   },
   async disconnect({ commit }) {
     disconnect();

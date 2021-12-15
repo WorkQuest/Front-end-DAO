@@ -98,8 +98,9 @@ export default {
       this.tokensAmount = this.balance;
     },
     async delegate() {
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!this.isConnected) return;
+      const connectionRes = await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      if (!connectionRes.ok) return;
+
       const { callback } = this.options;
       this.SetLoader(true);
       const res = await this.$store.dispatch('web3/delegate', { address: this.options.investorAddress, amount: this.tokensAmount });
