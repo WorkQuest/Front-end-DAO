@@ -1,7 +1,10 @@
 <template>
   <div class="answers">
+    //
     <div class="answers__field">
+      //
       <div class="answers__user user">
+        //
         <img
           :src="authorAvatarSrc(item)"
           alt="userAvatar"

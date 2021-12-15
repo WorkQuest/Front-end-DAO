@@ -141,77 +141,89 @@
           {{ $t('discussions.comments.noComments') }}
         </div>
       </div>
-      <div
+      <span
         v-for="(comment) in rootComments.comments"
         :key="comment.id"
         class="info__comment comment"
       >
         <comment-field :data="comment" />
-        <div
+        <button
           v-if="!filterComments(sub2Comments, comment.id).length && comment.amountSubComments > 0"
+          class="comment__btn"
           @click="loadSubs(comment.id, 2)"
         >
           Show subs
-        </div>
-        <div v-else-if="filterComments(sub2Comments, comment.id).length ">
-          <div
+        </button>
+        <span v-else-if="filterComments(sub2Comments, comment.id).length ">
+          <span
             v-for="(sub2) in filterComments(sub2Comments, comment.id)"
             :key="sub2.id"
           >
             <comment-field
               :data="sub2"
               :level="2"
+              :discussion-id="discussionId"
+              @loadSubs="loadSubs"
             />
-            <div
+            <button
               v-if="!filterComments(sub3Comments, sub2.id).length && sub2.amountSubComments > 0"
+              class="comment__btn"
               @click="loadSubs(sub2.id, 3)"
             >
               Show subs
-            </div>
-            <div v-else-if="filterComments(sub3Comments, sub2.id).length ">
-              <div
+            </button>
+            <span v-else-if="filterComments(sub3Comments, sub2.id).length ">
+              <span
                 v-for="(sub3) in filterComments(sub3Comments, sub2.id)"
                 :key="sub3.id"
               >
                 <comment-field
                   :data="sub3"
                   :level="3"
+                  :discussion-id="discussionId"
+                  @loadSubs="loadSubs"
                 />
-                <div
+                <button
                   v-if="!filterComments(sub4Comments, sub3.id).length && sub3.amountSubComments > 0"
+                  class="comment__btn"
                   @click="loadSubs(sub3.id, 4)"
                 >
                   Show subs
-                </div>
-                <div
+                </button>
+                <span
                   v-for="(sub4) in filterComments(sub4Comments, sub3.id)"
                   :key="sub4.id"
                 >
                   <comment-field
                     :data="sub4"
                     :level="4"
+                    :discussion-id="discussionId"
+                    @loadSubs="loadSubs"
                   />
-                  <div
+                  <button
                     v-if="!filterComments(sub5Comments, sub4.id).length && sub4.amountSubComments > 0"
+                    class="comment__btn"
                     @click="loadSubs(sub4.id, 5)"
                   >
                     Show subs
-                  </div>
-                  <div
+                  </button>
+                  <span
                     v-for="(sub5) in filterComments(sub5Comments, sub4.id)"
                     :key="sub5.id"
                   >
                     <comment-field
                       :data="sub5"
                       :level="5"
+                      :discussion-id="discussionId"
+                      @loadSubs="loadSubs"
                     />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+                  </span>
+                </span>
+              </span>
+            </span>
+          </span>
+        </span>
+      </span>
       <base-pager
         v-if="totalPagesValue > 1"
         v-model="page"
@@ -234,14 +246,11 @@ export default {
       sub3Comments: [],
       sub4Comments: [],
       sub5Comments: [],
-
-      rootCommentIdArray: [],
       page: 1,
       perPager: 4,
       isAddComment: false,
       rootCommentObjects: {},
       rootCommentArray: [],
-      filteredSubComments: [],
       totalPagesValue: 1,
       discussionId: '',
       opinion: '',
@@ -292,25 +301,28 @@ export default {
     filterComments(subComments, rootId) {
       return subComments.filter((item) => item.rootCommentId === rootId);
     },
+    clearSubs(level) {
+      if (level === 2) this.sub2Comments = [];
+      if (level === 3) this.sub3Comments = [];
+      if (level === 4) this.sub4Comments = [];
+      if (level === 5) this.sub5Comments = [];
+    },
     async loadSubs(rootId, level) {
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
       if (level === 2) {
-        this.sub2Comments.push(...res.comments);
-        return;
-      }
-      if (level === 3) {
-        this.sub3Comments.push(...res.comments);
-        return;
-      }
-      if (level === 4) {
-        this.sub4Comments.push(...res.comments);
-        return;
-      }
-      if (level === 5) {
-        this.sub5Comments.push(...res.comments);
-      }
+        if (this.sub2Comments.length > 0) this.sub2Comments = [];
+        return this.sub2Comments.push(...res.comments);
+      } if (level === 3) {
+        if (this.sub3Comments.length > 0) this.sub3Comments = [];
+        return this.sub3Comments.push(...res.comments);
+      } if (level === 4) {
+        if (this.sub4Comments.length > 0) this.sub4Comments = [];
+        return this.sub4Comments.push(...res.comments);
+      } if (level === 5) {
+        if (this.sub5Comments.length > 0) this.sub5Comments = [];
+        return this.sub5Comments.push(...res.comments);
+      } return '';
     },
-
     authorAvatarSrc(elem) {
       if (elem && elem.author.avatar) return elem.author.avatar.url;
       if (this.authorAvatarUrl) return this.authorAvatarUrl;
@@ -334,29 +346,6 @@ export default {
       if (item.star) return 'checkedStar';
       return 'simpleStar';
     },
-    async toggleShow(rootCommentId) {
-      if (this.rootCommentIdArray.length === 0) {
-        console.log('toggleShowID__1');
-        this.rootCommentIdArray.push(rootCommentId);
-        return true;
-      } if (this.rootCommentIdArray.length === 1 && this.rootCommentIdArray.includes(rootCommentId)) {
-        this.rootCommentIdArray.shift();
-        console.log('toggleShowID__2');
-        return false;
-      } if (this.rootCommentIdArray.length === 1 && !this.rootCommentIdArray.includes(rootCommentId)) {
-        this.rootCommentIdArray.shift();
-        this.rootCommentIdArray.push(rootCommentId);
-        console.log('toggleShowID__3');
-        return true;
-      }
-      await this.getSubComments(rootCommentId);
-      await this.filterSubComments(rootCommentId);
-      return false;
-    },
-    subCommentsToggle(rootCommentId) {
-      this.getSubComments(rootCommentId);
-      this.toggleShow(rootCommentId);
-    },
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
     },
@@ -374,9 +363,6 @@ export default {
     },
     async getCurrentDiscussion() {
       await this.$store.dispatch('discussions/getCurrentDiscussion', this.discussionId);
-    },
-    async getSubComments(commentId) {
-      await this.$store.dispatch('discussions/getSubCommentsLevel', { id: commentId, mode: 2 });
     },
     async addRootCommentResponse() {
       const discussionId = this.currentDiscussion.id;
@@ -511,16 +497,23 @@ export default {
     margin: 20px 0 25px 0;
   }
   &__btn {
-    border: none;
-    outline: none;
     align-items: center;
-    width: 190px;
-    height: 33px;
-    border-radius: 6px;
+    justify-content: center;
+    width: 100%;
+    height: 43px;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 130%;
     text-align: center;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+    transition: .3s;
+    background: $blue;
+    border-radius: 6px;
+    &:hover {
+      background: #103D7C;
+    }
   }
   &__footer {
     margin-top: 20px;
