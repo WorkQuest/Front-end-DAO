@@ -142,67 +142,74 @@
         </div>
       </div>
       <div
-        v-for="(elem) in rootComments.comments"
-        :key="elem.id"
+        v-for="(comment) in rootComments.comments"
+        :key="comment.id"
         class="info__comment comment"
       >
-        <div class="comment__field">
-          <div class="comment__user user">
-            <img
-              :src="authorAvatarSrc(elem)"
-              alt="userAvatar"
-              class="user__avatar"
-              @click="toInvestor(elem.author.id)"
-            >
+        <comment-field :data="comment" />
+        <div
+          v-if="!filterComments(sub2Comments, comment.id).length && comment.amountSubComments > 0"
+          @click="loadSubs(comment.id, 2)"
+        >
+          Show subs
+        </div>
+        <div v-else-if="filterComments(sub2Comments, comment.id).length ">
+          <div
+            v-for="(sub2) in filterComments(sub2Comments, comment.id)"
+            :key="sub2.id"
+          >
+            <comment-field
+              :data="sub2"
+              :level="2"
+            />
             <div
-              class="user__name"
-              @click="toInvestor(elem.author.id)"
+              v-if="!filterComments(sub3Comments, sub2.id).length && sub2.amountSubComments > 0"
+              @click="loadSubs(sub2.id, 3)"
             >
-              {{ authorFirstName(elem) }}
-              {{ authorLastName(elem) }}
+              Show subs
             </div>
-            <div class="user__date">
-              {{ $moment(elem.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
-            </div>
-          </div>
-          <div class="comment__description">
-            {{ elem.text }}
-          </div>
-          <div class="comment__bottom bottom">
-            <base-btn
-              class="bottom__btn"
-              mode="blue"
-              @click="subCommentsToggle(elem.id)"
-            >
-              {{ rootCommentIdArray.includes(elem.id) ? $t('discussions.hide') : $t('discussions.show') }}
-            </base-btn>
-            <div class="bottom__panel">
-              <img
-                src="~assets/img/ui/comment.svg"
-                alt=""
-                class="bottom__comment"
+            <div v-else-if="filterComments(sub3Comments, sub2.id).length ">
+              <div
+                v-for="(sub3) in filterComments(sub3Comments, sub2.id)"
+                :key="sub3.id"
               >
-              <div class="bottom__counter">
-                {{ elem.amountSubComments }}
-              </div>
-              <button class="bottom__like">
-                <span
-                  :class="{'bottom__like_chosen' : elem.commentLikes.length > 0 }"
-                  class="icon-heart_fill bottom__like"
-                  @click="toggleLikeOnComment(elem)"
+                <comment-field
+                  :data="sub3"
+                  :level="3"
                 />
-              </button>
-              <div class="bottom__counter bottom__counter_right">
-                {{ elem.amountLikes }}
+                <div
+                  v-if="!filterComments(sub4Comments, sub3.id).length && sub3.amountSubComments > 0"
+                  @click="loadSubs(sub3.id, 4)"
+                >
+                  Show subs
+                </div>
+                <div
+                  v-for="(sub4) in filterComments(sub4Comments, sub3.id)"
+                  :key="sub4.id"
+                >
+                  <comment-field
+                    :data="sub4"
+                    :level="4"
+                  />
+                  <div
+                    v-if="!filterComments(sub5Comments, sub4.id).length && sub4.amountSubComments > 0"
+                    @click="loadSubs(sub4.id, 5)"
+                  >
+                    Show subs
+                  </div>
+                  <div
+                    v-for="(sub5) in filterComments(sub5Comments, sub4.id)"
+                    :key="sub5.id"
+                  >
+                    <comment-field
+                      :data="sub5"
+                      :level="5"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <root-comment-level
-            :elem="elem"
-            :sub-comments="subComments"
-            :root-comment-id-array="rootCommentIdArray"
-          />
-          <root-comment-field :elem="elem" />
         </div>
       </div>
       <base-pager
@@ -222,6 +229,12 @@ import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
+      comments: [],
+      sub2Comments: [],
+      sub3Comments: [],
+      sub4Comments: [],
+      sub5Comments: [],
+
       rootCommentIdArray: [],
       page: 1,
       perPager: 4,
@@ -276,6 +289,28 @@ export default {
     this.SetLoader(false);
   },
   methods: {
+    filterComments(subComments, rootId) {
+      return subComments.filter((item) => item.rootCommentId === rootId);
+    },
+    async loadSubs(rootId, level) {
+      const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
+      if (level === 2) {
+        this.sub2Comments.push(...res.comments);
+        return;
+      }
+      if (level === 3) {
+        this.sub3Comments.push(...res.comments);
+        return;
+      }
+      if (level === 4) {
+        this.sub4Comments.push(...res.comments);
+        return;
+      }
+      if (level === 5) {
+        this.sub5Comments.push(...res.comments);
+      }
+    },
+
     authorAvatarSrc(elem) {
       if (elem && elem.author.avatar) return elem.author.avatar.url;
       if (this.authorAvatarUrl) return this.authorAvatarUrl;

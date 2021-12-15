@@ -18,7 +18,9 @@ import BaseFiles from '~/components/ui/BaseFiles';
 import RootCommentField from '~/components/app/Pages/Discussions/RootCommentField.vue';
 import RootCommentLevel from '~/components/app/Pages/Discussions/RootCommentLevel.vue';
 import SubCommentLevel from '~/components/app/Pages/Discussions/SubCommentLevel.vue';
+import CommentField from '~/components/app/Pages/Discussions/CommentField';
 
+Vue.component('comment-field', CommentField);
 Vue.component('root-comment-field', RootCommentField);
 Vue.component('sub-comment-level', SubCommentLevel);
 Vue.component('root-comment-level', RootCommentLevel);

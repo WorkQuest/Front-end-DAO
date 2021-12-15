@@ -34,14 +34,9 @@ export default {
       return console.log(e);
     }
   },
-  async getSubCommentsLevel({ commit }, { id, mode }) {
+  async getSubCommentsLevel({ commit }, { id }) {
     try {
-      console.log(mode);
       const response = await this.$axios.$get(`/v1/discussion/comment/${id}/sub-comments`);
-      if (mode === 2) commit('subCommentLevel2', response.result);
-      if (mode === 3) commit('subCommentLevel3', response.result);
-      if (mode === 4) commit('subCommentLevel4', response.result);
-      if (mode === 5) commit('subCommentLevel5', response.result);
       return response.result;
     } catch (e) {
       return console.log(e);
