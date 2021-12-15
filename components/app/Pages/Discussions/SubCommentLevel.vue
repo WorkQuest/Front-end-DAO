@@ -24,21 +24,20 @@
       </div>
       <div class="answers__bottom bottom">
         <base-btn
-          v-if="!isReply"
           class="bottom__btn"
           mode="blue"
           @click="toggleReply"
         >
-          {{ $t('discussions.reply') }}
+          {{ !isReply ? $t('discussions.reply') : $t('discussions.cancel') }}
         </base-btn>
         <base-btn
-          v-else
           class="bottom__btn"
           mode="blue"
-          @click="toggleReply"
+          @click="subCommentsToggle(item.id, 3)"
         >
-          {{ $t('discussions.cancel') }}
+          {{ level3Array.includes(item.id) ? $t('discussions.hide') : $t('discussions.show') }}
         </base-btn>
+        {{ subCommentsLevel3 }}
         <div class="bottom__panel">
           <base-btn
             class="bottom__like"
@@ -89,14 +88,66 @@ export default {
     return {
       isReply: false,
       subCommentInput: '',
+      level3Array: [],
+      level4Array: [],
+      level5Array: [],
     };
   },
   computed: {
     ...mapGetters({
       currentDiscussion: 'discussions/getCurrentDiscussion',
+      subCommentsLevel3: 'discussions/getSubCommentsLevel3',
+      subCommentsLevel4: 'discussions/getSubCommentsLevel4',
+      subCommentsLevel5: 'discussions/getSubCommentsLevel5',
     }),
   },
   methods: {
+    subCommentsToggle(rootCommentId, mode) {
+      this.getSubComments(rootCommentId, mode);
+      this.toggleShow(rootCommentId, mode);
+    },
+    async toggleShow(rootCommentId, mode) {
+      const array = this.commentArrays(mode);
+      console.log('rootCommentId', rootCommentId);
+      console.log('mode', mode);
+      if (array.length === 0) {
+        console.log('toggleShow__1');
+        array.push(rootCommentId);
+        return true;
+      } if (array.length === 1 && array.includes(rootCommentId)) {
+        console.log('toggleShow__2');
+        array.shift();
+        return false;
+      } if (array.length === 1 && !array.includes(rootCommentId)) {
+        console.log('toggleShow__3');
+        array.shift();
+        array.push(rootCommentId);
+        return true;
+      }
+      await this.getSubComments(rootCommentId, mode);
+      await this.filterSubComments(rootCommentId, mode);
+      return false;
+    },
+    async getSubComments(rootCommentId, mode) {
+      await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootCommentId, mode });
+    },
+    async filterSubComments(rootCommentId, mode) {
+      const subComments = this.subCommentsArrays(mode);
+      console.log('subComments', subComments);
+      return subComments.filter((subComment) => subComment.rootCommentId === rootCommentId);
+    },
+    subCommentsArrays(mode) {
+      if (mode === 3) return this.subCommentsLevel3;
+      if (mode === 4) return this.subCommentsLevel4;
+      if (mode === 5) return this.subCommentsLevel5;
+      return [];
+    },
+    commentArrays(mode) {
+      if (mode === 3) return this.level3Array;
+      if (mode === 4) return this.level4Array;
+      if (mode === 5) return this.level5Array;
+      return [];
+    },
     authorAvatarSrc(item) {
       if (item && item.author.avatar.url) return item.author.avatar.url;
       return require('~/assets/img/app/avatar_empty.png');
@@ -128,7 +179,7 @@ export default {
       } if (comment && Object.keys(comment.commentLikes).length === 0) {
         await this.$store.dispatch('discussions/toggleLikeOnComment', { id: comment.id, like: true });
       }
-      await this.$store.dispatch('discussions/getUsersSubCommentsOnComment', comment.id);
+      await this.$store.dispatch('discussions/getSubCommentsLevel', comment.id);
     },
     toggleReply() {
       this.isReply = !this.isReply;

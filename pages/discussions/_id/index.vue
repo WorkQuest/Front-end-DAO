@@ -256,7 +256,7 @@ export default {
       currentDiscussion: 'discussions/getCurrentDiscussion',
       authorAvatarUrl: 'discussions/getCurrentDiscussionAuthorAvatarUrl',
       rootComments: 'discussions/getRootComments',
-      subComments: 'discussions/getUsersSubCommentsOnComment',
+      subComments: 'discussions/getSubCommentsLevel2',
     }),
   },
   watch: {
@@ -299,25 +299,28 @@ export default {
       if (item.star) return 'checkedStar';
       return 'simpleStar';
     },
-    subCommentsToggle(rootCommentId) {
-      this.getSubComments(rootCommentId);
-      this.toggleShow(rootCommentId);
-    },
     async toggleShow(rootCommentId) {
       if (this.rootCommentIdArray.length === 0) {
+        console.log('toggleShowID__1');
         this.rootCommentIdArray.push(rootCommentId);
         return true;
       } if (this.rootCommentIdArray.length === 1 && this.rootCommentIdArray.includes(rootCommentId)) {
         this.rootCommentIdArray.shift();
+        console.log('toggleShowID__2');
         return false;
       } if (this.rootCommentIdArray.length === 1 && !this.rootCommentIdArray.includes(rootCommentId)) {
         this.rootCommentIdArray.shift();
         this.rootCommentIdArray.push(rootCommentId);
+        console.log('toggleShowID__3');
         return true;
       }
       await this.getSubComments(rootCommentId);
       await this.filterSubComments(rootCommentId);
       return false;
+    },
+    subCommentsToggle(rootCommentId) {
+      this.getSubComments(rootCommentId);
+      this.toggleShow(rootCommentId);
     },
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
@@ -338,7 +341,7 @@ export default {
       await this.$store.dispatch('discussions/getCurrentDiscussion', this.discussionId);
     },
     async getSubComments(commentId) {
-      await this.$store.dispatch('discussions/getUsersSubCommentsOnComment', commentId);
+      await this.$store.dispatch('discussions/getSubCommentsLevel', { id: commentId, mode: 2 });
     },
     async addRootCommentResponse() {
       const discussionId = this.currentDiscussion.id;

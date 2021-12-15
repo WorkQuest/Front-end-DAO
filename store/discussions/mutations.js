@@ -9,8 +9,17 @@ export default {
   setUsersLikesOnComment(state, data) {
     state.usersLikesOnComment = data;
   },
-  setUsersSubCommentsOnComment(state, data) {
-    state.usersSubCommentsOnComment = data;
+  subCommentLevel2(state, data) {
+    state.subCommentLevel2 = data;
+  },
+  subCommentLevel3(state, data) {
+    state.subCommentLevel2 = data;
+  },
+  subCommentLevel4(state, data) {
+    state.subCommentLevel2 = data;
+  },
+  subCommentLevel5(state, data) {
+    state.subCommentLevel2 = data;
   },
   setPeopleListWhoLikeDiscussion(state, data) {
     state.peopleListWhoLikeDiscussion = data;

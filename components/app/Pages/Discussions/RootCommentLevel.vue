@@ -36,7 +36,7 @@ export default {
       default: () => {},
     },
     subComments: {
-      type: [Object],
+      type: [Array, Object],
       default: () => {},
     },
     rootCommentIdArray: {
@@ -46,6 +46,7 @@ export default {
   },
   methods: {
     filterSubComments(rootCommentId) {
+      console.log(this.subComments);
       const subComments = this.subComments.comments;
       return subComments.filter((subComment) => subComment.rootCommentId === rootCommentId);
     },
