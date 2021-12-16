@@ -24,13 +24,40 @@
       <div class="comment__description">
         {{ comment.text }}
       </div>
-      <button
-        v-if="!filterComments(sub2Comments, comment.id).length && comment.amountSubComments > 0"
-        class="comment__btn"
-        @click="loadSubs(comment.id, 2)"
-      >
-        Show comments
-      </button>
+      <div class="comment__bottom bottom">
+        <!--        TODO: Исправить логику и стиль кнопки-->
+        <button
+          v-if="!filterComments(sub2Comments, comment.id).length && comment.amountSubComments > 0"
+          class="comment__btn"
+          @click="loadSubs(comment.id, 2)"
+        >
+          Show comments
+        </button>
+        <!-- RootComment panel -->
+        <div class="bottom bottom__footer">
+          <div class="bottom__footer">
+            <div class="bottom__comment">
+              <img
+                src="~assets/img/ui/comment.svg"
+                alt=""
+              >
+            </div>
+            <div class="bottom__counter">
+              {{ comment.amountSubComments }}
+            </div>
+            <button class="bottom__like">
+              <span
+                :class="{'bottom__like_chosen' : comment.commentLikes.length > 0}"
+                class="icon-heart_fill bottom__like"
+                @click="toggleLikeOnComment(comment)"
+              />
+            </button>
+            <div class="bottom__counter bottom__counter_right">
+              {{ comment.amountLikes }}
+            </div>
+          </div>
+        </div>
+      </div>
       <!--      TODO: Comments-->
       <div
         v-for="(sub2) in filterComments(sub2Comments, comment.id)"
@@ -92,32 +119,6 @@
               />
             </span>
           </span>
-        </div>
-      </div>
-      <div class="comment__bottom bottom">
-        <!--        TODO: Исправить логику и стиль кнопки-->
-        <!--        <base-btn-->
-        <!--          v-if="data.amountSubComments > 0"-->
-        <!--          class="bottom__btn"-->
-        <!--          mode="blue"-->
-        <!--          @click="switchCommentLevel(data, level)"-->
-        <!--        >-->
-        <!--          {{ data ? $t('discussions.hide') : $t('discussions.show') }}-->
-        <!--        </base-btn>-->
-        <div class="bottom__panel">
-          <base-btn
-            class="bottom__like"
-            mode="like"
-          >
-            <span
-              :class="{'bottom__like_chosen': comment.commentLikes.length > 0}"
-              class="icon-heart_fill bottom__like"
-              @click="toggleLikeOnComment(comment, level)"
-            />
-          </base-btn>
-          <div class="bottom__counter bottom__counter_right">
-            {{ comment.amountLikes }}
-          </div>
         </div>
       </div>
       <div
@@ -207,11 +208,8 @@ export default {
       this.opinion = '';
       await this.getRootComments();
     },
-    async getRootComments(additionalValue) {
-      const discussionId = this.currentDiscussion.id;
-      this.rootCommentObjects = await this.$store.dispatch('discussions/getRootComments', { discussionId, additionalValue });
-      this.rootCommentArray = this.rootCommentObjects.comments;
-      this.totalPagesValue = this.totalPages();
+    async getRootComments() {
+      this.$parent.getRootComments();
     },
     clearSubs(level) {
       if (level === 2) this.sub2Comments = [];
@@ -326,6 +324,7 @@ export default {
   }
   &__panel {
     display: flex;
+    flex-direction: row;
     align-items: center;
   }
   &__btn {
@@ -335,6 +334,26 @@ export default {
     border-radius: 6px;
     border: none;
     outline: none;
+  }
+  &__comment {
+    height: 18px;
+    width: 18px;
+    cursor: pointer;
+  }
+  &__counter {
+    font-size: 14px;
+    line-height: 18px;
+    color: #1D2127;
+    margin: 0 22px 0 8px;
+    cursor: pointer;
+    &_right {
+      margin: 7px;
+    }
+  }
+  &__footer {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
   }
   &__like {
     margin-left: auto;
@@ -350,16 +369,6 @@ export default {
       &:hover {
         color: #E9EDF2;
       }
-    }
-  }
-  &__counter {
-    font-size: 14px;
-    line-height: 18px;
-    color: #1D2127;
-    margin: 0 22px 0 8px;
-    cursor: pointer;
-    &_right {
-      margin: 7px;
     }
   }
 }
