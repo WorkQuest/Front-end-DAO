@@ -123,6 +123,7 @@
       <div
         class="answers__footer footer"
       >
+        <!--  Bottom -->
         <span class="icon-link footer__chain" />
         <!-- TODO: Переверстать инпуты и кнопки -->
         <input
