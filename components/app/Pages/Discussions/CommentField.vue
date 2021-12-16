@@ -64,6 +64,7 @@
         class="answers__footer footer"
       >
         <span class="icon-link footer__chain" />
+        <!-- TODO: Переверстать инпуты и кнопки -->
         <input
           v-model="subCommentInput"
           class="footer__input"

@@ -218,17 +218,6 @@ export default {
     this.SetLoader(false);
   },
   methods: {
-    // async loadSubs(rootId, level) {
-    //   const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
-    //   const obj = {
-    //     2: this.sub2Comments,
-    //     3: this.sub3Comments,
-    //     4: this.sub4Comments,
-    //     5: this.sub5Comments,
-    //   };
-    //   if (obj[level].length > 0) obj[level] = [];
-    //   return obj[level].push(...res.comments);
-    // },
     authorName() {
       if (this.discussionAuthor) return `${this.discussionAuthor.firstName} ${this.discussionAuthor.lastName}`;
       return this.$t('user.nameless');
@@ -247,16 +236,6 @@ export default {
     },
     async getCurrentDiscussion() {
       await this.$store.dispatch('discussions/getCurrentDiscussion', this.discussionId);
-    },
-    async addRootCommentResponse() {
-      const payload = {
-        text: this.opinion,
-        medias: [],
-      };
-      await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
-      this.isAddComment = false;
-      this.opinion = '';
-      await this.getRootComments();
     },
     async toggleFavorite(discussionId) {
       if (this.currentDiscussion && this.currentDiscussion.star) {

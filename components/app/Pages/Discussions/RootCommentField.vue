@@ -6,7 +6,7 @@
     >
       <div class="comment__user user">
         <img
-          :src="authorAvatarSrc(comment)"
+          :src="comment && comment.author.avatar.url ? comment.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
           alt="userAvatar"
           class="user__avatar"
           @click="toInvestor(comment.author.id)"
@@ -124,6 +124,7 @@
         class="answers__footer footer"
       >
         <span class="icon-link footer__chain" />
+        <!-- TODO: Переверстать инпуты и кнопки -->
         <input
           v-model="subCommentInput"
           class="footer__input"
@@ -217,6 +218,18 @@ export default {
       if (level === 4) this.sub4Comments = [];
       if (level === 5) this.sub5Comments = [];
     },
+    // TODO: Протестить метод
+    // async loadSubs(rootId, level) {
+    //   const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
+    //   const obj = {
+    //     2: this.sub2Comments,
+    //     3: this.sub3Comments,
+    //     4: this.sub4Comments,
+    //     5: this.sub5Comments,
+    //   };
+    //   if (obj[level].length > 0) obj[level] = [];
+    //   return obj[level].push(...res.comments);
+    // },
     async loadSubs(rootId, level) {
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
       if (level === 2) {
@@ -235,10 +248,6 @@ export default {
     },
     filterComments(subComments, rootId) {
       return subComments.filter((item) => item.rootCommentId === rootId);
-    },
-    authorAvatarSrc(item) {
-      if (item && item.author.avatar.url) return item.author.avatar.url;
-      return require('~/assets/img/app/avatar_empty.png');
     },
     authorName(item) {
       if (item && item.author) return `${item.author.firstName} ${item.author.lastName}`;
