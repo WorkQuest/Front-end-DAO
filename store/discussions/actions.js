@@ -44,8 +44,6 @@ export default {
   },
 
   async toggleLikeOnComment({ commit }, { id, like }) {
-    console.log('id', id);
-    console.log('like', like);
     try {
       let response = '';
       if (like) response = await this.$axios.$post(`/v1/discussion/comment/${id}/like`);

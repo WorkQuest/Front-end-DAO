@@ -238,19 +238,11 @@ export default {
       await this.$store.dispatch('discussions/getCurrentDiscussion', this.discussionId);
     },
     async toggleFavorite(discussionId) {
-      if (this.currentDiscussion && this.currentDiscussion.star) {
-        await this.$store.dispatch('discussions/toggleStarOnDiscussion', { id: discussionId, like: false });
-      } if (this.currentDiscussion && !this.currentDiscussion.star) {
-        await this.$store.dispatch('discussions/toggleStarOnDiscussion', { id: discussionId, like: true });
-      }
+      await this.$store.dispatch('discussions/toggleStarOnDiscussion', { id: discussionId, like: this.currentDiscussion && !this.currentDiscussion.star });
       await this.getCurrentDiscussion();
     },
     async toggleLikeOnDiscussion(discussionId) {
-      if (this.currentDiscussion && this.currentDiscussion.liked) {
-        await this.$store.dispatch('discussions/toggleLikeOnDiscussion', { id: discussionId, like: false });
-      } if (this.currentDiscussion && !this.currentDiscussion.liked) {
-        await this.$store.dispatch('discussions/toggleLikeOnDiscussion', { id: discussionId, like: true });
-      }
+      await this.$store.dispatch('discussions/toggleLikeOnDiscussion', { id: discussionId, like: this.currentDiscussion && !this.currentDiscussion.liked });
       await this.getCurrentDiscussion();
     },
     addComment() {

@@ -6,7 +6,7 @@
     >
       <div class="comment__user user">
         <img
-          :src="authorAvatarSrc(data)"
+          :src="data && data.author.avatar.url ? data.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
           alt="userAvatar"
           class="user__avatar"
           @click="toInvestor(data.author.id)"
@@ -15,8 +15,7 @@
           class="user__name"
           @click="toInvestor(data.author.id)"
         >
-          {{ authorFirstName(data) }}
-          {{ authorLastName(data) }}
+          {{ authorName(data) }}
         </div>
         <div class="user__date">
           {{ $moment(data.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
@@ -110,20 +109,12 @@ export default {
     }),
   },
   methods: {
-    authorAvatarSrc(item) {
-      if (item && item.author.avatar.url) return item.author.avatar.url;
-      return require('~/assets/img/app/avatar_empty.png');
-    },
     toggleReply() {
       this.isReply = !this.isReply;
     },
-    authorFirstName(item) {
-      if (item && item.author.firstName) return item.author.firstName;
+    authorName(item) {
+      if (item && item.author) return `${item.author.firstName} ${item.author.lastName}`;
       return this.$t('user.nameless');
-    },
-    authorLastName(item) {
-      if (item && item.author.lastName) return item.author.lastName;
-      return '';
     },
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
