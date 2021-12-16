@@ -19,7 +19,7 @@
         <div class="info__discussion discussion">
           <div class="discussion__user user">
             <img
-              :src="authorAvatarSrc()"
+              :src="authorAvatarUrl ? authorAvatarUrl : require('~/assets/img/app/avatar_empty.png')"
               alt="userAvatar"
               class="user__avatar"
               @click="toInvestor(discussionAuthor.id)"
@@ -28,13 +28,12 @@
               class="user__name"
               @click="toInvestor(discussionAuthor.id)"
             >
-              {{ authorFirstName() }}
-              {{ authorLastName() }}
+              {{ authorName() }}
             </span>
             <button class="user__star">
               <img
-                :src="favoriteStarSrc(currentDiscussion)"
-                :alt="favoriteStarAlt(currentDiscussion)"
+                :src="currentDiscussion.star ? require('~/assets/img/ui/star_checked.svg'): require('~/assets/img/ui/star_simple.svg')"
+                :alt="currentDiscussion.star ? 'checkedStar' : 'simpleStar'"
                 @click="toggleFavorite(currentDiscussion.id)"
               >
             </button>
@@ -180,6 +179,7 @@
             :key="sub3.id"
           >
             <comment-field
+              class="subcomment__field subcomment_lvl3"
               :data="sub3"
               :level="3"
               :discussion-id="discussionId"
@@ -196,6 +196,7 @@
               :key="sub4.id"
             >
               <comment-field
+                class="subcomment__field subcomment_lvl4"
                 :data="sub4"
                 :level="4"
                 :discussion-id="discussionId"
@@ -212,6 +213,7 @@
                 :key="sub5.id"
               >
                 <comment-field
+                  class="subcomment__field subcomment_lvl5"
                   :data="sub5"
                   :level="5"
                   :discussion-id="discussionId"
@@ -304,6 +306,17 @@ export default {
       if (level === 4) this.sub4Comments = [];
       if (level === 5) this.sub5Comments = [];
     },
+    // async loadSubs(rootId, level) {
+    //   const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
+    //   const obj = {
+    //     2: this.sub2Comments,
+    //     3: this.sub3Comments,
+    //     4: this.sub4Comments,
+    //     5: this.sub5Comments,
+    //   };
+    //   if (obj[level].length > 0) obj[level] = [];
+    //   return obj[level].push(...res.comments);
+    // },
     async loadSubs(rootId, level) {
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
       if (level === 2) {
@@ -320,37 +333,15 @@ export default {
         return this.sub5Comments.push(...res.comments);
       } return '';
     },
-    authorAvatarSrc(elem) {
-      if (elem && elem.author.avatar) return elem.author.avatar.url;
-      if (this.authorAvatarUrl) return this.authorAvatarUrl;
-      return require('~/assets/img/app/avatar_empty.png');
-    },
-    authorFirstName(elem) {
-      if (elem && elem.author.firstName) return elem.author.firstName;
-      if (this.discussionAuthor) return this.discussionAuthor.firstName;
+    authorName() {
+      if (this.discussionAuthor) return `${this.discussionAuthor.firstName} ${this.discussionAuthor.lastName}`;
       return this.$t('user.nameless');
-    },
-    authorLastName(elem) {
-      if (elem && elem.author.lastName) return elem.author.lastName;
-      if (this.discussionAuthor) return this.discussionAuthor.lastName;
-      return '';
-    },
-    favoriteStarSrc(item) {
-      if (item.star) return require('~/assets/img/ui/star_checked.svg');
-      return require('~/assets/img/ui/star_simple.svg');
-    },
-    favoriteStarAlt(item) {
-      if (item.star) return 'checkedStar';
-      return 'simpleStar';
     },
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
     },
     totalPages() {
-      if (this.rootCommentObjects.comments) {
-        return Math.ceil(this.rootCommentObjects.count / this.perPager);
-      }
-      return 0;
+      return this.rootCommentObjects.count > 0 ? Math.ceil(this.rootCommentObjects.count / this.perPager) : 0;
     },
     async getRootComments(additionalValue) {
       const discussionId = this.currentDiscussion.id;
@@ -404,6 +395,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 .info {
+  &__comment {
+    background: #fff;
+    width: 100%;
+  }
   &__body {
   justify-content: center;
   max-width: 1180px;
@@ -483,8 +478,13 @@ export default {
     height: 100%;
     background: #fff;
     border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 15px;
+    padding-bottom: 15px;
+  }
+  &__subcomment {
+    background: #fff;
+    width: 100%;
+    height: 100%;
+    padding: 20px 20px 0 20px;
   }
   &__description {
     @include text-usual;

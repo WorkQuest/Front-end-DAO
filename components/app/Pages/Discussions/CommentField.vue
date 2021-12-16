@@ -35,14 +35,14 @@
           {{ !isReply ? $t('discussions.reply') : $t('discussions.cancel') }}
         </base-btn>
         <!--        TODO: Исправить логику и стиль кнопки-->
-        <base-btn
-          v-if="data.amountSubComments > 0"
-          class="bottom__btn"
-          mode="blue"
-          @click="switchCommentLevel(data, level)"
-        >
-          {{ data ? $t('discussions.hide') : $t('discussions.show') }}
-        </base-btn>
+        <!--        <base-btn-->
+        <!--          v-if="data.amountSubComments > 0"-->
+        <!--          class="bottom__btn"-->
+        <!--          mode="blue"-->
+        <!--          @click="switchCommentLevel(data, level)"-->
+        <!--        >-->
+        <!--          {{ data ? $t('discussions.hide') : $t('discussions.show') }}-->
+        <!--        </base-btn>-->
         <div class="bottom__panel">
           <base-btn
             class="bottom__like"
@@ -110,7 +110,6 @@ export default {
   },
   methods: {
     authorAvatarSrc(item) {
-      console.log(this.data);
       if (item && item.author.avatar.url) return item.author.avatar.url;
       return require('~/assets/img/app/avatar_empty.png');
     },
@@ -128,22 +127,17 @@ export default {
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
     },
-    async switchCommentLevel(comment, level) {
-      console.log(level);
-      console.log(comment);
-      console.log('length', this.length);
-      if (!comment.rootCommentId) {
-        this.$parent.clearSubs(level);
-        // this.$parent.loadSubs(comment.id, level);
-      }
-      if (comment) {
-        // if (comment.rootCommentId) this.$parent.loadSubs(comment.rootCommentId, level);
-        this.$parent.clearSubs(level);
-      }
-    },
+    // async switchCommentLevel(comment, level) {
+    //   if (!comment.rootCommentId) {
+    //     this.$parent.clearSubs(level);
+    //     // this.$parent.loadSubs(comment.id, level);
+    //   }
+    //   if (comment) {
+    //     // if (comment.rootCommentId) this.$parent.loadSubs(comment.rootCommentId, level);
+    //     this.$parent.clearSubs(level);
+    //   }
+    // },
     async addSubCommentResponse(comment, level) {
-      console.log('comment', comment);
-      console.log('level', level);
       if (!comment.rootCommentId) {
         const payload = {
           rootCommentId: comment.id,
@@ -185,11 +179,10 @@ export default {
   display: flex;
   margin-bottom: 10px;
   &__field {
-    width: 1080px;
+    width: 100%;
     background: #FFFFFF;
     border-radius: 8px;
-    padding: 20px 40px 0 20px;
-    margin: 0 20px 0 10px;
+    padding: 20px 20px 0 20px;
   }
   &__description {
     @include text-usual;
@@ -202,20 +195,20 @@ export default {
     margin-bottom: 20px;
   }
   &_sub2 {
-   margin-left: 20px;
     background: #8D96A2;
+    margin-left: 30px;
   }
   &_sub3 {
-   margin-left: 40px;
     background: #707379;
+    margin-left: 50px;
   }
   &_sub4 {
-   margin-left: 60px;
     background: #505052;
+    margin-left: 70px;
   }
   &_sub5 {
-   margin-left: 80px;
     background: #37373a;
+    margin-left: 90px;
   }
 }
 .user {
