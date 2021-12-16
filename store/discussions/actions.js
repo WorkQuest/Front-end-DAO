@@ -26,9 +26,9 @@ export default {
       return console.log(e);
     }
   },
-  async sendCommentOnDiscussion({ commit }, { discussionId, payload }) {
+  async sendCommentOnDiscussion({ commit }, { id, payload }) {
     try {
-      const response = await this.$axios.$post(`/v1/discussion/${discussionId}/comment/send`, payload);
+      const response = await this.$axios.$post(`/v1/discussion/${id}/comment/send`, payload);
       return response.result;
     } catch (e) {
       return console.log(e);

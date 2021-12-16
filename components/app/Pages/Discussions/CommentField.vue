@@ -38,14 +38,15 @@
         >
           {{ !isReply ? $t('discussions.reply') : $t('discussions.cancel') }}
         </base-btn>
-        <!--        <base-btn-->
-        <!--          v-if="data.amountSubComments > 0"-->
-        <!--          class="bottom__btn"-->
-        <!--          mode="blue"-->
-        <!--          @click="switchCommentLevel(data, level)"-->
-        <!--        >-->
-        <!--          {{ data ? $t('discussions.hide') : $t('discussions.show') }}-->
-        <!--        </base-btn>-->
+        <!--        TODO: Исправить логику и стиль кнопки-->
+        <base-btn
+          v-if="data.amountSubComments > 0"
+          class="bottom__btn"
+          mode="blue"
+          @click="switchCommentLevel(data, level)"
+        >
+          {{ data ? $t('discussions.hide') : $t('discussions.show') }}
+        </base-btn>
         <div class="bottom__panel">
           <base-btn
             class="bottom__like"
@@ -82,6 +83,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'Comment',
   props: {
@@ -104,6 +107,11 @@ export default {
       subCommentInput: '',
     };
   },
+  computed: {
+    ...mapGetters({
+      currentDiscussion: 'discussions/getCurrentDiscussion',
+    }),
+  },
   methods: {
     authorAvatarSrc(item) {
       console.log(this.data);
@@ -124,27 +132,41 @@ export default {
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
     },
-    // async switchCommentLevel(comment, level) {
-    //   console.log(level);
-    //   console.log(comment);
-    //   if (!comment) {
-    //     if (comment.rootCommentId) this.$parent.loadSubs(comment.rootCommentId, level);
-    //     if (!comment.rootCommentId) this.$parent.loadSubs(comment.id, level);
-    //   } if (comment) {
-    //     this.$parent.clearSubs(level);
-    //   }
-    // },
+    async switchCommentLevel(comment, level) {
+      console.log(level);
+      console.log(comment);
+      console.log('length', this.length);
+      if (!comment.rootCommentId) {
+        this.$parent.clearSubs(level);
+        // this.$parent.loadSubs(comment.id, level);
+      }
+      if (comment) {
+        // if (comment.rootCommentId) this.$parent.loadSubs(comment.rootCommentId, level);
+        this.$parent.clearSubs(level);
+      }
+    },
     async addSubCommentResponse(comment, level) {
-      const { discussionId } = this;
-      const payload = {
-        rootCommentId: comment.rootCommentId,
-        text: this.subCommentInput,
-        medias: [],
-      };
-      await this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
-      if (comment.rootCommentId) this.$parent.loadSubs(comment.rootCommentId, level);
-      this.isReply = false;
-      this.subCommentInput = '';
+      console.log('comment', comment);
+      console.log('level', level);
+      if (!comment.rootCommentId) {
+        const payload = {
+          rootCommentId: comment.id,
+          text: this.subCommentInput,
+          medias: [],
+        };
+        await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
+        this.$parent.loadSubs(comment.id, level);
+      } else {
+        const payload = {
+          rootCommentId: comment.id,
+          text: this.subCommentInput,
+          medias: [],
+        };
+        await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
+        this.$parent.loadSubs(comment.rootCommentId, level);
+        this.isReply = false;
+        this.subCommentInput = '';
+      }
     },
     async toggleLikeOnComment(comment, level) {
       if (comment && Object.keys(comment.commentLikes).length > 0) {
@@ -185,15 +207,19 @@ export default {
   }
   &_sub2 {
    margin-left: 20px;
+    background: #8D96A2;
   }
   &_sub3 {
    margin-left: 40px;
+    background: #707379;
   }
   &_sub4 {
    margin-left: 60px;
+    background: #505052;
   }
   &_sub5 {
    margin-left: 80px;
+    background: #37373a;
   }
 }
 .user {

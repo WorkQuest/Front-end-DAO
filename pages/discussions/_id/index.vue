@@ -154,7 +154,7 @@
         >
           Show subs
         </button>
-        <span v-else-if="filterComments(sub2Comments, comment.id).length ">
+        <span v-else-if="filterComments(sub2Comments, comment.id).length">
           <span
             v-for="(sub2) in filterComments(sub2Comments, comment.id)"
             :key="sub2.id"
@@ -163,7 +163,6 @@
               :data="sub2"
               :level="2"
               :discussion-id="discussionId"
-              @loadSubs="loadSubs"
             />
             <button
               v-if="!filterComments(sub3Comments, sub2.id).length && sub2.amountSubComments > 0"
@@ -181,7 +180,6 @@
                   :data="sub3"
                   :level="3"
                   :discussion-id="discussionId"
-                  @loadSubs="loadSubs"
                 />
                 <button
                   v-if="!filterComments(sub4Comments, sub3.id).length && sub3.amountSubComments > 0"
@@ -198,7 +196,6 @@
                     :data="sub4"
                     :level="4"
                     :discussion-id="discussionId"
-                    @loadSubs="loadSubs"
                   />
                   <button
                     v-if="!filterComments(sub5Comments, sub4.id).length && sub4.amountSubComments > 0"
@@ -215,7 +212,6 @@
                       :data="sub5"
                       :level="5"
                       :discussion-id="discussionId"
-                      @loadSubs="loadSubs"
                     />
                   </span>
                 </span>
@@ -310,16 +306,16 @@ export default {
     async loadSubs(rootId, level) {
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
       if (level === 2) {
-        if (this.sub2Comments.length > 0) this.clearSubs(level);
+        if (this.sub2Comments.length > 0) this.sub2Comments = [];
         return this.sub2Comments.push(...res.comments);
       } if (level === 3) {
-        if (this.sub3Comments.length > 0) this.clearSubs(level);
+        if (this.sub3Comments.length > 0) this.sub3Comments = [];
         return this.sub3Comments.push(...res.comments);
       } if (level === 4) {
-        if (this.sub4Comments.length > 0) this.clearSubs(level);
+        if (this.sub4Comments.length > 0) this.sub3Comments = [];
         return this.sub4Comments.push(...res.comments);
       } if (level === 5) {
-        if (this.sub5Comments.length > 0) this.clearSubs(level);
+        if (this.sub5Comments.length > 0) this.sub4Comments = [];
         return this.sub5Comments.push(...res.comments);
       } return '';
     },
@@ -365,12 +361,11 @@ export default {
       await this.$store.dispatch('discussions/getCurrentDiscussion', this.discussionId);
     },
     async addRootCommentResponse() {
-      const discussionId = this.currentDiscussion.id;
       const payload = {
         text: this.opinion,
         medias: [],
       };
-      await this.$store.dispatch('discussions/sendCommentOnDiscussion', { discussionId, payload });
+      await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
       this.isAddComment = false;
       this.opinion = '';
       await this.getRootComments();
