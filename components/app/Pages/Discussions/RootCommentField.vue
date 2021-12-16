@@ -189,11 +189,7 @@ export default {
       }
     },
     async toggleLikeOnComment(comment) {
-      if (comment && Object.keys(comment.commentLikes).length > 0) {
-        await this.$store.dispatch('discussions/toggleLikeOnComment', { id: comment.id, like: false });
-      } if (comment && Object.keys(comment.commentLikes).length === 0) {
-        await this.$store.dispatch('discussions/toggleLikeOnComment', { id: comment.id, like: true });
-      }
+      await this.$store.dispatch('discussions/toggleLikeOnComment', { id: comment.id, like: comment && !Object.keys(comment.commentLikes).length > 0 });
       await this.getRootComments();
     },
     async getCurrentDiscussion() {
