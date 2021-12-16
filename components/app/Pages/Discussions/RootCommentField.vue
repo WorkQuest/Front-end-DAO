@@ -193,19 +193,6 @@ export default {
       await this.$store.dispatch('discussions/toggleLikeOnComment', { id: comment.id, like: comment && !Object.keys(comment.commentLikes).length > 0 });
       await this.getRootComments();
     },
-    async getCurrentDiscussion() {
-      await this.$store.dispatch('discussions/getCurrentDiscussion', this.discussionId);
-    },
-    async addRootCommentResponse() {
-      const payload = {
-        text: this.opinion,
-        medias: [],
-      };
-      await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
-      this.isAddComment = false;
-      this.opinion = '';
-      await this.getRootComments();
-    },
     async getRootComments() {
       this.$parent.getRootComments();
     },

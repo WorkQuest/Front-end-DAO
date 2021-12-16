@@ -234,6 +234,16 @@ export default {
       this.rootCommentArray = this.rootCommentObjects.comments;
       this.totalPagesValue = this.totalPages();
     },
+    async addRootCommentResponse() {
+      const payload = {
+        text: this.opinion,
+        medias: [],
+      };
+      await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
+      this.isAddComment = false;
+      this.opinion = '';
+      await this.getRootComments();
+    },
     async getCurrentDiscussion() {
       await this.$store.dispatch('discussions/getCurrentDiscussion', this.discussionId);
     },
