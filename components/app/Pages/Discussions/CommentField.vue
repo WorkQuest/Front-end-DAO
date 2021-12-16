@@ -252,11 +252,17 @@ export default {
   }
   &__btn {
     @include text-usual;
+    background: transparent;
+    color: $blue;
     width: 80px;
     height: 33px;
     border-radius: 6px;
     border: none;
     outline: none;
+    &:hover {
+      background: transparent;
+      color: #103D7C;
+    }
   }
   &__like {
     margin-left: auto;

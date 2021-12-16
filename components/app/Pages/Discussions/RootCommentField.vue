@@ -25,13 +25,12 @@
         {{ comment.text }}
       </div>
       <div class="comment__bottom bottom">
-        <!--        TODO: Исправить логику и стиль кнопки-->
         <button
           v-if="!filterComments(sub2Comments, comment.id).length && comment.amountSubComments > 0"
           class="comment__btn"
           @click="loadSubs(comment.id, 2)"
         >
-          Show comments
+          {{ $t('discussions.showComments') }}
         </button>
         <!-- RootComment panel -->
         <div class="bottom bottom__footer">
@@ -58,7 +57,7 @@
           </div>
         </div>
       </div>
-      <!--      TODO: Comments-->
+      <!--  Comments -->
       <div
         v-for="(sub2) in filterComments(sub2Comments, comment.id)"
         :key="sub2.id"
@@ -74,7 +73,7 @@
           class="comment__btn"
           @click="loadSubs(sub2.id, 3)"
         >
-          Show comments
+          {{ $t('discussions.showComments') }}
         </button>
         <div
           v-for="(sub3) in filterComments(sub3Comments, sub2.id)"
@@ -90,7 +89,7 @@
             class="comment__btn"
             @click="loadSubs(sub3.id, 4)"
           >
-            Show comments
+            {{ $t('discussions.showComments') }}
           </button>
           <span
             v-for="(sub4) in filterComments(sub4Comments, sub3.id)"
@@ -106,7 +105,7 @@
               class="comment__btn"
               @click="loadSubs(sub4.id, 5)"
             >
-              Show comments
+              {{ $t('discussions.showComments') }}
             </button>
             <span
               v-for="(sub5) in filterComments(sub5Comments, sub4.id)"
@@ -277,6 +276,7 @@ export default {
     text-align: center;
     transition: .3s;
     border-radius: 6px;
+    color: $blue;
     &:hover {
       color: #103D7C;
     }
