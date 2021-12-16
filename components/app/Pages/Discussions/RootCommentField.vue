@@ -175,6 +175,7 @@ export default {
         };
         await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
         await this.loadSubs(comment.id, level);
+        this.subCommentInput = '';
       } else {
         const payload = {
           rootCommentId: comment.id,
@@ -261,6 +262,24 @@ export default {
     background: #FFFFFF;
     border-radius: 8px;
     padding: 20px 20px 0 20px;
+  }
+  &__btn {
+    display: block;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 33px;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 130%;
+    text-align: center;
+    transition: .3s;
+    border-radius: 6px;
+    &:hover {
+      color: #103D7C;
+    }
   }
   &__description {
     @include text-usual;

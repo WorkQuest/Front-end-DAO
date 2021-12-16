@@ -195,19 +195,19 @@ export default {
     margin-bottom: 20px;
   }
   &_sub2 {
-    background: #8D96A2;
+    //background: #8D96A2;
     margin-left: 30px;
   }
   &_sub3 {
-    background: #707379;
+    //background: #707379;
     margin-left: 50px;
   }
   &_sub4 {
-    background: #505052;
+    //background: #505052;
     margin-left: 70px;
   }
   &_sub5 {
-    background: #37373a;
+    //background: #37373a;
     margin-left: 90px;
   }
 }
@@ -247,6 +247,8 @@ export default {
   &__panel {
     display: flex;
     align-items: center;
+    justify-items: right;
+    width: 100%;
   }
   &__btn {
     @include text-usual;
@@ -258,7 +260,7 @@ export default {
   }
   &__like {
     margin-left: auto;
-    margin-top: 5px;
+    margin-top: 0;
     color: #E9EDF2;
     font-size: 22px;
     transition: 0.5s;
@@ -279,7 +281,7 @@ export default {
     margin: 0 22px 0 8px;
     cursor: pointer;
     &_right {
-      margin: 7px;
+      margin: 7px 7px 7px 0;
     }
   }
 }
