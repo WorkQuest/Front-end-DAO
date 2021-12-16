@@ -18,7 +18,7 @@
           {{ authorName(data) }}
         </div>
         <div class="user__date">
-          {{ $moment(data.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
+          {{ $moment(data.updatedAt).startOf('day').fromNow() }}
         </div>
       </div>
       <div class="comment__description">
