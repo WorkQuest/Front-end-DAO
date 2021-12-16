@@ -141,12 +141,15 @@
           {{ $t('discussions.comments.noComments') }}
         </div>
       </div>
-      <span
+      <div
         v-for="(comment) in rootComments.comments"
         :key="comment.id"
         class="info__comment comment"
       >
-        <comment-field :data="comment" />
+        <comment-field
+          class="comment__field"
+          :data="comment"
+        />
         <button
           v-if="!filterComments(sub2Comments, comment.id).length && comment.amountSubComments > 0"
           class="comment__btn"
@@ -154,72 +157,70 @@
         >
           Show subs
         </button>
-        <span v-else-if="filterComments(sub2Comments, comment.id).length">
-          <span
-            v-for="(sub2) in filterComments(sub2Comments, comment.id)"
-            :key="sub2.id"
+        <div
+          v-for="(sub2) in filterComments(sub2Comments, comment.id)"
+          :key="sub2.id"
+          class="comment__subcomment subcomment"
+        >
+          <comment-field
+            class="subcomment__field subcomment_lvl2"
+            :data="sub2"
+            :level="2"
+            :discussion-id="discussionId"
+          />
+          <button
+            v-if="!filterComments(sub3Comments, sub2.id).length && sub2.amountSubComments > 0"
+            class="comment__btn"
+            @click="loadSubs(sub2.id, 3)"
+          >
+            Show subs
+          </button>
+          <div
+            v-for="(sub3) in filterComments(sub3Comments, sub2.id)"
+            :key="sub3.id"
           >
             <comment-field
-              :data="sub2"
-              :level="2"
+              :data="sub3"
+              :level="3"
               :discussion-id="discussionId"
             />
             <button
-              v-if="!filterComments(sub3Comments, sub2.id).length && sub2.amountSubComments > 0"
+              v-if="!filterComments(sub4Comments, sub3.id).length && sub3.amountSubComments > 0"
               class="comment__btn"
-              @click="loadSubs(sub2.id, 3)"
+              @click="loadSubs(sub3.id, 4)"
             >
               Show subs
             </button>
-            <span v-else-if="filterComments(sub3Comments, sub2.id).length ">
+            <span
+              v-for="(sub4) in filterComments(sub4Comments, sub3.id)"
+              :key="sub4.id"
+            >
+              <comment-field
+                :data="sub4"
+                :level="4"
+                :discussion-id="discussionId"
+              />
+              <button
+                v-if="!filterComments(sub5Comments, sub4.id).length && sub4.amountSubComments > 0"
+                class="comment__btn"
+                @click="loadSubs(sub4.id, 5)"
+              >
+                Show subs
+              </button>
               <span
-                v-for="(sub3) in filterComments(sub3Comments, sub2.id)"
-                :key="sub3.id"
+                v-for="(sub5) in filterComments(sub5Comments, sub4.id)"
+                :key="sub5.id"
               >
                 <comment-field
-                  :data="sub3"
-                  :level="3"
+                  :data="sub5"
+                  :level="5"
                   :discussion-id="discussionId"
                 />
-                <button
-                  v-if="!filterComments(sub4Comments, sub3.id).length && sub3.amountSubComments > 0"
-                  class="comment__btn"
-                  @click="loadSubs(sub3.id, 4)"
-                >
-                  Show subs
-                </button>
-                <span
-                  v-for="(sub4) in filterComments(sub4Comments, sub3.id)"
-                  :key="sub4.id"
-                >
-                  <comment-field
-                    :data="sub4"
-                    :level="4"
-                    :discussion-id="discussionId"
-                  />
-                  <button
-                    v-if="!filterComments(sub5Comments, sub4.id).length && sub4.amountSubComments > 0"
-                    class="comment__btn"
-                    @click="loadSubs(sub4.id, 5)"
-                  >
-                    Show subs
-                  </button>
-                  <span
-                    v-for="(sub5) in filterComments(sub5Comments, sub4.id)"
-                    :key="sub5.id"
-                  >
-                    <comment-field
-                      :data="sub5"
-                      :level="5"
-                      :discussion-id="discussionId"
-                    />
-                  </span>
-                </span>
               </span>
             </span>
-          </span>
-        </span>
-      </span>
+          </div>
+        </div>
+      </div>
       <base-pager
         v-if="totalPagesValue > 1"
         v-model="page"

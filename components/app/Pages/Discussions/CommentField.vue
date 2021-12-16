@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="comment"
-  >
+  <div class="comment">
     <div
       class="comment__field"
       :class="`comment_sub${level}`"
@@ -27,9 +25,7 @@
       <div class="comment__description">
         {{ data.text }}
       </div>
-      <div
-        class="comment__bottom bottom"
-      >
+      <div class="comment__bottom bottom">
         <base-btn
           v-if="level !== 5"
           class="bottom__btn"
