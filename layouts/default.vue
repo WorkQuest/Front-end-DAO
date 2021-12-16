@@ -1073,6 +1073,10 @@ export default {
       line-height: 130%;
       color: $black700;
     }
+    img {
+      height: 30px;
+      width: 40px;
+    }
   }
 }
 .menu {
@@ -1396,6 +1400,9 @@ export default {
     }
     &__subtitle {
       display: none;
+    }
+    &__link {
+      margin: 0;
     }
   }
   .links {

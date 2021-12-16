@@ -5,6 +5,9 @@
         <span class="wallet__title">{{ $t('wallet.wallet') }}</span>
         <div class="wallet__address address">
           <span class="address__user">{{ userInfo.userWallet }}</span>
+          <!-- mobile -->
+          <span class="address__user_mobile">{{ cutString(userInfo.userWallet, 8, 10) }}</span>
+          <!-- /mobile -->
           <base-btn
             v-clipboard:copy="userInfo.userWallet"
             v-clipboard:success="ClipboardSuccessHandler"
@@ -315,12 +318,6 @@ export default {
     padding: 20px 20px 0 20px;
     margin: 0 0 20px 0;
 
-    &_full {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      justify-content: space-between;
-      padding: 20px;
-    }
   }
   &__transactions {
     display: none;
@@ -330,6 +327,9 @@ export default {
 .address {
   &__user {
     margin-right: 20px;
+    &_mobile {
+      display: none;
+    }
   }
   &__icon {
     width: 24px;
@@ -374,14 +374,6 @@ export default {
     grid-gap: 20px;
 
     padding: 20px 0;
-    &_row {
-      flex-direction: column;
-
-      width: 220px;
-
-      margin-left: auto;
-      padding: 0;
-    }
   }
 
 }
@@ -397,7 +389,7 @@ export default {
   padding: 20px;
   margin-bottom: 20px;
 
-  background: #0083C7 url('/img/app/card.svg') no-repeat right center;
+  background: center / contain no-repeat #0083C7 url('~/assets/img/app/card.svg');
   background-size: cover;
   color: #FFFFFF;
   position: relative;
@@ -477,12 +469,37 @@ export default {
     &__subtitle {
       font-size: 20px;
     }
+    &__body {
+      width: calc(100vw - 30px);
+    }
   }
   .card {
     grid-template-columns: repeat(2, 1fr);
+    background-size: 381px;
+    background-position: right;
+  }
+  .balance {
+    &__bottom {
+      justify-content: space-between;
+      grid-gap: 5px;
+    }
+    &__btn {
+      min-width: 104px;
+    }
+  }
+  .address {
+    &__user {
+      display: none;
+      &_mobile {
+        display: inline;
+        color: $blue;
+        margin-right: 10px;
+        font-weight: 500;
+      }
+    }
   }
 }
-@include _480 {
+@include _575 {
   .user {
     &__wallet {
       font-size: 13px;
@@ -501,9 +518,14 @@ export default {
     }
   }
   .card {
+    padding: 15px;
     &__title {
-      text-shadow: $black800 2px 2px 10px;
+      font-size: 16px;
+      width: 230px;
     }
+  }
+  .balance {
+    padding: 10px 10px 0 10px;
   }
 }
 </style>

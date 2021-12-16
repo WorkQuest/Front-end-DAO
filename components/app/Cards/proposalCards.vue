@@ -545,6 +545,7 @@ export default {
     }
     .menu__left {
       display: flex;
+      flex-direction: row-reverse;
     }
     .content {
       grid-template-columns: 1fr;
