@@ -310,16 +310,16 @@ export default {
     async loadSubs(rootId, level) {
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
       if (level === 2) {
-        if (this.sub2Comments.length > 0) this.sub2Comments = [];
+        if (this.sub2Comments.length > 0) this.clearSubs(level);
         return this.sub2Comments.push(...res.comments);
       } if (level === 3) {
-        if (this.sub3Comments.length > 0) this.sub3Comments = [];
+        if (this.sub3Comments.length > 0) this.clearSubs(level);
         return this.sub3Comments.push(...res.comments);
       } if (level === 4) {
-        if (this.sub4Comments.length > 0) this.sub4Comments = [];
+        if (this.sub4Comments.length > 0) this.clearSubs(level);
         return this.sub4Comments.push(...res.comments);
       } if (level === 5) {
-        if (this.sub5Comments.length > 0) this.sub5Comments = [];
+        if (this.sub5Comments.length > 0) this.clearSubs(level);
         return this.sub5Comments.push(...res.comments);
       } return '';
     },
