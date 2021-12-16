@@ -145,83 +145,10 @@
         :key="comment.id"
         class="info__comment comment"
       >
-        <comment-field
+        <root-comment-field
           class="comment__field"
-          :data="comment"
+          :comment="comment"
         />
-        <button
-          v-if="!filterComments(sub2Comments, comment.id).length && comment.amountSubComments > 0"
-          class="comment__btn"
-          @click="loadSubs(comment.id, 2)"
-        >
-          Show subs
-        </button>
-        <div
-          v-for="(sub2) in filterComments(sub2Comments, comment.id)"
-          :key="sub2.id"
-          class="comment__subcomment subcomment"
-        >
-          <comment-field
-            class="subcomment__field subcomment_lvl2"
-            :data="sub2"
-            :level="2"
-            :discussion-id="discussionId"
-          />
-          <button
-            v-if="!filterComments(sub3Comments, sub2.id).length && sub2.amountSubComments > 0"
-            class="comment__btn"
-            @click="loadSubs(sub2.id, 3)"
-          >
-            Show subs
-          </button>
-          <div
-            v-for="(sub3) in filterComments(sub3Comments, sub2.id)"
-            :key="sub3.id"
-          >
-            <comment-field
-              class="subcomment__field subcomment_lvl3"
-              :data="sub3"
-              :level="3"
-              :discussion-id="discussionId"
-            />
-            <button
-              v-if="!filterComments(sub4Comments, sub3.id).length && sub3.amountSubComments > 0"
-              class="comment__btn"
-              @click="loadSubs(sub3.id, 4)"
-            >
-              Show subs
-            </button>
-            <span
-              v-for="(sub4) in filterComments(sub4Comments, sub3.id)"
-              :key="sub4.id"
-            >
-              <comment-field
-                class="subcomment__field subcomment_lvl4"
-                :data="sub4"
-                :level="4"
-                :discussion-id="discussionId"
-              />
-              <button
-                v-if="!filterComments(sub5Comments, sub4.id).length && sub4.amountSubComments > 0"
-                class="comment__btn"
-                @click="loadSubs(sub4.id, 5)"
-              >
-                Show subs
-              </button>
-              <span
-                v-for="(sub5) in filterComments(sub5Comments, sub4.id)"
-                :key="sub5.id"
-              >
-                <comment-field
-                  class="subcomment__field subcomment_lvl5"
-                  :data="sub5"
-                  :level="5"
-                  :discussion-id="discussionId"
-                />
-              </span>
-            </span>
-          </div>
-        </div>
       </div>
       <base-pager
         v-if="totalPagesValue > 1"
@@ -240,11 +167,6 @@ import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
-      comments: [],
-      sub2Comments: [],
-      sub3Comments: [],
-      sub4Comments: [],
-      sub5Comments: [],
       page: 1,
       perPager: 4,
       isAddComment: false,
@@ -253,7 +175,6 @@ export default {
       totalPagesValue: 1,
       discussionId: '',
       opinion: '',
-      subCommentInput: '',
       documents: [
         {
           id: '1',
@@ -297,15 +218,6 @@ export default {
     this.SetLoader(false);
   },
   methods: {
-    filterComments(subComments, rootId) {
-      return subComments.filter((item) => item.rootCommentId === rootId);
-    },
-    clearSubs(level) {
-      if (level === 2) this.sub2Comments = [];
-      if (level === 3) this.sub3Comments = [];
-      if (level === 4) this.sub4Comments = [];
-      if (level === 5) this.sub5Comments = [];
-    },
     // async loadSubs(rootId, level) {
     //   const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
     //   const obj = {
@@ -317,22 +229,6 @@ export default {
     //   if (obj[level].length > 0) obj[level] = [];
     //   return obj[level].push(...res.comments);
     // },
-    async loadSubs(rootId, level) {
-      const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
-      if (level === 2) {
-        if (this.sub2Comments.length > 0) this.sub2Comments = [];
-        return this.sub2Comments.push(...res.comments);
-      } if (level === 3) {
-        if (this.sub3Comments.length > 0) this.sub3Comments = [];
-        return this.sub3Comments.push(...res.comments);
-      } if (level === 4) {
-        if (this.sub4Comments.length > 0) this.sub3Comments = [];
-        return this.sub4Comments.push(...res.comments);
-      } if (level === 5) {
-        if (this.sub5Comments.length > 0) this.sub4Comments = [];
-        return this.sub5Comments.push(...res.comments);
-      } return '';
-    },
     authorName() {
       if (this.discussionAuthor) return `${this.discussionAuthor.firstName} ${this.discussionAuthor.lastName}`;
       return this.$t('user.nameless');
@@ -341,7 +237,7 @@ export default {
       this.$router.push(`/investors/${authorId}`);
     },
     totalPages() {
-      return this.rootCommentObjects.count > 0 ? Math.ceil(this.rootCommentObjects.count / this.perPager) : 0;
+      return Math.ceil(this.rootCommentObjects.count / this.perPager);
     },
     async getRootComments(additionalValue) {
       const discussionId = this.currentDiscussion.id;
