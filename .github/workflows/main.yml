@@ -25,6 +25,7 @@ jobs:
       - name: Run generate static task
         run: npm run generate
         env:
+          PROD: ${{ secrets.PROD }}
           BASE_URL: ${{ secrets.BASE_URL }}
 
       - name: Deploy to Server
@@ -57,6 +58,7 @@ jobs:
       - name: Run generate static task
         run: npm run generate
         env:
+          PROD: ${{ secrets.PROD }}
           BASE_URL: ${{ secrets.BASE_URL }}
 
       - name: Deploy to Server
