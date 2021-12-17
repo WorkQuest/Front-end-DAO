@@ -17,56 +17,65 @@
           />
         </div>
       </div>
-      <div class="add-discussion__subtitle">
-        {{ $t('modals.discussionTopic') }}
-      </div>
-      <base-field
-        v-model="title"
-        placeholder="Placeholder"
-        class="add-discussion__field"
-      />
-      <div class="add-discussion__subtitle">
-        {{ $t('modals.description') }}
-      </div>
-      <textarea
-        v-model="discussion"
-        class="add-discussion__body"
-        placeholder="Placeholder"
-      />
-      <base-uploader
-        class="files__container"
-        type="all"
-        :items="documents"
-        :is-show-empty="true"
-        :is-show-download="false"
+      <validation-observer
+        v-slot="{handleSubmit}"
       >
-        <template v-slot:actionButton>
+        <div class="add-discussion__subtitle">
+          {{ $t('modals.discussionTopic') }}
+        </div>
+        <base-field
+          v-model="title"
+          :placeholder="$t('modals.discussionTopic')"
+          class="add-discussion__field"
+          rules="required"
+          :name="$t('modals.discussionTopic')"
+        />
+        <div class="add-discussion__subtitle">
+          {{ $t('modals.description') }}
+        </div>
+        <base-textarea
+          v-model="discussion"
+          class="add-discussion__body"
+          :placeholder="$t('modals.description')"
+          rules="required"
+          mode="add-discussion"
+          :name="$t('modals.description')"
+        />
+        <base-uploader
+          class="files__container"
+          type="all"
+          :items="documents"
+          :is-show-empty="true"
+          :is-show-download="false"
+        >
+          <template v-slot:actionButton>
+            <base-btn
+              mode="lightBlue"
+              class="add-discussion__button"
+            >
+              {{ $t('meta.addFile') }}
+              <template v-slot:right>
+                <span class="icon-plus_circle_outline add-discussion__plus" />
+              </template>
+            </base-btn>
+          </template>
+        </base-uploader>
+        <div class="add-discussion__footer footer">
           <base-btn
+            class="footer__buttons"
             mode="lightBlue"
-            class="add-discussion__button"
+            @click="hide"
           >
-            {{ $t('meta.addFile') }}
-            <template v-slot:right>
-              <span class="icon-plus_circle_outline add-discussion__plus" />
-            </template>
+            {{ $t('modals.cancel') }}
           </base-btn>
-        </template>
-      </base-uploader>
-      <div class="add-discussion__footer footer">
-        <base-btn
-          class="footer__buttons"
-          mode="lightBlue"
-          @click="hide"
-        >
-          {{ $t('modals.cancel') }}
-        </base-btn>
-        <base-btn
-          class="footer__buttons"
-          @click="createDiscussion"
-        >
-          {{ $t('modals.addDiscussion') }}
-        </base-btn>
-      </div>
+          <base-btn
+            class="footer__buttons"
+            @click="handleSubmit(createDiscussion)"
+          >
+            {{ $t('modals.addDiscussion') }}
+          </base-btn>
+        </div>
+      </validation-observer>
     </div>
   </ctm-modal-box>
 </template>
@@ -129,16 +138,16 @@ export default {
 
 <style lang="scss" scoped>
 .add-discussion {
-  &__content{
+  &__content {
     padding: 30px 28px;
     width:  630px;
     background-color: white;
     border-radius: 6px;
   }
-  &__header{
+  &__header {
     margin-bottom: 10px;
   }
-  &__field{
+  &__field {
     width:  574px!important;
     height: 46px!important;
     background: #F3F7FA!important;
@@ -159,7 +168,7 @@ export default {
       background: #FFFFFF;
       border: 1px solid #0083C7;
     }
-    &::placeholder{
+    &::placeholder {
       color:#B0B3B9;
     }
   }
@@ -168,29 +177,29 @@ export default {
       font-size: 22px;
       padding: 12px;
   }
-  &__button{
+  &__button {
     width: 162px!important;
     height: 46px!important;
     margin: 10px 0 25px auto;
     border: 0.1px solid #0083C7;
   }
-  &__images{
+  &__images {
   margin: 15px 0 15px 0;
   }
-  &__files{
+  &__files {
     margin-top: 10px!important;
   }
 }
 
-.header{
+.header {
   display: flex;
   justify-content: space-between;
-  &__title{
+  &__title {
     font-weight: 500;
     font-size: 23px;
     line-height: 130%;
   }
-  &__close{
+  &__close {
     color: black;
     font-size: 25px;
   }
@@ -199,7 +208,7 @@ export default {
 .footer {
   display: flex;
   justify-content: space-between;
-  &__buttons{
+  &__buttons {
     width: 274px!important;
   }
 }

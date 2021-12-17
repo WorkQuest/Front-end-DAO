@@ -99,39 +99,61 @@
           {{ $t('discussions.add') }}
         </base-btn>
       </div>
-      <div
-        v-if="isAddComment"
-        class="info__response response"
+      <validation-observer
+        v-slot="{handleSubmit, validated, passed, invalid}"
       >
-        <div class="response__field">
-          <div class="response__title">
-            {{ $t('discussions.responseTitle') }}
-          </div>
-          <div class="response__footer footer">
-            <span class="icon-link footer__chain" />
-            <input
-              v-model="opinion"
-              class="footer__comment"
-              :placeholder="$t('discussions.input')"
-            >
-          </div>
-          <div class="response__footer">
-            <base-btn
-              class="response__btn"
-              mode="lightBlue"
-              @click="addComment"
-            >
-              {{ $t('discussions.cancel') }}
-            </base-btn>
-            <base-btn
-              class="response__btn"
-              @click="addRootCommentResponse"
-            >
-              {{ $t('discussions.add') }}
-            </base-btn>
+        <div
+          v-if="isAddComment"
+          class="info__response response"
+        >
+          <div class="response__field">
+            <div class="response__title">
+              {{ $t('discussions.responseTitle') }}
+            </div>
+            <div class="response__footer footer">
+              <span class="icon-link footer__chain" />
+              <input
+                v-model="opinion"
+                class="footer__comment"
+                :placeholder="$t('discussions.input')"
+              >
+              <!--              TODO: Переверстать и подключить валидацию-->
+              <!--              <base-btn-->
+              <!--                  class="footer__btn"-->
+              <!--                  :disabled="!validated || !passed || invalid"-->
+              <!--              >-->
+              <!--                <template v-slot:left>-->
+              <!--                  <span class="icon-link footer__chain" />-->
+              <!--                </template>-->
+              <!--              </base-btn>-->
+              <!--              <base-field-->
+              <!--                  v-model="opinion"-->
+              <!--                  class="footer__input"-->
+              <!--                  :placeholder="$t('discussions.input')"-->
+              <!--                  rules="required"-->
+              <!--                  :name="$t('discussions.response')"-->
+              <!--                  mode="comment-field"-->
+              <!--              />-->
+            </div>
+            <div class="response__footer">
+              <base-btn
+                class="response__btn"
+                mode="lightBlue"
+                @click="addComment"
+              >
+                {{ $t('discussions.cancel') }}
+              </base-btn>
+              <base-btn
+                class="response__btn"
+                :disabled="!validated || !passed || invalid"
+                @click="handleSubmit(addRootCommentResponse)"
+              >
+                {{ $t('discussions.add') }}
+              </base-btn>
+            </div>
           </div>
         </div>
-      </div>
+      </validation-observer>
       <div
         v-if="rootComments.count === 0"
         class="info__comment comment "
@@ -347,7 +369,6 @@ export default {
     height: 100%;
     background: #fff;
     border-radius: 8px;
-    padding-bottom: 15px;
   }
   &__subcomment {
     background: #fff;

@@ -58,22 +58,41 @@
           </div>
         </div>
       </div>
-      <div
-        v-if="isReply"
-        class="answers__footer footer"
+      <validation-observer
+        v-slot="{handleSubmit, validated, passed, invalid}"
       >
-        <span class="icon-link footer__chain" />
-        <!-- TODO: Переверстать инпуты и кнопки -->
-        <input
-          v-model="subCommentInput"
-          class="footer__input"
-          :placeholder="$t('discussions.input')"
+        <!--  Bottom -->
+        <div
+          v-if="isReply"
+          class="comment__footer footer"
         >
-        <span
-          class="icon-send footer__arrow"
-          @click="addSubCommentResponse(data, level)"
-        />
-      </div>
+          <base-btn
+            class="footer__btn"
+            :disabled="!validated || !passed || invalid"
+          >
+            <template v-slot:left>
+              <span class="icon-link footer__chain" />
+            </template>
+          </base-btn>
+          <base-field
+            v-model="subCommentInput"
+            class="footer__input"
+            :placeholder="$t('discussions.input')"
+            rules="required"
+            :name="$t('discussions.response')"
+            mode="comment-field"
+          />
+          <base-btn
+            class="footer__btn"
+            :disabled="!validated || !passed || invalid"
+            @click="handleSubmit(addSubCommentResponse(comment, 2))"
+          >
+            <template v-slot:left>
+              <span class="icon-send footer__arrow" />
+            </template>
+          </base-btn>
+        </div>
+      </validation-observer>
     </div>
   </div>
 </template>
@@ -167,24 +186,31 @@ export default {
 
 <style lang="scss" scoped>
 .comment {
-  padding: 10px;
+  padding: 0;
   display: flex;
-  margin-bottom: 10px;
   &__field {
     width: 100%;
     background: #FFFFFF;
     border-radius: 8px;
-    padding: 20px 20px 0 20px;
+  }
+  &__user {
+    margin: 20px 0 0 20px;
+  }
+  &__bottom {
+    margin: 25px 20px 25px 30px;
   }
   &__description {
     @include text-usual;
     color: #7C838D;
     align-self: stretch;
-    margin: 25px 0 25px 0;
+    margin: 20px 20px 25px 20px;
   }
   &__footer {
-    margin-top: 20px;
-    margin-bottom: 20px;
+    height: 40px;
+    display: grid;
+    grid-template-columns: 1fr 11fr 1fr;
+    margin: 20px;
+    align-items: center;
   }
   &_sub2 {
     //background: #8D96A2;
@@ -287,15 +313,15 @@ export default {
   display: flex;
   &__input {
     @include text-usual;
-    width: 1040px;
+    width: 100%;
     height: 40px;
-    background: #F7F8FA;
     border-radius: 6px;
     border: none;
-    padding: 10px 20px 10px 15px;
-    margin: 0 10px 20px 10px;
+    padding: 10px 15px 10px 15px;
+    margin: 0 0 20px 0;
   }
   &__chain {
+    padding: 0 0 0 5px;
     display: flex;
     width: 40px;
     height: 40px;
@@ -306,6 +332,15 @@ export default {
     color: #000000;
     font-size: 25px;
     cursor: pointer;
+  }
+  &__btn {
+    width: 40px;
+    height: 40px;
+    background: #F7F8FA;
+    cursor: pointer;
+    &:hover {
+      background: #F7F8FA;
+    }
   }
   &__arrow {
     display: flex;
@@ -318,6 +353,7 @@ export default {
     font-size: 25px;
     color: #0083C7;
     cursor: pointer;
+    padding: 0 0 0 10px;
   }
 }
 </style>
