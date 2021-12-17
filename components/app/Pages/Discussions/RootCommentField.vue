@@ -211,7 +211,7 @@ export default {
       await this.getRootComments();
     },
     async getRootComments() {
-      this.$parent.getRootComments();
+      this.$parent.$parent.getRootComments();
     },
     clearSubs(level) {
       if (level === 2) this.sub2Comments = [];
@@ -240,10 +240,10 @@ export default {
         if (this.sub3Comments.length > 0) this.sub3Comments = [];
         return this.sub3Comments.push(...res.comments);
       } if (level === 4) {
-        if (this.sub4Comments.length > 0) this.sub3Comments = [];
+        if (this.sub4Comments.length > 0) this.sub4Comments = [];
         return this.sub4Comments.push(...res.comments);
       } if (level === 5) {
-        if (this.sub5Comments.length > 0) this.sub4Comments = [];
+        if (this.sub5Comments.length > 0) this.sub5Comments = [];
         return this.sub5Comments.push(...res.comments);
       } return '';
     },
