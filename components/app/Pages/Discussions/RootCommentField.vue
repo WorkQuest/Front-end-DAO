@@ -138,7 +138,7 @@
             v-model="subCommentInput"
             class="footer__input"
             :placeholder="$t('discussions.input')"
-            rules="required"
+            rules="required|text-response"
             :name="$t('discussions.response')"
             mode="comment-field"
           />

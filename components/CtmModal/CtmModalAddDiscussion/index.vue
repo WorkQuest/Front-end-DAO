@@ -27,7 +27,7 @@
           v-model="title"
           :placeholder="$t('modals.discussionTopic')"
           class="add-discussion__field"
-          rules="required"
+          rules="required|text-title"
           :name="$t('modals.discussionTopic')"
         />
         <div class="add-discussion__subtitle">
@@ -37,7 +37,7 @@
           v-model="discussion"
           class="add-discussion__body"
           :placeholder="$t('modals.description')"
-          rules="required"
+          rules="required|text-desc"
           mode="add-discussion"
           :name="$t('modals.description')"
         />

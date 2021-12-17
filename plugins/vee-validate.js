@@ -137,6 +137,36 @@ extend('linkedIn', {
   },
   message: 'Please enter correct {_field_}',
 });
+extend('text-title', {
+  validate(value) {
+    const regex = /\d{0,60}$/;
+    return {
+      required: true,
+      valid: regex.test(value),
+    };
+  },
+  message: 'Please enter correct {_field_}',
+});
+extend('text-desc', {
+  validate(value) {
+    const regex = /\d{0,2000}$/;
+    return {
+      required: true,
+      valid: regex.test(value),
+    };
+  },
+  message: 'Please enter correct {_field_}',
+});
+extend('text-response', {
+  validate(value) {
+    const regex = /\d{0,250}$/;
+    return {
+      required: true,
+      valid: regex.test(value),
+    };
+  },
+  message: 'Please enter correct {_field_}',
+});
 
 export default ({ app }) => {
   configure({
