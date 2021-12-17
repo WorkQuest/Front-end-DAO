@@ -187,6 +187,7 @@ export default {
 .footer {
   display: flex;
   justify-content: space-between;
+  gap: 10px;
   &__buttons{
     width: 274px!important;
   }
@@ -206,23 +207,10 @@ export default {
     }
   }
 }
-@include _480 {
-  // .add-discussion {
-  //   // max-width: 380px !important;
-  //   &__field, &__body {
-  //     width: 300px !important;
-  //   }
-  // }
-}
 @include _380 {
   .add-discussion {
     &__field, &__body {
       width: 75vw !important;
-    }
-  }
-  .footer {
-    &__buttons {
-      margin: 0 5px;
     }
   }
 }
