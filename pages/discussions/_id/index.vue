@@ -99,8 +99,7 @@
           {{ $t('discussions.add') }}
         </base-btn>
       </div>
-      <validation-observer>
-        <!--        v-slot="{handleSubmit, validated, passed, invalid}"-->
+      <validation-observer v-slot="{handleSubmit, validated, passed, invalid}">
         <div
           v-if="isAddComment"
           class="info__response response"
@@ -110,29 +109,29 @@
               {{ $t('discussions.responseTitle') }}
             </div>
             <div class="response__footer footer">
-              <span class="icon-link footer__chain" />
-              <input
-                v-model="opinion"
-                class="footer__comment"
-                :placeholder="$t('discussions.input')"
-              >
-              <!--              TODO: Переверстать и подключить валидацию-->
-              <!--              <base-btn-->
-              <!--                  class="footer__btn"-->
-              <!--                  :disabled="!validated || !passed || invalid"-->
+              <!--              <span class="icon-link footer__chain" />-->
+              <!--              <input-->
+              <!--                v-model="opinion"-->
+              <!--                class="footer__comment"-->
+              <!--                :placeholder="$t('discussions.input')"-->
               <!--              >-->
-              <!--                <template v-slot:left>-->
-              <!--                  <span class="icon-link footer__chain" />-->
-              <!--                </template>-->
-              <!--              </base-btn>-->
-              <!--              <base-field-->
-              <!--                  v-model="opinion"-->
-              <!--                  class="footer__input"-->
-              <!--                  :placeholder="$t('discussions.input')"-->
-              <!--                  rules="required"-->
-              <!--                  :name="$t('discussions.response')"-->
-              <!--                  mode="comment-field"-->
-              <!--              />-->
+              <!--              TODO: Переверстать и подключить валидацию-->
+              <base-btn
+                class="footer__btn"
+                :disabled="!validated || !passed || invalid"
+              >
+                <template v-slot:left>
+                  <span class="icon-link footer__chain" />
+                </template>
+              </base-btn>
+              <base-field
+                v-model="opinion"
+                class="footer__input"
+                :placeholder="$t('discussions.input')"
+                rules="required"
+                :name="$t('discussions.response')"
+                mode="comment-field"
+              />
             </div>
             <div class="response__footer">
               <base-btn
@@ -142,9 +141,9 @@
               >
                 {{ $t('discussions.cancel') }}
               </base-btn>
-              <!--              :disabled="!validated || !passed || invalid"-->
               <base-btn
                 class="response__btn"
+                :disabled="!validated || !passed || invalid"
                 @click="handleSubmit(addRootCommentResponse)"
               >
                 {{ $t('discussions.add') }}
@@ -503,13 +502,12 @@ export default {
   display: flex;
   &__input {
     @include text-usual;
-    width: 1040px;
+    width: 100%;
     height: 40px;
-    background: #F7F8FA;
     border-radius: 6px;
     border: none;
-    padding: 10px 20px 10px 15px;
-    margin: 0 10px 0 10px;
+    padding: 10px 15px 10px 15px;
+    margin: 0 0 20px 0;
   }
   &__comment {
     @include text-usual;
@@ -520,6 +518,15 @@ export default {
     border: none;
     padding: 10px 20px 10px 15px;
     margin: 0 0 0 10px;
+  }
+  &__btn {
+    width: 40px;
+    height: 40px;
+    background: #F7F8FA;
+    cursor: pointer;
+    &:hover {
+      background: #F7F8FA;
+    }
   }
   &__chain {
     display: flex;
@@ -635,6 +642,8 @@ export default {
     line-height: 130%;
   }
   &__footer {
+    height: 40px;
+    align-items: center;
     margin-top: 20px;
     display: flex;
     justify-content: flex-end;
