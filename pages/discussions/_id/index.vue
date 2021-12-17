@@ -355,6 +355,8 @@ export default {
   }
 }
 .comment {
+  border-radius: 5px;
+  margin: 10px 0 0 0;
   &__field {
     width: 100%;
     height: 100%;
