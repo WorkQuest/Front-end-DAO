@@ -109,13 +109,6 @@
               {{ $t('discussions.responseTitle') }}
             </div>
             <div class="response__footer footer">
-              <!--              <span class="icon-link footer__chain" />-->
-              <!--              <input-->
-              <!--                v-model="opinion"-->
-              <!--                class="footer__comment"-->
-              <!--                :placeholder="$t('discussions.input')"-->
-              <!--              >-->
-              <!--              TODO: Переверстать и подключить валидацию-->
               <base-btn
                 class="footer__btn"
                 :disabled="!validated || !passed || invalid"
