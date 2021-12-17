@@ -96,6 +96,7 @@
           >
             {{ $t('meta.cancel') }}
           </base-btn>
+          connected: {{ isConnected }}
           <base-btn
             class="action__add"
             :disabled="!valid"
@@ -148,16 +149,19 @@ export default {
       this.SetLoader(true);
       this.descriptionInput = this.descriptionInput.trim();
       this.votingTopicInput = this.votingTopicInput.trim();
-      const documents = await this.uploadDocuments();
+      const medias = await this.uploadDocuments();
       const { address } = await this.$store.dispatch('web3/getAccount');
-      const { result } = await this.$store.dispatch('proposals/createProposal', {
-        title: this.votingTopicInput,
-        description: this.description,
+      const res = await this.$store.dispatch('proposals/createProposal', {
         proposer: address,
-        documents,
+        title: this.votingTopicInput,
+        description: this.descriptionInput,
+        medias,
       });
-      console.log('backend result', result);
-      await this.$store.dispatch('web3/addProposal', this.descriptionInput, result.nonce);
+      console.log('api', res);
+      if (res.ok) {
+        const { nonce } = res.result;
+        await this.$store.dispatch('web3/addProposal', { description: this.descriptionInput, nonce });
+      }
       this.close();
       this.SetLoader(false);
     },
@@ -165,7 +169,7 @@ export default {
       if (!this.documents.length) return [];
       const fetchData = [];
       const fetchUrlsData = [];
-      const result = [];
+      const medais = [];
       // eslint-disable-next-line no-restricted-syntax
       for (const item of this.documents) {
         fetchData.push(this.$store.dispatch('user/getUploadFileLink', { contentType: item.file.type }));
@@ -173,17 +177,15 @@ export default {
       const urls = await Promise.all(fetchData);
       for (let i = 0; i < this.documents.length; i += 1) {
         const { file } = this.documents[i];
-        result.push(urls[i].mediaId);
+        medais.push(urls[i].mediaId);
         fetchUrlsData.push(this.$store.dispatch('user/uploadFile', {
           url: urls[i].url,
-          data: {
-            file,
-            contentType: file.type,
-          },
+          data: file,
+          contentType: file.type,
         }));
       }
       await Promise.all(fetchUrlsData);
-      return result;
+      return medais;
     },
     removeDocument(id) {
       this.documents = this.documents.filter((item) => item.id !== id);

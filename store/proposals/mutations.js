@@ -6,7 +6,7 @@ export default {
     state.cards = payload;
   },
   setCardsCount(state, payload) {
-    state.cards = payload;
+    state.cardsCount = payload;
   },
   setFilters(state, payload) {
     state.filters = payload;

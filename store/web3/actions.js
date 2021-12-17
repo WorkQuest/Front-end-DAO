@@ -92,15 +92,15 @@ export default {
   },
 
   /* Proposals */
-  async addProposal({ commit }, description, nonceId) {
-    return await addProposal(description, nonceId);
+  async addProposal({ commit }, { description, nonce }) {
+    return await addProposal(description, nonce);
   },
-  async getProposals({ commit }, { offset, limit }) {
-    return await getProposals(offset, limit);
-  },
-  async getProposalInfoById({ commit }, id) {
-    return await getProposalInfoById(id);
-  },
+  // async getProposals({ commit }, { offset, limit }) {
+  //   return await getProposals(offset, limit);
+  // },
+  // async getProposalInfoById({ commit }, id) {
+  //   return await getProposalInfoById(id);
+  // },
   async doVote({ commit }, { id, value }) {
     return await doVote(id, value);
   },

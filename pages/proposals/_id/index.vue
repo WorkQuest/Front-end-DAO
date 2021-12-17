@@ -353,10 +353,7 @@ export default {
       }
     }
     if (card === null) {
-      // TODO: load from api
-      this.title = 'NOT FOUND';
-      this.SetLoader(false);
-      return; // todo: del later
+      card = await this.$store.dispatch('proposals/getProposal', this.idCard);
     }
     this.status = card.status;
     this.title = card.title;
@@ -435,18 +432,18 @@ export default {
     cardsStatusColor(idx) {
       const statusClass = {
         [proposalStatuses.PENDING]: 'info__status_pending',
+        [proposalStatuses.ACTIVE]: 'info__status_active',
         [proposalStatuses.REJECTED]: 'info__status_rejected',
         [proposalStatuses.ACCEPTED]: 'info__status_accepted',
-        [proposalStatuses.CANCELLED]: 'info__status_cancelled',
       };
       return statusClass[idx] || 'None';
     },
     getPriority(index) {
       const priority = {
         [proposalStatuses.PENDING]: this.$t('proposals.cards.status.pending'),
+        [proposalStatuses.ACTIVE]: this.$t('proposals.cards.status.active'),
         [proposalStatuses.REJECTED]: this.$t('proposals.cards.status.rejected'),
         [proposalStatuses.ACCEPTED]: this.$t('proposals.cards.status.accepted'),
-        [proposalStatuses.CANCELLED]: this.$t('proposals.cards.status.cancelled'),
       };
       return priority[index] || 'None';
     },
@@ -611,6 +608,10 @@ export default {
       background-color: #f6f8fa;
       color: #AAB0B9;
     }
+    &_active {
+      background-color: #f6f8fa;
+      color: #c6fcbc;
+    }
     &_rejected {
       background-color: #fcebeb;
       color: $red;
@@ -618,10 +619,6 @@ export default {
     &_accepted{
       background-color: #f6f8fa;
       color: $green;
-    }
-    &_cancelled {
-      background-color: $grey;
-      color: $shade700;
     }
 
     &_disabled {

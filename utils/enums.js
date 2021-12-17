@@ -8,15 +8,16 @@ export const errorCodes = Object.freeze({
 
   // Proposals
   AddProposal: 100, // Добавить пропосал
-  GetAllProposals: 101, // Получение всех пропосолов
-  GetProposal: 102, //  Получить инфу о пропосоле
-  VoteProposal: 103, // Голосовать за пропосал
-  GetVoteThreshold: 104, // Минимальная делигированная сумма для голоса
-  GetProposalThreshold: 105, // Минимальная делигированная сумма для создания пропосола
-  GetReceipt: 106, // Получить квитанцию
-  ExecuteVoting: 107,
-  GetChairpersonHash: 110,
-  HasRole: 111,
+  CreateProposal: 101,
+  GetAllProposals: 102, // Получение всех пропосолов
+  GetProposal: 103, //  Получить инфу о пропосоле
+  VoteProposal: 104, // Голосовать за пропосал
+  GetVoteThreshold: 105, // Минимальная делигированная сумма для голоса
+  GetProposalThreshold: 106, // Минимальная делигированная сумма для создания пропосола
+  GetReceipt: 107, // Получить квитанцию
+  ExecuteVoting: 108,
+  GetChairpersonHash: 109,
+  HasRole: 110,
 
   GetBalance: 200, // Баланс WQT на адресе
   Delegate: 201, // Делегирование
@@ -42,7 +43,8 @@ export const NativeTokenSymbolByChainId = Object.freeze({
 
 export const proposalStatuses = Object.freeze({
   PENDING: 0,
-  REJECTED: 1,
-  ACCEPTED: 2,
-  CANCELLED: 3,
+  ACTIVE: 1,
+  REJECTED: 2,
+  ACCEPTED: 3,
+  CANCELLED: 4,
 });

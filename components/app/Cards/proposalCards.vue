@@ -50,7 +50,7 @@
           <div class="card__header">
             <div class="card__header_top">
               <div class="card__header_left">
-                <span>Voting #{{ card.proposalId }}</span>
+                Voting<span v-if="card.status !== 0">#{{ card.proposalId }}</span>
               </div>
               <div class="card__header_right">
                 <div class="card__status">
@@ -62,15 +62,22 @@
               </div>
             </div>
           </div>
-          <div class="card__date">
+          <div
+            v-if="card.status !== 0"
+            class="card__date"
+          >
             {{ $moment(new Date(card.dateStart)).format('ll') }} - {{ $moment(new Date(card.dateEnd)).format('ll') }}
           </div>
-          <div class="card__about">
+          <div
+            class="card__about"
+            :class="{card__about_pending: card.status === 0}"
+          >
             {{ card.title }}
           </div>
           <div class="btn__container">
             <div class="btn__wrapper">
               <nuxt-link
+                v-if="card.status !== 0"
                 class="btn__link"
                 :to="`/proposals/${card.proposalId}`"
               >
@@ -146,9 +153,9 @@ export default {
     priority() {
       return {
         [proposalStatuses.PENDING]: this.$t('proposals.cards.status.pending'),
+        [proposalStatuses.ACTIVE]: this.$t('proposals.cards.status.active'),
         [proposalStatuses.REJECTED]: this.$t('proposals.cards.status.rejected'),
         [proposalStatuses.ACCEPTED]: this.$t('proposals.cards.status.accepted'),
-        [proposalStatuses.CANCELLED]: this.$t('proposals.cards.status.cancelled'),
       };
     },
   },
@@ -167,14 +174,13 @@ export default {
   //   },
   // },
   async mounted() {
-    // this.lastPage = this.prevFilters.lastPage || 1;
-    // this.search = this.prevFilters.search || '';
-    // this.ddValue = this.prevFilters.sortVoteStatus || 2;
-    // this.isDescending = this.prevFilters.isDescending || true;
-    // TODO: вернуть
-    // this.SetLoader(true);
-    // await this.loadPage(1);
-    // this.SetLoader(false);
+    this.SetLoader(true);
+    this.lastPage = this.prevFilters.lastPage || 1;
+    this.search = this.prevFilters.search || '';
+    this.ddValue = this.prevFilters.sortVoteStatus || 2;
+    this.isDescending = this.prevFilters.isDescending || true;
+    await this.loadPage(1);
+    this.SetLoader(false);
   },
   beforeDestroy() {
     this.$store.dispatch('proposals/updateFilters', {
@@ -188,9 +194,9 @@ export default {
     cardsStatusColor(idx) {
       const statusClass = {
         [proposalStatuses.PENDING]: 'card__status_pending',
+        [proposalStatuses.ACTIVE]: 'card__status_active',
         [proposalStatuses.REJECTED]: 'card__status_rejected',
         [proposalStatuses.ACCEPTED]: 'card__status_accepted',
-        [proposalStatuses.CANCELLED]: 'card__status_cancelled',
       };
       return statusClass[idx] || 'None';
     },
@@ -204,11 +210,11 @@ export default {
       }, 500);
     },
     async loadPage(page) {
+      this.currentPage = page;
       await this.$store.dispatch('proposals/getProposals', {
         limit: this.cardsLimit,
-        offset: (this.currentPage - 1) * this.cardsLimit,
-        search: this.search,
-        // TODO: передать оставшиеся фильтры
+        offset: (page - 1) * this.cardsLimit,
+        // search: this.search,
       });
     },
   },
@@ -386,6 +392,10 @@ export default {
       background-color: #f6f8fa;
       color: #AAB0B9;
     }
+    &_active {
+      background-color: #f6f8fa;
+      color: #c6fcbc;
+    }
     &_rejected {
       background-color: #fcebeb;
       color: $red;
@@ -393,10 +403,6 @@ export default {
     &_accepted{
       background-color: #f6f8fa;
       color: $green;
-    }
-    &_cancelled {
-      background-color: $grey;
-      color: $shade700;
     }
     &_disabled {
       display: none;
@@ -424,11 +430,17 @@ export default {
     letter-spacing: 0em;
     text-align: left;
 
+    overflow: hidden;
+    text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    &_pending {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      height: 48px;
+    }
   }
 }
 .dd {

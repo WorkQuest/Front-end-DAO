@@ -526,9 +526,9 @@
     "cards": {
       "status": {
         "pending": "Pending",
+        "active": "Active",
         "rejected": "Rejected",
-        "accepted": "Accepted",
-        "cancelled": "Cancelled"
+        "accepted": "Accepted"
       }
     }
   },

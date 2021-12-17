@@ -233,9 +233,10 @@ export const getVotes = async (address) => {
 };
 
 /* Proposals */
-export const addProposal = async (description, nonceId) => {
+export const addProposal = async (description, nonce) => {
   try {
-    const res = await sendTransaction('addProposal', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [nonceId, description.toString()]);
+    console.log('addproposal', description, nonce);
+    const res = await sendTransaction('addProposal', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [nonce, description.toString()]);
     return success(res);
   } catch (e) {
     return error(errorCodes.AddProposal, e.message, e);
