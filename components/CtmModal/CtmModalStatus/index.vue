@@ -7,6 +7,7 @@
       <div class="messageSend">
         <div class="messageSend__content">
           <img
+            v-if="options.img"
             :src="options.img"
             alt="RequestSend"
           >
