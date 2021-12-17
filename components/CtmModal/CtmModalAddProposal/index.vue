@@ -214,7 +214,7 @@ export default {
 <style lang="scss" scoped>
 
 .addProposal {
-  min-width: 630px !important;
+  min-width: 630px;
   &__content {
     padding: 0 28px 30px;
     margin-top: 25px;
@@ -335,6 +335,22 @@ export default {
     width: 162px !important;
     margin-left: auto;
     margin-top: 15px;
+  }
+}
+@include _767 {
+  .addProposal {
+    min-width: 550px;
+  }
+}
+@include _575 {
+  .addProposal {
+    min-width: 90vw;
+  }
+  .content {
+    &__voting {
+      grid-gap: 5px;
+      align-items: flex-end;
+    }
   }
 }
 </style>

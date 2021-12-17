@@ -18,6 +18,7 @@ import BasePager from '~/components/ui/BasePager';
 import BaseFiles from '~/components/ui/BaseFiles';
 import RootCommentField from '~/components/app/Pages/Discussions/RootCommentField.vue';
 import CommentField from '~/components/app/Pages/Discussions/CommentField';
+import TableItem from '~/components/mobile/TableItem.vue';
 
 Vue.component('comment-field', CommentField);
 Vue.component('root-comment-field', RootCommentField);
@@ -36,4 +37,5 @@ Vue.component('base-uploader', BaseUploader);
 Vue.component('base-images', BaseImages);
 Vue.component('base-files', BaseFiles);
 Vue.component('base-pager', BasePager);
+Vue.component('mobile-table-item', TableItem);
 Vue.component('vue-phone-number-input', VuePhoneNumberInput);

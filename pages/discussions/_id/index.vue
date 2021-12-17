@@ -98,6 +98,16 @@
         >
           {{ $t('discussions.add') }}
         </base-btn>
+        <base-btn
+          v-if="!isAddComment"
+          class="heading__btn_mobile"
+          mode="transparent"
+          @click="addComment"
+        >
+          <span class="heading__btn-text">
+            + {{ $t('discussions.add') }}
+          </span>
+        </base-btn>
       </div>
       <validation-observer v-slot="{handleSubmit, validated, passed, invalid}">
         <div
@@ -328,6 +338,9 @@ export default {
     height: 43px;
     border: none;
     outline: none;
+    &_mobile {
+      display: none;
+    }
   }
   &__title {
     font-weight: 500;
@@ -529,6 +542,7 @@ export default {
   }
   &__chain {
     display: flex;
+    padding: 0 10px;
     width: 40px;
     height: 40px;
     background: #F7F8FA;
@@ -541,6 +555,7 @@ export default {
   }
   &__arrow {
     display: flex;
+    padding: 0 10px;
     width: 40px;
     height: 40px;
     background: #F7F8FA;
@@ -658,6 +673,63 @@ export default {
   &__files{
     display: inline-flex;
     flex-direction: row;
+  }
+}
+@include _1199 {
+  .info {
+    &__body {
+      max-width: 100vw;
+      padding: 15px;
+    }
+  }
+}
+@include _767 {
+  .heading{
+    margin-left: 15px;
+    &__btn {
+      display: none;
+      &_mobile {
+        display: block;
+        width: 220px;
+        height: 43px;
+        border: none;
+        outline: none;
+      }
+      &-text {
+        color: $blue;
+        font-weight: 600;
+      }
+    }
+  }
+  .info {
+    &__body {
+      padding: 0;
+    }
+    &__header,
+    &__title {
+      margin-left: 15px;
+    }
+    &__pagination {
+      margin: 0 15px;
+    }
+  }
+  .response {
+    &__footer {
+      justify-content: space-between;
+      gap: 5px;
+    }
+    &__btn {
+      margin: 0;
+    }
+  }
+}
+@include _480 {
+  .heading {
+    &__btn {
+      &_mobile {
+        width: 120px;
+      }
+    }
   }
 }
 </style>

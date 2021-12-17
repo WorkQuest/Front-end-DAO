@@ -140,15 +140,15 @@ export default {
 .add-discussion {
   &__content {
     padding: 30px 28px;
-    width:  630px;
-    background-color: white;
+    width:  100%;
+    background-color: $white;
     border-radius: 6px;
   }
   &__header {
     margin-bottom: 10px;
   }
   &__field {
-    width:  574px!important;
+    width:  444px!important;
     height: 46px!important;
     background: #F3F7FA!important;
     justify-content: center;
@@ -156,7 +156,7 @@ export default {
     border-radius: 6px;
   }
   &__body {
-    width: 574px;
+    width: 444px;
     height: 174px;
     background: #F7F7FA;
     border-radius: 6px;
@@ -165,11 +165,11 @@ export default {
     border: none;
     resize: none;
     &:focus {
-      background: #FFFFFF;
+      background: $white;
       border: 1px solid #0083C7;
     }
-    &::placeholder {
-      color:#B0B3B9;
+    &::placeholder{
+      color: $black300;
     }
   }
     &__plus {
@@ -208,8 +208,31 @@ export default {
 .footer {
   display: flex;
   justify-content: space-between;
+  gap: 10px;
   &__buttons {
     width: 274px!important;
+  }
+}
+@include _767 {
+  .add-discussion {
+    width: 90vw !important;
+    &__content{
+      width: 100%;
+    }
+  }
+}
+@include _575 {
+  .add-discussion {
+    &__field, &__body {
+      width: 80vw !important;
+    }
+  }
+}
+@include _380 {
+  .add-discussion {
+    &__field, &__body {
+      width: 75vw !important;
+    }
   }
 }
 </style>
