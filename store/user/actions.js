@@ -26,11 +26,6 @@ export default {
     commit('setUserRole', response.result);
     return response;
   },
-  async editUserData({ commit }, payload) {
-    const response = await this.$axios.$put('/v1/profile/edit', payload);
-    commit('setUserData', response.result);
-    return response;
-  },
   async logout({ commit }) {
     commit('logOut');
   },
@@ -53,19 +48,31 @@ export default {
     return response;
   },
   async setImage({ commit }, { url, formData, type }) {
-    const response = await this.$axios.$put(url, formData, {
-      headers: {
-        'Content-Type': type,
-        'x-amz-acl': 'public-read',
-      },
-    });
-    commit('setImage', response.result);
-    return response;
+    try {
+      const response = await this.$axios.$put(url, formData, {
+        headers: {
+          'Content-Type': type,
+          'x-amz-acl': 'public-read',
+        },
+      });
+      commit('setImage', response.result);
+      return response;
+    } catch (e) {
+      return console.log(e);
+    }
   },
   async changeProfile({ commit }, payload) {
     commit('changeProfile', payload);
   },
-
+  async editProfile({ commit }, { config, method }) {
+    try {
+      const { result, ok } = await this.$axios.$put(method, config);
+      commit('setUserData', result);
+      return ok;
+    } catch (e) {
+      return console.log(e);
+    }
+  },
   async getUploadFileLink({ commit }, config) {
     const { result } = await this.$axios.$post('/v1/storage/get-upload-link', config);
     return result;

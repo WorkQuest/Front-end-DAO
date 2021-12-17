@@ -5,5 +5,7 @@ dist
 backup
 .idea
 .env
+.env-example
 /package-lock.json
 .DS_Store
+.vscode

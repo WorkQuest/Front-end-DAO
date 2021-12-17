@@ -116,17 +116,18 @@ export default {
 
 <style lang="scss" scoped>
 .add-discussion {
+  width:  630px;
   &__content{
     padding: 30px 28px;
-    width:  630px;
-    background-color: white;
+    width:  100%;
+    background-color: $white;
     border-radius: 6px;
   }
   &__header{
     margin-bottom: 10px;
   }
   &__field{
-    width:  574px!important;
+    width:  444px!important;
     height: 46px!important;
     background: #F3F7FA!important;
     justify-content: center;
@@ -134,7 +135,7 @@ export default {
     border-radius: 6px;
   }
   &__body {
-    width: 574px;
+    width: 444px;
     height: 174px;
     background: #F7F7FA;
     border-radius: 6px;
@@ -143,11 +144,11 @@ export default {
     border: none;
     resize: none;
     &:focus {
-      background: #FFFFFF;
+      background: $white;
       border: 1px solid #0083C7;
     }
     &::placeholder{
-      color:#B0B3B9;
+      color: $black300;
     }
   }
     &__plus {
@@ -188,6 +189,45 @@ export default {
   justify-content: space-between;
   &__buttons{
     width: 274px!important;
+  }
+}
+@include _767 {
+  .add-discussion {
+    width: 500px !important;
+    &__content{
+      width: 100%;
+    }
+    &__field, &__body {
+      width: 440px !important;
+    }
+  }
+}
+@include _575 {
+  .add-discussion {
+    &__field, &__body {
+      width: 435px !important;
+    }
+  }
+}
+@include _480 {
+  .add-discussion {
+    max-width: 380px !important;
+    &__field, &__body {
+      width: 300px !important;
+    }
+  }
+}
+@include _380 {
+  .add-discussion {
+    max-width: 350px !important;
+    &__field, &__body {
+      width: 285px !important;
+    }
+  }
+  .footer {
+    &__buttons {
+      margin: 0 5px;
+    }
   }
 }
 </style>

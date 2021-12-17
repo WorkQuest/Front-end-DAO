@@ -230,7 +230,7 @@ export default {
 <style lang="scss" scoped>
 
 .addProposal {
-  min-width: 630px !important;
+  min-width: 630px;
   &__content {
     padding: 0 28px 30px;
     margin-top: 25px;
@@ -359,7 +359,6 @@ export default {
     }
   }
 }
-
 .date-field {
   margin-bottom: 25px;
   margin-top: 5px;
@@ -370,5 +369,30 @@ export default {
   font-size: 16px;
   line-height: 130%;
 }
-
+@include _767 {
+  .addProposal {
+    min-width: 550px;
+  }
+}
+@include _575 {
+  .addProposal {
+    min-width: 460px;
+  }
+  .content {
+  &__voting {
+    grid-gap: 5px;
+    align-items: flex-end;
+  }
+}
+}
+@include _480 {
+  .addProposal {
+    min-width: 400px;
+  }
+}
+@include _380 {
+  .addProposal {
+    min-width: 300px;
+  }
+}
 </style>

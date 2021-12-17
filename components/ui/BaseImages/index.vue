@@ -120,4 +120,15 @@ export default {
     filter: brightness(60%);
   }
 }
+@include _767 {
+  .images {
+    display: inline-block;
+    white-space: nowrap;
+    overflow-x: scroll;
+    user-select: none;
+    &__image {
+      display: inline-block;
+    }
+  }
+}
 </style>

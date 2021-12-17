@@ -1,5 +1,6 @@
 import Vue from 'vue';
 
+import VuePhoneNumberInput from 'vue-phone-number-input';
 import CtmModal from '~/components/CtmModal';
 import CtmModalBox from '~/components/CtmModal/CtmModalBox';
 import Loader from '~/components/ui/Loader';
@@ -14,6 +15,7 @@ import BaseUploader from '~/components/ui/BaseUploader';
 import BaseImages from '~/components/ui/BaseImages';
 import BasePager from '~/components/ui/BasePager';
 import BaseFiles from '~/components/ui/BaseFiles';
+import TableItem from '~/components/mobile/TableItem.vue';
 
 Vue.component('ctm-modal', CtmModal);
 Vue.component('ctm-modal-box', CtmModalBox);
@@ -29,3 +31,5 @@ Vue.component('base-uploader', BaseUploader);
 Vue.component('base-images', BaseImages);
 Vue.component('base-files', BaseFiles);
 Vue.component('base-pager', BasePager);
+Vue.component('mobile-table-item', TableItem);
+Vue.component('vue-phone-number-input', VuePhoneNumberInput);

@@ -1,19 +1,21 @@
 <template>
   <div class="proposal">
     <div class="proposal__body">
-      <div class="proposal__back back">
-        <div class="back__container">
-          <nuxt-link
-            class="back__link"
-            to="/proposals"
-          >
-            <span class="back__icon icon-short_left" />
-            {{ $t('proposal.back') }}
-          </nuxt-link>
+      <div class="proposal__header-wrapper">
+        <div class="proposal__back back">
+          <div class="back__container">
+            <nuxt-link
+              class="back__link"
+              to="/proposals"
+            >
+              <span class="back__icon icon-short_left" />
+              {{ $t('proposal.back') }}
+            </nuxt-link>
+          </div>
         </div>
-      </div>
-      <div class="proposal__header">
-        {{ $t('proposal.title') }}
+        <div class="proposal__header">
+          {{ $t('proposal.title') }}
+        </div>
       </div>
       <div class="proposal__content content">
         <div class="proposal__info info content__column">
@@ -81,52 +83,50 @@
           </div>
         </div>
         <div class="proposal__results results content__column">
-          <div>
-            <div class="results__header">
-              {{ $t('proposal.results') }}
-            </div>
-            <div class="results__bar bar">
-              <div class="bar">
-                <div class="bar__result result">
-                  <div class="result__name">
-                    {{ $t('proposal.yes') }}
-                  </div>
-                  <div class="result__percent">
-                    {{ `${results.percents.yes}%` }}
-                  </div>
+          <div class="results__header">
+            {{ $t('proposal.results') }}
+          </div>
+          <div class="results__bar bar">
+            <div class="bar">
+              <div class="bar__result result">
+                <div class="result__name">
+                  {{ $t('proposal.yes') }}
                 </div>
-                <div class="bar__line">
-                  <div class="bar__line_gray">
-                    <div
-                      class="bar__line_green"
-                      :style="`width: ${results.percents.yes}%`"
-                    />
-                  </div>
-                </div>
-                <div class="bar__votes">
-                  {{ results.votes.yes }} {{ $t('proposal.votes') }}
+                <div class="result__percent">
+                  {{ `${results.percents.yes}%` }}
                 </div>
               </div>
-              <div class="bar">
-                <div class="bar__result result">
-                  <div class="result__name">
-                    {{ $t('proposal.no') }}
-                  </div>
-                  <div class="result__percent">
-                    {{ `${results.percents.no}%` }}
-                  </div>
+              <div class="bar__line">
+                <div class="bar__line_gray">
+                  <div
+                    class="bar__line_green"
+                    :style="`width: ${results.percents.yes}%`"
+                  />
                 </div>
-                <div class="bar__line">
-                  <div class="bar__line_gray">
-                    <div
-                      class="bar__line_red"
-                      :style="`width: ${results.percents.no}%`"
-                    />
-                  </div>
+              </div>
+              <div class="bar__votes">
+                {{ results.votes.yes }} {{ $t('proposal.votes') }}
+              </div>
+            </div>
+            <div class="bar">
+              <div class="bar__result result">
+                <div class="result__name">
+                  {{ $t('proposal.no') }}
                 </div>
-                <div class="bar__votes">
-                  {{ results.votes.no }} {{ $t('proposal.votes') }}
+                <div class="result__percent">
+                  {{ `${results.percents.no}%` }}
                 </div>
+              </div>
+              <div class="bar__line">
+                <div class="bar__line_gray">
+                  <div
+                    class="bar__line_red"
+                    :style="`width: ${results.percents.no}%`"
+                  />
+                </div>
+              </div>
+              <div class="bar__votes">
+                {{ results.votes.no }} {{ $t('proposal.votes') }}
               </div>
             </div>
           </div>
@@ -213,6 +213,19 @@
           :fields="historyTableFields"
           :items="prepareTableData(historyTableData)"
         />
+        <!-- mobile -->
+        <div class="history__proposals">
+          <p class="history__subtitle">
+            {{ $t('proposal.proposalHistory') }}
+          </p>
+          <mobile-table-item
+            v-for="(proposal, index) in historyTableData"
+            :key="index"
+            :item="proposal"
+            :is-last="historyTableData[index] === historyTableData[historyTableData.length - 1]"
+          />
+        </div>
+        <!-- /mobile -->
       </div>
     </div>
   </div>
@@ -522,7 +535,7 @@ export default {
   @include text-simple;
 
   &__body {
-    margin-top: 30px;
+    margin: 30px 15px 0 15px;
     max-width: 1180px;
     height: 100%;
   }
@@ -543,9 +556,9 @@ export default {
   }
 
   &__results {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: grid;
+    grid-template-rows: repeat(3, auto);
+    height: max-content;
   }
 
   &__history {
@@ -810,7 +823,11 @@ export default {
 
 .history {
   &__table {
+    position: relative;
     margin-top: 15px;
+  }
+  &__proposals {
+    display: none;
   }
 }
 
@@ -895,5 +912,72 @@ export default {
   color: #8D96A2;
   border: 1px solid rgba(0, 0, 0, 0);
   min-width: 140px;
+}
+@include _991 {
+  .content {
+    grid-template-columns: 1fr;
+    grid-row-gap: 20px;
+  }
+}
+@include _767 {
+  .proposal {
+    &__header {
+      &-wrapper {
+      display: grid;
+      padding: 20px;
+      }
+    }
+    &__back, &__header {
+      margin: 0;
+    }
+    &__body {
+      margin: 22px 5px;
+      @include mobile-container;
+    }
+  }
+  .content {
+    &__column {
+      @include mobile-container;
+    }
+  }
+  .history {
+    &__table {
+      display: none;
+    }
+    &__proposals {
+      display: block;
+      background: $white;
+      padding: 20px 15px;
+      margin-top: 15px;
+      border-radius: 6px;
+    }
+    &__subtitle {
+      font-size: 20px;
+    }
+  }
+  .info{
+    &__transactions {
+      grid-gap: 60px;
+      margin-top: 20px;
+    }
+  }
+}
+@include _480 {
+  .proposal {
+    &__body {
+      margin: 22px 0 0 0;
+    }
+  }
+  .forum {
+    &__link {
+      padding: 0;
+    }
+  }
+  .info{
+    &__transactions {
+      grid-gap: 10px;
+      grid-template-columns: 1fr;
+    }
+  }
 }
 </style>
