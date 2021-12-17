@@ -186,7 +186,7 @@ export default {
 
 <style lang="scss" scoped>
 .comment {
-  padding: 0;
+  padding: 0 30px 0 0;
   display: flex;
   &__field {
     width: 100%;
@@ -204,6 +204,10 @@ export default {
     color: #7C838D;
     align-self: stretch;
     margin: 20px 20px 25px 20px;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    width: 100%;
+    display: flex;
   }
   &__footer {
     height: 40px;

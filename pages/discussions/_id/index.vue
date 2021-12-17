@@ -372,6 +372,10 @@ export default {
     color: #7C838D;
     align-self: stretch;
     margin: 20px 0 25px 0;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    width: 100%;
+    display: flex;
   }
   &__btn {
     display: block;
