@@ -143,9 +143,9 @@
               >
                 {{ $t('discussions.cancel') }}
               </base-btn>
+              <!--              :disabled="!validated || !passed || invalid"-->
               <base-btn
                 class="response__btn"
-                :disabled="!validated || !passed || invalid"
                 @click="handleSubmit(addRootCommentResponse)"
               >
                 {{ $t('discussions.add') }}
