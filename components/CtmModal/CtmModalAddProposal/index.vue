@@ -344,23 +344,13 @@ export default {
 }
 @include _575 {
   .addProposal {
-    min-width: 460px;
+    min-width: 90vw;
   }
   .content {
-  &__voting {
-    grid-gap: 5px;
-    align-items: flex-end;
-  }
-}
-}
-@include _480 {
-  .addProposal {
-    min-width: 400px;
-  }
-}
-@include _380 {
-  .addProposal {
-    min-width: 300px;
+    &__voting {
+      grid-gap: 5px;
+      align-items: flex-end;
+    }
   }
 }
 </style>

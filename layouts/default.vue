@@ -1073,6 +1073,10 @@ export default {
       line-height: 130%;
       color: $black700;
     }
+    img {
+      height: 30px;
+      width: 40px;
+    }
   }
 }
 .menu {
@@ -1224,48 +1228,48 @@ export default {
       width: 40px;
       height: 40px;
       transition: all 0.5s;
+      border-radius: 11px;
       &_twitter {
-        background: center / contain no-repeat url('~assets/img/social/footer_twitter.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_twitter.svg') $white;
       }
       &_twitter:hover {
-        background: center / contain no-repeat url('~assets/img/social/footer_twitter_active.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_twitter_active.svg') $white;
       }
       &_youtube {
-        background: center / contain no-repeat url('~assets/img/social/footer_youtube.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_youtube.svg') $white;
       }
       &_youtube:hover {
-        background: center / contain no-repeat url('~assets/img/social/footer_youtube_active.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_youtube_active.svg') $white;
       }
       &_reddit {
-        background: center / contain no-repeat url('~assets/img/social/footer_reddit.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_reddit.svg') $white;
       }
       &_reddit:hover {
-        background: center / contain no-repeat url('~assets/img/social/footer_reddit_active.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_reddit_active.svg') $white;
       }
       &_facebook {
-        background: center / contain no-repeat url('~assets/img/social/footer_facebook.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_facebook.svg') $white;
       }
       &_facebook:hover {
-        background: center / contain no-repeat url('~assets/img/social/footer_facebook_active.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_facebook_active.svg') $white;
       }
       &_linkedin {
-        background: center / contain no-repeat url('~assets/img/social/footer_linkedin.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_linkedin.svg') $white;
       }
       &_linkedin:hover {
-        background: center / contain no-repeat url('~assets/img/social/footer_linkedin_active.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_linkedin_active.svg') $white;
       }
       &_instagram {
-        background: center / contain no-repeat url('~assets/img/social/footer_instagram.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_instagram.svg') $white;
       }
       &_instagram:hover {
-        background: center / contain no-repeat url('~assets/img/social/footer_instagram_active.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_instagram_active.svg') $white;
       }
       &_telegram {
-        background: center / contain no-repeat url('~assets/img/social/footer_telegram.svg');
-        border-radius: 4px;
+        background: center / contain no-repeat url('~assets/img/social/footer_telegram.svg') $white;
       }
       &_telegram:hover {
-        background: center / contain no-repeat url('~assets/img/social/footer_telegram_active.svg')
+        background: center / contain no-repeat url('~assets/img/social/footer_telegram_active.svg') $white;
       }
     }
   &__store {
@@ -1396,6 +1400,9 @@ export default {
     }
     &__subtitle {
       display: none;
+    }
+    &__link {
+      margin: 0;
     }
   }
   .links {

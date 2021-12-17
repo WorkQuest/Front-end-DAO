@@ -187,46 +187,30 @@ export default {
 .footer {
   display: flex;
   justify-content: space-between;
+  gap: 10px;
   &__buttons{
     width: 274px!important;
   }
 }
 @include _767 {
   .add-discussion {
-    width: 500px !important;
+    width: 90vw !important;
     &__content{
       width: 100%;
-    }
-    &__field, &__body {
-      width: 440px !important;
     }
   }
 }
 @include _575 {
   .add-discussion {
     &__field, &__body {
-      width: 435px !important;
-    }
-  }
-}
-@include _480 {
-  .add-discussion {
-    max-width: 380px !important;
-    &__field, &__body {
-      width: 300px !important;
+      width: 80vw !important;
     }
   }
 }
 @include _380 {
   .add-discussion {
-    max-width: 350px !important;
     &__field, &__body {
-      width: 285px !important;
-    }
-  }
-  .footer {
-    &__buttons {
-      margin: 0 5px;
+      width: 75vw !important;
     }
   }
 }
