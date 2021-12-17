@@ -85,7 +85,7 @@
           <base-btn
             class="footer__btn"
             :disabled="!validated || !passed || invalid"
-            @click="handleSubmit(addSubCommentResponse(comment, 2))"
+            @click="handleSubmit(addSubCommentResponse(data, 2))"
           >
             <template v-slot:left>
               <span class="icon-send footer__arrow" />
