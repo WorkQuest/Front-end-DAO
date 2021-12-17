@@ -96,7 +96,7 @@ export default {
       if (+delegated < +proposalThreshold) {
         await this.$store.dispatch('main/showToast', {
           title: this.$t('proposal.errors.addProposal'),
-          text: this.$t('proposal.notEnoughFunds', { a: proposalThreshold, b: delegated }),
+          text: this.$t('proposal.errors.notEnoughFunds', { a: proposalThreshold, b: delegated }),
         });
         await this.$store.dispatch('modals/show', {
           key: modals.delegate,

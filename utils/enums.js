@@ -29,7 +29,7 @@ export const errorCodes = Object.freeze({
 
 export const ChainsId = Object.freeze({
   ETH_MAIN: '0x1',
-  ETH_TEST: '0x4',
+  ETH_TEST: '0x3',
 });
 
 export const Chains = Object.freeze({

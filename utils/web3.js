@@ -165,10 +165,10 @@ export const connectToMetamask = async () => {
     web3Wallet = new Web3(ethereum);
     const chainId = await web3Wallet.eth.net.getId();
     await ethereum.request({ method: 'eth_requestAccounts' });
-    if (isProd() && ![1, 56].includes(+chainId)) {
+    if (isProd() && ![+ChainsId.ETH_MAIN, 56].includes(+chainId)) {
       return error(errorCodes.WrongChainId, 'Wrong blockchain in metamask', 'Current site work on mainnet. Please change network.');
     }
-    if (!isProd() && ![4, 97].includes(+chainId)) {
+    if (!isProd() && ![+ChainsId.ETH_TEST, 97].includes(+chainId)) {
       return error(errorCodes.WrongChainId, 'Wrong blockchain in metamask', 'Current site work on testnet. Please change network.');
     }
     account.address = await web3Wallet.eth.getCoinbase();
@@ -183,6 +183,7 @@ export const connectToMetamask = async () => {
 };
 
 export const handleMetamaskStatus = (callback) => {
+  console.log('handle status <<');
   isHandlingStatus = true;
   const { ethereum } = window;
   ethereum.on('chainChanged', callback);

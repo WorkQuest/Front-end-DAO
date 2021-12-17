@@ -32,7 +32,7 @@
               id="tokensNumber"
               v-model="tokensAmount"
               class="footer__body"
-              placeholder="1000"
+              placeholder="10000"
               :name="$t('modals.tokensNumber')"
               :rules="`required${min}`"
             />
@@ -86,6 +86,7 @@ export default {
   },
   async mounted() {
     const res = await this.$store.dispatch('web3/getBalance');
+    console.log('balance', res);
     if (res.ok) {
       this.balance = res.result;
     }
