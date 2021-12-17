@@ -159,6 +159,7 @@ export default {
       });
       console.log('api', res);
       if (res.ok) {
+        // TODO: create discussion here
         const { nonce } = res.result;
         await this.$store.dispatch('web3/addProposal', { description: this.descriptionInput, nonce });
       }
