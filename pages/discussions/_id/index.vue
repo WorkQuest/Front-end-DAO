@@ -99,9 +99,8 @@
           {{ $t('discussions.add') }}
         </base-btn>
       </div>
-      <validation-observer
-        v-slot="{handleSubmit, validated, passed, invalid}"
-      >
+      <validation-observer>
+        <!--        v-slot="{handleSubmit, validated, passed, invalid}"-->
         <div
           v-if="isAddComment"
           class="info__response response"
