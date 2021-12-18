@@ -3,9 +3,7 @@
     class="add-discussion"
     :is-header="false"
   >
-    <div
-      class="add-discussion__content"
-    >
+    <div class="add-discussion__content">
       <div class="add-discussion__header header">
         <div class="header__title">
           {{ $t('modals.addDiscussion') }}
@@ -18,7 +16,7 @@
         </div>
       </div>
       <validation-observer
-        v-slot="{handleSubmit}"
+        v-slot="{ handleSubmit, validated, passed, invalid }"
       >
         <div class="add-discussion__subtitle">
           {{ $t('modals.discussionTopic') }}
@@ -27,7 +25,7 @@
           v-model="title"
           :placeholder="$t('modals.discussionTopic')"
           class="add-discussion__field"
-          rules="required|text-title"
+          rules="required|max:60"
           :name="$t('modals.discussionTopic')"
         />
         <div class="add-discussion__subtitle">
@@ -37,7 +35,7 @@
           v-model="discussion"
           class="add-discussion__body"
           :placeholder="$t('modals.description')"
-          rules="required|text-desc"
+          rules="required|max:2000"
           mode="add-discussion"
           :name="$t('modals.description')"
         />
@@ -70,6 +68,7 @@
           </base-btn>
           <base-btn
             class="footer__buttons"
+            :disabled="!validated || !passed || invalid"
             @click="handleSubmit(createDiscussion)"
           >
             {{ $t('modals.addDiscussion') }}
@@ -81,7 +80,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 
 export default {
   name: 'AddDiscussion',
@@ -105,28 +103,17 @@ export default {
       ],
     };
   },
-  computed: {
-    ...mapGetters({
-      options: 'modals/getOptions',
-      currentDiscussion: 'discussions/getCurrentDiscussion',
-    }),
-  },
   methods: {
-    async getCurrentDiscussion() {
-      await this.$store.dispatch('discussions/getCurrentDiscussion', this.currentDiscussion.id);
-    },
-    goToCurrentDiscussion() {
-      this.$router.push(`/discussions/${this.currentDiscussion.id}`);
-    },
     async createDiscussion() {
-      const payload = {
+      const response = await this.$store.dispatch('discussions/createDiscussion', {
         title: this.title,
         description: this.discussion,
         medias: [],
-      };
-      await this.$store.dispatch('discussions/createDiscussion', payload);
-      await this.getCurrentDiscussion();
-      this.goToCurrentDiscussion();
+      });
+      if (response.ok) {
+        const { id } = response.result;
+        await this.$router.push(`/discussions/${id}`);
+      } else console.error('Something wrong, tell to developers');
       this.hide();
     },
     hide() {
@@ -140,65 +127,62 @@ export default {
 .add-discussion {
   &__content {
     padding: 30px 28px;
-    width:  100%;
+    width: 100%;
     background-color: $white;
     border-radius: 6px;
   }
+
   &__header {
     margin-bottom: 10px;
   }
+
   &__field {
-    width:  444px!important;
-    height: 46px!important;
-    background: #F3F7FA!important;
+    width: 444px !important;
+    height: 46px !important;
+    background: #F3F7FA !important;
     justify-content: center;
     margin: 5px 0 25px 0;
     border-radius: 6px;
   }
+
   &__body {
     width: 444px;
     height: 174px;
-    background: #F7F7FA;
-    border-radius: 6px;
-    padding: 11px 20px 11px 20px;
     margin: 5px 0 15px 0;
-    border: none;
-    resize: none;
-    &:focus {
-      background: $white;
-      border: 1px solid #0083C7;
-    }
-    &::placeholder{
-      color: $black300;
-    }
   }
-    &__plus {
-      color: #0083C7;
-      font-size: 22px;
-      padding: 12px;
+
+  &__plus {
+    color: #0083C7;
+    font-size: 22px;
+    padding: 12px;
   }
+
   &__button {
-    width: 162px!important;
-    height: 46px!important;
+    width: 162px !important;
+    height: 46px !important;
     margin: 10px 0 25px auto;
     border: 0.1px solid #0083C7;
   }
+
   &__images {
-  margin: 15px 0 15px 0;
+    margin: 15px 0 15px 0;
   }
+
   &__files {
-    margin-top: 10px!important;
+    margin-top: 10px !important;
   }
 }
 
 .header {
   display: flex;
   justify-content: space-between;
+
   &__title {
     font-weight: 500;
     font-size: 23px;
     line-height: 130%;
   }
+
   &__close {
     color: black;
     font-size: 25px;
@@ -209,18 +193,22 @@ export default {
   display: flex;
   justify-content: space-between;
   gap: 10px;
+
   &__buttons {
-    width: 274px!important;
+    width: 274px !important;
   }
 }
+
 @include _767 {
   .add-discussion {
     width: 90vw !important;
-    &__content{
+
+    &__content {
       width: 100%;
     }
   }
 }
+
 @include _575 {
   .add-discussion {
     &__field, &__body {
@@ -228,6 +216,7 @@ export default {
     }
   }
 }
+
 @include _380 {
   .add-discussion {
     &__field, &__body {

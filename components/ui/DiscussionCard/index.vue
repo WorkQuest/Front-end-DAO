@@ -2,7 +2,7 @@
   <div class="discussion">
     <div class="discussion__user user">
       <img
-        :src="authorAvatarSrc(item)"
+        :src="item.author.avatar ? item.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
         alt="userAvatar"
         class="user__avatar"
         @click="toInvestor(item.author.id)"
@@ -11,18 +11,18 @@
         class="user__name"
         @click="toInvestor(item.author.id)"
       >
-        {{ authorFirstName(item) }} {{ authorLastName(item) }}
+        {{ getAuthorName(item) }}
       </span>
       <button class="user__star">
         <img
-          :src="favoriteStarSrc(item)"
-          :alt="favoriteStarAlt(item)"
+          :src="require(`~/assets/img/ui/star_${isFavorite ? 'checked' : 'simple'}.svg`)"
+          alt="favorite"
           @click="toggleFavorite(item.id)"
         >
       </button>
     </div>
     <div class="discussion__title">
-      {{ cropTxt(item.title) }}
+      {{ cropTxt(item.title, 30) }}
     </div>
     <div class="discussion__date">
       {{ $moment(item.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
@@ -54,7 +54,7 @@
         <button class="bottom__comment">
           <img
             src="~assets/img/ui/comment.svg"
-            alt=""
+            alt="comment"
           >
         </button>
         <div class="bottom__counter">
@@ -63,12 +63,12 @@
         <button class="bottom__like">
           <span
             class="icon-heart_fill bottom__like"
-            :class="{'bottom__like_choosen': item.liked}"
+            :class="{'bottom__like_chosen': isLiked}"
             @click="toggleLikeOnDiscussion(item.id)"
           />
         </button>
         <div class="bottom__counter bottom__counter_right">
-          {{ item.amountLikes }}
+          {{ amountLikes }}
         </div>
       </div>
     </div>
@@ -84,57 +84,48 @@ export default {
   },
   data() {
     return {
+      amountLikes: 0,
+      isLiked: false,
       isHovering: false,
+      isFavorite: false,
     };
   },
+  mounted() {
+    this.amountLikes = this.item.amountLikes;
+    this.isLiked = !!Object.keys(this.item.liked || {}).length;
+    this.isFavorite = !!Object.keys(this.item.star || {}).length;
+  },
   methods: {
-    favoriteStarSrc(item) {
-      if (item && item.star) return require('~/assets/img/ui/star_checked.svg');
-      return require('~/assets/img/ui/star_simple.svg');
-    },
-    favoriteStarAlt(item) {
-      if (item && item.star) return 'checkedStar';
-      return 'simpleStar';
-    },
     authorAvatarSrc(item) {
       if (item && item.author.avatar.url) return item.author.avatar.url;
       return require('~/assets/img/app/avatar_empty.png');
     },
-    authorFirstName(item) {
-      if (item && item.author.firstName) return item.author.firstName;
+    getAuthorName(item) {
+      const { firstName, lastName } = item.author;
+      if (firstName || lastName) return `${firstName} ${lastName}`;
       return this.$t('user.nameless');
-    },
-    authorLastName(item) {
-      if (item && item.author.lastName) return item.author.lastName;
-      return '';
     },
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
     },
     async toggleFavorite(discussionId) {
-      if (this.item && this.item.star) {
-        await this.$store.dispatch('discussions/toggleStarOnDiscussion', { id: discussionId, like: false });
-      } if (this.item && !this.item.star) {
-        await this.$store.dispatch('discussions/toggleStarOnDiscussion', { id: discussionId, like: true });
-      }
-      await this.getDiscussions();
-    },
-    cropTxt(str) {
-      const maxLength = 80;
-      if (str.length > maxLength) str = `${str.slice(0, maxLength)}...`;
-      return str;
-    },
-    async getDiscussions() {
-      await this.$store.dispatch('discussions/getDiscussions');
+      await this.$store.dispatch('discussions/toggleStarOnDiscussion', {
+        id: discussionId,
+        like: !this.isFavorite,
+      });
+      this.isFavorite = !this.isFavorite;
     },
     async toggleLikeOnDiscussion(discussionId) {
-      console.log(this.item.liked);
-      if (this.item && this.item.liked) {
-        await this.$store.dispatch('discussions/toggleLikeOnDiscussion', { id: discussionId, like: false });
-      } if (this.item && !this.item.liked) {
-        await this.$store.dispatch('discussions/toggleLikeOnDiscussion', { id: discussionId, like: true });
-      }
-      await this.getDiscussions();
+      await this.$store.dispatch('discussions/toggleLikeOnDiscussion', {
+        id: discussionId,
+        like: !this.isLiked,
+      });
+      this.amountLikes = !this.isLiked ? this.amountLikes + 1 : this.amountLikes - 1;
+      this.isLiked = !this.isLiked;
+    },
+    cropTxt(str, maxLength = 80) {
+      if (str.length > maxLength) str = `${str.slice(0, maxLength)}...`;
+      return str;
     },
   },
 };
@@ -221,11 +212,8 @@ export default {
       &:hover {
         color: #0083C7;
       }
-      &_choosen {
+      &_chosen {
         color: #0083C7;
-        &:hover {
-          color: #E9EDF2;
-        }
       }
     }
     &__arrow {

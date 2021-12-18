@@ -25,7 +25,7 @@ export default {
     try {
       const response = await this.$axios.$post('/v1/discussion/create', payload);
       commit('setCurrentDiscussion', response.result);
-      return response.result;
+      return response;
     } catch (e) {
       return console.log(e);
     }
@@ -60,10 +60,9 @@ export default {
 
   async toggleStarOnDiscussion({ commit }, { id, like }) {
     try {
-      let response = '';
-      if (like) response = await this.$axios.$post(`/v1/discussion/${id}/star`);
-      else response = await this.$axios.$delete(`/v1/discussion/${id}/star`);
-      return response.result;
+      if (like) await this.$axios.$post(`/v1/discussion/${id}/star`);
+      else await this.$axios.$delete(`/v1/discussion/${id}/star`);
+      return true;
     } catch (e) {
       return console.log(e);
     }
@@ -71,10 +70,9 @@ export default {
 
   async toggleLikeOnDiscussion({ commit }, { id, like }) {
     try {
-      let response = '';
-      if (like) response = await this.$axios.$post(`/v1/discussion/${id}/like`);
-      else response = await this.$axios.$delete(`/v1/discussion/${id}/like`);
-      return response.result;
+      if (like) await this.$axios.$post(`/v1/discussion/${id}/like`);
+      else await this.$axios.$delete(`/v1/discussion/${id}/like`);
+      return true;
     } catch (e) {
       return console.log(e);
     }

@@ -26,7 +26,6 @@
         id="textarea"
         :value="mode === 'convertDate' ? convertDate(value) : value"
         class="ctm-field__textarea"
-        :class="{'ctm-field__textarea__add-discussion' : mode === 'add-discussion'}"
         :placeholder="placeholder"
         @input="input"
       />
@@ -147,19 +146,24 @@ export default {
     z-index: 120;
   }
   &__textarea {
+    @include text-simple();
+    width: 100%;
+    height: 100%;
+
     padding: 10px 20px;
     border-radius: 6px;
-    height: 214px;
-    width: 100%;
-    border: 0;
+    border: none;
+
+    color: $black700;
+
     background-color: $black0;
     resize: none;
     &::placeholder {
-      color: $black200;
+      color: $black300;
     }
-    &__add-discussion {
-      width: 574px;
-      height: 174px;
+    &:focus {
+      background: $white;
+      border: 1px solid #0083C7;
     }
   }
     &__right {
@@ -190,6 +194,7 @@ export default {
     align-items: center;
     position: relative;
     width: 100%;
+    height: 100%;
   }
   &__header {
     letter-spacing: -0.025em;
