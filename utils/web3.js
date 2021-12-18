@@ -107,29 +107,6 @@ const sendTransaction = async (_method, abiName, _abi, _address, params) => {
   });
 };
 
-// TODO: проверить работоспособность методы выше. если везде все окей - вырезать
-// export const sendTransaction = async (_method, _abi, _address, payload) => {
-//   if (!web3Wallet) {
-//     console.error('Provider is null!');
-//     return error(errorCodes.ProviderIsNull, 'Provider is null');
-//   }
-//   const accountAddress = account.address;
-//   const inst = new web3Wallet.eth.Contract(_abi, _address);
-//   const gasPrice = await web3Wallet.eth.getGasPrice();
-//   const functionResult = inst.methods[_method].apply(null, payload);
-//   const data = functionResult.encodeABI();
-//   const gasEstimate = await functionResult.estimateGas({ from: accountAddress }); // execution reverted
-//   const transactionData = {
-//     to: _address,
-//     from: accountAddress,
-//     data,
-//     gasPrice,
-//     gas: gasEstimate,
-//   };
-//   console.log(transactionData);
-//   return await web3Wallet.eth.sendTransaction(transactionData);
-// };
-
 export const fetchContractData = async (_method, abiName, _abi, _address, _params) => {
   try {
     const inst = getContractInstance(abiName, _abi, _address);
@@ -163,8 +140,8 @@ export const connectToMetamask = async () => {
       return error(errorCodes.MetamaskIsNotInstalled);
     }
     web3Wallet = new Web3(ethereum);
-    const chainId = await web3Wallet.eth.net.getId();
     await ethereum.request({ method: 'eth_requestAccounts' });
+    const chainId = await web3Wallet.eth.net.getId();
     if (isProd() && ![+ChainsId.ETH_MAIN, 56].includes(+chainId)) {
       return error(errorCodes.WrongChainId, 'Wrong blockchain in metamask', 'Current site work on mainnet. Please change network.');
     }
@@ -175,15 +152,17 @@ export const connectToMetamask = async () => {
     account.chainId = chainId;
     return success(account);
   } catch (e) {
-    if (e.message.indexOf('eth_requestAccounts') !== -1) {
+    // if (e.message.indexOf('eth_requestAccounts') !== -1) {
+    if (e.message.match(/already processing/i)) {
       showToast('Metamask connection', 'Please open metamask to connect', 'danger');
+    } else {
+      console.log(e.message);
     }
     return error(errorCodes.ConnectToMetamaskError, '', e);
   }
 };
 
 export const handleMetamaskStatus = (callback) => {
-  console.log('handle status <<');
   isHandlingStatus = true;
   const { ethereum } = window;
   ethereum.on('chainChanged', callback);

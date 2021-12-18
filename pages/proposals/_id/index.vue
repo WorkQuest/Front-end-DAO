@@ -31,7 +31,7 @@
               <span>{{ title }}</span>
             </div>
             <div class="header__subtitle">
-              <span>{{ $moment(dateStart).format('lll') }} - {{ $moment(dateEnd).format('lll') }}</span>
+              <span v-if="dateStart && dateEnd">{{ $moment(dateStart).format('lll') }} - {{ $moment(dateEnd).format('lll') }}</span>
             </div>
           </div>
           <div class="info__transactions transactions">
@@ -297,6 +297,7 @@ export default {
       vote: null,
       isDescending: true,
       isActive: true,
+      isFirstLoading: true,
     };
   },
   computed: {
@@ -324,6 +325,7 @@ export default {
   },
   watch: {
     async isConnected(newVal) {
+      if (this.isFirstLoading) return;
       if (!newVal) {
         this.resetDataFromContract();
         return;
@@ -359,8 +361,8 @@ export default {
     this.title = card.title;
     this.description = card.description;
     this.hash = card.txHash;
-    this.dateStart = this.$moment(new Date(card.timestamp * 1000)).format('lll');
-    this.dateStart = this.$moment(new Date(card.timestamp * 1000 + card.votingPeriod)).format('lll');
+    this.dateStart = new Date(card.timestamp * 1000);
+    this.dateEnd = new Date(card.timestamp * 1000 + card.votingPeriod);
     let i = 1;
     // eslint-disable-next-line no-restricted-syntax
     for (const media of card.medias) {
@@ -378,6 +380,7 @@ export default {
         ...vote,
       });
     }
+    this.isFirstLoading = false;
     this.SetLoader(false);
   },
   methods: {

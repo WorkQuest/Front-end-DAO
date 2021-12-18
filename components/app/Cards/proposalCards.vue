@@ -66,7 +66,7 @@
             v-if="card.status !== 0"
             class="card__date"
           >
-            {{ $moment(new Date(card.timestamp * 1000)).format('ll') }} - {{ $moment(new Date(card.dateEnd)).format('ll') }}
+            {{ $moment(new Date(card.timestamp * 1000)).format('ll') }} - {{ $moment(new Date(card.timestamp * 1000 + card.votingPeriod)).format('ll') }}
           </div>
           <div
             class="card__about"
