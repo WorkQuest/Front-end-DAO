@@ -91,28 +91,13 @@
             >
           </button>
           <button
-            class="auth__btn auth__btn_google"
-            @click="redirectSocialLink('google')"
+            v-for="(item, key) in socials"
+            :key="key"
+            class="auth__btn"
+            :class="`auth__btn_${item}`"
+            @click="redirectSocialLink(item)"
           >
-            <span class="icon-google" />
-          </button>
-          <button
-            class="auth__btn auth__btn_twitter"
-            @click="redirectSocialLink('twitter')"
-          >
-            <span class="icon-twitter" />
-          </button>
-          <button
-            class="auth__btn auth__btn_facebook"
-            @click="redirectSocialLink('facebook')"
-          >
-            <span class="icon-facebook" />
-          </button>
-          <button
-            class="auth__btn auth__btn_LinkedIn"
-            @click="redirectSocialLink('linkedin')"
-          >
-            <span class="icon-LinkedIn" />
+            <span :class="`icon-${item === 'linkedin' ? 'LinkedIn' : item}`" />
           </button>
         </div>
       </div>
@@ -138,6 +123,9 @@ export default {
     ...mapGetters({
       userData: 'user/getUserData',
     }),
+    socials() {
+      return ['google', 'twitter', 'facebook', 'linkedin'];
+    },
   },
   async mounted() {
     this.SetLoader(true);
@@ -290,7 +278,7 @@ export default {
         color: #3B67D7;
       }
     }
-    &_LinkedIn {
+    &_linkedin {
       span:before {
         font-size: 18px;
         color: #0A7EEA;
