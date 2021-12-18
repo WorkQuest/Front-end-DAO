@@ -409,12 +409,12 @@
     "votingTopic": "Voting topic",
     "votingTopicField": "voting topic",
     "numberOfVotes": "Number of Votes",
-    "votingStart": "Voting Start",
+    "votingStart": "Voting start",
     "votingStartField": "voting start",
     "undelegate": "Undelegate",
     "shure": "Are you shure to undelegate {n}?",
     "delegate": "Delegate",
-    "investorAddress": "Investor adress",
+    "investorAddress": "Investor address",
     "tokensNumber": "Tokens Number",
     "tokensDelegated": "Enter number of tokens that will be delegated",
     "max": "Maximum",
@@ -442,7 +442,11 @@
     "imageLoadedSuccessful": "Image loaded successful",
     "pleasePressSaveButton": "Please press save button",
     "saved": "Saved",
-    "userDataHasBeenSaved": "User data has been saved"
+    "userDataHasBeenSaved": "User data has been saved",
+    "signWorkQuest": {
+      "title": "Connection to Work Quest",
+      "desc": "If you already have an account created on one of the Work Quest products, you can log in using its login details"
+    }
   },
   "ui": {
     "workers": "Workers",
@@ -535,6 +539,7 @@
     "cards": {
       "status": {
         "pending": "Pending",
+        "active": "Active",
         "rejected": "Rejected",
         "accepted": "Accepted"
       }
@@ -557,7 +562,7 @@
     "voted": "Voted",
     "ui": {
       "addTime": "Added time",
-      "allProposals": "All proposals",
+      "all": "All",
       "yes": "Yes",
       "no": "No"
     },
@@ -568,6 +573,14 @@
       "date": "Date",
       "address": "Address",
       "vote": "Vote"
+    },
+    "executeVoting": "Execute voting",
+    "proposalIsExpired": "Proposal is expired",
+    "errors": {
+      "addProposal": "Add proposal error",
+      "voteError": "Voting error",
+      "votingTimeIsExpired": "Voting time is expired",
+      "notEnoughFunds": "You must have delegated at least {a} WQT. Delegated: {b} WQT."
     }
   },
   "settings": {
@@ -922,7 +935,11 @@
     "faq5": "How is the average annual return (APR) calculated?"
   },
   "errors": {
-    "incorrectPass" : "Oops, something went wrong. Check the data and try again."
+    "incorrectPass" : "Oops, something went wrong. Check the data and try again.",
+    "delegate": {
+      "title": "Delegate error",
+      "notEnoughBalance": "Not enough balance to delegate"
+    }
   },
   "discussions": {
     "showComments": "Show comments",
