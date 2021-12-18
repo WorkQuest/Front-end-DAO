@@ -4,7 +4,7 @@
     :title="$t('modals.addProposal')"
   >
     <div class="addProposal__content content">
-      <validation-observer v-slot="{handleSubmit, valid}">
+      <validation-observer v-slot="{handleSubmit, validated, passed, invalid}">
         <div class="content__voting">
           <div class="content__field">
             <base-field
@@ -12,43 +12,86 @@
               v-model="votingTopicInput"
               :placeholder="$t('modals.votingTopic')"
               :label="$t('modals.votingTopic')"
-              rules="required|maxLength=200"
+              rules="required"
               :name="$t('modals.votingTopicField')"
             />
+          </div>
+          <div class="content__field field">
+            <div class="field__picker picker">
+              <label
+                for="runtime__picker"
+                class="picker__header"
+              >
+                {{ $t('modals.numberOfVotes') }}
+              </label>
+              <div
+                id="runtime__picker"
+                class="picker__container"
+              >
+                <div class="btn__container btn__left">
+                  <button
+                    v-if="pickerValue > 0"
+                    class="picker__btn"
+                    @click="prevValue"
+                  >
+                    <span class="icon icon__caret icon-caret_left" />
+                  </button>
+                </div>
+                <div class="picker__body">
+                  <base-field
+                    v-model="pickerValue"
+                    type="number"
+                    value="Number"
+                    class="picker__field"
+                    text-align="center"
+                    is-hide-error
+                  />
+                </div>
+                <div class="btn__container btn__right">
+                  <button
+                    class="picker__btn"
+                    @click="addValue()"
+                  >
+                    <span class="icon icon__caret icon-caret_right" />
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="content__dates">
           <div class="content__field">
-            {{ $t('modals.votingStart') }}
-            <div class="date-field">
-              {{ votingStartInput }}
-            </div>
+            <base-field
+              v-model="votingStartInput"
+              :placeholder="'DD/MM/YYYY'"
+              :label="$t('modals.votingStart')"
+              rules="required|fullDate"
+              :name="$t('modals.votingStartField')"
+            />
           </div>
           <div class="content__field">
-            {{ $t('modals.votingEnd') }}
-            <div class="date-field">
-              {{ votingEndInput }}
-            </div>
+            <base-field
+              v-model="votingEndInput"
+              :placeholder="'DD/MM/YYYY'"
+              :label="$t('modals.votingEnd')"
+              rules="required|fullDate"
+              :name="$t('modals.votingEndField')"
+            />
           </div>
         </div>
         <div class="content__field field">
           <div class="content-field__description description">
             <label
-              for="description"
+              for="descriptionInput"
               class="description__header"
             >
               {{ $t('modals.description') }}
             </label>
-            <!-- TODO: max length to rules -->
-            <validation-provider rules="required">
-              <textarea
-                id="description"
-                v-model="descriptionInput"
-                class="description__textarea"
-                name="description"
-                maxLength="2000"
-              />
-            </validation-provider>
+            <textarea
+              id="descriptionInput"
+              v-model="descriptionInput"
+              class="description__textarea"
+            />
           </div>
         </div>
         <div class="content__field field">
@@ -60,20 +103,11 @@
               :is-show-download="false"
               rules="required|alpha_num"
               :name="$t('modals.recepientAddressField')"
-              @remove="removeDocument"
             >
               <template v-slot:actionButton>
-                <input
-                  ref="fileUpload"
-                  class="uploader__btn_hidden"
-                  type="file"
-                  accept="image/*, .doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, .pdf"
-                  @change="handleFileSelected($event)"
-                >
                 <base-btn
                   mode="outline"
                   class="uploader__btn"
-                  @click="$refs.fileUpload.click()"
                 >
                   {{ $t('meta.addFile') }}
                   <template v-slot:right>
@@ -88,14 +122,13 @@
           <base-btn
             mode="outline"
             class="action__cancel"
-            @click="close()"
+            @click="hide()"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
           <base-btn
             class="action__add"
-            :disabled="!valid"
-            @click="handleSubmit(addProposal)"
+            :disabled="validated || passed || invalid "
           >
             {{ $t('meta.addProposal') }}
           </base-btn>
@@ -107,8 +140,6 @@
 
 <script>
 
-import { mapGetters } from 'vuex';
-
 export default {
   name: 'ModalAddProposal',
   data() {
@@ -118,31 +149,56 @@ export default {
       votingStartInput: '',
       votingEndInput: '',
       descriptionInput: '',
-      fileId: 0,
-      documents: [],
-      docsLimit: 10,
-      imagesLimit: 10,
+      documents0: [],
+      documents: [
+        {
+          id: '1',
+          type: 'doc',
+          name: 'some_document1.pdf',
+          size: '1.2mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
+          id: '2',
+          type: 'doc',
+          name: 'some_doc2.pdf',
+          size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
+          id: '3',
+          type: 'doc',
+          name: 'some_docum2.pdf',
+          size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
+          id: '4',
+          type: 'img',
+          name: 'some_doc2.pdf',
+          size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
+          id: '5',
+          type: 'img',
+          name: 'some_doc2.pdf',
+          size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
+          id: '6',
+          type: 'img',
+          name: 'some_doc2.pdf',
+          size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        }, {
+          id: '7',
+          type: 'img',
+          name: 'some_doc2.pdf',
+          size: '1.5mb',
+          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
+        },
+      ],
     };
   },
-  computed: {
-    ...mapGetters({
-      isConnected: 'web3/getWalletIsConnected',
-    }),
-  },
-  watch: {
-    isConnected() {
-      this.close();
-    },
-  },
-  async mounted() {
-    if (!this.isConnected) await this.$store.dispatch('web3/checkMetamaskStatus');
-
-    const start = this.$moment();
-    this.votingStartInput = this.$moment(start).format('DD/MM/YYYY');
-    this.votingEndInput = this.$moment(start).add(1, 'M').format('DD/MM/YYYY');
-  },
   methods: {
-    close() {
+    hide() {
       this.CloseModal();
     },
     addValue(el) {
@@ -150,50 +206,6 @@ export default {
     },
     prevValue(el) {
       this.pickerValue = Number(this.pickerValue) - 1;
-    },
-    async addProposal() {
-      this.SetLoader(true);
-      const res = await this.$store.dispatch('web3/addProposal', this.descriptionInput);
-      console.log(res);
-      if (res.ok) {
-        this.close();
-      }
-      this.SetLoader(false);
-    },
-    removeDocument(id) {
-      this.documents = this.documents.filter((item) => item.id !== id);
-    },
-    handleFileSelected(e) {
-      if (!e.target.files[0]) return;
-      const file = e.target.files[0];
-      const type = file.type.split('/').shift() === 'image' ? 'img' : 'doc';
-
-      if (type === 'img' && this.documents.filter((item) => item.type === 'img').length >= this.imagesLimit) {
-        return;
-      }
-      if (type === 'doc' && this.documents.filter((item) => item.type === 'doc').length >= this.docsLimit) {
-        return;
-      }
-
-      const { size, name } = file;
-      const sizeKb = size / 1000;
-      const sizeMb = sizeKb / 1000;
-      if (sizeMb > 20) return; // more 20mb
-      let fileSize;
-      if (sizeMb < 0.1) {
-        fileSize = `${Math.round(sizeKb * 10) / 10}kb`;
-      } else {
-        fileSize = `${Math.round(sizeMb * 10) / 10}mb`;
-      }
-      this.documents.push({
-        id: this.fileId,
-        img: URL.createObjectURL(file),
-        type,
-        file,
-        name,
-        size: fileSize,
-      });
-      this.fileId += 1;
     },
   },
 };
@@ -211,7 +223,10 @@ export default {
 
 .content {
   &__voting {
-    width: 100%;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    align-items: flex-start;
+    grid-gap: 25px;
   }
   &__dates {
     display: grid;
@@ -320,23 +335,8 @@ export default {
     width: 162px !important;
     margin-left: auto;
     margin-top: 15px;
-    &_hidden {
-      display: none;
-    }
   }
 }
-
-.date-field {
-  margin-bottom: 25px;
-  margin-top: 5px;
-  background: #F7F8FA;
-  border-radius: 6px;
-  height: 46px;
-  padding: 12.5px 15px;
-  font-size: 16px;
-  line-height: 130%;
-}
-
 @include _767 {
   .addProposal {
     min-width: 550px;
