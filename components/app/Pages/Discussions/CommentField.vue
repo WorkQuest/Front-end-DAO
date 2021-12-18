@@ -105,7 +105,7 @@
         :level="3"
       />
     </div>
-    <base-btn v-if="array[array.length - 1].id === data.id && array.length > subCommentsOnPage">
+    <base-btn v-if="isShowBtnMoreComments">
       Show more comments
     </base-btn>
   </div>
@@ -146,6 +146,9 @@ export default {
     ...mapGetters({
       currentDiscussion: 'discussions/getCurrentDiscussion',
     }),
+    isShowBtnMoreComments() {
+      return this.array[this.array.length - 1].id === this.data.id && this.array.length > this.subCommentsOnPage;
+    },
   },
   methods: {
     async loadSubs(rootId) {
