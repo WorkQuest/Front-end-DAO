@@ -3,6 +3,7 @@ export default {
   getCurrentDiscussionAuthorAvatarUrl: (state) => state.currentDiscussion?.author?.avatar?.url || null,
   getCurrentDiscussion: (state) => state.currentDiscussion,
   getDiscussions: (state) => state.discussions,
+  getDiscussionsCount: (state) => state.discussionsCount,
   getUsersLikesOnComment: (state) => state.usersLikesOnComment,
   getSubCommentsLevel2: (state) => state.subCommentLevel2,
   getSubCommentsLevel3: (state) => state.subCommentLevel3,

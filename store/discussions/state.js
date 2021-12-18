@@ -1,7 +1,7 @@
 export default () => ({
   currentDiscussion: {},
   discussions: {},
-  discussionCount: '',
+  discussionsCount: 0,
   usersLikesOnComment: {},
   subCommentLevel2: [],
   subCommentLevel3: [],

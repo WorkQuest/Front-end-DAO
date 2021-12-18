@@ -2,9 +2,11 @@ export default {
   setCurrentDiscussion(state, data) {
     state.currentDiscussion = data;
   },
-  setDiscussions(state, data) {
-    state.discussions = data.discussions;
-    state.discussionCount = data.count;
+  setDiscussions(state, value) {
+    state.discussions = value;
+  },
+  setDiscussionsCount(state, value) {
+    state.discussionsCount = value;
   },
   setUsersLikesOnComment(state, data) {
     state.usersLikesOnComment = data;

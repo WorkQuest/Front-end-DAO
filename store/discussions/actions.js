@@ -1,9 +1,13 @@
 export default {
-  async getDiscussions({ commit }, additionalValue) {
+  async getAllDiscussions({ commit }, queries) {
     try {
-      const response = await this.$axios.$get(`/v1/discussions?${additionalValue || 'limit=8'}`);
-      commit('setDiscussions', response.result);
-      return response.result;
+      if (!queries.q) delete queries.q;
+      const { result } = await this.$axios.$get('/v1/discussions', {
+        params: { ...queries },
+      });
+      commit('setDiscussions', result.discussions);
+      commit('setDiscussionsCount', result.count);
+      return result;
     } catch (e) {
       return console.log(e);
     }

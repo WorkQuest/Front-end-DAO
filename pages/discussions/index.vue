@@ -10,7 +10,7 @@
         :is-hide-error="true"
         :is-search="true"
         :placeholder="$t('discussions.seacrhField')"
-        @input="discussionFilter"
+        @input="searchDiscussion"
       />
       <base-btn
         class="discussions__btn"
@@ -48,50 +48,55 @@ import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
 
 export default {
-
+  name: 'Discussions',
   data() {
     return {
-      search: '',
       page: 1,
-      perPager: 8,
-      discussionObjects: {},
+      limit: 8,
+      offset: 0,
+      search: '',
     };
   },
   computed: {
     ...mapGetters({
       discussions: 'discussions/getDiscussions',
+      discussionsCount: 'discussions/getDiscussionsCount',
     }),
     totalPages() {
-      if (this.discussionObjects.discussions) {
-        return Math.ceil(this.discussionObjects.count / this.perPager);
-      }
-      return 0;
+      return Math.ceil(this.discussionsCount / this.limit);
     },
   },
   watch: {
     async page() {
       this.SetLoader(true);
-      let payload = `limit=${this.perPager}&offset=${(this.page - 1) * this.perPager}`;
-      payload += this.search.trim().length ? `&q=${this.search}` : '';
-      await this.getDiscussions(payload);
+      this.offset = (this.page - 1) * this.limit;
+      await this.$store.dispatch('discussions/getAllDiscussions', {
+        limit: this.limit,
+        offset: this.offset,
+        q: this.search.trim(),
+      });
       this.SetLoader(false);
     },
   },
-  async mounted() {
+  mounted() {
     this.SetLoader(true);
-    await this.getDiscussions();
+    this.$store.dispatch('discussions/getAllDiscussions', {
+      limit: this.limit,
+      offset: this.offset,
+    });
     this.SetLoader(false);
   },
   methods: {
-    async discussionFilter() {
+    async searchDiscussion() {
       this.SetLoader(true);
-      let payload = `limit=${this.perPager}&offset=${(this.page - 1) * this.perPager}`;
-      payload = this.search.trim().length ? `&q=${this.search}` : '';
-      await this.getDiscussions(payload);
+      this.page = 1;
+      this.offset = 0;
+      await this.$store.dispatch('discussions/getAllDiscussions', {
+        limit: this.limit,
+        offset: this.offset,
+        q: this.search.trim(),
+      });
       this.SetLoader(false);
-    },
-    async getDiscussions(payload) {
-      this.discussionObjects = await this.$store.dispatch('discussions/getDiscussions', payload);
     },
     openModalAddDiscussion() {
       this.ShowModal({
