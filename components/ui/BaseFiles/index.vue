@@ -24,15 +24,16 @@
         </div>
       </div>
       <div class="file__actions actions">
-        <div
+        <a
           v-if="isShowDownload"
           class="actions__download download"
-          @click="download(item.id)"
+          :href="item.downloadUrl"
+          target="_blank"
         >
           <div class="download__icon icon">
             <span class="icon__download icon-download" />
           </div>
-        </div>
+        </a>
         <div
           v-else
           class="actions__close icon"

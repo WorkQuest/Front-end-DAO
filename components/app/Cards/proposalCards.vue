@@ -66,7 +66,7 @@
             v-if="card.status !== 0"
             class="card__date"
           >
-            {{ $moment(new Date(card.dateStart)).format('ll') }} - {{ $moment(new Date(card.dateEnd)).format('ll') }}
+            {{ $moment(new Date(card.timestamp * 1000)).format('ll') }} - {{ $moment(new Date(card.dateEnd)).format('ll') }}
           </div>
           <div
             class="card__about"
@@ -95,7 +95,7 @@
     </div>
     <base-pager
       v-if="totalPages > 1"
-      v-model="pages"
+      v-model="currentPage"
       class="main__pagination"
       :total-pages="totalPages"
     />
@@ -113,7 +113,6 @@ export default {
     return {
       tab: 1,
       currentPage: 1,
-      pages: 1,
       search: '',
       timeoutIdSearch: null,
       isDescending: true,
@@ -159,10 +158,10 @@ export default {
       };
     },
   },
-  // watch: {
-  //   async currentPage(newVal) {
-  //     await this.loadPage(newVal);
-  //   },
+  watch: {
+    async currentPage(newVal) {
+      await this.loadPage(newVal);
+    },
   //   async search(newVal) {
   //     if (newVal) await this.loadPage(1);
   //   },
@@ -172,14 +171,14 @@ export default {
   //   async isDescending(newVal, prevVal) {
   //     if (newVal !== prevVal) await this.loadPage(1);
   //   },
-  // },
+  },
   async mounted() {
     this.SetLoader(true);
-    this.lastPage = this.prevFilters.lastPage || 1;
+    this.currentPage = this.prevFilters.lastPage || 1;
     this.search = this.prevFilters.search || '';
     this.ddValue = this.prevFilters.sortVoteStatus || 2;
     this.isDescending = this.prevFilters.isDescending || true;
-    await this.loadPage(1);
+    await this.loadPage(this.currentPage);
     this.SetLoader(false);
   },
   beforeDestroy() {
@@ -398,7 +397,7 @@ export default {
     }
     &_active {
       background-color: #f6f8fa;
-      color: #c6fcbc;
+      color: $blue;
     }
     &_rejected {
       background-color: #fcebeb;

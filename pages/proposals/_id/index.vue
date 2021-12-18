@@ -40,20 +40,20 @@
                 {{ $t('proposal.hashTitle') }}
               </div>
               <!-- TODO: route to etherscan rinkeby/mainnet tx created hash from api -->
-              <nuxt-link
-                to="/proposals/1"
+              <a
+                :href="getHashLink()"
                 class="hash__value"
+                target="_blank"
               >
                 {{ hash.length ? modifyHash(hash) : '...' }}
-              </nuxt-link>
+              </a>
             </div>
             <div class="transactions__files files">
               <div class="files__title">
                 {{ $t('proposal.filesTitle') }}
               </div>
-              <base-uploader
+              <base-files
                 class="files__container"
-                type="files"
                 :items="documents"
                 :is-show-empty="true"
               />
@@ -234,6 +234,7 @@
 <script>
 import moment from 'moment';
 import { mapGetters } from 'vuex';
+import BigNumber from 'bignumber.js';
 import { proposalStatuses, Chains } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 
@@ -258,34 +259,20 @@ export default {
         },
       ],
       historyTableData: [
-        {
-          number: '1',
-          hash: '11400714819323198485',
-          date: moment('20210615', 'YYYYMMDD').format('ll'),
-          address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
-          vote: true,
-        },
-        {
-          number: '2',
-          hash: '11400714819323198485',
-          date: moment('20210720', 'YYYYMMDD').format('ll'),
-          address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
-          vote: true,
-        },
-        {
-          number: '3',
-          hash: '11400714819323198485',
-          date: moment('20210617', 'YYYYMMDD').format('ll'),
-          address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
-          vote: false,
-        },
-        {
-          number: '4',
-          hash: '11400714819323198485',
-          date: moment('20210520', 'YYYYMMDD').format('ll'),
-          address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
-          vote: false,
-        },
+        // {
+        //   number: '1',
+        //   hash: '11400714819323198485',
+        //   date: moment('20210615', 'YYYYMMDD').format('ll'),
+        //   address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
+        //   vote: true,
+        // },
+        // {
+        //   number: '4',
+        //   hash: '11400714819323198485',
+        //   date: moment('20210520', 'YYYYMMDD').format('ll'),
+        //   address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
+        //   vote: false,
+        // },
       ],
       idCard: null,
       status: 0,
@@ -293,15 +280,7 @@ export default {
       dateEnd: '',
       title: '',
       ddValue: 0,
-      documents: [
-        {
-          id: '1',
-          type: 'doc',
-          name: 'some_document1.pdf',
-          size: '1.2mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        },
-      ],
+      documents: [],
       hash: '',
       description: null,
       results: {
@@ -345,94 +324,138 @@ export default {
   },
   watch: {
     async isConnected(newVal) {
-      if (!newVal) return;
+      if (!newVal) {
+        this.resetDataFromContract();
+        return;
+      }
       this.SetLoader(true);
-      await this.checkRole();
+      await this.loadCard();
       this.SetLoader(false);
     },
   },
   async mounted() {
     this.SetLoader(true);
     this.idCard = +this.$route.params.id;
+
+    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
     if (this.isConnected) {
-      await this.checkRole();
+      await this.loadCard();
     }
 
     let card = null;
-    for (let i = 0; i < this.cards.length; i += 1) {
-      if (this.cards[i].proposalId === this.idCard) {
-        card = this.cards[i];
-        break;
-      }
-    }
-    if (card === null) {
-      card = await this.$store.dispatch('proposals/getProposal', this.idCard);
-    }
+    let voteData = null;
+    // for (let i = 0; i < this.cards.length; i += 1) {
+    //   if (this.cards[i].proposalId === this.idCard) {
+    //     card = this.cards[i];
+    //     break;
+    //   }
+    // }
+    // if (card === null) {
+    const { result } = await this.$store.dispatch('proposals/getProposal', this.idCard);
+    card = result.proposal;
+    voteData = result.vote;
+    // }
     this.status = card.status;
     this.title = card.title;
     this.description = card.description;
-    // this.results = {}
+    this.hash = card.txHash;
+    this.dateStart = this.$moment(new Date(card.timestamp * 1000)).format('lll');
+    this.dateStart = this.$moment(new Date(card.timestamp * 1000 + card.votingPeriod)).format('lll');
+    let i = 1;
+    // eslint-disable-next-line no-restricted-syntax
+    for (const media of card.medias) {
+      this.documents.push({
+        id: i,
+        name: `Document ${i}`,
+        type: 'doc',
+        downloadUrl: media.url,
+      });
+      i += 1;
+    }
+    // eslint-disable-next-line no-restricted-syntax
+    for (const vote of voteData.voting) {
+      this.historyTableData.push({
+        ...vote,
+      });
+    }
     this.SetLoader(false);
   },
   methods: {
+    getHashLink() {
+      if (!this.hash) return '';
+      return process.env.PROD === 'true'
+        ? `https://rinkeby.etherscan.io/tx/${this.hash}` : `https://rinkeby.etherscan.io/tx/${this.hash}`;
+    },
     async checkRole() { // TODO: remove check chairperson and move logic to admin panel
       await this.$store.dispatch('web3/isChairpersonRole');
     },
     async executeVoting() {
       this.SetLoader(true);
       if (!this.isChairperson) return;
-      await this.$store.dispatch('web3/executeVoting', this.idCard);
-      // todo: update info from event
+      const res = await this.$store.dispatch('web3/executeVoting', this.idCard);
+      console.log('Voting response:', res);
+
+      // TODO: check if res ok - reload data
+      // if (res.ok)
+      await this.loadCard();
       this.SetLoader(false);
     },
-    // async loadCard() {
-    //   const [proposalRes] = await Promise.all([
-    //     this.$store.dispatch('web3/getProposalInfoById', this.idCard),
-    //     this.getReceipt(),
-    //   ]);
-    //   if (!proposalRes.ok) return;
-    //   const { result } = proposalRes.result;
-    //   console.log(result);
-    //   const {
-    //     forVotes, againstVotes, active, defeated, succeded, description, startTime, expireTime,
-    //   } = result;
-    //   const yes = +(new BigNumber(forVotes).shiftedBy(-18));
-    //   const no = +(new BigNumber(againstVotes).shiftedBy(-18));
-    //   this.results.votes.yes = yes;
-    //   this.results.votes.no = no;
-    //   const sumVotes = no + yes; // TODO: оставить код расчета голосов
-    //   if (sumVotes <= 0) {
-    //     this.results.percents.yes = 0;
-    //     this.results.percents.no = 0;
-    //   } else if (no - yes === no) {
-    //     this.results.percents.yes = 0;
-    //     this.results.percents.no = 100;
-    //   } else if (yes - no === yes) {
-    //     this.results.percents.yes = 100;
-    //     this.results.percents.no = 0;
-    //   } else {
-    //     if (yes > 0) {
-    //       this.results.percents.yes = +(new BigNumber((yes * 100) / sumVotes).decimalPlaces(1).toString());
-    //     } else this.results.percents.yes = 0;
-    //     if (no > 0) {
-    //       this.results.percents.no = +(new BigNumber((no * 100) / sumVotes).decimalPlaces(1).toString());
-    //     } else this.results.percents.no = 0;
-    //   }
-    //   const start = new Date(startTime * 1000);
-    //   const end = new Date(expireTime * 1000);
-    //   this.isActive = active;
-    //   if (active) {
-    //     this.status = 0;
-    //   } else if (defeated) {
-    //     this.status = 3;
-    //   } else {
-    //     this.status = succeded ? 2 : 1;
-    //   }
-    //   this.dateStart = start;
-    //   this.dateEnd = end;
-    //   this.description = description;
-    //   this.title = '*TITLE from back*';
-    // },
+    resetDataFromContract() {
+      console.log('Clear data');
+      this.results = {
+        percents: {
+          yes: 0,
+          no: 0,
+        },
+        votes: {
+          yes: 0,
+          no: 0,
+        },
+      };
+    },
+    async loadCard() {
+      const [proposalRes] = await Promise.all([
+        this.$store.dispatch('web3/getProposalInfoById', this.idCard),
+        this.getReceipt(),
+        this.checkRole(),
+      ]);
+      if (!proposalRes.ok) return;
+      const { result } = proposalRes.result;
+      console.log(result);
+      const {
+        forVotes, againstVotes, active, defeated, succeded,
+      } = result;
+      const yes = +(new BigNumber(forVotes).shiftedBy(-18));
+      const no = +(new BigNumber(againstVotes).shiftedBy(-18));
+      this.results.votes.yes = yes;
+      this.results.votes.no = no;
+      const sumVotes = no + yes;
+      if (sumVotes <= 0) {
+        this.results.percents.yes = 0;
+        this.results.percents.no = 0;
+      } else if (no - yes === no) {
+        this.results.percents.yes = 0;
+        this.results.percents.no = 100;
+      } else if (yes - no === yes) {
+        this.results.percents.yes = 100;
+        this.results.percents.no = 0;
+      } else {
+        if (yes > 0) {
+          this.results.percents.yes = +(new BigNumber((yes * 100) / sumVotes).decimalPlaces(1).toString());
+        } else this.results.percents.yes = 0;
+        if (no > 0) {
+          this.results.percents.no = +(new BigNumber((no * 100) / sumVotes).decimalPlaces(1).toString());
+        } else this.results.percents.no = 0;
+      }
+      this.isActive = active;
+      if (active) {
+        this.status = 0;
+      } else if (defeated) {
+        this.status = 3;
+      } else {
+        this.status = succeded ? 2 : 1;
+      }
+    },
     async getReceipt() {
       const { address } = await this.$store.dispatch('web3/getAccount');
       const res = await this.$store.dispatch('web3/getReceipt', { id: this.idCard, accountAddress: address });
@@ -623,7 +646,7 @@ export default {
     }
     &_active {
       background-color: #f6f8fa;
-      color: #c6fcbc;
+      color: $blue;
     }
     &_rejected {
       background-color: #fcebeb;
