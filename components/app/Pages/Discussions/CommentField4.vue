@@ -87,7 +87,9 @@ export default {
       currentDiscussion: 'discussions/getCurrentDiscussion',
     }),
     isShowBtnMoreComments() {
-      return this.array[this.array.length - 1].id === this.data.id && this.array[this.array.length - 1].rootComment.amountSubComments > this.subCommentsOnPage;
+      return this.array[this.array.length - 1].id === this.data.id
+          && this.array[this.array.length - 1].rootComment.amountSubComments > this.subCommentsOnPage
+          && this.array.length !== this.array[this.array.length - 1].rootComment.amountSubComments;
     },
   },
   methods: {
@@ -107,25 +109,15 @@ export default {
       this.$router.push(`/investors/${authorId}`);
     },
     async addSubCommentResponse(comment, level) {
-      if (!comment.rootCommentId) {
-        const payload = {
-          rootCommentId: comment.id,
-          text: this.subCommentInput,
-          medias: [],
-        };
-        await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
-        this.$parent.loadSubs(comment.id, level);
-      } else {
-        const payload = {
-          rootCommentId: comment.id,
-          text: this.subCommentInput,
-          medias: [],
-        };
-        await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
-        this.$parent.loadSubs(comment.rootCommentId, level);
-        this.isReply = false;
-        this.subCommentInput = '';
-      }
+      const payload = {
+        rootCommentId: comment.id,
+        text: this.subCommentInput,
+        medias: [],
+      };
+      await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
+      await this.$parent.loadSubs(comment.rootCommentId, level);
+      this.isReply = false;
+      this.subCommentInput = '';
     },
     async toggleLikeOnComment(comment, level) {
       if (comment && Object.keys(comment.commentLikes).length > 0) {
