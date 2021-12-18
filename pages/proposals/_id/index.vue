@@ -39,7 +39,6 @@
               <div class="hash__title">
                 {{ $t('proposal.hashTitle') }}
               </div>
-              <!-- TODO: route to etherscan rinkeby/mainnet tx created hash from api -->
               <a
                 :href="getHashLink()"
                 class="hash__value"
@@ -166,20 +165,17 @@
                 {{ $t('proposal.yes') }}
               </base-btn>
             </div>
-            <div
+            <base-btn
               v-else
+              mode="outline"
+              class="btn__voted"
+              :class="[
+                {'btn__voted_green': vote === true },
+                {'btn__voted_red': vote === false },
+              ]"
             >
-              <base-btn
-                mode="outline"
-                class="btn__voted"
-                :class="[
-                  {'btn__voted_green': vote === true },
-                  {'btn__voted_red': vote === false },
-                ]"
-              >
-                {{ $t('proposal.youVoted') }} {{ vote ? $t('proposal.yes') : $t('proposal.no') }}
-              </base-btn>
-            </div>
+              {{ $t('proposal.youVoted') }} {{ vote ? $t('proposal.yes') : $t('proposal.no') }}
+            </base-btn>
           </div>
         </div>
       </div>
@@ -232,7 +228,6 @@
 </template>
 
 <script>
-import moment from 'moment';
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import { proposalStatuses, Chains } from '~/utils/enums';
