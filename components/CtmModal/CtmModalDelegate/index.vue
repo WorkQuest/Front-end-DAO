@@ -5,18 +5,18 @@
   >
     <div class="delegate__content content">
       <validation-observer v-slot="{handleSubmit, valid}">
-        <div class="content__adress adress">
+        <div class="content__address address">
           <label
             for="investorAddress"
-            class="adress__label"
+            class="address__label"
           >{{ $t('modals.investorAddress') }}</label>
           <base-field
-            id="invsetorAdress"
+            id="invsetorAddress"
             disabled
-            :value="accountAddress.address"
-            class="adress__body"
+            :value="options.investorAddress"
+            class="address__body"
           >
-            {{ accountAddress.address }}
+            {{ options.investorAddress }}
           </base-field>
         </div>
         <div class="content__tokens tokens">
@@ -32,8 +32,7 @@
               id="tokensNumber"
               v-model="tokensAmount"
               class="footer__body"
-              placeholder="1000"
-              :type="'number'"
+              placeholder="10000"
               :name="$t('modals.tokensNumber')"
               :rules="`required${min}`"
             />
@@ -69,7 +68,6 @@ export default {
     return {
       tokensAmount: '',
       balance: 0,
-      accountAddress: '',
     };
   },
   computed: {
@@ -87,7 +85,6 @@ export default {
     },
   },
   async mounted() {
-    this.accountAddress = await this.$store.dispatch('web3/getAccount');
     const res = await this.$store.dispatch('web3/getBalance');
     if (res.ok) {
       this.balance = res.result;
@@ -101,24 +98,25 @@ export default {
       this.tokensAmount = this.balance;
     },
     async delegate() {
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!this.isConnected) return;
+      const connectionRes = await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      if (!connectionRes.ok) return;
+
       const { callback } = this.options;
       this.SetLoader(true);
-      const res = await this.$store.dispatch('web3/delegate', { address: this.accountAddress.address, amount: this.tokensAmount });
+      const res = await this.$store.dispatch('web3/delegate', { address: this.options.investorAddress, amount: this.tokensAmount });
       this.SetLoader(false);
       if (res.ok) {
-        await this.close();
         await this.$store.dispatch('main/showToast', {
           title: 'Delegate',
           text: `Delegated ${this.tokensAmount} WQT`,
         });
+        await this.close();
         if (callback) await callback();
       } else if (res.msg.includes('Not enough balance to delegate')) {
         await this.$store.dispatch('modals/show', {
           key: modals.status,
-          title: 'Delegate error', // TODO: to localization
-          subtitle: 'Not enough balance to delegate',
+          title: this.$t('errors.delegate.title'),
+          subtitle: this.$t('errors.delegate.notEnoughBalance'),
         });
       }
     },
