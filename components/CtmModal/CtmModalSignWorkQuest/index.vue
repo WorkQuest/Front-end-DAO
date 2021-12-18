@@ -17,15 +17,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-
 export default {
   name: 'ModalSignWorkQuest',
-  computed: {
-    ...mapGetters({
-      options: 'modals/getOptions',
-    }),
-  },
   methods: {
     async hide() {
       this.CloseModal();
