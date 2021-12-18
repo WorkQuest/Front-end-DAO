@@ -87,4 +87,11 @@ export default {
     border-radius: 6px;
   }
 }
+@include _767 {
+  .kyc {
+    &__header {
+      margin-left: 15px;
+    }
+  }
+}
 </style>

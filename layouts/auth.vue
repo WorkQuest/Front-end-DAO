@@ -136,16 +136,18 @@ export default {
       max-width: initial;
       justify-self: initial;
       padding: 0px 10px;
+      max-width: calc(100vw - 10px);
     }
     &__content {
       margin: 0 auto;
-      width: 470px;
+      width: 100%;
       align-items: center;
       padding-top: 30px;
     }
     &__right {
       grid-row: 1/2;
       grid-column: 1/3;
+      max-width: 100vw;
     }
     &__slogan {
       font-size: 32px;
