@@ -1,4 +1,5 @@
 <template>
+  <!-- Level1 -->
   <div class="comment">
     <div
       class="comment__field"
@@ -67,93 +68,42 @@
           :data="sub2"
           :level="2"
         />
-        <button
-          v-if="!filterComments(sub3Comments, sub2.id).length && sub2.amountSubComments > 0"
-          class="comment__btn"
-          @click="loadSubs(sub2.id, 3)"
-        >
-          {{ $t('discussions.showComments') }}
-        </button>
-        <div
-          v-for="(sub3) in filterComments(sub3Comments, sub2.id)"
-          :key="sub3.id"
-        >
-          <comment-field
-            class="subcomment__field subcomment_lvl3"
-            :data="sub3"
-            :level="3"
-          />
-          <button
-            v-if="!filterComments(sub4Comments, sub3.id).length && sub3.amountSubComments > 0"
-            class="comment__btn"
-            @click="loadSubs(sub3.id, 4)"
-          >
-            {{ $t('discussions.showComments') }}
-          </button>
-          <span
-            v-for="(sub4) in filterComments(sub4Comments, sub3.id)"
-            :key="sub4.id"
-          >
-            <comment-field
-              class="subcomment__field subcomment_lvl4"
-              :data="sub4"
-              :level="4"
-            />
-            <button
-              v-if="!filterComments(sub5Comments, sub4.id).length && sub4.amountSubComments > 0"
-              class="comment__btn"
-              @click="loadSubs(sub4.id, 5)"
-            >
-              {{ $t('discussions.showComments') }}
-            </button>
-            <span
-              v-for="(sub5) in filterComments(sub5Comments, sub4.id)"
-              :key="sub5.id"
-            >
-              <comment-field
-                class="subcomment__field subcomment_lvl5"
-                :data="sub5"
-                :level="5"
-              />
-            </span>
-          </span>
-        </div>
       </div>
-      <validation-observer
-        v-slot="{handleSubmit, validated, passed, invalid}"
-      >
-        <!--  Bottom -->
-        <div
-          class="comment__footer footer"
-        >
-          <base-btn
-            class="footer__btn"
-            :disabled="!validated || !passed || invalid"
-          >
-            <template v-slot:left>
-              <span class="icon-link footer__chain" />
-            </template>
-          </base-btn>
-          <base-field
-            v-model="subCommentInput"
-            class="footer__input"
-            :placeholder="$t('discussions.input')"
-            rules="required|text-response"
-            :name="$t('discussions.response')"
-            mode="comment-field"
-          />
-          <base-btn
-            class="footer__btn"
-            :disabled="!validated || !passed || invalid"
-            @click="handleSubmit(addSubCommentResponse(comment, 2))"
-          >
-            <template v-slot:left>
-              <span class="icon-send footer__arrow" />
-            </template>
-          </base-btn>
-        </div>
-      </validation-observer>
     </div>
+    <validation-observer
+      v-slot="{handleSubmit, validated, passed, invalid}"
+    >
+      <!--  Bottom -->
+      <div
+        class="comment__footer footer"
+      >
+        <base-btn
+          class="footer__btn"
+          :disabled="!validated || !passed || invalid"
+        >
+          <template v-slot:left>
+            <span class="icon-link footer__chain" />
+          </template>
+        </base-btn>
+        <base-field
+          v-model="subCommentInput"
+          class="footer__input"
+          :placeholder="$t('discussions.input')"
+          rules="required|text-response"
+          :name="$t('discussions.response')"
+          mode="comment-field"
+        />
+        <base-btn
+          class="footer__btn"
+          :disabled="!validated || !passed || invalid"
+          @click="handleSubmit(addSubCommentResponse(comment, 2))"
+        >
+          <template v-slot:left>
+            <span class="icon-send footer__arrow" />
+          </template>
+        </base-btn>
+      </div>
+    </validation-observer>
   </div>
 </template>
 
@@ -172,9 +122,6 @@ export default {
     return {
       comments: [],
       sub2Comments: [],
-      sub3Comments: [],
-      sub4Comments: [],
-      sub5Comments: [],
       subCommentInput: '',
     };
   },
@@ -215,9 +162,6 @@ export default {
     },
     clearSubs(level) {
       if (level === 2) this.sub2Comments = [];
-      if (level === 3) this.sub3Comments = [];
-      if (level === 4) this.sub4Comments = [];
-      if (level === 5) this.sub5Comments = [];
     },
     // TODO: Протестить метод
     // async loadSubs(rootId, level) {
@@ -236,28 +180,9 @@ export default {
       if (level === 2) {
         if (this.sub2Comments.length > 0) this.sub2Comments = [];
         return this.sub2Comments.push(...res.comments);
-      } if (level === 3) {
-        if (this.sub3Comments.length > 0) this.sub3Comments = [];
-        return this.sub3Comments.push(...res.comments);
-      } if (level === 4) {
-        if (this.sub4Comments.length > 0) this.sub4Comments = [];
-        return this.sub4Comments.push(...res.comments);
-      } if (level === 5) {
-        if (this.sub5Comments.length > 0) this.sub5Comments = [];
-        return this.sub5Comments.push(...res.comments);
-      } return '';
+      }
+      return '';
     },
-    // async getSubComments(id) {
-    //   const { comments } = await this.$store.dispatch('discussions/getSubCommentsLevel', id);
-    //   if (comments) {
-    //     return (
-    //       <div>
-    //         <div>{name}</div>
-    //         <comment-field :comment=comments[0] />
-    //       </div>
-    //     );
-    //   }
-    // },
     filterComments(subComments, rootId) {
       return subComments.filter((item) => item.rootCommentId === rootId);
     },
@@ -276,10 +201,16 @@ export default {
 .comment {
   padding: 0 30px 0 0;
   display: flex;
+  &__subcomment {
+    display: flex;
+    flex-direction: column;
+  }
   &__field {
     width: 100%;
     background: #FFFFFF;
     border-radius: 8px;
+    display: flex;
+    flex-direction: column;
   }
   &__user {
     margin: 20px 0 0 20px;

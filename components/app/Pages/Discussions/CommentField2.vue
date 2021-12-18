@@ -1,5 +1,5 @@
 <template>
-  <!-- Level2 -->
+  <!-- Level3 -->
   <div class="comment">
     <div
       class="comment__field"
@@ -44,9 +44,9 @@
         <!--          {{ data ? $t('discussions.hide') : $t('discussions.show') }}-->
         <!--        </base-btn>-->
         <button
-          v-if="!filterComments(sub3Comments, data.id).length && data.amountSubComments > 0"
+          v-if="!filterComments(sub4Comments, data.id).length && data.amountSubComments > 0"
           class="comment__btn"
-          @click="loadSubs(data.id, 3)"
+          @click="loadSubs(data.id, 4)"
         >
           {{ $t('discussions.showComments') }}
         </button>
@@ -93,7 +93,7 @@
           <base-btn
             class="footer__btn"
             :disabled="!validated || !passed || invalid"
-            @click="handleSubmit(addSubCommentResponse(data, 2))"
+            @click="handleSubmit(addSubCommentResponse(data, 3))"
           >
             <template v-slot:left>
               <span class="icon-send footer__arrow" />
@@ -103,14 +103,14 @@
       </validation-observer>
     </div>
     <div
-      v-for="(sub3) in filterComments(sub3Comments, data.id)"
-      :key="sub3.id"
+      v-for="(sub4) in filterComments(sub4Comments, data.id)"
+      :key="sub4.id"
       class="footer comment__container subcomment"
     >
-      <comment-field2
+      <comment-field3
         class="subcomment__field subcomment_lvl3"
-        :data="sub3"
-        :level="3"
+        :data="sub4"
+        :level="4"
       />
     </div>
   </div>
@@ -139,7 +139,7 @@ export default {
     return {
       isReply: false,
       subCommentInput: '',
-      sub3Comments: [],
+      sub4Comments: [],
     };
   },
   computed: {
@@ -150,9 +150,9 @@ export default {
   methods: {
     async loadSubs(rootId, level) {
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
-      if (level === 3) {
-        if (this.sub3Comments.length > 0) this.sub3Comments = [];
-        return this.sub3Comments.push(...res.comments);
+      if (level === 4) {
+        if (this.sub4Comments.length > 0) this.sub4Comments = [];
+        return this.sub4Comments.push(...res.comments);
       } return '';
     },
     filterComments(subComments, rootId) {
@@ -265,12 +265,6 @@ export default {
   &_sub5 {
     //background: #37373a;
     margin-left: 90px;
-  }
-}
-.subcomment {
-  &__field {
-    display: flex;
-    flex-direction: column;
   }
 }
 .user {

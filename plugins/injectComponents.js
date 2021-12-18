@@ -18,9 +18,15 @@ import BasePager from '~/components/ui/BasePager';
 import BaseFiles from '~/components/ui/BaseFiles';
 import RootCommentField from '~/components/app/Pages/Discussions/RootCommentField.vue';
 import CommentField from '~/components/app/Pages/Discussions/CommentField';
+import CommentField2 from '~/components/app/Pages/Discussions/CommentField2';
+import CommentField3 from '~/components/app/Pages/Discussions/CommentField3';
+import CommentField4 from '~/components/app/Pages/Discussions/CommentField4';
 import TableItem from '~/components/mobile/TableItem.vue';
 
 Vue.component('comment-field', CommentField);
+Vue.component('comment-field2', CommentField2);
+Vue.component('comment-field3', CommentField3);
+Vue.component('comment-field4', CommentField4);
 Vue.component('root-comment-field', RootCommentField);
 Vue.component('ctm-modal', CtmModal);
 Vue.component('ctm-modal-box', CtmModalBox);

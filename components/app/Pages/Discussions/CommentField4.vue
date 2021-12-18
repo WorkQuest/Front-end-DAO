@@ -1,5 +1,5 @@
 <template>
-  <!-- Level2 -->
+  <!-- Level5 -->
   <div class="comment">
     <div
       class="comment__field"
@@ -34,22 +34,6 @@
         >
           {{ !isReply ? $t('discussions.reply') : $t('discussions.cancel') }}
         </base-btn>
-        <!--        TODO: Исправить логику и стиль кнопки-->
-        <!--        <base-btn-->
-        <!--          v-if="data.amountSubComments > 0"-->
-        <!--          class="bottom__btn"-->
-        <!--          mode="blue"-->
-        <!--          @click="switchCommentLevel(data, level)"-->
-        <!--        >-->
-        <!--          {{ data ? $t('discussions.hide') : $t('discussions.show') }}-->
-        <!--        </base-btn>-->
-        <button
-          v-if="!filterComments(sub3Comments, data.id).length && data.amountSubComments > 0"
-          class="comment__btn"
-          @click="loadSubs(data.id, 3)"
-        >
-          {{ $t('discussions.showComments') }}
-        </button>
         <div class="bottom__panel">
           <base-btn
             class="bottom__like"
@@ -93,7 +77,7 @@
           <base-btn
             class="footer__btn"
             :disabled="!validated || !passed || invalid"
-            @click="handleSubmit(addSubCommentResponse(data, 2))"
+            @click="handleSubmit(addSubCommentResponse(data, 5))"
           >
             <template v-slot:left>
               <span class="icon-send footer__arrow" />
@@ -101,17 +85,6 @@
           </base-btn>
         </div>
       </validation-observer>
-    </div>
-    <div
-      v-for="(sub3) in filterComments(sub3Comments, data.id)"
-      :key="sub3.id"
-      class="footer comment__container subcomment"
-    >
-      <comment-field2
-        class="subcomment__field subcomment_lvl3"
-        :data="sub3"
-        :level="3"
-      />
     </div>
   </div>
 </template>
@@ -139,7 +112,6 @@ export default {
     return {
       isReply: false,
       subCommentInput: '',
-      sub3Comments: [],
     };
   },
   computed: {
@@ -148,16 +120,6 @@ export default {
     }),
   },
   methods: {
-    async loadSubs(rootId, level) {
-      const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
-      if (level === 3) {
-        if (this.sub3Comments.length > 0) this.sub3Comments = [];
-        return this.sub3Comments.push(...res.comments);
-      } return '';
-    },
-    filterComments(subComments, rootId) {
-      return subComments.filter((item) => item.rootCommentId === rootId);
-    },
     toggleReply() {
       this.isReply = !this.isReply;
     },
@@ -218,10 +180,6 @@ export default {
 .comment {
   padding: 0 30px 0 0;
   display: flex;
-  &__container {
-    display: flex;
-    flex-direction: column;
-  }
   &__field {
     width: 100%;
     background: #FFFFFF;
@@ -265,12 +223,6 @@ export default {
   &_sub5 {
     //background: #37373a;
     margin-left: 90px;
-  }
-}
-.subcomment {
-  &__field {
-    display: flex;
-    flex-direction: column;
   }
 }
 .user {
