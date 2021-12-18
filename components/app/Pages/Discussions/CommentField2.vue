@@ -242,7 +242,7 @@ export default {
     align-items: center;
   }
   &_sub3 {
-    background: #707379;
+    //background: #707379;
     margin-left: 30px;
   }
 }

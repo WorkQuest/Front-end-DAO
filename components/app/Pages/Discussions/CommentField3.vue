@@ -248,7 +248,7 @@ export default {
     align-items: center;
   }
   &_sub4 {
-    background: #505052;
+    //background: #505052;
     margin-left: 45px;
   }
 }

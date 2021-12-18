@@ -160,7 +160,7 @@ export default {
     align-items: center;
   }
   &_sub5 {
-    background: #37373a;
+    //background: #37373a;
     margin-left: 60px;
   }
 }
