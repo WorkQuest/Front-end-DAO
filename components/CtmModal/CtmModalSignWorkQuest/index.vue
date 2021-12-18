@@ -8,9 +8,7 @@
         {{ $t('modals.signWorkQuest.desc') }}
       </div>
       <div class="ctm-modal__content-btns">
-        <base-btn
-          @click="hide()"
-        >
+        <base-btn @click="hide()">
           {{ $t('modals.cancel') }}
         </base-btn>
       </div>
