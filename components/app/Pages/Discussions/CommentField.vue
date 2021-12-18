@@ -141,10 +141,8 @@ export default {
   methods: {
     async loadSubs(rootId, level) {
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
-      if (level === 3) {
-        if (this.sub3Comments.length > 0) this.sub3Comments = [];
-        return this.sub3Comments.push(...res.comments);
-      } return '';
+      if (this.sub3Comments.length > 0) this.sub3Comments = [];
+      return this.sub3Comments.push(...res.comments);
     },
     filterComments(subComments, rootId) {
       return subComments.filter((item) => item.rootCommentId === rootId);
