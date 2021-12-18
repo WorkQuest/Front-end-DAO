@@ -164,7 +164,7 @@ export default {
       await this.getRootComments();
     },
     async getRootComments() {
-      this.$parent.$parent.getRootComments();
+      this.$parent.getRootComments();
     },
     increaseCounter() {
       this.count += 1;
