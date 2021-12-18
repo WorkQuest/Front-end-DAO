@@ -1,20 +1,18 @@
 <template>
   <ctm-modal-box
-    class="messageSend"
+    class="ctm-modal"
     :title="$t('modals.signWorkQuest.title')"
   >
-    <div class="ctm-modal__content sign">
-      <div class="sign sign__description">
+    <div class="ctm-modal__content">
+      <div class="ctm-modal__description">
         {{ $t('modals.signWorkQuest.desc') }}
       </div>
       <div class="ctm-modal__content-btns">
-        <div class="btn-group">
-          <base-btn
-            @click="hide()"
-          >
-            {{ $t('modals.cancel') }}
-          </base-btn>
-        </div>
+        <base-btn
+          @click="hide()"
+        >
+          {{ $t('modals.cancel') }}
+        </base-btn>
       </div>
     </div>
   </ctm-modal-box>
@@ -39,10 +37,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.sign__description {
-  padding-top: 15px;
-  padding-bottom: 10px;
-}
 .icon {
   font-size: 25px;
   color: $blue;
@@ -61,38 +55,26 @@ export default {
 }
 .ctm-modal {
   @include modalKit;
+  max-width: 450px !important;
+  height:auto !important;
   &__content-field {
     margin: 15px 0 0 0;
   }
-
   &__content-btns {
-    .btn-group{
-      display: grid;
-      grid-gap: 20px;
-      gap: 20px;
-      margin-top: 25px;
-    }
-  }
-
-  &__label {
-    margin-bottom: 5px;
-  }
-
-  &__content {
-    padding-top: 0 !important;
-  }
-}
-
-.messageSend {
-  max-width: 450px !important;
-  &__content {
     display: grid;
-    grid-template-columns: 1fr;
-    justify-items: center;
     grid-gap: 20px;
+    gap: 20px;
+    margin-top: 25px;
+  }
+  &__content {
+    padding: 0 25px !important;
   }
   &__action {
     margin-top: 10px;
+  }
+  &__description {
+    padding-top: 15px;
+    padding-bottom: 10px;
   }
 }
 </style>
