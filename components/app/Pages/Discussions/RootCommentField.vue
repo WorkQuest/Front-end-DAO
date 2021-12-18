@@ -25,13 +25,12 @@
         {{ comment.text }}
       </div>
       <div class="comment__bottom bottom">
-        <button
-          v-if="!filterComments(sub2Comments, comment.id).length && comment.amountSubComments > 0"
+        <base-btn
           class="comment__btn"
           @click="loadSubs(comment.id, 2)"
         >
-          {{ $t('discussions.showComments') }}
-        </button>
+          {{ !filterComments(sub2Comments, comment.id).length && comment.amountSubComments > 0 ? $t('discussions.show') : $t('discussions.hide') }}
+        </base-btn>
         <!-- RootComment panel -->
         <div class="bottom bottom__footer">
           <div class="bottom__footer">
@@ -219,21 +218,16 @@ export default {
     margin: 25px 20px 25px 30px;
   }
   &__btn {
-    display: block;
-    align-items: center;
-    justify-content: center;
-    width: 150px;
-    height: 33px;
-    font-family: 'Inter', sans-serif;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 16px;
-    line-height: 130%;
-    text-align: center;
-    transition: .3s;
-    border-radius: 6px;
+    @include text-usual;
+    background: transparent;
     color: $blue;
+    width: 160px;
+    height: 33px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
     &:hover {
+      background: transparent;
       color: #103D7C;
     }
   }

@@ -34,22 +34,13 @@
         >
           {{ !isReply ? $t('discussions.reply') : $t('discussions.cancel') }}
         </base-btn>
-        <!--        TODO: Исправить логику и стиль кнопки-->
-        <!--        <base-btn-->
-        <!--          v-if="data.amountSubComments > 0"-->
-        <!--          class="bottom__btn"-->
-        <!--          mode="blue"-->
-        <!--          @click="switchCommentLevel(data, level)"-->
-        <!--        >-->
-        <!--          {{ data ? $t('discussions.hide') : $t('discussions.show') }}-->
-        <!--        </base-btn>-->
-        <button
-          v-if="!filterComments(sub3Comments, data.id).length && data.amountSubComments > 0"
+        <base-btn
+          v-if="data.amountSubComments > 0"
           class="bottom__btn"
           @click="loadSubs(data.id, 3)"
         >
-          {{ $t('discussions.showComments') }}
-        </button>
+          {{ !filterComments(sub3Comments, data.id).length ? $t('discussions.show') : $t('discussions.hide') }}
+        </base-btn>
         <div class="bottom__panel">
           <base-btn
             class="bottom__like"
@@ -316,7 +307,7 @@ export default {
     @include text-usual;
     background: transparent;
     color: $blue;
-    width: 160px;
+    width: 180px;
     height: 33px;
     border-radius: 6px;
     border: none;
