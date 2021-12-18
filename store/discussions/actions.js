@@ -38,9 +38,9 @@ export default {
       return console.log(e);
     }
   },
-  async getSubCommentsLevel({ commit }, { id }) {
+  async getSubCommentsLevel({ commit }, { id, additionalValue }) {
     try {
-      const response = await this.$axios.$get(`/v1/discussion/comment/${id}/sub-comments`);
+      const response = await this.$axios.$get(`/v1/discussion/comment/${id}/sub-comments?${additionalValue || 'limit=5'}`);
       return response.result;
     } catch (e) {
       return console.log(e);

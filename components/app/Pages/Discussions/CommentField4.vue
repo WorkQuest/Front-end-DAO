@@ -43,7 +43,11 @@
         </div>
       </div>
     </div>
-    <base-btn v-if="isShowBtnMoreComments">
+    <base-btn
+      v-if="isShowBtnMoreComments"
+      class="subcomment__btn"
+      @click="loadMoreSubs5(data.rootCommentId)"
+    >
       Show more comments
     </base-btn>
   </div>
@@ -60,7 +64,7 @@ export default {
       default: null,
     },
     level: {
-      type: Number,
+      type: [Number, String],
       default: 2,
     },
     array: {
@@ -87,6 +91,14 @@ export default {
     },
   },
   methods: {
+    async loadMoreSubs5(rootId) {
+      this.$parent.increaseCounter();
+      this.$parent.loadMoreSubs(rootId);
+    },
+    async loadMoreSubs(rootId) {
+      const additionalValue = `limit=${this.subCommentsOnPage * this.count}`;
+      await this.loadSubs(rootId, additionalValue);
+    },
     authorName(item) {
       if (item && item.author) return `${item.author.firstName} ${item.author.lastName}`;
       return this.$t('user.nameless');
@@ -131,6 +143,29 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.subcomment {
+  &__field {
+    display: flex;
+    flex-direction: column;
+  }
+  &__btn {
+    @include text-usual;
+    justify-self: center;
+    background: transparent;
+    margin-left: auto;
+    margin-right: auto;
+    color: $blue;
+    width: 190px;
+    height: 33px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    &:hover {
+      background: transparent;
+      color: #103D7C;
+    }
+  }
+}
 .comment {
   padding: 0 30px 0 0;
   display: flex;
