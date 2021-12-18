@@ -26,14 +26,6 @@
         {{ data.text }}
       </div>
       <div class="comment__bottom bottom">
-        <base-btn
-          v-if="level !== 5"
-          class="bottom__btn"
-          mode="blue"
-          @click="toggleReply"
-        >
-          {{ !isReply ? $t('discussions.reply') : $t('discussions.cancel') }}
-        </base-btn>
         <div class="bottom__panel">
           <base-btn
             class="bottom__like"
@@ -50,42 +42,10 @@
           </div>
         </div>
       </div>
-      <validation-observer
-        v-slot="{handleSubmit, validated, passed, invalid}"
-      >
-        <!--  Bottom -->
-        <div
-          v-if="isReply"
-          class="comment__footer footer"
-        >
-          <base-btn
-            class="footer__btn"
-            :disabled="!validated || !passed || invalid"
-          >
-            <template v-slot:left>
-              <span class="icon-link footer__chain" />
-            </template>
-          </base-btn>
-          <base-field
-            v-model="subCommentInput"
-            class="footer__input"
-            :placeholder="$t('discussions.input')"
-            rules="required|text-response"
-            :name="$t('discussions.response')"
-            mode="comment-field"
-          />
-          <base-btn
-            class="footer__btn"
-            :disabled="!validated || !passed || invalid"
-            @click="handleSubmit(addSubCommentResponse(data, 5))"
-          >
-            <template v-slot:left>
-              <span class="icon-send footer__arrow" />
-            </template>
-          </base-btn>
-        </div>
-      </validation-observer>
     </div>
+    <base-btn v-if="array[array.length - 1].id === data.id && array.length > subCommentsOnPage">
+      Show more comments
+    </base-btn>
   </div>
 </template>
 
@@ -101,7 +61,11 @@ export default {
     },
     level: {
       type: Number,
-      default: 1,
+      default: 2,
+    },
+    array: {
+      type: Array,
+      default: () => [],
     },
     discussionId: {
       type: String,
@@ -110,8 +74,8 @@ export default {
   },
   data() {
     return {
-      isReply: false,
       subCommentInput: '',
+      subCommentsOnPage: 5,
     };
   },
   computed: {
@@ -120,9 +84,6 @@ export default {
     }),
   },
   methods: {
-    toggleReply() {
-      this.isReply = !this.isReply;
-    },
     authorName(item) {
       if (item && item.author) return `${item.author.firstName} ${item.author.lastName}`;
       return this.$t('user.nameless');

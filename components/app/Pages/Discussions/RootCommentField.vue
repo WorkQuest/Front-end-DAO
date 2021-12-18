@@ -66,7 +66,8 @@
         <comment-field
           class="subcomment__field subcomment_lvl2"
           :data="sub2"
-          :level="2"
+          :array="filterComments(sub2Comments, comment.id)"
+          level="2"
         />
       </div>
     </div>

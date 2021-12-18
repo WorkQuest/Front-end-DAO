@@ -101,9 +101,13 @@
       <comment-field3
         class="subcomment__field subcomment_lvl3"
         :data="sub4"
-        :level="4"
+        :array="filterComments(sub4Comments, data.id)"
+        level="4"
       />
     </div>
+    <base-btn v-if="array[array.length - 1].id === data.id && array.length > subCommentsOnPage">
+      Show more comments
+    </base-btn>
   </div>
 </template>
 
@@ -119,7 +123,11 @@ export default {
     },
     level: {
       type: Number,
-      default: 1,
+      default: 2,
+    },
+    array: {
+      type: Array,
+      default: () => [],
     },
     discussionId: {
       type: String,
@@ -131,6 +139,7 @@ export default {
       isReply: false,
       subCommentInput: '',
       sub4Comments: [],
+      subCommentsOnPage: 5,
     };
   },
   computed: {
