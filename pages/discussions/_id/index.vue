@@ -191,7 +191,7 @@ export default {
   data() {
     return {
       page: 1,
-      perPager: 4,
+      perPager: 10,
       isAddComment: false,
       rootCommentObjects: {},
       rootCommentArray: [],

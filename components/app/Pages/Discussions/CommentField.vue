@@ -101,9 +101,13 @@
       <comment-field2
         class="subcomment__field subcomment_lvl3"
         :data="sub3"
+        :array="filterComments(sub3Comments, data.id)"
         :level="3"
       />
     </div>
+    <base-btn v-if="array[array.length - 1].id === data.id && array.length > subCommentsOnPage">
+      Show more comments
+    </base-btn>
   </div>
 </template>
 
@@ -117,9 +121,13 @@ export default {
       type: Object,
       default: null,
     },
+    array: {
+      type: Array,
+      default: () => [],
+    },
     level: {
       type: Number,
-      default: 1,
+      default: 2,
     },
     discussionId: {
       type: String,
@@ -128,6 +136,7 @@ export default {
   },
   data() {
     return {
+      subCommentsOnPage: 5,
       isReply: false,
       subCommentInput: '',
       sub3Comments: [],
@@ -160,16 +169,6 @@ export default {
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
     },
-    // async switchCommentLevel(comment, level) {
-    //   if (!comment.rootCommentId) {
-    //     this.$parent.clearSubs(level);
-    //     // this.$parent.loadSubs(comment.id, level);
-    //   }
-    //   if (comment) {
-    //     // if (comment.rootCommentId) this.$parent.loadSubs(comment.rootCommentId, level);
-    //     this.$parent.clearSubs(level);
-    //   }
-    // },
     async addSubCommentResponse(comment, level) {
       if (!comment.rootCommentId) {
         const payload = {
@@ -244,19 +243,7 @@ export default {
   }
   &_sub2 {
     //background: #8D96A2;
-    margin-left: 30px;
-  }
-  &_sub3 {
-    //background: #707379;
-    margin-left: 50px;
-  }
-  &_sub4 {
-    //background: #505052;
-    margin-left: 70px;
-  }
-  &_sub5 {
-    //background: #37373a;
-    margin-left: 90px;
+    margin-left: 15px;
   }
 }
 .subcomment {
@@ -308,7 +295,7 @@ export default {
     @include text-usual;
     background: transparent;
     color: $blue;
-    width: 180px;
+    width: 190px;
     height: 33px;
     border-radius: 6px;
     border: none;
