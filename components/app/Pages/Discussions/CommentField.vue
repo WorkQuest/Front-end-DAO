@@ -105,7 +105,11 @@
         :level="3"
       />
     </div>
-    <base-btn v-if="isShowBtnMoreComments">
+    <base-btn
+      v-if="isShowBtnMoreComments"
+      class="subcomment__btn"
+      @click="loadMoreSubs2(data.rootCommentId)"
+    >
       Show more comments
     </base-btn>
   </div>
@@ -126,7 +130,7 @@ export default {
       default: () => [],
     },
     level: {
-      type: Number,
+      type: [Number, String],
       default: 2,
     },
     discussionId: {
@@ -140,6 +144,7 @@ export default {
       isReply: false,
       subCommentInput: '',
       sub3Comments: [],
+      count: 1,
     };
   },
   computed: {
@@ -147,10 +152,23 @@ export default {
       currentDiscussion: 'discussions/getCurrentDiscussion',
     }),
     isShowBtnMoreComments() {
-      return this.array[this.array.length - 1].id === this.data.id && this.array[this.array.length - 1].rootComment.amountSubComments > this.subCommentsOnPage;
+      return this.array[this.array.length - 1].id === this.data.id && this.array[this.array.length - 1].rootComment.amountSubComments > this.subCommentsOnPage && this.array.length !== this.array[this.array.length - 1].rootComment.amountSubComments;
     },
   },
   methods: {
+    async loadMoreSubs2(rootId) {
+      this.$parent.increaseCounter();
+      this.$parent.loadMoreSubs(rootId);
+    },
+    increaseCounter() {
+      this.count += 1;
+    },
+    async loadMoreSubs(rootId) {
+      const additionalValue = `limit=${this.subCommentsOnPage * this.count}`;
+      const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId, additionalValue });
+      if (this.sub3Comments.length > 0) this.sub3Comments = [];
+      return this.sub3Comments.push(...res.comments);
+    },
     async loadSubs(rootId) {
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
       if (this.sub3Comments.length > 0) this.sub3Comments = [];
@@ -253,6 +271,23 @@ export default {
   &__field {
     display: flex;
     flex-direction: column;
+  }
+  &__btn {
+    @include text-usual;
+    justify-self: center;
+    background: transparent;
+    margin-left: auto;
+    margin-right: auto;
+    color: $blue;
+    width: 190px;
+    height: 33px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    &:hover {
+      background: transparent;
+      color: #103D7C;
+    }
   }
 }
 .user {

@@ -121,9 +121,11 @@ export default {
   },
   data() {
     return {
+      subCommentsOnPage: 5,
       comments: [],
       sub2Comments: [],
       subCommentInput: '',
+      count: 1,
     };
   },
   computed: {
@@ -164,18 +166,15 @@ export default {
     async getRootComments() {
       this.$parent.$parent.getRootComments();
     },
-    // TODO: Протестить метод
-    // async loadSubs(rootId, level) {
-    //   const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
-    //   const obj = {
-    //     2: this.sub2Comments,
-    //     3: this.sub3Comments,
-    //     4: this.sub4Comments,
-    //     5: this.sub5Comments,
-    //   };
-    //   if (obj[level].length > 0) obj[level] = [];
-    //   return obj[level].push(...res.comments);
-    // },
+    increaseCounter() {
+      this.count += 1;
+    },
+    async loadMoreSubs(rootId) {
+      const additionalValue = `limit=${this.subCommentsOnPage * this.count}`;
+      const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId, additionalValue });
+      if (this.sub2Comments.length > 0) this.sub2Comments = [];
+      return this.sub2Comments.push(...res.comments);
+    },
     async loadSubs(rootId) {
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
       if (this.sub2Comments.length > 0) this.sub2Comments = [];

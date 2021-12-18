@@ -105,7 +105,11 @@
         level="5"
       />
     </div>
-    <base-btn v-if="isShowBtnMoreComments">
+    <base-btn
+      v-if="isShowBtnMoreComments"
+      class="subcomment__btn"
+      @click="loadMoreSubs4(data.rootCommentId)"
+    >
       Show more comments
     </base-btn>
   </div>
@@ -122,7 +126,7 @@ export default {
       default: null,
     },
     level: {
-      type: Number,
+      type: [Number, String],
       default: 2,
     },
     array: {
@@ -140,6 +144,7 @@ export default {
       subCommentInput: '',
       sub5Comments: [],
       subCommentsOnPage: 5,
+      count: 1,
     };
   },
   computed: {
@@ -153,6 +158,19 @@ export default {
   methods: {
     clearSubs() {
       this.sub5Comments = [];
+    },
+    async loadMoreSubs4(rootId) {
+      this.$parent.increaseCounter();
+      this.$parent.loadMoreSubs(rootId);
+    },
+    increaseCounter() {
+      this.count += 1;
+    },
+    async loadMoreSubs(rootId) {
+      const additionalValue = `limit=${this.subCommentsOnPage * this.count}`;
+      const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId, additionalValue });
+      if (this.sub5Comments.length > 0) this.sub5Comments = [];
+      return this.sub5Comments.push(...res.comments);
     },
     async loadSubs(rootId) {
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
@@ -213,6 +231,23 @@ export default {
   &__field {
     display: flex;
     flex-direction: column;
+  }
+  &__btn {
+    @include text-usual;
+    justify-self: center;
+    background: transparent;
+    margin-left: auto;
+    margin-right: auto;
+    color: $blue;
+    width: 190px;
+    height: 33px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    &:hover {
+      background: transparent;
+      color: #103D7C;
+    }
   }
 }
 .comment {
