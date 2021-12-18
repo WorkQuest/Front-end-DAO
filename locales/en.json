@@ -439,7 +439,11 @@
     "imageLoadedSuccessful": "Image loaded successful",
     "pleasePressSaveButton": "Please press save button",
     "saved": "Saved",
-    "userDataHasBeenSaved": "User data has been saved"
+    "userDataHasBeenSaved": "User data has been saved",
+    "signWorkQuest": {
+      "title": "Connection to Work Quest",
+      "desc": "If you already have an account created on one of the Work Quest products, you can log in using its login details"
+    }
   },
   "ui": {
     "workers": "Workers",

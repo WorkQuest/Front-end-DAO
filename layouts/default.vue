@@ -235,7 +235,7 @@
                   >
                     <div
                       class="user-dropdown__link"
-                      @click="toRoute(item.link)"
+                      @click="item.title === 'Logout' ? logout(): toRoute(item.link)"
                     >
                       {{ item.title }}
                     </div>
