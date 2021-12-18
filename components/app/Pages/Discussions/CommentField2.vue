@@ -7,7 +7,7 @@
     >
       <div class="comment__user user">
         <img
-          :src="data && data.author.avatar.url ? data.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
+          :src="data && data.author.avatar && data.author.avatar.url ? data.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
           alt="userAvatar"
           class="user__avatar"
           @click="toInvestor(data.author.id)"
