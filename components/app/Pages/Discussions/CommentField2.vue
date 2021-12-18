@@ -214,7 +214,7 @@ export default {
     flex-direction: column;
   }
   &__field {
-    width: 100%;
+    width: 101.3%;
     background: #FFFFFF;
     border-radius: 8px;
   }
@@ -241,21 +241,9 @@ export default {
     margin: 20px;
     align-items: center;
   }
-  &_sub2 {
-    //background: #8D96A2;
-    margin-left: 30px;
-  }
   &_sub3 {
-    //background: #707379;
-    margin-left: 50px;
-  }
-  &_sub4 {
-    //background: #505052;
-    margin-left: 70px;
-  }
-  &_sub5 {
-    //background: #37373a;
-    margin-left: 90px;
+    background: #707379;
+    margin-left: 30px;
   }
 }
 .user {
@@ -301,7 +289,7 @@ export default {
     @include text-usual;
     background: transparent;
     color: $blue;
-    width: 180px;
+    width: 190px;
     height: 33px;
     border-radius: 6px;
     border: none;

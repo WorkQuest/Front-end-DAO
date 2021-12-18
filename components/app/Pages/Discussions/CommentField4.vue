@@ -132,7 +132,7 @@ export default {
   padding: 0 30px 0 0;
   display: flex;
   &__field {
-    width: 100%;
+    width: 104.2%;
     background: #FFFFFF;
     border-radius: 8px;
   }
@@ -159,21 +159,9 @@ export default {
     margin: 20px;
     align-items: center;
   }
-  &_sub2 {
-    //background: #8D96A2;
-    margin-left: 30px;
-  }
-  &_sub3 {
-    //background: #707379;
-    margin-left: 50px;
-  }
-  &_sub4 {
-    //background: #505052;
-    margin-left: 70px;
-  }
   &_sub5 {
-    //background: #37373a;
-    margin-left: 90px;
+    background: #37373a;
+    margin-left: 60px;
   }
 }
 .user {
@@ -214,20 +202,6 @@ export default {
     align-items: center;
     justify-items: right;
     width: 100%;
-  }
-  &__btn {
-    @include text-usual;
-    background: transparent;
-    color: $blue;
-    width: 80px;
-    height: 33px;
-    border-radius: 6px;
-    border: none;
-    outline: none;
-    &:hover {
-      background: transparent;
-      color: #103D7C;
-    }
   }
   &__like {
     margin-left: auto;

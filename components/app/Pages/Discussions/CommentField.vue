@@ -252,20 +252,8 @@ export default {
     align-items: center;
   }
   &_sub2 {
-    //background: #8D96A2;
-    margin-left: 30px;
-  }
-  &_sub3 {
-    //background: #707379;
-    margin-left: 50px;
-  }
-  &_sub4 {
-    //background: #505052;
-    margin-left: 70px;
-  }
-  &_sub5 {
-    //background: #37373a;
-    margin-left: 90px;
+    background: #8D96A2;
+    margin-left: 15px;
   }
 }
 .subcomment {
@@ -317,7 +305,7 @@ export default {
     @include text-usual;
     background: transparent;
     color: $blue;
-    width: 180px;
+    width: 190px;
     height: 33px;
     border-radius: 6px;
     border: none;
