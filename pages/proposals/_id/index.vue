@@ -132,7 +132,7 @@
           </div>
           <div class="results__buttons buttons">
             <div class="buttons__header">
-              {{ $t('proposal.proposalIsExpired') }}
+              {{ $t('proposal.results') }}
             </div>
             <base-btn
               v-if="!isActive && isChairperson"

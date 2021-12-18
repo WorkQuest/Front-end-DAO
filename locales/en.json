@@ -568,7 +568,7 @@
       "vote": "Vote"
     },
     "executeVoting": "Execute voting",
-    "proposalIsExpired": "Proposal is expired",
+    "proposalIsExpired": "Waiting for the end of the vote",
     "errors": {
       "addProposal": "Add proposal error",
       "voteError": "Voting error",
