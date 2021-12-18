@@ -147,7 +147,7 @@ export default {
       currentDiscussion: 'discussions/getCurrentDiscussion',
     }),
     isShowBtnMoreComments() {
-      return this.array[this.array.length - 1].id === this.data.id && this.array.length > this.subCommentsOnPage;
+      return this.array[this.array.length - 1].id === this.data.id && this.array[this.array.length - 1].rootComment.amountSubComments > this.subCommentsOnPage;
     },
   },
   methods: {
