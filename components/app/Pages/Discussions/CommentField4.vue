@@ -130,16 +130,6 @@ export default {
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
     },
-    // async switchCommentLevel(comment, level) {
-    //   if (!comment.rootCommentId) {
-    //     this.$parent.clearSubs(level);
-    //     // this.$parent.loadSubs(comment.id, level);
-    //   }
-    //   if (comment) {
-    //     // if (comment.rootCommentId) this.$parent.loadSubs(comment.rootCommentId, level);
-    //     this.$parent.clearSubs(level);
-    //   }
-    // },
     async addSubCommentResponse(comment, level) {
       if (!comment.rootCommentId) {
         const payload = {

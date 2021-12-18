@@ -18,7 +18,7 @@
           {{ authorName(comment) }}
         </div>
         <div class="user__date">
-          {{ $moment(comment.updatedAt).startOf('day').fromNow() }}
+          {{ $moment(comment.createdAt).startOf('minute').fromNow() }}
         </div>
       </div>
       <div class="comment__description">
@@ -27,7 +27,7 @@
       <div class="comment__bottom bottom">
         <base-btn
           class="comment__btn"
-          @click="loadSubs(comment.id, 2)"
+          @click="!filterComments(sub2Comments, comment.id).length ? loadSubs(comment.id) : clearSubs()"
         >
           {{ !filterComments(sub2Comments, comment.id).length && comment.amountSubComments > 0 ? $t('discussions.show') : $t('discussions.hide') }}
         </base-btn>
@@ -130,6 +130,9 @@ export default {
     }),
   },
   methods: {
+    clearSubs() {
+      this.sub2Comments = [];
+    },
     async addSubCommentResponse(comment, level) {
       if (!comment.rootCommentId) {
         const payload = {
@@ -159,9 +162,6 @@ export default {
     async getRootComments() {
       this.$parent.$parent.getRootComments();
     },
-    clearSubs(level) {
-      if (level === 2) this.sub2Comments = [];
-    },
     // TODO: Протестить метод
     // async loadSubs(rootId, level) {
     //   const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
@@ -174,13 +174,10 @@ export default {
     //   if (obj[level].length > 0) obj[level] = [];
     //   return obj[level].push(...res.comments);
     // },
-    async loadSubs(rootId, level) {
+    async loadSubs(rootId) {
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
-      if (level === 2) {
-        if (this.sub2Comments.length > 0) this.sub2Comments = [];
-        return this.sub2Comments.push(...res.comments);
-      }
-      return '';
+      if (this.sub2Comments.length > 0) this.sub2Comments = [];
+      return this.sub2Comments.push(...res.comments);
     },
     filterComments(subComments, rootId) {
       return subComments.filter((item) => item.rootCommentId === rootId);

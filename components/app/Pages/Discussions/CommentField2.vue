@@ -19,7 +19,7 @@
           {{ authorName(data) }}
         </div>
         <div class="user__date">
-          {{ $moment(data.updatedAt).startOf('day').fromNow() }}
+          {{ $moment(data.createdAt).startOf('minute').fromNow() }}
         </div>
       </div>
       <div class="comment__description">
@@ -37,7 +37,7 @@
         <base-btn
           v-if="data.amountSubComments > 0"
           class="bottom__btn"
-          @click="loadSubs(data.id, 4)"
+          @click="!filterComments(sub4Comments, data.id).length ? loadSubs(data.id) : clearSubs()"
         >
           {{ !filterComments(sub4Comments, data.id).length ? $t('discussions.show') : $t('discussions.hide') }}
         </base-btn>
@@ -139,7 +139,10 @@ export default {
     }),
   },
   methods: {
-    async loadSubs(rootId, level) {
+    clearSubs() {
+      this.sub4Comments = [];
+    },
+    async loadSubs(rootId) {
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
       if (this.sub4Comments.length > 0) this.sub4Comments = [];
       return this.sub4Comments.push(...res.comments);
@@ -157,16 +160,6 @@ export default {
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
     },
-    // async switchCommentLevel(comment, level) {
-    //   if (!comment.rootCommentId) {
-    //     this.$parent.clearSubs(level);
-    //     // this.$parent.loadSubs(comment.id, level);
-    //   }
-    //   if (comment) {
-    //     // if (comment.rootCommentId) this.$parent.loadSubs(comment.rootCommentId, level);
-    //     this.$parent.clearSubs(level);
-    //   }
-    // },
     async addSubCommentResponse(comment, level) {
       if (!comment.rootCommentId) {
         const payload = {

@@ -19,7 +19,7 @@
           {{ authorName(data) }}
         </div>
         <div class="user__date">
-          {{ $moment(data.updatedAt).startOf('day').fromNow() }}
+          {{ $moment(data.createdAt).startOf('minute').fromNow() }}
         </div>
       </div>
       <div class="comment__description">
@@ -37,7 +37,7 @@
         <base-btn
           v-if="data.amountSubComments > 0"
           class="bottom__btn"
-          @click="loadSubs(data.id, 3)"
+          @click="!filterComments(sub3Comments, data.id).length ? loadSubs(data.id) : clearSubs()"
         >
           {{ !filterComments(sub3Comments, data.id).length ? $t('discussions.show') : $t('discussions.hide') }}
         </base-btn>
@@ -139,10 +139,13 @@ export default {
     }),
   },
   methods: {
-    async loadSubs(rootId, level) {
+    async loadSubs(rootId) {
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
       if (this.sub3Comments.length > 0) this.sub3Comments = [];
       return this.sub3Comments.push(...res.comments);
+    },
+    clearSubs() {
+      this.sub3Comments = [];
     },
     filterComments(subComments, rootId) {
       return subComments.filter((item) => item.rootCommentId === rootId);
