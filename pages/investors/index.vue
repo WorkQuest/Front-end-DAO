@@ -16,6 +16,14 @@
         :fields="historyTableFields"
         :items="usersData.users"
       />
+      <div class="investors__investors">
+        <mobile-table-item
+          v-for="(investor, index) in historyTableData"
+          :key="index"
+          :item="investor"
+          :is-last="historyTableData[index] === historyTableData[historyTableData.length - 1]"
+        />
+      </div>
       <base-pager
         v-if="usersData.count > filter.limit"
         v-model="currPage"
@@ -130,8 +138,11 @@ export default {
   &__table{
     margin-bottom: 15px;
   }
+  &__investors {
+      display: none;
+    }
   &__pagination{
-    margin-top: 10px;
+    margin: 10px 15px 0 0;
   }
 }
 
@@ -150,5 +161,30 @@ export default {
     border-radius: 6px;
   }
 }
-
+@include _1199 {
+  .body {
+    max-width: 100vw;
+    &__title {
+      margin-left: 10px;
+    }
+  }
+}
+@include _767 {
+  .body {
+    max-width: 100vw;
+  }
+  .investors {
+    &__table {
+      display: none;
+    }
+    &__investors {
+      display: block;
+      background: $white;
+      padding: 16px;
+    }
+    &__pagination {
+      margin-right: 10px;
+    }
+  }
+}
 </style>

@@ -295,6 +295,9 @@ export default {
   &__pagination{
     margin-top: 20px;
   }
+  &__body {
+    margin-top: 20px;
+  }
 }
 .menu {
   display: grid;
@@ -332,6 +335,7 @@ export default {
   border: 1px solid rgba(0, 0, 0, 0);
   padding: 0 20px;
   width: 100%;
+  white-space: nowrap;
   &:hover {
     background: #FFFFFF;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -365,8 +369,8 @@ export default {
   &__content {
     display: grid;
     grid-template-rows: 0.8fr 0.7fr 1fr 0.5fr;
-    width: 240px;
-    padding: 20px 0px;
+    width: 100%;
+    padding: 20px;
   }
   &__header {
     display: flex;
@@ -446,6 +450,9 @@ export default {
     padding-left: 20px;
     padding-right: 20px;
   }
+   .content {
+    grid-template-columns: repeat(3, 1fr);
+  }
   .menu {
     grid-template-columns: auto auto;
   }
@@ -454,11 +461,20 @@ export default {
   }
 }
 @include _991 {
-  .content {
-    grid-template-columns: repeat(3, 1fr);
+  .menu {
+    justify-content: flex-start;
+    display: flex;
+    &__right {
+      flex-grow: 3;
+    }
   }
-  .menu__right {
-    grid-template-columns: repeat(2, 1fr);
+  .proposals {
+    &__search {
+      width: 100%;
+    }
+  }
+  .content {
+    grid-gap: 10px;
   }
 }
 @include _767 {
@@ -470,7 +486,6 @@ export default {
   }
   .search {
     grid-template-columns: auto auto;
-    padding: 0 10px;
     grid-gap: 10px;
     &__toggle {
       display: none;
@@ -486,17 +501,23 @@ export default {
       display: flex;
       flex-direction: column;
       grid-template-columns: auto;
+      &__right {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      &__drop {
+        width: 100vw;
+      }
     }
     .menu__left {
       display: flex;
-      flex-direction: column;
+      flex-direction: row-reverse;
     }
     .content {
       grid-template-columns: 1fr;
     }
-    .menu__right {
-      grid-template-columns: repeat(2, 1fr);
-    }
   }
+  .dd::v-deep .dd__btn {
+        padding: 0 10px;
+      }
 }
 </style>

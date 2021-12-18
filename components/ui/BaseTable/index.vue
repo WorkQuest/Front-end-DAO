@@ -15,6 +15,9 @@
       >
         <span class="table__title">{{ $props.title }}</span>
       </template>
+      <template #cell(tx_hash)="el">
+        <span class="table__grey">{{ cutString(el.item.tx_hash, 9, 6) }}</span>
+      </template>
       <template #cell(status)="el">
         <span
           v-if="el.item.status === 'Success'"
@@ -216,45 +219,45 @@ export default {
     color: #1D2127!important;
     text-decoration: none!important;
   }
-  @include _991 {
+  @include _1199 {
     .table {
-      &__row {
-        font-size: 12px;
+       &__row {
+        font-size: 13px !important;
       }
       &__header {
-        font-size: 10px;
+        font-size: 10px !important;
       }
     }
-    //thead, tbody tr {
-    //  display:table;
-    //  width: 920px;
-    //  min-width: 710px;
-    //  table-layout:fixed;
-    //}
-    //thead {
-    //  width: calc( 940px - 1em );
-    //  min-width: calc( 710px - 1em );
-    //}
+    .btn__delegate {
+      width: 80px !important;
+      font-size: 13px;
+    }
   }
-  @include _767 {
-    //thead, tbody tr {
-    //  display:table;
-    //  width: 700px;
-    //  min-width: 540px;
-    //  table-layout:fixed;
-    //}
-    //thead {
-    //  width: calc( 700px - 1em );
-    //  min-width: calc( 540px - 1em );
-    //}
+  @include _991 {
+    .table {
+      width: 99%;
+      &__row {
+        font-size: 10px !important;
+      }
+      &__header {
+        font-size: 8px !important;
+      }
+      .btn__delegate {
+      width: 60px !important;
+      font-size: 10px;
+    }
+    }
+    &__copy {
+      font-size: 10px;
+    }
   }
   &__copy{
     color:#0083C7;
     font-size: 25px;
   }
   &__avatar{
-    width: 40px!important;
-    height: 40px!important;
+    width: 30px!important;
+    height: 30px!important;
     border-radius: 50%;
     margin: 0!important;
     text-align: center;

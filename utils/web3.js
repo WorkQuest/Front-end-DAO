@@ -62,24 +62,28 @@ export const goToChain = async (chain) => {
     return { ok: true };
   } catch (e) {
     if (typeof window.ethereum !== 'undefined') {
-      showToast('Switch chain error:', `${e.message}`, 'danger');
+      if (e.message.indexOf('wallet_switchEthereumChain') !== -1) { // eth_requestAccounts
+        showToast('Switch chain error', 'Please select network in metamask', 'danger');
+      } else {
+        showToast('Switch chain error', `${e.message}`, 'danger');
+      }
     }
     return error(500, 'switch chain error', e);
   }
 };
 
-const contractInstances = {
-  [+ChainsId.ETH_MAIN]: {},
-  [+ChainsId.ETH_TEST]: {},
-};
+const contractInstances = {};
 export const getContractInstance = (abiName, _abi, _address) => {
-  if (contractInstances[account.chainId][abiName + _address]) return contractInstances[account.chainId][abiName + _address];
+  if (contractInstances[account.chainId] && contractInstances[account.chainId][abiName + _address]) {
+    return contractInstances[account.chainId][abiName + _address];
+  }
   try {
     if (!web3Wallet) {
       console.error('web3Wallet is null!');
       return error(errorCodes.ProviderIsNull, 'web3Wallet is null');
     }
     const inst = new web3Wallet.eth.Contract(_abi, _address);
+    if (!contractInstances[account.chainId]) contractInstances[account.chainId] = {};
     contractInstances[account.chainId][abiName + _address] = inst;
     return inst;
   } catch (e) {
@@ -89,7 +93,7 @@ export const getContractInstance = (abiName, _abi, _address) => {
 };
 
 const sendTransaction = async (_method, abiName, _abi, _address, params) => {
-  const inst = getContractInstance(abiName, _abi, _address);
+  const inst = await getContractInstance(abiName, _abi, _address);
   const accountAddress = account.address;
   const data = inst.methods[_method].apply(this, params).encodeABI();
 
@@ -105,37 +109,13 @@ const sendTransaction = async (_method, abiName, _abi, _address, params) => {
   });
 };
 
-// TODO: проверить работоспособность методы выше. если везде все окей - вырезать
-// export const sendTransaction = async (_method, _abi, _address, payload) => {
-//   if (!web3Wallet) {
-//     console.error('Provider is null!');
-//     return error(errorCodes.ProviderIsNull, 'Provider is null');
-//   }
-//   const accountAddress = account.address;
-//   const inst = new web3Wallet.eth.Contract(_abi, _address);
-//   const gasPrice = await web3Wallet.eth.getGasPrice();
-//   const functionResult = inst.methods[_method].apply(null, payload);
-//   const data = functionResult.encodeABI();
-//   const gasEstimate = await functionResult.estimateGas({ from: accountAddress }); // execution reverted
-//   const transactionData = {
-//     to: _address,
-//     from: accountAddress,
-//     data,
-//     gasPrice,
-//     gas: gasEstimate,
-//   };
-//   console.log(transactionData);
-//   return await web3Wallet.eth.sendTransaction(transactionData);
-// };
-
 export const fetchContractData = async (_method, abiName, _abi, _address, _params) => {
   try {
     const inst = getContractInstance(abiName, _abi, _address);
-    console.log(inst, abiName, _method);
     const res = await inst.methods[_method].apply(this, _params).call();
     return success(res);
   } catch (e) {
-    console.error('fetch data: ', e.message);
+    console.error('fetch data: [', _method, ']', e.message);
     return error(errorCodes.FetchContractData, '', e);
   }
 };
@@ -164,21 +144,25 @@ export const connectToMetamask = async () => {
     web3Wallet = new Web3(ethereum);
     const chainId = await web3Wallet.eth.net.getId();
     await ethereum.request({ method: 'eth_requestAccounts' });
-    if (isProd() && ![1, 56].includes(+chainId)) {
+    if (isProd() && ![+ChainsId.ETH_MAIN, 56].includes(+chainId)) {
       return error(errorCodes.WrongChainId, 'Wrong blockchain in metamask', 'Current site work on mainnet. Please change network.');
     }
-    if (!isProd() && ![4, 97].includes(+chainId)) {
+    if (!isProd() && ![+ChainsId.ETH_TEST, 97].includes(+chainId)) {
       return error(errorCodes.WrongChainId, 'Wrong blockchain in metamask', 'Current site work on testnet. Please change network.');
     }
     account.address = await web3Wallet.eth.getCoinbase();
     account.chainId = chainId;
     return success(account);
   } catch (e) {
+    if (e.message.indexOf('eth_requestAccounts') !== -1) {
+      showToast('Metamask connection', 'Please open metamask to connect', 'danger');
+    }
     return error(errorCodes.ConnectToMetamaskError, '', e);
   }
 };
 
 export const handleMetamaskStatus = (callback) => {
+  console.log('handle status <<');
   isHandlingStatus = true;
   const { ethereum } = window;
   ethereum.on('chainChanged', callback);
@@ -229,15 +213,16 @@ export const getVotes = async (address) => {
 };
 
 /* Proposals */
-export const addProposal = async (description) => {
+export const addProposal = async (description, nonce) => {
   try {
-    const res = await sendTransaction('addProposal', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [description.toString()]);
+    console.log('addproposal', description, nonce);
+    const res = await sendTransaction('addProposal', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [nonce, description.toString()]);
     return success(res);
   } catch (e) {
     return error(errorCodes.AddProposal, e.message, e);
   }
 };
-export const getProposals = async (offset, limit) => { // TODO: delete later (как добавится бэк - дергать с него)
+export const getProposals = async (offset, limit) => {
   try {
     const { result } = await fetchContractData('getProposals', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [offset, limit]);
     return success(result);
@@ -293,5 +278,22 @@ export const executeVoting = async (id) => {
     return success(res);
   } catch (e) {
     return error(errorCodes.ExecuteVoting, e.message, e);
+  }
+};
+
+export const getChairpersonHash = async () => {
+  try {
+    const { result } = await fetchContractData('CHAIRPERSON_ROLE', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING);
+    return success(result);
+  } catch (e) {
+    return error(errorCodes.GetChairpersonHash, e.message, e);
+  }
+};
+export const hasRole = async (roleHash) => {
+  try {
+    const { result } = await fetchContractData('hasRole', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [roleHash, account.address]);
+    return success(result);
+  } catch (e) {
+    return error(errorCodes.HasRole, e.message, e);
   }
 };

@@ -154,7 +154,7 @@ export default {
     height: 46px!important;
   }
 }
-.adress{
+.address{
   &__label{
     @include text-usual;
     color: #1D2127;
