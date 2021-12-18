@@ -1,4 +1,7 @@
 {
+  "user": {
+    "nameless": "Nameless"
+  },
   "invite": {
     "title": "Invited"
   },
@@ -939,7 +942,13 @@
     }
   },
   "discussions": {
+    "showComments": "Show comments",
+    "noDiscussions": "No discussions found! Please change your request...",
+    "comments": {
+      "noComments": "There is no comments!"
+    },
   "title": "Discussions",
+    "response": "response",
   "btn": "Add new discussion",
   "seacrhField": "Search discussion",
   "descriptionTitle": "Description",

@@ -3,9 +3,7 @@
     class="add-discussion"
     :is-header="false"
   >
-    <div
-      class="add-discussion__content"
-    >
+    <div class="add-discussion__content">
       <div class="add-discussion__header header">
         <div class="header__title">
           {{ $t('modals.addDiscussion') }}
@@ -17,62 +15,71 @@
           />
         </div>
       </div>
-      <div class="add-discussion__subtitle">
-        {{ $t('modals.discussionTopic') }}
-      </div>
-      <base-field
-        v-model="title"
-        placeholder="Placeholder"
-        class="add-discussion__field"
-      />
-      <div class="add-discussion__subtitle">
-        {{ $t('modals.description') }}
-      </div>
-      <textarea
-        v-model="discussion"
-        class="add-discussion__body"
-        placeholder="Placeholder"
-      />
-      <base-uploader
-        class="files__container"
-        type="all"
-        :items="documents"
-        :is-show-empty="true"
-        :is-show-download="false"
+      <validation-observer
+        v-slot="{ handleSubmit, validated, passed, invalid }"
       >
-        <template v-slot:actionButton>
+        <div class="add-discussion__subtitle">
+          {{ $t('modals.discussionTopic') }}
+        </div>
+        <base-field
+          v-model="title"
+          :placeholder="$t('modals.discussionTopic')"
+          class="add-discussion__field"
+          rules="required|max:60"
+          :name="$t('modals.discussionTopic')"
+        />
+        <div class="add-discussion__subtitle">
+          {{ $t('modals.description') }}
+        </div>
+        <base-textarea
+          v-model="discussion"
+          class="add-discussion__body"
+          :placeholder="$t('modals.description')"
+          rules="required|max:2000"
+          mode="add-discussion"
+          :name="$t('modals.description')"
+        />
+        <base-uploader
+          class="files__container"
+          type="all"
+          :items="documents"
+          :is-show-empty="true"
+          :is-show-download="false"
+        >
+          <template v-slot:actionButton>
+            <base-btn
+              mode="lightBlue"
+              class="add-discussion__button"
+            >
+              {{ $t('meta.addFile') }}
+              <template v-slot:right>
+                <span class="icon-plus_circle_outline add-discussion__plus" />
+              </template>
+            </base-btn>
+          </template>
+        </base-uploader>
+        <div class="add-discussion__footer footer">
           <base-btn
+            class="footer__buttons"
             mode="lightBlue"
-            class="add-discussion__button"
+            @click="hide"
           >
-            {{ $t('meta.addFile') }}
-            <template v-slot:right>
-              <span class="icon-plus_circle_outline add-discussion__plus" />
-            </template>
+            {{ $t('modals.cancel') }}
           </base-btn>
-        </template>
-      </base-uploader>
-      <div class="add-discussion__footer footer">
-        <base-btn
-          class="footer__buttons"
-          mode="lightBlue"
-          @click="hide"
-        >
-          {{ $t('modals.cancel') }}
-        </base-btn>
-        <base-btn
-          class="footer__buttons"
-          @click="consoleValue"
-        >
-          {{ $t('modals.addDiscussion') }}
-        </base-btn>
-      </div>
+          <base-btn
+            class="footer__buttons"
+            :disabled="!validated || !passed || invalid"
+            @click="handleSubmit(createDiscussion)"
+          >
+            {{ $t('modals.addDiscussion') }}
+          </base-btn>
+        </div>
+      </validation-observer>
     </div>
   </ctm-modal-box>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 
 export default {
   name: 'AddDiscussion',
@@ -93,22 +100,24 @@ export default {
         { img: require('~/assets/img/ui/rectangle.svg'), id: 3, type: 'img' },
         { img: require('~/assets/img/ui/rectangle.svg'), id: 4, type: 'img' },
         { img: require('~/assets/img/ui/rectangle.svg'), id: 5, type: 'img' },
-
       ],
     };
   },
-  computed: {
-    ...mapGetters({
-      options: 'modals/getOptions',
-    }),
-  },
   methods: {
+    async createDiscussion() {
+      const response = await this.$store.dispatch('discussions/createDiscussion', {
+        title: this.title,
+        description: this.discussion,
+        medias: [],
+      });
+      if (response.ok) {
+        const { id } = response.result;
+        await this.$router.push(`/discussions/${id}`);
+      } else console.error('Something wrong, tell to developers');
+      this.hide();
+    },
     hide() {
       this.CloseModal();
-    },
-    consoleValue() {
-      this.title = '';
-      this.discussion = '';
     },
   },
 };
@@ -116,69 +125,65 @@ export default {
 
 <style lang="scss" scoped>
 .add-discussion {
-  width:  630px;
-  &__content{
+  &__content {
     padding: 30px 28px;
-    width:  100%;
+    width: 100%;
     background-color: $white;
     border-radius: 6px;
   }
-  &__header{
+
+  &__header {
     margin-bottom: 10px;
   }
-  &__field{
-    width:  444px!important;
-    height: 46px!important;
-    background: #F3F7FA!important;
+
+  &__field {
+    width: 444px !important;
+    height: 46px !important;
+    background: #F3F7FA !important;
     justify-content: center;
     margin: 5px 0 25px 0;
     border-radius: 6px;
   }
+
   &__body {
     width: 444px;
     height: 174px;
-    background: #F7F7FA;
-    border-radius: 6px;
-    padding: 11px 20px 11px 20px;
-    margin: 5px 0px 15px 0px;
-    border: none;
-    resize: none;
-    &:focus {
-      background: $white;
-      border: 1px solid #0083C7;
-    }
-    &::placeholder{
-      color: $black300;
-    }
+    margin: 5px 0 15px 0;
   }
-    &__plus {
-      color: #0083C7;
-      font-size: 22px;
-      padding: 12px;
+
+  &__plus {
+    color: #0083C7;
+    font-size: 22px;
+    padding: 12px;
   }
-  &__button{
-    width: 162px!important;
-    height: 46px!important;
+
+  &__button {
+    width: 162px !important;
+    height: 46px !important;
     margin: 10px 0 25px auto;
     border: 0.1px solid #0083C7;
   }
-  &__images{
-  margin: 15px 0px 15px 0px;
+
+  &__images {
+    margin: 15px 0 15px 0;
   }
-  &__files{
-    margin-top: 10px!important;
+
+  &__files {
+    margin-top: 10px !important;
   }
 }
 
-.header{
+.header {
   display: flex;
   justify-content: space-between;
-  &__title{
+
+  &__title {
     font-weight: 500;
     font-size: 23px;
     line-height: 130%;
   }
-  &__close{
+
+  &__close {
     color: black;
     font-size: 25px;
   }
@@ -188,18 +193,22 @@ export default {
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  &__buttons{
-    width: 274px!important;
+
+  &__buttons {
+    width: 274px !important;
   }
 }
+
 @include _767 {
   .add-discussion {
     width: 90vw !important;
-    &__content{
+
+    &__content {
       width: 100%;
     }
   }
 }
+
 @include _575 {
   .add-discussion {
     &__field, &__body {
@@ -207,6 +216,7 @@ export default {
     }
   }
 }
+
 @include _380 {
   .add-discussion {
     &__field, &__body {
