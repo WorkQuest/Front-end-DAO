@@ -45,7 +45,7 @@
         <!--        </base-btn>-->
         <button
           v-if="!filterComments(sub5Comments, data.id).length && data.amountSubComments > 0"
-          class="comment__btn"
+          class="bottom__btn"
           @click="loadSubs(data.id, 5)"
         >
           {{ $t('discussions.showComments') }}
@@ -316,7 +316,7 @@ export default {
     @include text-usual;
     background: transparent;
     color: $blue;
-    width: 80px;
+    width: 160px;
     height: 33px;
     border-radius: 6px;
     border: none;
