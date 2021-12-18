@@ -26,6 +26,7 @@
       </div>
       <div class="comment__bottom bottom">
         <base-btn
+          v-if="comment.amountSubComments > 0"
           class="comment__btn"
           @click="!filterComments(sub2Comments, comment.id).length ? loadSubs(comment.id) : clearSubs()"
         >
