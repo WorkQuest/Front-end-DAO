@@ -152,8 +152,7 @@ export const connectToMetamask = async () => {
     account.chainId = chainId;
     return success(account);
   } catch (e) {
-    // if (e.message.indexOf('eth_requestAccounts') !== -1) {
-    if (e.message.match(/already processing/i)) {
+    if (e.message.indexOf('eth_requestAccounts') !== -1) {
       showToast('Metamask connection', 'Please open metamask to connect', 'danger');
     } else {
       console.log(e.message);

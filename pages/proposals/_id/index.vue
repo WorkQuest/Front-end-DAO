@@ -334,6 +334,13 @@ export default {
     this.SetLoader(true);
     this.idCard = +this.$route.params.id;
 
+    const resp = await this.$store.dispatch('proposals/getProposal', this.idCard);
+    console.log(resp);
+    if (resp.ok === false) {
+      await this.$router.push('/proposals');
+      return;
+    }
+
     await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
     if (this.isConnected) {
       await this.loadCard();
@@ -341,17 +348,11 @@ export default {
 
     let card = null;
     let voteData = null;
-    // for (let i = 0; i < this.cards.length; i += 1) {
-    //   if (this.cards[i].proposalId === this.idCard) {
-    //     card = this.cards[i];
-    //     break;
-    //   }
-    // }
-    // if (card === null) {
-    const { result } = await this.$store.dispatch('proposals/getProposal', this.idCard);
+
+    const { result } = resp;
     card = result.proposal;
     voteData = result.vote;
-    // }
+
     this.status = card.status;
     this.title = card.title;
     this.description = card.description;

@@ -172,6 +172,7 @@ export default {
 .download {
   width: 33px;
   height: 33px;
+  text-decoration: none;
 
   &__icon {
     width: 100%;
