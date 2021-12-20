@@ -19,13 +19,6 @@
         {{ $tc('modals.shure', options.name) }}
       </div>
       <div class="undelegate__tokens tokens">
-        <!--              <div class="tokens__title">-->
-        <!--                {{ $t('modals.tokensNumber') }}-->
-        <!--              </div>-->
-        <!--              <label-->
-        <!--                for="tokensNumber"-->
-        <!--                class="tokens__title_grey"-->
-        <!--              >{{ $t('modals.tokensDelegated') }}</label>-->
         <div class="tokens__footer footer">
           <base-field
             id="tokensNumber"
@@ -34,12 +27,6 @@
             class="footer__body"
             :placeholder="$t('modals.placeholder')"
           />
-          <!--                <base-btn-->
-          <!--                  class="footer__maximum"-->
-          <!--                  mode="lightBlue"-->
-          <!--                >-->
-          <!--                  {{ $t('modals.max') }}-->
-          <!--                </base-btn>-->
         </div>
       </div>
       <div class="undelegate__bottom bottom">
