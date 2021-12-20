@@ -578,12 +578,12 @@
       "addProposal": "Add proposal error",
       "voteError": "Voting error",
       "votingTimeIsExpired": "Voting time is expired",
-      "notEnoughFunds": "You must have delegated at least {a} WQT. Delegated: {b} WQT."
+      "notEnoughFunds": "You must have delegated at least {a} WQT. Delegated: {b} WQT.",
       "vote": "Vote",
       "isEmpty": "List is empty"
     },
     "executeVoting": "Execute voting",
-    "proposalIsExpired": "Waiting for the end of the vote",
+    "proposalIsExpired": "Waiting for the end of the vote"
   },
   "settings": {
     "description": "And you are beautiful",
