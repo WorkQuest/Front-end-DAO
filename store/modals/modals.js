@@ -45,4 +45,5 @@ export default {
   addProposal: 'addProposal',
   delegate: 'delegate',
   undelegate: 'undelegate',
+  gallery: 'gallery',
 };

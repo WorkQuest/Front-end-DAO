@@ -12,6 +12,7 @@
         :src="item.img || item.url"
         alt=""
         class="image__img"
+        @click="mode !== 'default' ? showGallery(item): ''"
       >
       <span class="image__size">
         {{ item.size }}
@@ -27,6 +28,8 @@
 </template>
 
 <script>
+import modals from '~/store/modals/modals';
+
 export default {
   props: {
     mode: {
@@ -51,6 +54,9 @@ export default {
     },
   },
   methods: {
+    showGallery(item) {
+      this.ShowModal({ key: modals.gallery, files: item });
+    },
     onIconClick(id) {
       if (this.isShowDownload) this.downloadImage(id);
       else this.deleteImage(id);

@@ -201,21 +201,7 @@ export default {
       totalPagesValue: 1,
       discussionId: '',
       opinion: '',
-      documents: [
-        {
-          id: '1',
-          type: 'doc',
-          name: 'Some_document.pdf',
-          size: '1.2 MB',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        },
-        { img: require('~/assets/img/ui/rectangle.svg'), id: 1, type: 'img' },
-        { img: require('~/assets/img/ui/rectangle.svg'), id: 2, type: 'img' },
-        { img: require('~/assets/img/ui/rectangle.svg'), id: 3, type: 'img' },
-        { img: require('~/assets/img/ui/rectangle.svg'), id: 4, type: 'img' },
-        { img: require('~/assets/img/ui/rectangle.svg'), id: 5, type: 'img' },
-
-      ],
+      documents: [],
     };
   },
   computed: {

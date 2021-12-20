@@ -43,7 +43,6 @@
           class="files__container"
           type="all"
           :items="documents"
-          :is-show-empty="true"
           :is-show-download="false"
         >
           <template v-slot:actionButton>
@@ -64,15 +63,6 @@
                 <span class="icon-plus_circle_outline add-discussion__plus" />
               </template>
             </base-btn>
-            <!--            <base-btn-->
-            <!--              mode="lightBlue"-->
-            <!--              class="add-discussion__button"-->
-            <!--            >-->
-            <!--              {{ $t('meta.addFile') }}-->
-            <!--              <template v-slot:right>-->
-            <!--                <span class="icon-plus_circle_outline add-discussion__plus" />-->
-            <!--              </template>-->
-            <!--            </base-btn>-->
           </template>
         </base-uploader>
         <div class="add-discussion__footer footer">
@@ -115,6 +105,9 @@ export default {
     this.acceptedTypes = this.accept.replace(/\s/g, '').split(',');
   },
   methods: {
+    remove(id) {
+      return this.documents.filter((item) => item.id !== id);
+    },
     checkContentType(file) {
       return this.acceptedTypes.indexOf(file.type) !== -1;
     },

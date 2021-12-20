@@ -67,7 +67,7 @@ export default {
       return this.items.filter((item) => item.type === 'doc');
     },
     images() {
-      return this.items.filter((item) => item.type === 'image/jpeg');
+      return this.items.filter((item) => item.type === 'img');
     },
   },
   methods: {
@@ -89,7 +89,7 @@ export default {
     display: flex;
     flex-direction: column;
   }
-  &__all {
+  &__all{
     display: flex;
     flex-direction: column;
   }
