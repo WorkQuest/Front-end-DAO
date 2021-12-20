@@ -130,24 +130,27 @@
             </div>
           </div>
           <div class="results__buttons buttons">
-            <div class="buttons__header">
+            <div
+              v-if="timeIsExpired || isVoted"
+              class="buttons__header"
+            >
               {{ $t('proposal.results') }}
             </div>
             <base-btn
-              v-if="!isActive && isChairperson"
+              v-if="isActive && timeIsExpired && isChairperson"
               class="results__finish"
               @click="executeVoting"
             >
               {{ $t('proposal.executeVoting') }}
             </base-btn>
             <div
-              v-if="!isVoted && timeIsExpired && !isChairperson"
+              v-else-if="timeIsExpired && isActive && !isChairperson"
               class="results__finish"
             >
               {{ $t('proposal.proposalIsExpired') }}
             </div>
             <div
-              v-else-if="!isVoted"
+              v-else-if="!isVoted && !timeIsExpired"
               class="buttons__container"
             >
               <base-btn
@@ -166,7 +169,7 @@
               </base-btn>
             </div>
             <base-btn
-              v-else
+              v-else-if="isVoted"
               mode="outline"
               class="btn__voted"
               :class="[
@@ -342,7 +345,6 @@ export default {
     card = result.proposal;
     voteData = result.vote; // TODO: подгрузить с нового роута список голосов с бэка
 
-    this.status = card.status;
     this.title = card.title;
     this.description = card.description;
     this.hash = card.txHash;
@@ -394,7 +396,7 @@ export default {
       this.SetLoader(true);
       if (!this.isChairperson) return;
       await this.$store.dispatch('web3/executeVoting', this.idCard);
-      await this.loadCard();
+      await this.updateVoteResults();
       this.SetLoader(false);
     },
     resetDataFromContract() {
@@ -411,7 +413,8 @@ export default {
     },
     async loadCard() {
       const [proposalRes] = await Promise.all([
-        this.$store.dispatch('web3/getProposalInfoById', this.idCard), // contract
+        this.$store.dispatch('web3/getProposalInfoById', this.idCard),
+        this.updateVoteResults(),
         this.getReceipt(),
         this.checkRole(),
       ]);
@@ -444,11 +447,16 @@ export default {
         } else this.results.percents.no = 0;
       }
       this.isActive = active;
-      if (active) {
-        this.status = 0;
-      } else {
-        this.status = succeded ? 2 : 1;
-      }
+    },
+    async updateVoteResults() {
+      const res = await this.$store.dispatch('web3/voteResults', this.idCard);
+      if (!res.ok) return;
+      const { succeded, defeated } = res.result;
+      if (!succeded && !defeated) {
+        this.status = 1;
+      } else if (defeated || !succeded) {
+        this.status = 2;
+      } else this.status = 3;
     },
     async getReceipt() {
       const { address } = await this.$store.dispatch('web3/getAccount');
@@ -486,11 +494,11 @@ export default {
         this.$store.dispatch('web3/getVotes', account.address),
         this.$store.dispatch('web3/getVoteThreshold'),
       ]);
-      console.log(+delegated.result, +voteThreshold.result);
+      console.log(`votes: ${+delegated.result}`, `voteThreshold: ${voteThreshold.result}`);
       if (+delegated.result < +voteThreshold.result) {
         await this.$store.dispatch('main/showToast', {
           title: this.$t('proposal.errors.voteError'),
-          text: this.$tc('proposal.errors.notEnoughFunds', { a: voteThreshold.result, b: delegated.result }),
+          text: this.$t('proposal.errors.notEnoughFunds', { a: +voteThreshold.result, b: +delegated.result }),
         });
         await this.$store.dispatch('modals/show', {
           key: modals.delegate,
@@ -516,11 +524,15 @@ export default {
       if (!this.isConnected) return;
       const res = await this.$store.dispatch('web3/doVote', { id: this.idCard, value });
       if (!res.ok) {
+        await this.$store.dispatch('main/showToast', {
+          title: this.$t('proposal.errors.voteError'),
+          text: this.$t('proposal.errors.delegatedAfter'),
+        });
         this.SetLoader(false);
         return;
       }
       await this.loadCard();
-      // TODO: подгрузить с нового роута список голосов с бэка
+      // TODO: tut подгрузить с нового роута список голосов с бэка
       this.SetLoader(false);
     },
   },

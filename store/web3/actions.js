@@ -15,7 +15,7 @@ import {
   getVoteThreshold,
   getVotes,
   getReceipt,
-  getProposalThreshold, executeVoting, getChairpersonHash, hasRole,
+  getProposalThreshold, executeVoting, getChairpersonHash, hasRole, voteResults,
 } from '~/utils/web3';
 import modals from '~/store/modals/modals';
 import { error, success } from '~/utils/success-error';
@@ -117,6 +117,9 @@ export default {
   },
   async executeVoting({ commit }, id) {
     return await executeVoting(id);
+  },
+  async voteResults({ commit }, id) {
+    return await voteResults(id);
   },
   async isChairpersonRole({ commit, getters }) {
     if (!getters.chairpersonRoleHash) {

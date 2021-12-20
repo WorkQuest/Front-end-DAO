@@ -214,7 +214,6 @@ export const getVotes = async (address) => {
 /* Proposals */
 export const addProposal = async (description, nonce) => {
   try {
-    console.log('addproposal', description, nonce);
     const res = await sendTransaction('addProposal', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [nonce, description.toString()]);
     return success(res);
   } catch (e) {
@@ -277,6 +276,14 @@ export const executeVoting = async (id) => {
     return success(res);
   } catch (e) {
     return error(errorCodes.ExecuteVoting, e.message, e);
+  }
+};
+export const voteResults = async (id) => {
+  try {
+    const { result } = await fetchContractData('voteResults', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [id]);
+    return success(result);
+  } catch (e) {
+    return error(errorCodes.VoteResults, e.message, e);
   }
 };
 
