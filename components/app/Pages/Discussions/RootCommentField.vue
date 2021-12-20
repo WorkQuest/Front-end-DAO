@@ -90,7 +90,7 @@
           v-model="subCommentInput"
           class="footer__input"
           :placeholder="$t('discussions.input')"
-          rules="required|text-response"
+          rules="required|max:250"
           :name="$t('discussions.response')"
           mode="comment-field"
         />

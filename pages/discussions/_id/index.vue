@@ -131,7 +131,7 @@
                 v-model="opinion"
                 class="footer__input"
                 :placeholder="$t('discussions.input')"
-                rules="required|text-response"
+                rules="required|max:250"
                 :name="$t('discussions.response')"
                 mode="comment-field"
               />
@@ -155,14 +155,10 @@
           </div>
         </div>
       </validation-observer>
-      <div
+      <empty-data
         v-if="rootComments.count === 0"
-        class="info__comment comment "
-      >
-        <div class="comment__field">
-          {{ $t('discussions.comments.noComments') }}
-        </div>
-      </div>
+        :description="$t('discussions.comments.noComments')"
+      />
       <div
         v-for="(comment) in rootComments.comments"
         :key="comment.id"

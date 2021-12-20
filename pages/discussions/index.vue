@@ -19,13 +19,11 @@
         {{ $t('discussions.btn') }}
       </base-btn>
     </div>
+    <empty-data
+      v-if="discussions.length === 0"
+      :description="$t('discussions.noDiscussions')"
+    />
     <div class="discussions__cards">
-      <div
-        v-if="discussions.length === 0"
-        class="discussions__card"
-      >
-        {{ $t('discussions.noDiscussions') }}
-      </div>
       <discussion-card
         v-for="(item, i) in discussions"
         :key="i"
