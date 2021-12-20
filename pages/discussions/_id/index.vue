@@ -234,8 +234,6 @@ export default {
     filterMediaToTypes() {
       this.pdf = this.currentDiscussion.medias.filter((file) => file.contentType === 'application/msword' || file.contentType === 'application/pdf');
       this.images = this.currentDiscussion.medias.filter((file) => file.contentType === 'image/jpeg' || file.contentType === 'image/png');
-      console.log('this.pdf', this.pdf);
-      console.log('this.images', this.images);
     },
     authorName() {
       if (this.discussionAuthor) return `${this.discussionAuthor.firstName} ${this.discussionAuthor.lastName}`;
