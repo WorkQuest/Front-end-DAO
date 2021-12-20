@@ -29,7 +29,6 @@ export default {
   async getProposal({ commit }, proposalId) {
     try {
       const { result } = await this.$axios.$get(`v1/proposal/${proposalId}`);
-      console.log('single proposal', result);
       return success(result);
     } catch (e) {
       console.error(e.message);

@@ -370,7 +370,7 @@ export default {
     this.description = card.description;
     this.hash = card.txHash;
     this.dateStart = new Date(card.timestamp * 1000);
-    this.dateEnd = new Date(card.timestamp * 1000 + card.votingPeriod);
+    this.dateEnd = new Date((card.timestamp + card.votingPeriod) * 1000);
     let i = 1;
     // eslint-disable-next-line no-restricted-syntax
     for (const media of card.medias) {
@@ -404,10 +404,6 @@ export default {
       this.SetLoader(true);
       if (!this.isChairperson) return;
       const res = await this.$store.dispatch('web3/executeVoting', this.idCard);
-      console.log('Voting response:', res);
-
-      // TODO: check if res ok - reload data [!!!]
-      // if (res.ok)
       await this.loadCard();
       this.SetLoader(false);
     },
@@ -552,7 +548,6 @@ export default {
       if (!this.isConnected) return;
       const res = await this.$store.dispatch('web3/doVote', { id: this.idCard, value });
       if (!res.ok) {
-        await this.loadCard();
         this.SetLoader(false);
         return;
       }

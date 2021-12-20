@@ -572,7 +572,8 @@
       "hash": "Hash",
       "date": "Date",
       "address": "Address",
-      "vote": "Vote"
+      "vote": "Vote",
+      "isEmpty": "List is empty"
     },
     "errors": {
       "addProposal": "Add proposal error",
