@@ -12,13 +12,6 @@ export default {
       return error(errorCodes.CreateProposal, e.message, e);
     }
   },
-  async createDiscussion({ commit }, payload) {
-    try {
-      return await this.$axios.$post('v1/discussion/create', payload);
-    } catch (e) {
-      return error(errorCodes.CreateDiscussion, e.message, e);
-    }
-  },
   async getProposals({ commit }, { offset, limit }) {
     try {
       const result = await this.$axios.$get('v1/proposal', {

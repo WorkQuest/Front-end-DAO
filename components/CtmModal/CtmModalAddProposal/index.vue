@@ -160,7 +160,7 @@ export default {
         medias,
       });
       // TODO: create proposal
-      // const createProposalRes = await this.$store.dispatch('proposals/createDiscussion', {
+      // const createProposalRes = await this.$store.dispatch('discussions/createDiscussion', {
       //   title: this.votingTopicInput,
       //   description: this.descriptionInput,
       //   medias,
