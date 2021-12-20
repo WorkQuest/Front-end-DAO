@@ -16,7 +16,7 @@
         <span class="table__title">{{ $props.title }}</span>
       </template>
       <template #cell(tx_hash)="el">
-        <span class="table__grey">{{ cutString(el.item.tx_hash, 9, 6) }}</span>
+        <span class="table__grey">{{ el.item.tx_hash }}</span>
       </template>
       <template #cell(status)="el">
         <span
@@ -31,8 +31,8 @@
       <template #cell(block)="el">
         <span class="table__grey">{{ el.item.block }}</span>
       </template>
-      <template #cell(timestamp)="el">
-        <span class="table__grey">{{ el.item.timestamp }}</span>
+      <template #cell(date)="el">
+        <span class="table__grey">{{ $moment(el.item.date).format('ll') }}</span>
       </template>
       <template #cell(transaction_fee)="el">
         <span class="table__grey">{{ el.item.transaction_fee }}</span>
@@ -86,7 +86,7 @@
         </base-btn>
       </template>
       <template #cell(investorAddress)="el">
-        {{ modifyAddress(el.item.investorAddress) }}
+        {{ el.item.investorAddress }}
       </template>
       <template
         #cell(name)="el"
@@ -163,9 +163,6 @@ export default {
         title: 'Copy error',
         text: value,
       });
-    },
-    modifyAddress(investorAddress) {
-      return `${investorAddress.substr(0, 5)}...${investorAddress.substr(investorAddress.length - 6, 6)}`;
     },
   },
 };

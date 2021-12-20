@@ -44,7 +44,7 @@
                 class="hash__value"
                 target="_blank"
               >
-                {{ hash.length ? modifyHash(hash) : '...' }}
+                {{ hash.length ? cutString(hash, 6, 6) : '...' }}
               </a>
             </div>
             <div class="transactions__files files">
@@ -207,7 +207,7 @@
           class="history__table"
           :title="$t('proposal.proposalHistory')"
           :fields="historyTableFields"
-          :items="prepareTableData(historyTableData)"
+          :items="historyTableData"
         />
         <div
           v-if="!historyTableData.length"
@@ -248,39 +248,7 @@ import modals from '~/store/modals/modals';
 export default {
   data() {
     return {
-      historyTableFields: [
-        {
-          key: 'number', label: this.$t('proposal.table.number'), sortable: true,
-        },
-        {
-          key: 'hash', label: this.$t('proposal.table.hash'), sortable: true,
-        },
-        {
-          key: 'date', label: this.$t('proposal.table.date'), sortable: true,
-        },
-        {
-          key: 'address', label: this.$t('proposal.table.address'), sortable: true,
-        },
-        {
-          key: 'vote', label: this.$t('proposal.table.vote'), sortable: true,
-        },
-      ],
-      historyTableData: [
-        // {
-        //   number: '1',
-        //   hash: '11400714819323198485',
-        //   date: moment('20210615', 'YYYYMMDD').format('ll'),
-        //   address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
-        //   vote: true,
-        // },
-        // {
-        //   number: '4',
-        //   hash: '11400714819323198485',
-        //   date: moment('20210520', 'YYYYMMDD').format('ll'),
-        //   address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
-        //   vote: false,
-        // },
-      ],
+      historyTableData: [],
       idCard: null,
       status: 0,
       dateStart: '',
@@ -313,6 +281,15 @@ export default {
       isChairperson: 'web3/isChairpersonRole',
       cards: 'proposals/cards',
     }),
+    historyTableFields() {
+      return [
+        { key: 'number', label: this.$t('proposal.table.number'), sortable: true },
+        { key: 'hash', label: this.$t('proposal.table.hash'), sortable: true },
+        { key: 'date', label: this.$t('proposal.table.date'), sortable: true },
+        { key: 'address', label: this.$t('proposal.table.address'), sortable: true },
+        { key: 'vote', label: this.$t('proposal.table.vote'), sortable: true },
+      ];
+    },
     ddValues() {
       return [
         this.$t('proposal.ui.all'),
@@ -363,7 +340,7 @@ export default {
 
     const { result } = resp;
     card = result.proposal;
-    voteData = result.vote;
+    voteData = result.vote; // TODO: подгрузить с нового роута список голосов с бэка
 
     this.status = card.status;
     this.title = card.title;
@@ -382,16 +359,27 @@ export default {
       });
       i += 1;
     }
-    // eslint-disable-next-line no-restricted-syntax
-    for (const vote of voteData.voting) {
-      this.historyTableData.push({
-        ...vote,
-      });
-    }
+    this.fillTableData(voteData.voting);
     this.isFirstLoading = false;
     this.SetLoader(false);
   },
   methods: {
+    fillTableData(votes) {
+      let id = 1;
+      const result = [];
+      // eslint-disable-next-line no-restricted-syntax
+      for (const vote of votes) {
+        result.push({
+          number: id,
+          hash: this.cutString(vote.transactionHash, 6, 6),
+          date: new Date(vote.timestamp * 1000),
+          address: this.cutString(vote.voter, 6, 6),
+          vote: vote.support,
+        });
+        id += 1;
+      }
+      this.historyTableData = result;
+    },
     getHashLink() {
       if (!this.hash) return '';
       return process.env.PROD === 'true'
@@ -401,14 +389,15 @@ export default {
       await this.$store.dispatch('web3/isChairpersonRole');
     },
     async executeVoting() {
+      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      if (!this.isConnected) return;
       this.SetLoader(true);
       if (!this.isChairperson) return;
-      const res = await this.$store.dispatch('web3/executeVoting', this.idCard);
+      await this.$store.dispatch('web3/executeVoting', this.idCard);
       await this.loadCard();
       this.SetLoader(false);
     },
     resetDataFromContract() {
-      console.log('Clear data');
       this.results = {
         percents: {
           yes: 0,
@@ -422,7 +411,7 @@ export default {
     },
     async loadCard() {
       const [proposalRes] = await Promise.all([
-        this.$store.dispatch('web3/getProposalInfoById', this.idCard),
+        this.$store.dispatch('web3/getProposalInfoById', this.idCard), // contract
         this.getReceipt(),
         this.checkRole(),
       ]);
@@ -430,7 +419,7 @@ export default {
       const { result } = proposalRes.result;
       console.log(result);
       const {
-        forVotes, againstVotes, active, defeated, succeded,
+        forVotes, againstVotes, active, succeded,
       } = result;
       const yes = +(new BigNumber(forVotes).shiftedBy(-18));
       const no = +(new BigNumber(againstVotes).shiftedBy(-18));
@@ -487,26 +476,6 @@ export default {
         [proposalStatuses.ACCEPTED]: this.$t('proposals.cards.status.accepted'),
       };
       return priority[index] || 'None';
-    },
-    modifyHash(hash) {
-      if (!hash) return '';
-      return `${hash.substr(0, 6)}...${hash.substr(hash.length - 6, 6)}`;
-    },
-    prepareTableData(data) {
-      const newData = [];
-      data.forEach((item) => {
-        const itemModel = item;
-        itemModel.hash = this.modifyHash(item.hash);
-        newData.push(itemModel);
-      });
-      switch (this.ddValue) {
-        case 0:
-          return newData.filter((item) => item.vote);
-        case 1:
-          return newData.filter((item) => !item.vote);
-        default:
-          return newData;
-      }
     },
     async toDelegate(value) {
       await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
