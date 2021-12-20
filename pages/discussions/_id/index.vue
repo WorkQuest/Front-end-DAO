@@ -15,63 +15,54 @@
       <div class="info__title">
         {{ $t('discussions.infoTitle') }}
       </div>
-      <div
-        v-for="(item) in discussions"
-        :key="item.id"
-        class="info__field"
-      >
+      <div class="info__field">
         <div class="info__discussion discussion">
-          <div class=" discussion__user user">
+          <div class="discussion__user user">
             <img
-              src="~assets/img/ui/avatar.svg"
-              alt="avatar"
+              :src="authorAvatarUrl ? authorAvatarUrl : require('~/assets/img/app/avatar_empty.png')"
+              alt="userAvatar"
               class="user__avatar"
+              @click="toInvestor(discussionAuthor.id)"
             >
-            <span class="user__name">
-              {{ item.userName }}
+            <span
+              class="user__name"
+              @click="toInvestor(discussionAuthor.id)"
+            >
+              {{ authorName() }}
             </span>
             <button class="user__star">
               <img
-                v-if="!isFavorite"
-                src="~assets/img/ui/star_simple.svg"
-                alt="simpleStar"
-                @click="toggleFavorite"
-              >
-              <img
-                v-else
-                src="~assets/img/ui/star_checked.svg"
-                alt="checkedStar"
-                @click="toggleFavorite"
+                :src="currentDiscussion.star ? require('~/assets/img/ui/star_checked.svg'): require('~/assets/img/ui/star_simple.svg')"
+                :alt="currentDiscussion.star ? 'checkedStar' : 'simpleStar'"
+                @click="toggleFavorite(currentDiscussion.id)"
               >
             </button>
           </div>
           <div class="discussion__title">
-            {{ item.title }}
+            {{ currentDiscussion.title }}
           </div>
           <div class="discussion__date">
-            {{ item.date }}
+            {{ $moment(currentDiscussion.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
           </div>
           <div class="discussion__subtitle">
             {{ $t('discussions.files') }}
           </div>
-          <div class="discussion__filesUploader filesUploader">
-            <base-uploader
-              class="files__container"
-              type="all"
-              :items="documents"
-              :is-show-empty="true"
-            />
-          </div>
+          <base-uploader
+            class="discussion__uploader"
+            type="all"
+            :items="documents"
+            :is-show-empty="true"
+          />
           <div class="discussion__description description">
             <hr class="discussion__line">
             <div class="description__title">
               {{ $t('discussions.descriptionTitle') }}
             </div>
             <div class="description__item">
-              {{ item.description }}
+              {{ currentDiscussion.description }}
             </div>
           </div>
-          <div class="discussion__bottom bottom">
+          <div class="discussion__bottom bottom bottom__footer">
             <div class="bottom__footer">
               <div class="bottom__comment">
                 <img
@@ -80,22 +71,17 @@
                 >
               </div>
               <div class="bottom__counter">
-                {{ item.commentCounter }}
+                {{ currentDiscussion.amountComments }}
               </div>
               <button class="bottom__like">
                 <span
-                  v-if="!isLiked"
+                  :class="{'bottom__like_chosen' : currentDiscussion.liked}"
                   class="icon-heart_fill bottom__like"
-                  @click="toggleLiked"
-                />
-                <span
-                  v-else
-                  class="icon-heart_fill bottom__like bottom__like_choosen"
-                  @click="toggleLiked"
+                  @click="toggleLikeOnDiscussion(discussionId)"
                 />
               </button>
               <div class="bottom__counter bottom__counter_right">
-                {{ item.likeCounter }}
+                {{ currentDiscussion.amountLikes }}
               </div>
             </div>
           </div>
@@ -123,129 +109,75 @@
           </span>
         </base-btn>
       </div>
-      <div
-        v-if="isAddComment"
-        class="info__response response"
-      >
-        <div class="response__field">
-          <div class="response__title">
-            {{ $t('discussions.responseTitle') }}
-          </div>
-          <div class="response__footer footer">
-            <span class="icon-link footer__chain" />
-            <input
-              v-model="opinion"
-              class="footer__comment"
-              :placeholder="$t('discussions.input')"
-            >
-          </div>
-          <div class="response__footer">
-            <base-btn
-              class="response__btn"
-              mode="lightBlue"
-              @click="addComment"
-            >
-              {{ $t('discussions.cancel') }}
-            </base-btn>
-            <base-btn
-              class="response__btn"
-              @click="writeOpinion"
-            >
-              {{ $t('discussions.add') }}
-            </base-btn>
+      <validation-observer v-slot="{handleSubmit, validated, passed, invalid}">
+        <div
+          v-if="isAddComment"
+          class="info__response response"
+        >
+          <div class="response__field">
+            <div class="response__title">
+              {{ $t('discussions.responseTitle') }}
+            </div>
+            <div class="response__footer footer">
+              <base-btn
+                class="footer__btn"
+                :disabled="!validated || !passed || invalid"
+              >
+                <template v-slot:left>
+                  <span class="icon-link footer__chain" />
+                </template>
+              </base-btn>
+              <base-field
+                v-model="opinion"
+                class="footer__input"
+                :placeholder="$t('discussions.input')"
+                rules="required|text-response"
+                :name="$t('discussions.response')"
+                mode="comment-field"
+              />
+            </div>
+            <div class="response__footer">
+              <base-btn
+                class="response__btn"
+                mode="lightBlue"
+                @click="addComment"
+              >
+                {{ $t('discussions.cancel') }}
+              </base-btn>
+              <base-btn
+                class="response__btn"
+                :disabled="!validated || !passed || invalid"
+                @click="handleSubmit(addRootCommentResponse)"
+              >
+                {{ $t('discussions.add') }}
+              </base-btn>
+            </div>
           </div>
         </div>
-      </div>
+      </validation-observer>
       <div
-        v-for="(elem) in comments"
-        :key="elem.id"
-        class="info__comment comment"
+        v-if="rootComments.count === 0"
+        class="info__comment comment "
       >
         <div class="comment__field">
-          <div class="comment__user user">
-            <img
-              src="~assets/img/ui/avatar.svg"
-              alt=""
-              class="user__avatar"
-            >
-            <div class="user__name">
-              {{ elem.userName }}
-            </div>
-            <div class="user__date">
-              {{ elem.date }}
-            </div>
-          </div>
-          <div class="comment__description">
-            {{ elem.description }}
-          </div>
-          <div class="comment__bottom bottom">
-            <base-btn
-              class="bottom__btn"
-              mode="blue"
-              @click="toggleShow"
-            >
-              <p v-if="!isShow">
-                {{ $t('discussions.show') }}
-              </p>
-              <p v-if="isShow">
-                {{ $t('discussions.hide') }}
-              </p>
-            </base-btn>
-            <div class="bottom__panel">
-              <img
-                src="~assets/img/ui/comment.svg"
-                alt=""
-                class="bottom__comment"
-              >
-              <div class="bottom__counter">
-                {{ elem.commentCounter }}
-              </div>
-              <button class="bottom__like">
-                <span
-                  v-if="!isVote"
-                  class="icon-heart_fill bottom__like"
-                  @click="toggleVote"
-                />
-                <span
-                  v-else
-                  class="icon-heart_fill bottom__like bottom__like_choosen"
-                  @click="toggleVote"
-                />
-              </button>
-              <div class="bottom__counter bottom__counter_right">
-                {{ elem.likeCounter }}
-              </div>
-            </div>
-          </div>
-          <div v-if="isShow">
-            <answers-card
-              v-for="(item) in answers"
-              :key="item.id"
-              :item="item"
-              class="comment__replays"
-            />
-          </div>
-          <base-btn
-            v-if="isShow"
-            mode="blue"
-            class="comment__btn"
-          >
-            {{ $t('discussions.more') }}
-          </base-btn>
-          <div class="comment__footer footer">
-            <span class="class= icon-link footer__chain" />
-            <input
-              class="footer__input"
-              :placeholder="$t('discussions.input')"
-            >
-            <span class="class= icon-send footer__arrow" />
-          </div>
+          {{ $t('discussions.comments.noComments') }}
         </div>
       </div>
+      <div
+        v-for="(comment) in rootComments.comments"
+        :key="comment.id"
+        class="info__comment comment"
+      >
+        <root-comment-field
+          class="comment__field"
+          :comment="comment"
+        />
+      </div>
       <base-pager
-        v-model="pages"
+        v-if="totalPagesValue > 1"
+        v-model="page"
         class="info__pagination"
-        :total-pages="totalPages"
+        :total-pages="totalPagesValue"
       />
     </div>
   </div>
@@ -253,115 +185,19 @@
 
 <script>
 
-import answersCard from '~/components/ui/AnswersCard';
+import { mapGetters } from 'vuex';
 
 export default {
-  components: {
-    answersCard,
-  },
   data() {
     return {
-      isFavorite: false,
-      isLiked: false,
+      page: 1,
+      perPager: 10,
       isAddComment: false,
-      isShow: false,
-      isChoosen: false,
-      isVote: false,
+      rootCommentObjects: {},
+      rootCommentArray: [],
+      totalPagesValue: 1,
+      discussionId: '',
       opinion: '',
-      pages: 1,
-      totalPages: 5,
-      discussions: [
-        {
-          id: 1,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          title: 'Lorem ipsum dolor sit amet consectetur',
-          date: 'Jan 01, 2021, 12:00',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-        },
-      ],
-      comments: [
-        {
-          id: 2,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          date: '10 days ago',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-          isCommentLiked: false,
-        },
-        {
-          id: 3,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          date: '10 days ago',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-          isCommentLiked: false,
-
-        },
-        {
-          id: 4,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          date: '10 days ago',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-          isCommentLiked: false,
-
-        },
-        {
-          id: 5,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          date: '10 days ago',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-          isCommentLiked: false,
-        },
-        {
-          id: 6,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          date: '10 days ago',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-          commentCounter: 50,
-          isCommentLiked: false,
-        },
-      ],
-      answers: [
-        {
-          id: 7,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          date: '10 days ago',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-        },
-        {
-          id: 8,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          date: '10 days ago',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-        },
-        {
-          id: 9,
-          avatar: '~assets/img/ui/avatar.svg',
-          userName: 'Rosalia Vans',
-          date: '10 days ago',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus lacus quam tristique neque, donec amet id. Dui velit sit sapien eu. Massa auctor viverra in augue ac nulla. Tellus duis consectetur tellus vel. Consectetur id hendrerit molestie sit etiam fames ullamcorper egestas. Tortor, velit sem volutpat sed amet, sed elit eget. Bibendum tristique volutpat vitae dolor aliquet. Lectus tellus',
-          likeCounter: 50,
-        },
-      ],
       documents: [
         {
           id: '1',
@@ -379,24 +215,71 @@ export default {
       ],
     };
   },
-  methods: {
-    toggleFavorite() {
-      this.isFavorite = !this.isFavorite;
+  computed: {
+    ...mapGetters({
+      discussionAuthor: 'discussions/getCurrentDiscussionAuthorData',
+      currentDiscussion: 'discussions/getCurrentDiscussion',
+      authorAvatarUrl: 'discussions/getCurrentDiscussionAuthorAvatarUrl',
+      rootComments: 'discussions/getRootComments',
+      subComments: 'discussions/getSubCommentsLevel2',
+    }),
+  },
+  watch: {
+    async page() {
+      this.SetLoader(true);
+      const additionalValue = `limit=${this.perPager}&offset=${(this.page - 1) * this.perPager}`;
+      await this.getRootComments(additionalValue);
+      this.SetLoader(false);
     },
-    toggleLiked() {
-      this.isLiked = !this.isLiked;
+  },
+  async mounted() {
+    this.SetLoader(true);
+    this.discussionId = this.$route.params.id;
+    await this.getCurrentDiscussion();
+    await this.getRootComments();
+    this.totalPages();
+    this.SetLoader(false);
+  },
+  methods: {
+    authorName() {
+      if (this.discussionAuthor) return `${this.discussionAuthor.firstName} ${this.discussionAuthor.lastName}`;
+      return this.$t('user.nameless');
+    },
+    toInvestor(authorId) {
+      this.$router.push(`/investors/${authorId}`);
+    },
+    totalPages() {
+      return Math.ceil(this.rootCommentObjects.count / this.perPager);
+    },
+    async getRootComments(additionalValue) {
+      const discussionId = this.currentDiscussion.id;
+      this.rootCommentObjects = await this.$store.dispatch('discussions/getRootComments', { discussionId, additionalValue });
+      this.rootCommentArray = this.rootCommentObjects.comments;
+      this.totalPagesValue = this.totalPages();
+    },
+    async addRootCommentResponse() {
+      const payload = {
+        text: this.opinion,
+        medias: [],
+      };
+      await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
+      this.isAddComment = false;
+      this.opinion = '';
+      await this.getRootComments();
+    },
+    async getCurrentDiscussion() {
+      await this.$store.dispatch('discussions/getCurrentDiscussion', this.discussionId);
+    },
+    async toggleFavorite(discussionId) {
+      await this.$store.dispatch('discussions/toggleStarOnDiscussion', { id: discussionId, like: this.currentDiscussion && !this.currentDiscussion.star });
+      await this.getCurrentDiscussion();
+    },
+    async toggleLikeOnDiscussion(discussionId) {
+      await this.$store.dispatch('discussions/toggleLikeOnDiscussion', { id: discussionId, like: this.currentDiscussion && !this.currentDiscussion.liked });
+      await this.getCurrentDiscussion();
     },
     addComment() {
       this.isAddComment = !this.isAddComment;
-    },
-    toggleShow() {
-      this.isShow = !this.isShow;
-    },
-    toggleVote() {
-      this.isVote = !this.isVote;
-    },
-    writeOpinion() {
-      console.log(this.opinion);
     },
   },
 };
@@ -404,7 +287,11 @@ export default {
 </script>
 <style lang="scss" scoped>
 .info {
-  &__body{
+  &__comment {
+    background: #fff;
+    width: 100%;
+  }
+  &__body {
   justify-content: center;
   max-width: 1180px;
   margin: 0 auto;
@@ -412,38 +299,38 @@ export default {
   height: 100%;
   @include _1024;
   }
-  &__header{
-    margin: 20px 0px 0px 0px;
+  &__header {
+    margin: 20px 0 0 0;
     justify-content: left;
   }
-  &__heading{
-    margin: 30px 0px 20px 0px;
+  &__heading {
+    margin: 30px 0 20px 0;
   }
   &__title {
     font-weight: 600;
     font-size: 28px;
     line-height: 36px;
     margin-right: auto;
-    padding: 10px 0px 20px 0px;
+    padding: 10px 0 20px 0;
   }
   &__field {
     justify-content: space-between;
   }
-  &__discussion{
+  &__discussion {
     width: 100%;
     height: 100%;
     background: #FFFFFF;
     border-radius: 8px;
-    padding: 20px 20px 0px 20px;
+    padding: 20px 20px 0 20px;
   }
-  &__footer{
+  &__footer {
     margin-top: 20px;
   }
-  &__pagination{
+  &__pagination {
     margin-top: 5px;
   }
 }
-.heading{
+.heading {
   display: flex;
   justify-content: space-between;
   &__btn {
@@ -455,14 +342,14 @@ export default {
       display: none;
     }
   }
-  &__title{
+  &__title {
     font-weight: 500;
     font-size: 24px;
     line-height: 32px;
     color: #1D2127;
   }
 }
-.link{
+.link {
   display: flex;
   align-items: center;
   text-decoration: none;
@@ -474,61 +361,83 @@ export default {
     color: #4C5767;
     }
   &__arrow {
-    margin: 6px 10px 6px 0px;
+    margin: 6px 10px 6px 0;
     color:  #4C5767;
     font-size: 25px;
     cursor: pointer;
   }
 }
-.comment{
-  &__field{
+.comment {
+  border-radius: 5px;
+  margin: 10px 0 0 0;
+  &__field {
     width: 100%;
     height: 100%;
     background: #fff;
     border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 15px;
   }
-  &__description{
+  &__subcomment {
+    background: #fff;
+    width: 100%;
+    height: 100%;
+    padding: 20px 20px 0 20px;
+  }
+  &__description {
     @include text-usual;
     color: #7C838D;
     align-self: stretch;
-    margin: 20px 0px 25px 0px;
+    margin: 20px 0 25px 0;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    width: 100%;
+    display: flex;
   }
   &__btn {
-    border: none;
-    outline: none;
-    align-items: center;
-    width: 190px;
-    height: 33px;
-    border-radius: 6px;
-    text-align: center;
     display: block;
     margin-left: auto;
     margin-right: auto;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 43px;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 130%;
+    text-align: center;
+    transition: .3s;
+    background: $blue;
+    border-radius: 6px;
+    &:hover {
+      background: #103D7C;
+    }
   }
-  &__footer{
+  &__footer {
     margin-top: 20px;
   }
 }
-.user{
+.user {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  &__avatar{
+  &__avatar {
     flex: 0 0 0 32px;
     width: 32px;
     height: 32px;
-    left: 0px;
-    top: 0px;
+    left: 0;
+    top: 0;
     border-radius: 50%;
+    cursor: pointer;
   }
-  &__name{
+  &__name {
     @include text-usual;
     color: #1D2127;
-    padding: 0px 10px 0px 10px;
+    padding: 0 10px 0 10px;
+    cursor: pointer;
   }
-  &__date{
+  &__date {
     font-size: 12px;
     line-height: 130%;
     color: #AAB0B9;
@@ -564,8 +473,15 @@ export default {
     margin-top: 5px;
     color: #E9EDF2;
     font-size: 22px;
-    &_choosen{
+    transition: 0.5s;
+    &:hover {
       color: #0083C7;
+    }
+    &_chosen {
+      color: #0083C7;
+      &:hover {
+        color: #E9EDF2;
+      }
     }
   }
   &__comment {
@@ -577,7 +493,7 @@ export default {
     font-size: 14px;
     line-height: 18px;
     color: #1D2127;
-    margin: 0px 22px 0px 8px;
+    margin: 0 22px 0 8px;
     cursor: pointer;
     &_right {
       margin: 7px;
@@ -594,19 +510,18 @@ export default {
     margin-right: 7px;
   }
 }
-.footer{
+.footer {
   display: flex;
-  &__input{
+  &__input {
     @include text-usual;
-    width: 1040px;
+    width: 100%;
     height: 40px;
-    background: #F7F8FA;
     border-radius: 6px;
     border: none;
-    padding: 10px 20px 10px 15px;
-    margin: 0px 10px 0px 10px;
+    padding: 10px 15px 10px 15px;
+    margin: 0 0 20px 0;
   }
-  &__comment{
+  &__comment {
     @include text-usual;
     width: 1090px;
     height: 40px;
@@ -614,9 +529,18 @@ export default {
     border-radius: 6px;
     border: none;
     padding: 10px 20px 10px 15px;
-    margin: 0px 0px 0px 10px;
+    margin: 0 0 0 10px;
   }
-  &__chain{
+  &__btn {
+    width: 40px;
+    height: 40px;
+    background: #F7F8FA;
+    cursor: pointer;
+    &:hover {
+      background: #F7F8FA;
+    }
+  }
+  &__chain {
     display: flex;
     padding: 0 10px;
     width: 40px;
@@ -629,7 +553,7 @@ export default {
     font-size: 25px;
     cursor: pointer;
   }
-  &__arrow{
+  &__arrow {
     display: flex;
     padding: 0 10px;
     width: 40px;
@@ -648,7 +572,7 @@ export default {
     font-weight: 600;
     font-size: 24px;
     line-height: 32px;
-    margin: 20px 0px 10px 0px;
+    margin: 20px 0 10px 0;
   }
   &__date {
     font-size: 14px;
@@ -659,44 +583,44 @@ export default {
   &__line {
     margin-top: 20px;
   }
-  &__subtitle{
+  &__subtitle {
     font-weight: 600;
     font-size: 18px;
     line-height: 130%;
   }
-  &__block{
-    margin: 10px 0px 20px 0px;
+  &__block {
+    margin: 10px 0 20px 0;
   }
-  &__filesUploader{
-    margin: 0px 0px 20px 0px!important;
+  &__filesUploader {
+    margin: 0 0 20px 0 !important;
   }
-  &__bottom{
+  &__bottom {
     padding-bottom: 10px;
   }
 }
 
-.block{
+.block {
   display: inline-flex;
   align-items: center;
   cursor: pointer;
-  &__icon{
-    margin: 0px 16px 0px 0px;
+  &__icon {
+    margin: 0 16px 0 0;
   }
-  &__name{
+  &__name {
     font-size: 16px;
     line-height: 145%;
     color: #282F39;
     margin-right: 8px;
   }
-  &__size{
+  &__size {
     font-size: 13px;
     line-height: 130%;
     color: #A7AEB9;
   }
-  &__file{
-    margin: 0px 10px 0px 8px;
+  &__file {
+    margin: 0 10px 0 8px;
   }
-  &__close{
+  &__close {
     height: 33px;
     width: 33px;
     margin-right: 13px;
@@ -716,34 +640,36 @@ export default {
     font-size: 18px;
     line-height: 130%;
     font-weight: 600;
-    margin: 20px 0px 10px 0px;
+    margin: 20px 0 10px 0;
   }
 }
-.response{
-  &__field{
+.response {
+  &__field {
       background: #FFFFFF;
       border-radius: 8px;
       padding: 20px;
       margin: 20px 0 20px 0;
   }
-  &__title{
+  &__title {
     font-weight: 500;
     font-size: 18px;
     line-height: 130%;
   }
-  &__footer{
+  &__footer {
+    height: 40px;
+    align-items: center;
     margin-top: 20px;
     display: flex;
     justify-content: flex-end;
   }
-  &__btn{
+  &__btn {
     width: 220px;
     height: 43px;
     margin-left: 20px;
     outline: none;
   }
 }
-.filesUploader{
+.filesUploader {
   &__files{
     display: inline-flex;
     flex-direction: row;

@@ -1,4 +1,7 @@
 {
+  "user": {
+    "nameless": "Nameless"
+  },
   "invite": {
     "title": "Invited"
   },
@@ -439,7 +442,11 @@
     "imageLoadedSuccessful": "Image loaded successful",
     "pleasePressSaveButton": "Please press save button",
     "saved": "Saved",
-    "userDataHasBeenSaved": "User data has been saved"
+    "userDataHasBeenSaved": "User data has been saved",
+    "signWorkQuest": {
+      "title": "Connection to Work Quest",
+      "desc": "If you already have an account created on one of the Work Quest products, you can log in using its login details"
+    }
   },
   "ui": {
     "workers": "Workers",
@@ -565,17 +572,18 @@
       "hash": "Hash",
       "date": "Date",
       "address": "Address",
-      "vote": "Vote",
-      "isEmpty": "List is empty"
+      "vote": "Vote"
     },
-    "executeVoting": "Execute voting",
-    "proposalIsExpired": "Waiting for the end of the vote",
     "errors": {
       "addProposal": "Add proposal error",
       "voteError": "Voting error",
       "votingTimeIsExpired": "Voting time is expired",
       "notEnoughFunds": "You must have delegated at least {a} WQT. Delegated: {b} WQT."
-    }
+      "vote": "Vote",
+      "isEmpty": "List is empty"
+    },
+    "executeVoting": "Execute voting",
+    "proposalIsExpired": "Waiting for the end of the vote",
   },
   "settings": {
     "description": "And you are beautiful",
@@ -936,7 +944,13 @@
     }
   },
   "discussions": {
+    "showComments": "Show comments",
+    "noDiscussions": "No discussions found! Please change your request...",
+    "comments": {
+      "noComments": "There is no comments!"
+    },
   "title": "Discussions",
+    "response": "response",
   "btn": "Add new discussion",
   "seacrhField": "Search discussion",
   "descriptionTitle": "Description",

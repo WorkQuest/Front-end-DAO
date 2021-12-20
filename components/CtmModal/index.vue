@@ -56,6 +56,7 @@
       <CtmModalDelegate v-if="modals.delegate === currentModalKey" />
       <CtmModalUndelegate v-if="modals.undelegate === currentModalKey" />
       <CtmModalWarning v-if="modals.warning === currentModalKey" />
+      <CtmModalSignWorkQuest v-if="modals.signWorkQuest === currentModalKey" />
     </div>
   </transition>
 </template>
@@ -106,6 +107,7 @@ import CtmModalAddDiscussion from './CtmModalAddDiscussion';
 import CtmModalUndelegate from './CtmModalUndelegate';
 import CtmModalDelegate from './CtmModalDelegate';
 import CtmModalWarning from './CtmModalWarning';
+import CtmModalSignWorkQuest from './CtmModalSignWorkQuest';
 
 export default {
   name: 'ModalBox',
@@ -154,6 +156,7 @@ export default {
     CtmModalDelegate,
     CtmModalUndelegate,
     CtmModalWarning,
+    CtmModalSignWorkQuest,
   },
   data: () => ({
     modals,
