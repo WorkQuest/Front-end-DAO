@@ -565,7 +565,8 @@
       "hash": "Hash",
       "date": "Date",
       "address": "Address",
-      "vote": "Vote"
+      "vote": "Vote",
+      "isEmpty": "List is empty"
     },
     "executeVoting": "Execute voting",
     "proposalIsExpired": "Waiting for the end of the vote",

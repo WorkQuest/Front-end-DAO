@@ -21,7 +21,6 @@ export default {
           offset,
         },
       });
-      console.log(result.proposal);
       commit('setCards', result.proposal);
       commit('setCardsCount', result.count);
     } catch (e) {

@@ -209,6 +209,12 @@
           :fields="historyTableFields"
           :items="prepareTableData(historyTableData)"
         />
+        <div
+          v-if="!historyTableData.length"
+          class="history__table history__empty"
+        >
+          {{ $t('proposal.table.isEmpty') }}
+        </div>
         <!-- mobile -->
         <div class="history__proposals">
           <p class="history__subtitle">
@@ -220,6 +226,12 @@
             :item="proposal"
             :is-last="historyTableData[index] === historyTableData[historyTableData.length - 1]"
           />
+          <div
+            v-if="!historyTableData.length"
+            class="history__empty"
+          >
+            {{ $t('proposal.table.isEmpty') }}
+          </div>
         </div>
         <!-- /mobile -->
       </div>
@@ -394,7 +406,7 @@ export default {
       const res = await this.$store.dispatch('web3/executeVoting', this.idCard);
       console.log('Voting response:', res);
 
-      // TODO: check if res ok - reload data
+      // TODO: check if res ok - reload data [!!!]
       // if (res.ok)
       await this.loadCard();
       this.SetLoader(false);
@@ -528,7 +540,7 @@ export default {
     },
     async onVote(value) {
       this.SetLoader(true);
-      if (this.timeIsExpired || this.$moment().isAfter(this.$moment(this.endTime))) { // TODO: как-то проверить вышло ли время! (чек второй)
+      if (this.timeIsExpired || this.$moment().isAfter(this.$moment(this.endTime))) { // todo: check can remove 2q?
         await this.$store.dispatch('main/showToast', {
           title: this.$t('proposal.voteError'),
           text: this.$t('proposal.errors.votingTimeIsExpired'),
@@ -850,6 +862,9 @@ export default {
   }
   &__proposals {
     display: none;
+  }
+  &__empty {
+    text-align: center;
   }
 }
 

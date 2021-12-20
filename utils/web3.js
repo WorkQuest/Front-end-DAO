@@ -221,7 +221,7 @@ export const addProposal = async (description, nonce) => {
     return error(errorCodes.AddProposal, e.message, e);
   }
 };
-export const getProposals = async (offset, limit) => { // TODO: delete later (как добавится бэк - дергать с него)
+export const getProposals = async (offset, limit) => {
   try {
     const { result } = await fetchContractData('getProposals', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [offset, limit]);
     return success(result);

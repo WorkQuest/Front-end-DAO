@@ -71,7 +71,7 @@
                   ref="fileUpload"
                   class="uploader__btn_hidden"
                   type="file"
-                  accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, .pdf"
+                  :accept="accept"
                   @change="handleFileSelected($event)"
                 >
                 <base-btn
@@ -96,7 +96,6 @@
           >
             {{ $t('meta.cancel') }}
           </base-btn>
-          connected: {{ isConnected }}
           <base-btn
             class="action__add"
             :disabled="!valid"
@@ -127,6 +126,8 @@ export default {
       documents: [],
       docsLimit: 10,
       imagesLimit: 10,
+      accept: 'application/msword, application/pdf',
+      acceptedTypes: [],
     };
   },
   computed: {
@@ -135,6 +136,7 @@ export default {
     }),
   },
   async mounted() {
+    this.acceptedTypes = this.accept.replace(/\s/g, '').split(',');
     const start = this.$moment();
     this.votingStartInput = this.$moment(start).format('DD/MM/YYYY');
     this.votingEndInput = this.$moment(start).add(1, 'M').format('DD/MM/YYYY');
@@ -191,11 +193,18 @@ export default {
     removeDocument(id) {
       this.documents = this.documents.filter((item) => item.id !== id);
     },
+    checkContentType(file) {
+      return this.acceptedTypes.indexOf(file.type) !== -1;
+    },
     handleFileSelected(e) {
       if (!e.target.files[0]) return;
       const file = e.target.files[0];
       const type = file.type.split('/').shift() === 'image' ? 'img' : 'doc';
 
+      console.log(file.type);
+      if (!this.checkContentType(file)) {
+        return;
+      }
       if (type === 'img' && this.documents.filter((item) => item.type === 'img').length >= this.imagesLimit) {
         return;
       }
