@@ -138,6 +138,7 @@ export default {
 }
 .bottom {
   display: flex;
+  gap: 10px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -190,6 +191,7 @@ export default {
   }
   &__chain{
     display: flex;
+    padding: 0 10px;
     width: 40px;
     height: 40px;
     background: #F7F8FA;
@@ -202,6 +204,7 @@ export default {
   }
   &__arrow{
     display: flex;
+    padding: 0 10px;
     width: 40px;
     height: 40px;
     background: #F7F8FA;
@@ -211,6 +214,28 @@ export default {
     font-size: 25px;
     color: #0083C7;
     cursor: pointer;
+  }
+}
+@include _1199 {
+  .answers {
+    &__field {
+      width: 80vw;
+    }
+  }
+}
+@include _575 {
+  .answers {
+    &__field {
+      margin: 20px 20px 15px 50px;
+    }
+  }
+}
+@include _380 {
+  .answers {
+    &__field {
+      padding: 10px 20px 0px 10px;
+      margin: 10px 10px 5px 30px;
+    }
   }
 }
 </style>

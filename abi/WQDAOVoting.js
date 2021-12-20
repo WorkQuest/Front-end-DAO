@@ -47,6 +47,12 @@ export default [
       },
       {
         indexed: false,
+        internalType: 'uint256',
+        name: 'nonce',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
         internalType: 'address',
         name: 'proposer',
         type: 'address',
@@ -69,6 +75,12 @@ export default [
         name: 'minimumQuorum',
         type: 'uint256',
       },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'timestamp',
+        type: 'uint256',
+      },
     ],
     name: 'ProposalCreated',
     type: 'event',
@@ -81,6 +93,18 @@ export default [
         internalType: 'uint256',
         name: 'id',
         type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'bool',
+        name: 'succeded',
+        type: 'bool',
+      },
+      {
+        indexed: false,
+        internalType: 'bool',
+        name: 'defeated',
+        type: 'bool',
       },
     ],
     name: 'ProposalExecuted',
@@ -201,6 +225,12 @@ export default [
         name: 'votes',
         type: 'uint256',
       },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'timestamp',
+        type: 'uint256',
+      },
     ],
     name: 'VoteCast',
     type: 'event',
@@ -259,6 +289,11 @@ export default [
   },
   {
     inputs: [
+      {
+        internalType: 'uint256',
+        name: 'nonce',
+        type: 'uint256',
+      },
       {
         internalType: 'string',
         name: '_description',
@@ -366,6 +401,11 @@ export default [
               },
               {
                 internalType: 'uint256',
+                name: 'nonce',
+                type: 'uint256',
+              },
+              {
+                internalType: 'uint256',
                 name: 'forVotes',
                 type: 'uint256',
               },
@@ -408,6 +448,16 @@ export default [
                 internalType: 'string',
                 name: 'description',
                 type: 'string',
+              },
+              {
+                internalType: 'bool',
+                name: 'succeded',
+                type: 'bool',
+              },
+              {
+                internalType: 'bool',
+                name: 'defeated',
+                type: 'bool',
               },
             ],
             internalType: 'struct WQDAOVoting.ProposalInfo[]',
@@ -621,6 +671,11 @@ export default [
         type: 'uint256',
       },
       {
+        internalType: 'uint256',
+        name: 'nonce',
+        type: 'uint256',
+      },
+      {
         internalType: 'address',
         name: 'proposer',
         type: 'address',
@@ -667,6 +722,19 @@ export default [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_proposalId',
+        type: 'uint256',
+      },
+    ],
+    name: 'rejectVoting',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {

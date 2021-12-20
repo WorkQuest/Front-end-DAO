@@ -130,6 +130,19 @@
               :fields="walletTableFields"
             />
           </div>
+          <!-- mobile -->
+          <div class="profile__history">
+            <p class="profile__subtitle">
+              {{ $t('wallet.table.trx') }}
+            </p>
+            <mobile-table-item
+              v-for="(transaction, index) in transactionsData"
+              :key="index"
+              :item="transaction"
+              :is-last="transactionsData[index] === transactionsData[transactionsData.length - 1]"
+            />
+          </div>
+          <!-- /mobile -->
         </div>
       </div>
       <base-pager
@@ -290,7 +303,6 @@ export default {
   },
   methods: {
     async getInvestorData() {
-      console.log(this.isMyProfile());
       if (this.isMyProfile()) {
         this.investor = this.userData;
       } else {
@@ -558,5 +570,53 @@ export default {
     }
   }
 }
-
+@include _767 {
+  .investor {
+    width: 100vw;
+    display: block;
+    margin: 0;
+    &__header {
+      margin: 15px 10px;
+    }
+  }
+  .info {
+    grid-template-rows: 3fr 1fr auto;
+    &__base {
+      grid-template-columns: 1fr;
+    }
+    &__additional {
+      grid-template-columns: 1fr;
+    }
+    &__avatar {
+      height: 100%;
+      width: 340px;
+    }
+  }
+  .action {
+    justify-content: space-around;
+  }
+  .profile {
+    &__table {
+      display: none;
+    }
+    &__history {
+      display: block;
+      background: $white;
+      padding: 16px;
+      margin: 15px 0;
+    }
+    &__subtitle {
+      font-size: 20px;
+    }
+  }
+  .title {
+    margin: 0 15px;
+  }
+}
+@include _575 {
+  .title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
 </style>

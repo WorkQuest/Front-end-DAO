@@ -46,3 +46,16 @@ td{
   padding: 12px 20px!important;
 }
 
+@include _1199 {
+  td {
+    padding: 10px 0 !important;
+    &:first-child {
+      padding-left: 15px !important;
+      width: 60px !important;
+    }
+    &:last-child {
+      padding-right: 0 !important;
+    }
+  }
+}
+

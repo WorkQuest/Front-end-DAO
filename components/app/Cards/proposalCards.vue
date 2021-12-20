@@ -63,7 +63,7 @@
             </div>
           </div>
           <div class="card__date">
-            {{ $moment(new Date(card.dateStart)).format('ll') }} - {{ $moment(new Date(card.dateEnd)).format('ll') }}
+            {{ card.date }}
           </div>
           <div class="card__about">
             {{ card.about }}
@@ -73,7 +73,7 @@
               <nuxt-link
                 v-if="card.status===0"
                 class="btn__link"
-                :to="`/proposals/${card.voting}`"
+                to="/proposals/1"
               >
                 <base-btn
                   mode="outline"
@@ -96,7 +96,6 @@
       </div>
     </div>
     <base-pager
-      v-if="totalPages > 1"
       v-model="pages"
       class="main__pagination"
       :total-pages="totalPages"
@@ -106,43 +105,122 @@
 
 <script>
 
-import { mapGetters } from 'vuex';
-import { Chains } from '~/utils/enums';
-
 export default {
   name: 'ProposalCards',
   data() {
     return {
-      totalPages: 0,
+      totalPages: 5,
       tab: 1,
       currentPage: 1,
       pages: 1,
       search: '',
-      timeoutIdSearch: null,
       isDescending: true,
-      cardsLimit: 12,
+      ddValues: [
+        this.$t('proposals.ui.yes'),
+        this.$t('proposals.ui.no'),
+        this.$t('proposals.ui.allProposals'),
+      ],
       ddValue: 2,
       cards: [
-        // {
-        //   voting: 1,
-        //   status: 0,
-        //   date: 'Jan 01, 2021 - Mar 01, 2021',
-        //   about: 'Lorem ipsum dolor sit amet, consectetur',
-        // },
+        {
+          voting: 1,
+          status: 0,
+          date: 'Jan 01, 2021 - Mar 01, 2021',
+          about: 'Lorem ipsum dolor sit amet, consectetur',
+        },
+        {
+          voting: 1,
+          status: 1,
+          date: 'Jan 01, 2021 - Mar 01, 2021',
+          about: 'Lorem ipsum dolor sit amet, consectetur',
+        },
+        {
+          voting: 1,
+          status: 2,
+          date: 'Jan 01, 2021 - Mar 01, 2021',
+          about: 'Lorem ipsum dolor sit amet, consectetur',
+        },
+        {
+          voting: 1,
+          status: 1,
+          date: 'Jan 01, 2021 - Mar 01, 2021',
+          about: 'Lorem ipsum dolor sit amet, consectetur',
+        },
+        {
+          voting: 1,
+          status: 2,
+          date: 'Jan 01, 2021 - Mar 01, 2021',
+          about: 'Lorem ipsum dolor sit amet, consectetur',
+        },
+        {
+          voting: 1,
+          status: 0,
+          date: 'Jan 01, 2021 - Mar 01, 2021',
+          about: 'Lorem ipsum dolor sit amet, consectetur',
+        },
+        {
+          voting: 1,
+          status: 2,
+          date: 'Jan 01, 2021 - Mar 01, 2021',
+          about: 'Lorem ipsum dolor sit amet, consectetur',
+        },
+        {
+          voting: 1,
+          status: 0,
+          date: 'Jan 01, 2021 - Mar 01, 2021',
+          about: 'Lorem ipsum dolor sit amet, consectetur',
+        },
+        {
+          voting: 1,
+          status: 1,
+          date: 'Jan 01, 2021 - Mar 01, 2021',
+          about: 'Lorem ipsum dolor sit amet, consectetur',
+        },
+        {
+          voting: 1,
+          status: 2,
+          date: 'Jan 01, 2021 - Mar 01, 2021',
+          about: 'Lorem ipsum dolor sit amet, consectetur',
+        },
+        {
+          voting: 1,
+          status: 0,
+          date: 'Jan 01, 2021 - Mar 01, 2021',
+          about: 'Lorem ipsum dolor sit amet, consectetur',
+        },
+        {
+          voting: 1,
+          status: 1,
+          date: 'Jan 01, 2021 - Mar 01, 2021',
+          about: 'Lorem ipsum dolor sit amet, consectetur',
+        },
+        {
+          voting: 1,
+          status: 1,
+          date: 'Jan 01, 2021 - Mar 01, 2021',
+          about: 'Lorem ipsum dolor sit amet, consectetur',
+        },
+        {
+          voting: 1,
+          status: 1,
+          date: 'Jan 01, 2021 - Mar 01, 2021',
+          about: 'Lorem ipsum dolor sit amet, consectetur',
+        },
+        {
+          voting: 1,
+          status: 2,
+          about: 'Lorem ipsum dolor sit amet, consectetur',
+        },
+        {
+          voting: 1,
+          status: 0,
+          date: 'Jan 01, 2021 - Mar 01, 2021',
+          about: 'Lorem ipsum dolor sit amet, consectetur',
+        },
       ],
     };
   },
   computed: {
-    ...mapGetters({
-      isConnected: 'web3/getWalletIsConnected',
-    }),
-    ddValues() {
-      return [
-        this.$t('proposals.ui.yes'),
-        this.$t('proposals.ui.no'),
-        this.$t('proposals.ui.allProposals'),
-      ];
-    },
     cardLevelClass(idx) {
       const { cards } = this;
       return [
@@ -159,8 +237,6 @@ export default {
   },
   async mounted() {
     this.SetLoader(true);
-    await this.checkConnection();
-    if (this.isConnected) await this.loadPage(1);
     this.SetLoader(false);
   },
   methods: {
@@ -182,41 +258,6 @@ export default {
         2: this.$t('proposals.cards.status.accepted'),
       };
       return priority[index] || 'None';
-    },
-    async searchProposals() {
-      if (this.timeoutIdSearch) {
-        clearTimeout(this.timeoutIdSearch);
-        this.timeoutIdSearch = null;
-      }
-      this.timeoutIdSearch = setTimeout(async () => {
-        await this.loadPage(1);
-      }, 500);
-    },
-    async checkConnection() {
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-    },
-    async loadPage(page) {
-      if (this.isConnected) {
-        const res = await this.$store.dispatch('web3/getProposals', { limit: 10, offset: 10 * (page - 1) });
-        if (!res.ok) return;
-        const { count, pages } = res.result;
-        this.totalPages = +count / this.cardsLimit;
-        this.prepareCards(pages);
-      }
-    },
-    // TODO: переделать на получение с бэка
-    prepareCards(cards) {
-      console.log(cards);
-      // eslint-disable-next-line no-restricted-syntax
-      for (const item of cards) {
-        this.cards.push({
-          voting: item.id,
-          dateStart: item.startTime * 1000,
-          dateEnd: item.expireTime * 1000,
-          about: item.description,
-          status: item.active ? 0 : 1,
-        });
-      }
     },
   },
 };
@@ -295,6 +336,9 @@ export default {
   &__pagination{
     margin-top: 20px;
   }
+  &__body {
+    margin-top: 20px;
+  }
 }
 .menu {
   display: grid;
@@ -332,6 +376,7 @@ export default {
   border: 1px solid rgba(0, 0, 0, 0);
   padding: 0 20px;
   width: 100%;
+  white-space: nowrap;
   &:hover {
     background: #FFFFFF;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -365,8 +410,8 @@ export default {
   &__content {
     display: grid;
     grid-template-rows: 0.8fr 0.7fr 1fr 0.5fr;
-    width: 240px;
-    padding: 20px 0px;
+    width: 100%;
+    padding: 20px;
   }
   &__header {
     display: flex;
@@ -427,12 +472,6 @@ export default {
     line-height: 28px;
     letter-spacing: 0em;
     text-align: left;
-
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 }
 .dd {
@@ -446,6 +485,9 @@ export default {
     padding-left: 20px;
     padding-right: 20px;
   }
+   .content {
+    grid-template-columns: repeat(3, 1fr);
+  }
   .menu {
     grid-template-columns: auto auto;
   }
@@ -454,11 +496,20 @@ export default {
   }
 }
 @include _991 {
-  .content {
-    grid-template-columns: repeat(3, 1fr);
+  .menu {
+    justify-content: flex-start;
+    display: flex;
+    &__right {
+      flex-grow: 3;
+    }
   }
-  .menu__right {
-    grid-template-columns: repeat(2, 1fr);
+  .proposals {
+    &__search {
+      width: 100%;
+    }
+  }
+  .content {
+    grid-gap: 10px;
   }
 }
 @include _767 {
@@ -470,7 +521,6 @@ export default {
   }
   .search {
     grid-template-columns: auto auto;
-    padding: 0 10px;
     grid-gap: 10px;
     &__toggle {
       display: none;
@@ -486,17 +536,23 @@ export default {
       display: flex;
       flex-direction: column;
       grid-template-columns: auto;
+      &__right {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      &__drop {
+        width: 100vw;
+      }
     }
     .menu__left {
       display: flex;
-      flex-direction: column;
+      flex-direction: row-reverse;
     }
     .content {
       grid-template-columns: 1fr;
     }
-    .menu__right {
-      grid-template-columns: repeat(2, 1fr);
-    }
   }
+  .dd::v-deep .dd__btn {
+        padding: 0 10px;
+      }
 }
 </style>

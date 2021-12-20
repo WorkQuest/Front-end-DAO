@@ -76,6 +76,7 @@ export default {
         { 'base-btn_lightBlue': mode === 'lightBlue' },
         { 'base-btn_lightRed': mode === 'lightRed' },
         { 'base-btn_copy icon-copy': mode === 'copy' },
+        { 'base-btn_transparent': mode === 'transparent' },
       ];
     },
   },
@@ -278,11 +279,8 @@ export default {
       background: $black100;
     }
   }
-}
-
-@include _575 {
-  .base-btn {
-    font-size: 14px;
+  &_transparent {
+    background: transparent;
   }
 }
 </style>

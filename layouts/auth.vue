@@ -35,7 +35,14 @@ export default {
   computed: {
     ...mapGetters({
       isLoading: 'main/getIsLoading',
+      access: 'user/accessToken',
+      refresh: 'user/refreshToken',
     }),
+  },
+  created() {
+    if (this.access || this.refresh || localStorage.getItem('access') || localStorage.getItem('refresh')) {
+      this.$router.push('/proposals');
+    }
   },
   methods: {
     toMain() {
@@ -129,16 +136,18 @@ export default {
       max-width: initial;
       justify-self: initial;
       padding: 0px 10px;
+      max-width: calc(100vw - 10px);
     }
     &__content {
       margin: 0 auto;
-      width: 470px;
+      width: 100%;
       align-items: center;
       padding-top: 30px;
     }
     &__right {
       grid-row: 1/2;
       grid-column: 1/3;
+      max-width: 100vw;
     }
     &__slogan {
       font-size: 32px;
