@@ -3,7 +3,7 @@
     class="files"
   >
     <div
-      v-for="(item, i) in files"
+      v-for="(item, i) in items"
       :key="i"
       class="files__file file"
     >
@@ -17,22 +17,23 @@
         class="file__container"
       >
         <div class="file__name">
-          {{ item.name }}
+          {{ item.name || item.id }}
         </div>
         <div class="file__size">
           {{ item.size }}
         </div>
       </div>
       <div class="file__actions actions">
-        <div
+        <a
           v-if="isShowDownload"
           class="actions__download download"
-          @click="download(item.id)"
+          :href="item.downloadUrl || item.url"
+          target="_blank"
         >
           <div class="download__icon icon">
             <span class="icon__download icon-download" />
           </div>
-        </div>
+        </a>
         <div
           v-else
           class="actions__close icon"
@@ -43,7 +44,7 @@
       </div>
     </div>
     <div
-      v-if="!files.length && isShowEmpty"
+      v-if="!items.length && isShowEmpty"
       class="files__empty"
     >
       {{ $t('proposal.noFiles') }}
@@ -72,18 +73,11 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      files: this.items,
-    };
-  },
   methods: {
     deleteFile(id) {
-      this.files = this.files.filter((file) => file.id !== id);
+      this.$emit('remove', id);
     },
-    download(id) {
-      console.log('download file', id);
-    },
+    download(id) {},
   },
 };
 </script>
@@ -133,7 +127,11 @@ export default {
   }
 
   &__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: 16px;
+    width: 70%;
     color: #282F39;
     margin-left: 8px;
   }
@@ -174,6 +172,7 @@ export default {
 .download {
   width: 33px;
   height: 33px;
+  text-decoration: none;
 
   &__icon {
     width: 100%;

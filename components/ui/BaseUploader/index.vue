@@ -18,6 +18,7 @@
       <base-images
         :items="images"
         :is-show-download="isShowDownload"
+        @remove="remove"
       />
       <slot name="actionButton" />
     </div>
@@ -29,10 +30,12 @@
         :items="files"
         :is-show-download="isShowDownload"
         :is-show-empty="isShowEmpty"
+        @remove="remove"
       />
       <base-images
         :items="images"
         :is-show-download="isShowDownload"
+        @remove="remove"
       />
       <slot name="actionButton" />
     </div>
@@ -59,11 +62,18 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      files: this.items.filter((item) => item.type === 'doc'),
-      images: this.items.filter((item) => item.type === 'img'),
-    };
+  computed: {
+    files() {
+      return this.items.filter((item) => item.type === 'doc');
+    },
+    images() {
+      return this.items.filter((item) => item.type === 'image/jpeg');
+    },
+  },
+  methods: {
+    remove(id) {
+      this.$emit('remove', id);
+    },
   },
 };
 </script>
@@ -79,7 +89,7 @@ export default {
     display: flex;
     flex-direction: column;
   }
-  &__all{
+  &__all {
     display: flex;
     flex-direction: column;
   }

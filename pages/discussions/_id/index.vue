@@ -47,12 +47,17 @@
           <div class="discussion__subtitle">
             {{ $t('discussions.files') }}
           </div>
-          <base-uploader
-            class="discussion__uploader"
-            type="all"
-            :items="documents"
-            :is-show-empty="true"
+          <base-files
+            class="discussion__files"
+            :items="pdf"
           />
+          <base-images
+            class="discussion__images"
+            mode="images"
+            :items="images"
+            :is-show-download="false"
+          />
+          <slot name="actionButton" />
           <div class="discussion__description description">
             <hr class="discussion__line">
             <div class="description__title">
@@ -186,6 +191,8 @@ import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
+      images: [],
+      pdf: [],
       page: 1,
       perPager: 10,
       isAddComment: false,
@@ -232,11 +239,18 @@ export default {
     this.SetLoader(true);
     this.discussionId = this.$route.params.id;
     await this.getCurrentDiscussion();
+    this.filterMediaToTypes();
     await this.getRootComments();
     this.totalPages();
     this.SetLoader(false);
   },
   methods: {
+    filterMediaToTypes() {
+      this.pdf = this.currentDiscussion.medias.filter((file) => file.contentType === 'application/msword' || file.contentType === 'application/pdf');
+      this.images = this.currentDiscussion.medias.filter((file) => file.contentType === 'image/jpeg' || file.contentType === 'image/png');
+      console.log('this.pdf', this.pdf);
+      console.log('this.images', this.images);
+    },
     authorName() {
       if (this.discussionAuthor) return `${this.discussionAuthor.firstName} ${this.discussionAuthor.lastName}`;
       return this.$t('user.nameless');

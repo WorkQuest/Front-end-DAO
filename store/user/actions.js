@@ -73,4 +73,16 @@ export default {
       return console.log(e);
     }
   },
+  async getUploadFileLink({ commit }, config) {
+    const { result } = await this.$axios.$post('/v1/storage/get-upload-link', config);
+    return result;
+  },
+  async uploadFile({ commit }, payload) {
+    await this.$axios.$put(payload.url, payload.data, {
+      headers: {
+        'Content-Type': payload.contentType,
+        'x-amz-acl': 'public-read',
+      },
+    });
+  },
 };
