@@ -24,6 +24,9 @@ export const errorCodes = Object.freeze({
   GetVotes: 202, // Делегировано адресу
   Undelegate: 202,
 
+  // Discussions
+  CreateDiscussion: 300,
+
   axiosFetchError: 5000,
 });
 

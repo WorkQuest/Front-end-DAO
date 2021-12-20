@@ -9,8 +9,14 @@ export default {
     try {
       return await this.$axios.$post('v1/proposal/create', payload);
     } catch (e) {
-      console.error(e.message);
       return error(errorCodes.CreateProposal, e.message, e);
+    }
+  },
+  async createDiscussion({ commit }, payload) {
+    try {
+      return await this.$axios.$post('v1/discussion/create', payload);
+    } catch (e) {
+      return error(errorCodes.CreateDiscussion, e.message, e);
     }
   },
   async getProposals({ commit }, { offset, limit }) {

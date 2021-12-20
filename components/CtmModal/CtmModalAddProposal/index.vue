@@ -159,6 +159,13 @@ export default {
         description: this.descriptionInput,
         medias,
       });
+      // TODO: create proposal
+      // const createProposalRes = await this.$store.dispatch('proposals/createDiscussion', {
+      //   title: this.votingTopicInput,
+      //   description: this.descriptionInput,
+      //   medias,
+      //   // ...proposal id еще?
+      // });
       console.log('api', res);
       if (res.ok) {
         // TODO: create discussion here
@@ -172,7 +179,7 @@ export default {
       if (!this.documents.length) return [];
       const fetchData = [];
       const fetchUrlsData = [];
-      const medais = [];
+      const medias = [];
       // eslint-disable-next-line no-restricted-syntax
       for (const item of this.documents) {
         fetchData.push(this.$store.dispatch('user/getUploadFileLink', { contentType: item.file.type }));
@@ -180,7 +187,7 @@ export default {
       const urls = await Promise.all(fetchData);
       for (let i = 0; i < this.documents.length; i += 1) {
         const { file } = this.documents[i];
-        medais.push(urls[i].mediaId);
+        medias.push(urls[i].mediaId);
         fetchUrlsData.push(this.$store.dispatch('user/uploadFile', {
           url: urls[i].url,
           data: file,
@@ -188,7 +195,7 @@ export default {
         }));
       }
       await Promise.all(fetchUrlsData);
-      return medais;
+      return medias;
     },
     removeDocument(id) {
       this.documents = this.documents.filter((item) => item.id !== id);
