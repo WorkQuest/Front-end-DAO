@@ -457,8 +457,6 @@ export default {
       this.isActive = active;
       if (active) {
         this.status = 0;
-      } else if (defeated) {
-        this.status = 3;
       } else {
         this.status = succeded ? 2 : 1;
       }
@@ -491,6 +489,7 @@ export default {
       return priority[index] || 'None';
     },
     modifyHash(hash) {
+      if (!hash) return '';
       return `${hash.substr(0, 6)}...${hash.substr(hash.length - 6, 6)}`;
     },
     prepareTableData(data) {
@@ -536,7 +535,7 @@ export default {
     },
     async onVote(value) {
       this.SetLoader(true);
-      if (this.timeIsExpired || this.$moment().isAfter(this.$moment(this.endTime))) { // todo: check can remove 2q?
+      if (this.$moment().isAfter(this.$moment(this.endTime))) {
         await this.$store.dispatch('main/showToast', {
           title: this.$t('proposal.voteError'),
           text: this.$t('proposal.errors.votingTimeIsExpired'),
@@ -552,6 +551,7 @@ export default {
         return;
       }
       await this.loadCard();
+      // TODO: подгрузить с нового роута список голосов с бэка
       this.SetLoader(false);
     },
   },
