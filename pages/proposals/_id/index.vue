@@ -20,7 +20,7 @@
       <div class="proposal__content content">
         <div class="proposal__info info content__column">
           <div class="info__top info__top_blue">
-            <span>{{ `Voting #${voting}` }}</span>
+            <span>{{ `Voting #${idCard}` }}</span>
             <span
               class="info__status"
               :class="cardsStatusColor(status)"
@@ -28,10 +28,10 @@
           </div>
           <div class="info__header header">
             <div class="header__title">
-              <span>{{ about }}</span>
+              <span>{{ title }}</span>
             </div>
             <div class="header__subtitle">
-              <span>{{ date }}</span>
+              <span v-if="dateStart && dateEnd">{{ $moment(dateStart).format('lll') }} - {{ $moment(dateEnd).format('lll') }}</span>
             </div>
           </div>
           <div class="info__transactions transactions">
@@ -39,20 +39,20 @@
               <div class="hash__title">
                 {{ $t('proposal.hashTitle') }}
               </div>
-              <nuxt-link
-                to="/proposals/1"
+              <a
+                :href="getHashLink()"
                 class="hash__value"
+                target="_blank"
               >
-                {{ hash.length ? modifyHash(hash) : '...' }}
-              </nuxt-link>
+                {{ hash.length ? cutString(hash, 6, 6) : '...' }}
+              </a>
             </div>
             <div class="transactions__files files">
               <div class="files__title">
                 {{ $t('proposal.filesTitle') }}
               </div>
-              <base-uploader
+              <base-files
                 class="files__container"
-                type="files"
                 :items="documents"
                 :is-show-empty="true"
               />
@@ -64,7 +64,7 @@
               {{ $t('proposal.description') }}
             </div>
             <div class="description__value">
-              {{ descriptionValue }}
+              {{ description }}
             </div>
           </div>
           <div class="info__forum forum">
@@ -130,42 +130,55 @@
             </div>
           </div>
           <div class="results__buttons buttons">
-            <div class="buttons__header">
-              {{ $t('proposal.voteForProposal') }}
+            <div
+              v-if="timeIsExpired || isVoted"
+              class="buttons__header"
+            >
+              {{ $t('proposal.results') }}
+            </div>
+            <base-btn
+              v-if="isActive && timeIsExpired && isChairperson"
+              class="results__finish"
+              @click="executeVoting"
+            >
+              {{ $t('proposal.executeVoting') }}
+            </base-btn>
+            <div
+              v-else-if="timeIsExpired && isActive && !isChairperson"
+              class="results__finish"
+            >
+              {{ $t('proposal.proposalIsExpired') }}
             </div>
             <div
-              v-if="!results.isVoted"
+              v-else-if="!isVoted && !timeIsExpired"
               class="buttons__container"
             >
               <base-btn
                 mode="delete"
                 class="btn__votes btn__votes_size"
-                @click="onVote('NO')"
+                @click="toDelegate(false)"
               >
                 {{ $t('proposal.no') }}
               </base-btn>
               <base-btn
                 mode="approve"
                 class="btn__votes btn__votes_size btn__votes_green"
-                @click="onVote('YES')"
+                @click="toDelegate(true)"
               >
                 {{ $t('proposal.yes') }}
               </base-btn>
             </div>
-            <div
-              v-else
+            <base-btn
+              v-else-if="isVoted"
+              mode="outline"
+              class="btn__voted"
+              :class="[
+                {'btn__voted_green': vote === true },
+                {'btn__voted_red': vote === false },
+              ]"
             >
-              <base-btn
-                mode="outline"
-                class="btn__voted"
-                :class="[
-                  {'btn__voted_green': results.vote === 'YES' },
-                  {'btn__voted_red': results.vote === 'NO' },
-                ]"
-              >
-                {{ $t('proposal.youVoted') }} {{ results.vote === 'YES' ? $t('proposal.yes') : $t('proposal.no') }}
-              </base-btn>
-            </div>
+              {{ $t('proposal.youVoted') }} {{ vote ? $t('proposal.yes') : $t('proposal.no') }}
+            </base-btn>
           </div>
         </div>
       </div>
@@ -197,8 +210,20 @@
           class="history__table"
           :title="$t('proposal.proposalHistory')"
           :fields="historyTableFields"
-          :items="prepareTableData(historyTableData)"
+          :items="historyTableData"
         />
+        <base-pager
+          v-if="totalPages > 1"
+          v-model="currentPage"
+          class="history__pagination"
+          :total-pages="totalPages"
+        />
+        <div
+          v-if="!historyTableData.length"
+          class="history__table history__empty"
+        >
+          {{ $t('proposal.table.isEmpty') }}
+        </div>
         <!-- mobile -->
         <div class="history__proposals">
           <p class="history__subtitle">
@@ -210,7 +235,19 @@
             :item="proposal"
             :is-last="historyTableData[index] === historyTableData[historyTableData.length - 1]"
           />
+          <div
+            v-if="!historyTableData.length"
+            class="history__empty"
+          >
+            {{ $t('proposal.table.isEmpty') }}
+          </div>
         </div>
+        <base-pager
+          v-if="totalPages > 1"
+          v-model="currentPage"
+          class="history__pagination_mobile"
+          :total-pages="totalPages"
+        />
         <!-- /mobile -->
       </div>
     </div>
@@ -218,208 +255,342 @@
 </template>
 
 <script>
-import moment from 'moment';
+import { mapGetters } from 'vuex';
+import BigNumber from 'bignumber.js';
+import { proposalStatuses, Chains } from '~/utils/enums';
+import modals from '~/store/modals/modals';
 
 export default {
   data() {
     return {
-      historyTableFields: [
-        {
-          key: 'number', label: this.$t('proposal.table.number'), sortable: true,
-        },
-        {
-          key: 'hash', label: this.$t('proposal.table.hash'), sortable: true,
-        },
-        {
-          key: 'date', label: this.$t('proposal.table.date'), sortable: true,
-        },
-        {
-          key: 'address', label: this.$t('proposal.table.address'), sortable: true,
-        },
-        {
-          key: 'vote', label: this.$t('proposal.table.vote'), sortable: true,
-        },
-      ],
-      historyTableData: [
-        {
-          number: '1',
-          hash: '11400714819323198485',
-          date: moment('20210615', 'YYYYMMDD').format('ll'),
-          address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
-          vote: 'YES',
-        },
-        {
-          number: '2',
-          hash: '11400714819323198485',
-          date: moment('20210720', 'YYYYMMDD').format('ll'),
-          address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
-          vote: 'YES',
-        },
-        {
-          number: '3',
-          hash: '11400714819323198485',
-          date: moment('20210617', 'YYYYMMDD').format('ll'),
-          address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
-          vote: 'NO',
-        },
-        {
-          number: '4',
-          hash: '11400714819323198485',
-          date: moment('20210520', 'YYYYMMDD').format('ll'),
-          address: '18vk40cc3er48fzs5ghqzxy88uqs6a3lsus8cz9',
-          vote: 'NO',
-        },
-      ],
-      idCard: '',
-      voting: '',
-      status: '',
-      date: '',
-      about: '',
-      ddValues: [
-        this.$t('proposal.ui.yes'),
-        this.$t('proposal.ui.no'),
-        this.$t('proposal.ui.allProposals'),
-      ],
-      ddValue: 2,
-      documents0: [],
-      documents: [
-        {
-          id: '1',
-          type: 'doc',
-          name: 'some_document1.pdf',
-          size: '1.2mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '2',
-          type: 'doc',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '3',
-          type: 'doc',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '4',
-          type: 'img',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '5',
-          type: 'img',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '6',
-          type: 'img',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        }, {
-          id: '7',
-          type: 'img',
-          name: 'some_doc2.pdf',
-          size: '1.5mb',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        },
-      ],
-      hash: '11400714819323198485',
-      descriptionValue: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid animi, ea exercitationem fugit incidunt nesciunt nisi non officiis optio quaerat rem similique suscipit. Ab ad asperiores, commodi consequatur cum delectus distinctio eaque fugiat impedit iste laborum laudantium maxime nam odio perspiciatis quibusdam quisquam ratione sequi suscipit ullam vel veritatis voluptate.',
+      limit: 10,
+      currentPage: 1,
+      historyTableData: [],
+      historyCount: 0,
+      idCard: null,
+      status: 0,
+      dateStart: '',
+      dateEnd: '',
+      title: '',
+      ddValue: 0,
+      documents: [],
+      hash: '',
+      description: null,
       results: {
         percents: {
-          yes: '65',
-          no: '35',
+          yes: 0,
+          no: 0,
         },
         votes: {
-          yes: 10,
-          no: 2,
+          yes: 0,
+          no: 0,
         },
-        isVoted: false,
-        vote: 'YES',
       },
-      cards: [
-        {
-          voting: 1,
-          status: 0,
-          date: `${moment('20210520', 'YYYYMMDD').format('ll')} - ${moment().format('ll')}`,
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: `${moment('20210520', 'YYYYMMDD').format('ll')} - ${moment().format('ll')}`,
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 2,
-          date: `${moment('20210520', 'YYYYMMDD').format('ll')} - ${moment().format('ll')}`,
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-      ],
+      isVoted: false,
+      vote: null,
       isDescending: true,
+      isActive: true,
+      isFirstLoading: true,
     };
   },
   computed: {
+    ...mapGetters({
+      isConnected: 'web3/getWalletIsConnected',
+      isChairperson: 'web3/isChairpersonRole',
+      cards: 'proposals/cards',
+    }),
+    totalPages() {
+      return Math.ceil(this.historyCount / this.limit);
+    },
+    historyTableFields() {
+      return [
+        { key: 'number', label: this.$t('proposal.table.number'), sortable: true },
+        { key: 'hash', label: this.$t('proposal.table.hash'), sortable: true },
+        { key: 'date', label: this.$t('proposal.table.date'), sortable: true },
+        { key: 'address', label: this.$t('proposal.table.address'), sortable: true },
+        { key: 'vote', label: this.$t('proposal.table.vote'), sortable: true },
+      ];
+    },
+    ddValues() {
+      return [
+        this.$t('proposal.ui.all'),
+        this.$t('proposal.ui.yes'),
+        this.$t('proposal.ui.no'),
+      ];
+    },
     sortingClass() {
       return [
         { 'icon-Sorting_descending': this.isDescending },
         { 'icon-Sorting_ascending': !this.isDescending },
       ];
     },
+    timeIsExpired() {
+      return this.$moment().isAfter(this.$moment(this.dateEnd));
+    },
   },
-  mounted() {
-    const URLString = document.URL;
-    this.idCard = parseInt(URLString.split('/').slice(-1)[0], 10);
-    const card = this.cards[this.idCard - 1];
-    this.voting = card.voting;
-    this.status = card.status;
-    this.date = card.date;
-    this.about = card.about;
+  watch: {
+    async isConnected(newVal) {
+      if (this.isFirstLoading) return;
+      if (!newVal) {
+        this.resetDataFromContract();
+        return;
+      }
+      this.SetLoader(true);
+      await this.loadCard();
+      this.SetLoader(false);
+    },
+    async isDescending() {
+      await this.fetchVoting(this.currentPage);
+    },
+    async currentPage() {
+      await this.fetchVoting(this.currentPage);
+    },
+    async ddValue() {
+      await this.fetchVoting(1);
+    },
+  },
+  async mounted() {
+    this.SetLoader(true);
+    this.idCard = +this.$route.params.id;
+
+    let card = null;
+    if (this.cards && this.cards.length) {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const item of this.cards) {
+        if (item.proposalId === this.idCard) {
+          card = item;
+          break;
+        }
+      }
+    }
+    if (card === null) {
+      const [proposalRes, votingRes] = await Promise.all([
+        this.$store.dispatch('proposals/getProposal', {
+          proposalId: this.idCard,
+        }),
+        this.fetchVoting(this.currentPage),
+      ]);
+      if (!proposalRes.ok || !votingRes) {
+        this.SetLoader(false);
+        await this.$router.push('/proposals');
+        return;
+      }
+      card = proposalRes.result;
+    } else {
+      const votingRes = this.fetchVoting(this.currentPage);
+      if (!votingRes) {
+        this.SetLoader(false);
+        await this.$router.push('/proposals');
+        return;
+      }
+    }
+    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+    if (this.isConnected) {
+      await this.loadCard();
+    }
+    this.title = card.title;
+    this.description = card.description;
+    this.hash = card.txHash;
+    this.dateStart = new Date(card.timestamp * 1000);
+    this.dateEnd = new Date((card.timestamp + card.votingPeriod) * 1000);
+    let i = 1;
+    // eslint-disable-next-line no-restricted-syntax
+    for (const media of card.medias) {
+      this.documents.push({
+        id: i,
+        name: `Document ${i}`,
+        type: 'doc',
+        downloadUrl: media.url,
+      });
+      i += 1;
+    }
+    this.isFirstLoading = false;
+    this.SetLoader(false);
   },
   methods: {
+    async fetchVoting(page) {
+      const votingRes = await this.$store.dispatch('proposals/getProposalVotes', {
+        proposalId: this.idCard,
+        params: {
+          limit: this.limit,
+          offset: (page - 1) * this.limit,
+          createdAt: this.isDescending ? 'desc' : 'asc',
+          support: this.ddValue > 0 ? this.ddValue === 1 : null,
+        },
+      });
+      if (!votingRes.ok) {
+        return false;
+      }
+      this.historyCount = votingRes.result.count;
+      this.fillTableData(votingRes.result.voting);
+      return true;
+    },
+    fillTableData(votes) {
+      let id = 1;
+      const result = [];
+      // eslint-disable-next-line no-restricted-syntax
+      for (const vote of votes) {
+        result.push({
+          number: id,
+          hash: this.cutString(vote.transactionHash, 6, 6),
+          date: new Date(vote.timestamp * 1000),
+          address: this.cutString(vote.voter, 6, 6),
+          vote: vote.support,
+        });
+        id += 1;
+      }
+      this.historyTableData = result;
+    },
+    getHashLink() {
+      if (!this.hash) return '';
+      return process.env.PROD === 'true'
+        ? `https://rinkeby.etherscan.io/tx/${this.hash}` : `https://rinkeby.etherscan.io/tx/${this.hash}`;
+    },
+    async checkRole() { // TODO: remove check chairperson and move logic to admin panel
+      await this.$store.dispatch('web3/isChairpersonRole');
+    },
+    async executeVoting() {
+      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      if (!this.isConnected) return;
+      this.SetLoader(true);
+      if (!this.isChairperson) return;
+      await this.$store.dispatch('web3/executeVoting', this.idCard);
+      await this.updateVoteResults();
+      this.SetLoader(false);
+    },
+    resetDataFromContract() {
+      this.results = {
+        percents: {
+          yes: 0,
+          no: 0,
+        },
+        votes: {
+          yes: 0,
+          no: 0,
+        },
+      };
+    },
+    async loadCard() {
+      const [proposalRes] = await Promise.all([
+        this.$store.dispatch('web3/getProposalInfoById', this.idCard),
+        this.updateVoteResults(),
+        this.getReceipt(),
+        this.checkRole(),
+      ]);
+      if (!proposalRes.ok) return;
+      const { result } = proposalRes.result;
+      const {
+        forVotes, againstVotes, active,
+      } = result;
+      const yes = +(new BigNumber(forVotes).shiftedBy(-18));
+      const no = +(new BigNumber(againstVotes).shiftedBy(-18));
+      this.results.votes.yes = yes;
+      this.results.votes.no = no;
+      const sumVotes = no + yes;
+      if (sumVotes <= 0) {
+        this.results.percents.yes = 0;
+        this.results.percents.no = 0;
+      } else if (no - yes === no) {
+        this.results.percents.yes = 0;
+        this.results.percents.no = 100;
+      } else if (yes - no === yes) {
+        this.results.percents.yes = 100;
+        this.results.percents.no = 0;
+      } else {
+        if (yes > 0) {
+          this.results.percents.yes = +(new BigNumber((yes * 100) / sumVotes).decimalPlaces(1).toString());
+        } else this.results.percents.yes = 0;
+        if (no > 0) {
+          this.results.percents.no = +(new BigNumber((no * 100) / sumVotes).decimalPlaces(1).toString());
+        } else this.results.percents.no = 0;
+      }
+      this.isActive = active;
+    },
+    async updateVoteResults() {
+      const res = await this.$store.dispatch('web3/voteResults', this.idCard);
+      if (!res.ok) return;
+      const { succeded, defeated } = res.result;
+      if (!succeded && !defeated) {
+        this.status = 1;
+      } else if (defeated || !succeded) {
+        this.status = 2;
+      } else this.status = 3;
+    },
+    async getReceipt() {
+      const { address } = await this.$store.dispatch('web3/getAccount');
+      const res = await this.$store.dispatch('web3/getReceipt', { id: this.idCard, accountAddress: address });
+      if (res.ok && res.result) {
+        const { hasVoted, support } = res.result;
+        this.isVoted = hasVoted;
+        this.vote = support;
+      }
+    },
     cardsStatusColor(idx) {
       const statusClass = {
-        0: 'info__status_pending',
-        1: 'info__status_rejected',
-        2: 'info__status_accepted',
+        [proposalStatuses.PENDING]: 'info__status_pending',
+        [proposalStatuses.ACTIVE]: 'info__status_active',
+        [proposalStatuses.REJECTED]: 'info__status_rejected',
+        [proposalStatuses.ACCEPTED]: 'info__status_accepted',
       };
       return statusClass[idx] || 'None';
     },
     getPriority(index) {
       const priority = {
-        0: this.$t('proposals.cards.status.pending'),
-        1: this.$t('proposals.cards.status.rejected'),
-        2: this.$t('proposals.cards.status.accepted'),
+        [proposalStatuses.PENDING]: this.$t('proposals.cards.status.pending'),
+        [proposalStatuses.ACTIVE]: this.$t('proposals.cards.status.active'),
+        [proposalStatuses.REJECTED]: this.$t('proposals.cards.status.rejected'),
+        [proposalStatuses.ACCEPTED]: this.$t('proposals.cards.status.accepted'),
       };
       return priority[index] || 'None';
     },
-    modifyHash(hash) {
-      return `${hash.substr(0, 6)}...${hash.substr(hash.length - 6, 6)}`;
-    },
-    prepareTableData(data) {
-      const newData = [];
-      data.forEach((item) => {
-        const itemModel = item;
-        itemModel.hash = this.modifyHash(item.hash);
-        newData.push(itemModel);
-      });
-      switch (this.ddValue) {
-        case 0:
-          return newData.filter((item) => item.vote === 'YES');
-        case 1:
-          return newData.filter((item) => item.vote === 'NO');
-        default:
-          return newData;
+    async toDelegate(value) {
+      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      if (!this.isConnected) return;
+
+      const account = await this.$store.dispatch('web3/getAccount');
+      const [delegated, voteThreshold] = await Promise.all([
+        this.$store.dispatch('web3/getVotes', account.address),
+        this.$store.dispatch('web3/getVoteThreshold'),
+      ]);
+      if (+delegated.result < +voteThreshold.result) {
+        await this.$store.dispatch('main/showToast', {
+          title: this.$t('proposal.errors.voteError'),
+          text: this.$t('proposal.errors.notEnoughFunds', { a: +voteThreshold.result, b: +delegated.result }),
+        });
+        await this.$store.dispatch('modals/show', {
+          key: modals.delegate,
+          investorAddress: account.address,
+          min: +voteThreshold.result,
+          callback: async () => this.onVote(value),
+        });
+      } else {
+        await this.onVote(value);
       }
     },
-    onVote(value) {
-      this.results.isVoted = true;
-      this.results.vote = value;
+    async onVote(value) {
+      this.SetLoader(true);
+      if (this.$moment().isAfter(this.$moment(this.endTime))) {
+        await this.$store.dispatch('main/showToast', {
+          title: this.$t('proposal.voteError'),
+          text: this.$t('proposal.errors.votingTimeIsExpired'),
+        });
+        this.SetLoader(false);
+        return;
+      }
+      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      if (!this.isConnected) return;
+      const res = await this.$store.dispatch('web3/doVote', { id: this.idCard, value });
+      if (!res.ok) {
+        await this.$store.dispatch('main/showToast', {
+          title: this.$t('proposal.errors.voteError'),
+          text: this.$t('proposal.errors.delegatedAfter'),
+        });
+        this.SetLoader(false);
+        return;
+      }
+      await this.fetchVoting(this.currentPage);
+      await this.loadCard();
+      this.SetLoader(false);
     },
   },
 };
@@ -517,15 +688,17 @@ export default {
       background-color: #f6f8fa;
       color: #AAB0B9;
     }
-
+    &_active {
+      background-color: #f6f8fa;
+      color: $blue;
+    }
     &_rejected {
       background-color: #fcebeb;
-      color: #DF3333;
+      color: $red;
     }
-
-    &_accepted {
+    &_accepted{
       background-color: #f6f8fa;
-      color: #22CC14;
+      color: $green;
     }
 
     &_disabled {
@@ -642,6 +815,9 @@ export default {
     color: #1D2127;
     margin-bottom: 15px;
   }
+  &__finish {
+    margin-bottom: 15px;
+  }
 }
 
 .bar {
@@ -693,6 +869,7 @@ export default {
   &__percent {
     width: 29px;
     color: #7C838D;
+    margin-right: 10px;
   }
 }
 
@@ -718,6 +895,15 @@ export default {
   }
   &__proposals {
     display: none;
+  }
+  &__empty {
+    text-align: center;
+  }
+  &__pagination {
+    margin-top: 20px;
+    &_mobile {
+      display: none;
+    }
   }
 }
 
@@ -833,6 +1019,12 @@ export default {
   .history {
     &__table {
       display: none;
+    }
+    &__pagination {
+      display: none;
+      &_mobile {
+        display: block;
+      }
     }
     &__proposals {
       display: block;

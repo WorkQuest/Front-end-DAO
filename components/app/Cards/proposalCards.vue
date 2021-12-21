@@ -39,8 +39,12 @@
       </div>
     </div>
     <div class="content">
+      <span v-if="!cards.length">
+        {{ $t('proposals.cards.emptyCardsList') }}
+      </span>
       <div
         v-for="(card, i) in cards"
+        v-else
         :key="i"
         class="card"
       >
@@ -50,30 +54,36 @@
           <div class="card__header">
             <div class="card__header_top">
               <div class="card__header_left">
-                <span>Voting #{{ card.voting }}</span>
+                Voting<span v-if="card.status !== 0">#{{ card.proposalId }}</span>
               </div>
               <div class="card__header_right">
                 <div class="card__status">
                   <span
                     class="card__status"
                     :class="cardsStatusColor(card.status)"
-                  >{{ getPriority(card.status) }}</span>
+                  >{{ priority[card.status] || 'None' }}</span>
                 </div>
               </div>
             </div>
           </div>
-          <div class="card__date">
-            {{ card.date }}
+          <div
+            v-if="card.status !== 0"
+            class="card__date"
+          >
+            {{ $moment(new Date(card.timestamp * 1000)).format('ll') }} - {{ $moment(new Date(card.timestamp * 1000 + card.votingPeriod)).format('ll') }}
           </div>
-          <div class="card__about">
-            {{ card.about }}
+          <div
+            class="card__about"
+            :class="{card__about_pending: card.status === 0}"
+          >
+            {{ card.title }}
           </div>
           <div class="btn__container">
             <div class="btn__wrapper">
               <nuxt-link
-                v-if="card.status===0"
+                v-if="card.status !== 0"
                 class="btn__link"
-                to="/proposals/1"
+                :to="`/proposals/${card.proposalId}`"
               >
                 <base-btn
                   mode="outline"
@@ -82,21 +92,14 @@
                   {{ $t('meta.open') }}
                 </base-btn>
               </nuxt-link>
-              <base-btn
-                v-else
-                mode="outline"
-                class="message__action"
-                :disabled="true"
-              >
-                {{ $t('proposal.voted') }}
-              </base-btn>
             </div>
           </div>
         </div>
       </div>
     </div>
     <base-pager
-      v-model="pages"
+      v-if="totalPages > 1"
+      v-model="currentPage"
       class="main__pagination"
       :total-pages="totalPages"
     />
@@ -105,122 +108,41 @@
 
 <script>
 
+import { mapGetters } from 'vuex';
+import { Chains, proposalStatuses } from '~/utils/enums';
+
 export default {
   name: 'ProposalCards',
   data() {
     return {
-      totalPages: 5,
       tab: 1,
       currentPage: 1,
-      pages: 1,
       search: '',
+      searchTimeout: null,
+      timeoutIdSearch: null,
       isDescending: true,
-      ddValues: [
-        this.$t('proposals.ui.yes'),
-        this.$t('proposals.ui.no'),
-        this.$t('proposals.ui.allProposals'),
-      ],
-      ddValue: 2,
-      cards: [
-        {
-          voting: 1,
-          status: 0,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 2,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 2,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 0,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 2,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 0,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 2,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 0,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 1,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 2,
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-        {
-          voting: 1,
-          status: 0,
-          date: 'Jan 01, 2021 - Mar 01, 2021',
-          about: 'Lorem ipsum dolor sit amet, consectetur',
-        },
-      ],
+      cardsLimit: 12,
+      ddValue: 0,
     };
   },
   computed: {
+    ...mapGetters({
+      cards: 'proposals/cards',
+      cardsCount: 'proposals/cardsCount',
+      prevFilters: 'proposals/filters',
+    }),
+    totalPages() {
+      return Math.ceil(this.cardsCount / this.cardsLimit);
+    },
+    ddValues() {
+      return [
+        this.$t('proposals.ui.allProposals'),
+        this.$t('proposals.cards.status.pending'),
+        this.$t('proposals.cards.status.active'),
+        this.$t('proposals.cards.status.rejected'),
+        this.$t('proposals.cards.status.accepted'),
+      ];
+    },
     cardLevelClass(idx) {
       const { cards } = this;
       return [
@@ -234,30 +156,77 @@ export default {
         { 'icon-Sorting_ascending': !this.isDescending },
       ];
     },
+    priority() {
+      return {
+        [proposalStatuses.PENDING]: this.$t('proposals.cards.status.pending'),
+        [proposalStatuses.ACTIVE]: this.$t('proposals.cards.status.active'),
+        [proposalStatuses.REJECTED]: this.$t('proposals.cards.status.rejected'),
+        [proposalStatuses.ACCEPTED]: this.$t('proposals.cards.status.accepted'),
+      };
+    },
+  },
+  watch: {
+    async currentPage(newVal) {
+      await this.loadPage(newVal);
+    },
+    async search() {
+      this.searchTimeout = setTimeout(async () => {
+        await this.loadPage(1);
+      }, 500);
+    },
+    async ddValue() {
+      await this.loadPage(1);
+    },
+    async isDescending() {
+      await this.loadPage(this.currentPage);
+    },
   },
   async mounted() {
     this.SetLoader(true);
+    this.currentPage = this.prevFilters.lastPage || 1;
+    this.search = this.prevFilters.search || '';
+    this.ddValue = this.prevFilters.sortVoteStatus || 0;
+    this.isDescending = this.prevFilters.isDescending || true;
+    await this.loadPage(this.currentPage);
     this.SetLoader(false);
   },
+  beforeDestroy() {
+    this.$store.dispatch('proposals/updateFilters', {
+      lastPage: this.currentPage,
+      search: this.search,
+      sortVoteStatus: this.ddValue,
+      isDescending: this.isDescending,
+    });
+  },
   methods: {
-    showDetails() {
-      this.$router.push('/proposals/1');
-    },
     cardsStatusColor(idx) {
       const statusClass = {
-        0: 'card__status_pending',
-        1: 'card__status_rejected',
-        2: 'card__status_accepted',
+        [proposalStatuses.PENDING]: 'card__status_pending',
+        [proposalStatuses.ACTIVE]: 'card__status_active',
+        [proposalStatuses.REJECTED]: 'card__status_rejected',
+        [proposalStatuses.ACCEPTED]: 'card__status_accepted',
       };
       return statusClass[idx] || 'None';
     },
-    getPriority(index) {
-      const priority = {
-        0: this.$t('proposals.cards.status.pending'),
-        1: this.$t('proposals.cards.status.rejected'),
-        2: this.$t('proposals.cards.status.accepted'),
+    async searchProposals() {
+      if (this.timeoutIdSearch) {
+        clearTimeout(this.timeoutIdSearch);
+        this.timeoutIdSearch = null;
+      }
+      this.timeoutIdSearch = setTimeout(async () => {
+        await this.loadPage(1);
+      }, 500);
+    },
+    async loadPage(page) {
+      this.currentPage = page;
+      const params = {
+        limit: this.cardsLimit,
+        offset: (page - 1) * this.cardsLimit,
+        q: this.search || null,
+        status: this.ddValue - 1 >= 0 ? this.ddValue - 1 : null,
+        createdAt: this.isDescending ? 'desc' : 'asc',
       };
-      return priority[index] || 'None';
+      await this.$store.dispatch('proposals/getProposals', params);
     },
   },
 };
@@ -433,19 +402,22 @@ export default {
     height: 24px;
     display: flex;
     padding: 0 4px;
-    align-items: center;
     border-radius: 3px;
     &_pending {
       background-color: #f6f8fa;
       color: #AAB0B9;
     }
+    &_active {
+      background-color: #f6f8fa;
+      color: $blue;
+    }
     &_rejected {
       background-color: #fcebeb;
-      color: #DF3333;
+      color: $red;
     }
     &_accepted{
       background-color: #f6f8fa;
-      color: #22CC14;
+      color: $green;
     }
     &_disabled {
       display: none;
@@ -472,6 +444,18 @@ export default {
     line-height: 28px;
     letter-spacing: 0em;
     text-align: left;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    &_pending {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      height: 56px;
+    }
   }
 }
 .dd {
