@@ -81,29 +81,23 @@
           {{ $t('signIn.loginWith') }}
         </div>
         <div class="auth__icons">
-          <button class="auth__btn auth__btn_wq">
+          <button
+            class="auth__btn auth__btn_workQuest"
+            @click="showSignWorkQuest()"
+          >
             <img
               src="~assets/img/app/logo.svg"
-              alt="Work Quest"
-              class="auth__btn__picture"
-            >
-            <img
-              src="~assets/img/app/logo_white.svg"
-              alt="Work Quest"
-              class="auth__btn__image"
+              alt="WorkQuest"
             >
           </button>
-          <button class="auth__btn auth__btn_google">
-            <span class="icon-google" />
-          </button>
-          <button class="auth__btn auth__btn_twitter">
-            <span class="icon-twitter" />
-          </button>
-          <button class="auth__btn auth__btn_facebook">
-            <span class="icon-facebook" />
-          </button>
-          <button class="auth__btn auth__btn_LinkedIn">
-            <span class="icon-LinkedIn" />
+          <button
+            v-for="(item, key) in socials"
+            :key="key"
+            class="auth__btn"
+            :class="`auth__btn_${item}`"
+            @click="redirectSocialLink(item)"
+          >
+            <span :class="`icon-${item === 'linkedin' ? 'LinkedIn' : item}`" />
           </button>
         </div>
       </div>
@@ -129,6 +123,9 @@ export default {
     ...mapGetters({
       userData: 'user/getUserData',
     }),
+    socials() {
+      return ['google', 'twitter', 'facebook', 'linkedin'];
+    },
   },
   async mounted() {
     this.SetLoader(true);
@@ -159,6 +156,14 @@ export default {
       } catch (e) {
         console.log(e);
       }
+    },
+    async redirectSocialLink(socialNetwork) {
+      window.location = `${process.env.BASE_URL}v1/auth/login/${socialNetwork}`;
+    },
+    showSignWorkQuest() {
+      this.ShowModal({
+        key: modals.signWorkQuest,
+      });
     },
     showRestoreModal() {
       this.ShowModal({
@@ -273,7 +278,7 @@ export default {
         color: #3B67D7;
       }
     }
-    &_LinkedIn {
+    &_linkedin {
       span:before {
         font-size: 18px;
         color: #0A7EEA;

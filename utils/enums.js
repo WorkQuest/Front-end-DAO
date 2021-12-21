@@ -18,6 +18,7 @@ export const errorCodes = Object.freeze({
   ExecuteVoting: 108,
   GetChairpersonHash: 109,
   HasRole: 110,
+  VoteResults: 111,
 
   GetBalance: 200, // Баланс WQT на адресе
   Delegate: 201, // Делегирование

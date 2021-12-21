@@ -20,6 +20,7 @@ import {
   getChairpersonHash,
   hasRole,
   undelegate,
+  voteResults,
 } from '~/utils/web3';
 import modals from '~/store/modals/modals';
 import { error, success } from '~/utils/success-error';
@@ -36,7 +37,6 @@ export default {
     if (typeof window.ethereum === 'undefined') {
       this.ShowModal({
         key: modals.status,
-        // img: '~assets/img/ui/cardHasBeenAdded.svg',
         title: 'Please install Metamask!',
         subtitle: 'Please click install...',
         button: 'Install',
@@ -105,9 +105,9 @@ export default {
   // async getProposals({ commit }, { offset, limit }) {
   //   return await getProposals(offset, limit);
   // },
-  // async getProposalInfoById({ commit }, id) {
-  //   return await getProposalInfoById(id);
-  // },
+  async getProposalInfoById({ commit }, id) {
+    return await getProposalInfoById(id);
+  },
   async doVote({ commit }, { id, value }) {
     return await doVote(id, value);
   },
@@ -125,6 +125,9 @@ export default {
   },
   async executeVoting({ commit }, id) {
     return await executeVoting(id);
+  },
+  async voteResults({ commit }, id) {
+    return await voteResults(id);
   },
   async isChairpersonRole({ commit, getters }) {
     if (!getters.chairpersonRoleHash) {

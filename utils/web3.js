@@ -142,8 +142,8 @@ export const connectToMetamask = async () => {
       return error(errorCodes.MetamaskIsNotInstalled);
     }
     web3Wallet = new Web3(ethereum);
-    const chainId = await web3Wallet.eth.net.getId();
     await ethereum.request({ method: 'eth_requestAccounts' });
+    const chainId = await web3Wallet.eth.net.getId();
     if (isProd() && ![+ChainsId.ETH_MAIN, 56].includes(+chainId)) {
       return error(errorCodes.WrongChainId, 'Wrong blockchain in metamask', 'Current site work on mainnet. Please change network.');
     }
@@ -156,13 +156,14 @@ export const connectToMetamask = async () => {
   } catch (e) {
     if (e.message.indexOf('eth_requestAccounts') !== -1) {
       showToast('Metamask connection', 'Please open metamask to connect', 'danger');
+    } else {
+      console.log(e.message);
     }
     return error(errorCodes.ConnectToMetamaskError, '', e);
   }
 };
 
 export const handleMetamaskStatus = (callback) => {
-  console.log('handle status <<');
   isHandlingStatus = true;
   const { ethereum } = window;
   ethereum.on('chainChanged', callback);
@@ -215,7 +216,6 @@ export const getVotes = async (address) => {
 /* Proposals */
 export const addProposal = async (description, nonce) => {
   try {
-    console.log('addproposal', description, nonce);
     const res = await sendTransaction('addProposal', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [nonce, description.toString()]);
     return success(res);
   } catch (e) {
@@ -278,6 +278,14 @@ export const executeVoting = async (id) => {
     return success(res);
   } catch (e) {
     return error(errorCodes.ExecuteVoting, e.message, e);
+  }
+};
+export const voteResults = async (id) => {
+  try {
+    const { result } = await fetchContractData('voteResults', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [id]);
+    return success(result);
+  } catch (e) {
+    return error(errorCodes.VoteResults, e.message, e);
   }
 };
 

@@ -24,15 +24,16 @@
         </div>
       </div>
       <div class="file__actions actions">
-        <div
+        <a
           v-if="isShowDownload"
           class="actions__download download"
-          @click="download(item.id)"
+          :href="item.downloadUrl"
+          target="_blank"
         >
           <div class="download__icon icon">
             <span class="icon__download icon-download" />
           </div>
-        </div>
+        </a>
         <div
           v-else
           class="actions__close icon"
@@ -126,7 +127,11 @@ export default {
   }
 
   &__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: 16px;
+    width: 70%;
     color: #282F39;
     margin-left: 8px;
   }
@@ -167,6 +172,7 @@ export default {
 .download {
   width: 33px;
   height: 33px;
+  text-decoration: none;
 
   &__icon {
     width: 100%;
