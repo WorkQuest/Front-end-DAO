@@ -257,9 +257,11 @@ export default {
     margin-right: -30px;
     justify-content: center!important;
     &_green {
+      margin: auto auto;
       background: #22CC14 !important;
     }
     &_red {
+      margin: auto auto;
       background: #DF3333 !important;
     }
   }

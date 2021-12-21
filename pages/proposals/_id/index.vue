@@ -434,8 +434,10 @@ export default {
         result.push({
           number: id,
           hash: this.cutString(vote.transactionHash, 6, 6),
+          _hash: vote.transactionHash,
           date: new Date(vote.timestamp * 1000),
           address: this.cutString(vote.voter, 6, 6),
+          _address: vote.voter,
           vote: vote.support,
         });
         id += 1;
