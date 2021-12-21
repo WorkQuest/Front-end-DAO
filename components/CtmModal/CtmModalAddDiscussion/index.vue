@@ -40,7 +40,7 @@
           :name="$t('modals.description')"
         />
         <base-uploader
-          class="files__container"
+          class="add-discussion uploader__container"
           type="all"
           :items="documents"
           :is-show-download="false"
@@ -171,6 +171,9 @@ export default {
 
 <style lang="scss" scoped>
 .uploader {
+  &__container {
+    margin: 30px 0 30px 0;
+  }
   &__btn {
     height: 46px !important;
     width: 162px !important;
