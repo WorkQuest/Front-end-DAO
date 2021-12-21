@@ -242,12 +242,13 @@
             {{ $t('proposal.table.isEmpty') }}
           </div>
         </div>
-        <base-pager
-          v-if="totalPages > 1"
-          v-model="currentPage"
-          class="history__pagination_mobile"
-          :total-pages="totalPages"
-        />
+        <div class="history__pagination_mobile">
+          <base-pager
+            v-if="totalPages > 1"
+            v-model="currentPage"
+            :total-pages="totalPages"
+          />
+        </div>
         <!-- /mobile -->
       </div>
     </div>
@@ -428,13 +429,16 @@ export default {
     fillTableData(votes) {
       let id = 1;
       const result = [];
+      const prod = process.env.PROD === 'true';
       // eslint-disable-next-line no-restricted-syntax
       for (const vote of votes) {
         result.push({
           number: id,
           hash: this.cutString(vote.transactionHash, 6, 6),
+          hashLink: prod ? `https://etherscan.io/tx/${vote.transactionHash}` : `https://rinkeby.etherscan.io/tx/${vote.transactionHash}`,
           date: new Date(vote.timestamp * 1000),
           address: this.cutString(vote.voter, 6, 6),
+          addressLink: prod ? `https://rinkeby.etherscan.io/address/${vote.voter}` : `https://etherscan.io/address/${vote.voter}`,
           vote: vote.support,
         });
         id += 1;
@@ -903,6 +907,7 @@ export default {
     margin-top: 20px;
     &_mobile {
       display: none;
+      margin-top: 20px;
     }
   }
 }
