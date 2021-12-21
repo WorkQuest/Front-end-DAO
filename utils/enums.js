@@ -18,6 +18,7 @@ export const errorCodes = Object.freeze({
   ExecuteVoting: 108,
   GetChairpersonHash: 109,
   HasRole: 110,
+  VoteResults: 111,
 
   GetBalance: 200, // Баланс WQT на адресе
   Delegate: 201, // Делегирование
@@ -29,7 +30,7 @@ export const errorCodes = Object.freeze({
 
 export const ChainsId = Object.freeze({
   ETH_MAIN: '0x1',
-  ETH_TEST: '0x3',
+  ETH_TEST: '0x4',
 });
 
 export const Chains = Object.freeze({

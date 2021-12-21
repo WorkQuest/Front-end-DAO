@@ -101,6 +101,21 @@ export default {
 
   &:hover .image__size {
     display: block !important;
+    object-fit: cover;
+  }
+
+  &__size {
+    display: none;
+    position: absolute;
+    left: 2px;
+    bottom: 1px;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  &:hover .image__size {
+    display: block !important;
   }
 
   &__icon {
