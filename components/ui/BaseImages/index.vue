@@ -9,25 +9,33 @@
       class="images__image image"
     >
       <img
-        :src="item.img"
+        :src="item.img || item.url"
         alt=""
         class="image__img"
+        @click="mode !== 'default' ? showGallery(item) : ''"
       >
       <span class="image__size">
         {{ item.size }}
       </span>
       <span
+        v-if="mode === 'default'"
         class="image__icon icon"
         :class="classIcon"
-        @click="onIconClick(item.id)"
+        @click="onIconClick(item)"
       />
     </div>
   </div>
 </template>
 
 <script>
+import modals from '~/store/modals/modals';
+
 export default {
   props: {
+    mode: {
+      type: String,
+      default: () => 'default',
+    },
     items: {
       type: Array,
       default: () => [],
@@ -46,14 +54,15 @@ export default {
     },
   },
   methods: {
-    onIconClick(id) {
-      if (this.isShowDownload) this.downloadImage(id);
-      else this.deleteImage(id);
+    showGallery(item) {
+      this.ShowModal({ key: modals.gallery, files: item });
     },
-    deleteImage(id) {
-      this.$emit('remove', id);
+    onIconClick(item) {
+      this.deleteImage(item);
     },
-    downloadImage(id) {},
+    deleteImage(item) {
+      this.$emit('remove', item);
+    },
   },
 };
 </script>
@@ -76,6 +85,22 @@ export default {
   &__img {
     width: 100%;
     height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+  }
+
+  &__size {
+    display: none;
+    position: absolute;
+    left: 2px;
+    bottom: 1px;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  &:hover .image__size {
+    display: block !important;
     object-fit: cover;
   }
 

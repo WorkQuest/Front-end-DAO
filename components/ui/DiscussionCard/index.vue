@@ -25,7 +25,7 @@
       {{ cropTxt(item.title, 30) }}
     </div>
     <div class="discussion__date">
-      {{ $moment(item.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
+      {{ $moment(item.createdAt).format('Do MMMM YYYY, hh:mm a') }}
     </div>
     <hr class="discussion__line">
     <div class="description discussion__description">

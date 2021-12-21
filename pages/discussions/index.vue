@@ -19,13 +19,11 @@
         {{ $t('discussions.btn') }}
       </base-btn>
     </div>
+    <empty-data
+      v-if="discussions.length === 0"
+      :description="$t('discussions.noDiscussions')"
+    />
     <div class="discussions__cards">
-      <div
-        v-if="discussions.length === 0"
-        class="discussions__card"
-      >
-        {{ $t('discussions.noDiscussions') }}
-      </div>
       <discussion-card
         v-for="(item, i) in discussions"
         :key="i"
@@ -89,13 +87,17 @@ export default {
   methods: {
     async searchDiscussion() {
       this.SetLoader(true);
-      this.page = 1;
-      this.offset = 0;
-      await this.$store.dispatch('discussions/getAllDiscussions', {
-        limit: this.limit,
-        offset: this.offset,
-        q: this.search.trim(),
-      });
+      let timeOut;
+      if (timeOut !== undefined) clearTimeout(timeOut);
+      timeOut = setTimeout(async () => {
+        this.page = 1;
+        this.offset = 0;
+        await this.$store.dispatch('discussions/getAllDiscussions', {
+          limit: this.limit,
+          offset: this.offset,
+          q: this.search.trim(),
+        });
+      }, 500);
       this.SetLoader(false);
     },
     openModalAddDiscussion() {

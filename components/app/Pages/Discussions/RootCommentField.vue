@@ -79,7 +79,7 @@
         class="comment__footer footer"
       >
         <base-btn
-          class="footer__btn"
+          class="footer__btn hide"
           :disabled="!validated || !passed || invalid"
         >
           <template v-slot:left>
@@ -90,7 +90,7 @@
           v-model="subCommentInput"
           class="footer__input"
           :placeholder="$t('discussions.input')"
-          rules="required|text-response"
+          rules="required|max:250"
           :name="$t('discussions.response')"
           mode="comment-field"
         />
@@ -195,6 +195,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.hide {
+  visibility: hidden;
+}
 .comment {
   padding: 0 30px 0 0;
   display: flex;

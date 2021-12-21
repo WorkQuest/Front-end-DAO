@@ -15,7 +15,10 @@
                 {{ $t('settings.alsoRating') }}
               </div>
               <div class="banner__verification">
-                <base-btn mode="ver">
+                <base-btn
+                  mode="ver"
+                  @click="getVerification"
+                >
                   {{ $t('settings.getVerification') }}
                 </base-btn>
               </div>
@@ -310,6 +313,9 @@ export default {
     this.SetLoader(false);
   },
   methods: {
+    getVerification() {
+      this.$router.push('/KYC');
+    },
     setCurrData() {
       this.localUserData = JSON.parse(JSON.stringify(this.userData));
 

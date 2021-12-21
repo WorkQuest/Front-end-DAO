@@ -40,16 +40,25 @@
           :name="$t('modals.description')"
         />
         <base-uploader
-          class="files__container"
+          class="add-discussion uploader__container"
           type="all"
           :items="documents"
-          :is-show-empty="true"
           :is-show-download="false"
+          @remove="remove"
         >
           <template v-slot:actionButton>
+            <input
+              ref="fileUpload"
+              class="uploader__btn_hidden"
+              type="file"
+              multiple
+              :accept="accept"
+              @change="handleFileSelected($event)"
+            >
             <base-btn
-              mode="lightBlue"
-              class="add-discussion__button"
+              mode="outline"
+              class="uploader__btn"
+              @click="$refs.fileUpload.click()"
             >
               {{ $t('meta.addFile') }}
               <template v-slot:right>
@@ -85,30 +94,67 @@ export default {
   name: 'AddDiscussion',
   data() {
     return {
+      accept: 'application/msword, application/pdf, image/jpeg, image/png',
+      acceptedTypes: [],
       title: '',
       discussion: '',
-      documents: [
-        {
-          id: '1',
-          type: 'doc',
-          name: 'Some_document.pdf',
-          size: '1.2 MB',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        },
-        { img: require('~/assets/img/ui/rectangle.svg'), id: 1, type: 'img' },
-        { img: require('~/assets/img/ui/rectangle.svg'), id: 2, type: 'img' },
-        { img: require('~/assets/img/ui/rectangle.svg'), id: 3, type: 'img' },
-        { img: require('~/assets/img/ui/rectangle.svg'), id: 4, type: 'img' },
-        { img: require('~/assets/img/ui/rectangle.svg'), id: 5, type: 'img' },
-      ],
+      imagesLimit: 5,
+      docsLimit: 5,
+      documents: [],
     };
   },
+  mounted() {
+    this.acceptedTypes = this.accept.replace(/\s/g, '').split(',');
+  },
   methods: {
+    remove(item) {
+      this.documents = this.documents.filter((doc) => doc.name !== item.name);
+    },
+    checkContentType(file) {
+      return this.acceptedTypes.indexOf(file.type) !== -1;
+    },
+    handleFileSelected(e) {
+      if (!e.target.files[0]) return;
+      const file = e.target.files[0];
+      const type = file.type.split('/').shift() === 'image' ? 'img' : 'doc';
+
+      if (!this.checkContentType(file)) {
+        return;
+      }
+      if (type === 'img' && this.documents.filter((item) => item.type === 'img').length >= this.imagesLimit) {
+        return;
+      }
+      if (type === 'doc' && this.documents.filter((item) => item.type === 'doc').length >= this.docsLimit) {
+        return;
+      }
+
+      const { size, name } = file;
+      const sizeKb = size / 1000;
+      const sizeMb = sizeKb / 1000;
+      if (sizeMb > 20) return; // more 20mb
+      let fileSize;
+      if (sizeMb < 0.1) {
+        fileSize = `${Math.round(sizeKb * 10) / 10}kb`;
+      } else {
+        fileSize = `${Math.round(sizeMb * 10) / 10}mb`;
+      }
+      this.documents.push({
+        id: this.fileId,
+        img: URL.createObjectURL(file),
+        type,
+        file,
+        name,
+        size: fileSize,
+      });
+      this.fileId += 1;
+    },
     async createDiscussion() {
+      console.log(this.medias);
+      const medias = await this.uploadFiles(this.documents);
       const response = await this.$store.dispatch('discussions/createDiscussion', {
         title: this.title,
         description: this.discussion,
-        medias: [],
+        medias,
       });
       if (response.ok) {
         const { id } = response.result;
@@ -124,6 +170,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.uploader {
+  &__container {
+    margin: 30px 0 30px 0;
+  }
+  &__btn {
+    height: 46px !important;
+    width: 162px !important;
+    margin-left: auto;
+    margin-top: 15px;
+    &_hidden {
+      display: none;
+    }
+  }
+}
 .add-discussion {
   &__content {
     padding: 30px 28px;
