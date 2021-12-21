@@ -401,10 +401,11 @@ export default {
           path: '/proposals',
           title: this.$t('ui.proposals'),
         },
-        {
-          path: '/wallet',
-          title: this.$t('ui.wallet'),
-        },
+        //  TODO Временно убрали кнопку wallet
+        // {
+        //   path: '/wallet',
+        //   title: this.$t('ui.wallet'),
+        // },
         {
           path: '/investors',
           title: this.$t('ui.investors'),

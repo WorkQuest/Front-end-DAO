@@ -57,12 +57,14 @@
       <CtmModalUndelegate v-if="modals.undelegate === currentModalKey" />
       <CtmModalWarning v-if="modals.warning === currentModalKey" />
       <CtmModalSignWorkQuest v-if="modals.signWorkQuest === currentModalKey" />
+      <CtmModalGallery v-if="modals.gallery === currentModalKey" />
     </div>
   </transition>
 </template>
 <script>
 import { mapGetters } from 'vuex';
 import modals from '@/store/modals/modals';
+import CtmModalGallery from './CtmModalGallery';
 import CtmModalConfirmEmail from './CtmModalConfirmEmail';
 import CtmModalChangePassword from './CtmModalChangePassword';
 import CtmModalRestore from './CtmModalRestore';
@@ -112,6 +114,7 @@ import CtmModalSignWorkQuest from './CtmModalSignWorkQuest';
 export default {
   name: 'ModalBox',
   components: {
+    CtmModalGallery,
     CtmModalConfirmEmail,
     CtmModalRestore,
     CtmModalChangePassword,

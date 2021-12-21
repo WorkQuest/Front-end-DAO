@@ -26,7 +26,13 @@ jobs:
         run: npm run generate
         env:
           PROD: ${{ secrets.PROD }}
+
           BASE_URL: ${{ secrets.BASE_URL }}
+          GMAPKEY: ${{ secrets.GMAPKEY }}
+          SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
+
+          WQ_TOKEN: ${{ secrets.WQ_TOKEN }}
+          WQ_DAO_VOTING: ${{ secrets.WQ_DAO_VOTING }}
 
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@v2.1.4
@@ -59,7 +65,13 @@ jobs:
         run: npm run generate
         env:
           PROD: ${{ secrets.PROD }}
+
           BASE_URL: ${{ secrets.BASE_URL }}
+          GMAPKEY: ${{ secrets.GMAPKEY }}
+          SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
+
+          WQ_TOKEN: ${{ secrets.WQ_TOKEN }}
+          WQ_DAO_VOTING: ${{ secrets.WQ_DAO_VOTING }}
 
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@v2.1.4

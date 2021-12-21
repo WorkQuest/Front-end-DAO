@@ -22,7 +22,9 @@ import CommentField2 from '~/components/app/Pages/Discussions/CommentField2';
 import CommentField3 from '~/components/app/Pages/Discussions/CommentField3';
 import CommentField4 from '~/components/app/Pages/Discussions/CommentField4';
 import TableItem from '~/components/mobile/TableItem.vue';
+import EmptyData from '~/components/ui/EmptyData';
 
+Vue.component('empty-data', EmptyData);
 Vue.component('comment-field', CommentField);
 Vue.component('comment-field2', CommentField2);
 Vue.component('comment-field3', CommentField3);

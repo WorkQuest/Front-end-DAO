@@ -2,6 +2,7 @@
   <div class="uploader">
     <base-files
       v-if="type === 'files' || type === 'all'"
+      class="uploader__files"
       :items="files"
       :is-show-download="isShowDownload"
       :is-show-empty="isShowEmpty"
@@ -46,8 +47,8 @@ export default {
     },
   },
   methods: {
-    remove(id) {
-      this.$emit('remove', id);
+    remove(item) {
+      this.$emit('remove', item);
     },
   },
 };
