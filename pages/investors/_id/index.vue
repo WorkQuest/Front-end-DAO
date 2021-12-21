@@ -92,7 +92,7 @@
                 :disabled="true"
                 :is-hide-error="true"
                 mode="iconWhite"
-                :value="investor.additionalInfo ? investor.additionalInfo.socialNetwork[input.key] : ''"
+                :value="investor.additionalInfo && investor.additionalInfo.socialNetwork ? investor.additionalInfo.socialNetwork[input.key] : ''"
                 :placeholder="$t('investor.notFilled')"
               >
                 <template v-slot:left>
@@ -169,29 +169,6 @@ export default {
       name: 'user@gmail.com',
       pages: 1,
       totalPages: 5,
-      walletTableFields: [
-        {
-          key: 'tx_hash', label: this.$t('wallet.table.txHash'), sortable: true,
-        },
-        {
-          key: 'status', label: this.$t('wallet.table.status'), sortable: true,
-        },
-        {
-          key: 'block', label: this.$t('wallet.table.block'), sortable: true,
-        },
-        {
-          key: 'timestamp', label: this.$t('wallet.table.timestamp'), sortable: true,
-        },
-        {
-          key: 'transferred', label: this.$t('wallet.table.transferred'), sortable: true,
-        },
-        {
-          key: 'value', label: this.$t('wallet.table.value'), sortable: true,
-        },
-        {
-          key: 'transaction_fee', label: this.$t('wallet.table.trxFee'), sortable: true,
-        },
-      ],
       transactionsData: [
         {
           tx_hash: 'sd535sd66sdsd',
@@ -255,44 +232,32 @@ export default {
       userData: 'user/getUserData',
     }),
     mainDataArr() {
-      return [{
-        key: 'firstName',
-        icon: 'icon-user',
-      },
-      {
-        key: 'lastName',
-        icon: 'icon-user',
-      },
-      {
-        key: 'location',
-        icon: 'icon-location',
-      },
-      {
-        key: 'email',
-        icon: 'icon-mail',
-      },
-      {
-        key: 'secondMobileNumber',
-        icon: 'icon-phone',
-      }];
+      return [
+        { key: 'firstName', icon: 'icon-user' },
+        { key: 'lastName', icon: 'icon-user' },
+        { key: 'location', icon: 'icon-location' },
+        { key: 'email', icon: 'icon-mail' },
+        { key: 'secondMobileNumber', icon: 'icon-phone' },
+      ];
     },
     socialInputsArr() {
-      return [{
-        key: 'instagram',
-        icon: 'icon-instagram',
-      },
-      {
-        key: 'twitter',
-        icon: 'icon-twitter',
-      },
-      {
-        key: 'linkedin',
-        icon: 'icon-LinkedIn',
-      },
-      {
-        key: 'facebook',
-        icon: 'icon-facebook',
-      }];
+      return [
+        { key: 'instagram', icon: 'icon-instagram' },
+        { key: 'twitter', icon: 'icon-twitter' },
+        { key: 'linkedin', icon: 'icon-LinkedIn' },
+        { key: 'facebook', icon: 'icon-facebook' },
+      ];
+    },
+    walletTableFields() {
+      return [
+        { key: 'tx_hash', label: this.$t('wallet.table.txHash'), sortable: true },
+        { key: 'status', label: this.$t('wallet.table.status'), sortable: true },
+        { key: 'block', label: this.$t('wallet.table.block'), sortable: true },
+        { key: 'timestamp', label: this.$t('wallet.table.timestamp'), sortable: true },
+        { key: 'transferred', label: this.$t('wallet.table.transferred'), sortable: true },
+        { key: 'value', label: this.$t('wallet.table.value'), sortable: true },
+        { key: 'transaction_fee', label: this.$t('wallet.table.trxFee'), sortable: true },
+      ];
     },
   },
   async beforeMount() {

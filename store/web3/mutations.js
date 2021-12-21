@@ -8,4 +8,7 @@ export default {
   setChairpersonRoleHash(state, payload) {
     state.chairpersonRoleHash = payload;
   },
+  setAccount(state, payload) {
+    state.account = payload;
+  },
 };

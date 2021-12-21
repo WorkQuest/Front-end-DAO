@@ -68,6 +68,7 @@ export default {
   async connectMetamask({ commit, dispatch }) {
     const connectRes = await connectToMetamask();
     if (connectRes.ok) {
+      commit('setAccount', connectRes.result);
       commit('setWalletIsConnected', true);
       if (!getIsHandlingStatus()) {
         handleMetamaskStatus(() => { dispatch('reconnectMetamask'); });

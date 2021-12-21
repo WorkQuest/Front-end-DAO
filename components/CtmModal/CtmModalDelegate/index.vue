@@ -13,10 +13,10 @@
           <base-field
             id="invsetorAddress"
             disabled
-            :value="options.investorAddress"
+            :value="accountAddress.address"
             class="address__body"
           >
-            {{ options.investorAddress }}
+            {{ accountAddress.address }}
           </base-field>
         </div>
         <div class="content__tokens tokens">
@@ -68,6 +68,7 @@ export default {
     return {
       tokensAmount: '',
       balance: 0,
+      accountAddress: '',
     };
   },
   computed: {
@@ -86,6 +87,7 @@ export default {
   },
   async mounted() {
     const res = await this.$store.dispatch('web3/getBalance');
+    this.accountAddress = await this.$store.dispatch('web3/getAccount');
     if (res.ok) {
       this.balance = res.result;
     }
@@ -103,7 +105,7 @@ export default {
 
       const { callback } = this.options;
       this.SetLoader(true);
-      const res = await this.$store.dispatch('web3/delegate', { address: this.options.investorAddress, amount: this.tokensAmount });
+      const res = await this.$store.dispatch('web3/delegate', { address: this.accountAddress.address, amount: this.tokensAmount });
       this.SetLoader(false);
       if (res.ok) {
         await this.$store.dispatch('main/showToast', {

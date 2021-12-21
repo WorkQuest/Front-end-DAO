@@ -51,113 +51,6 @@ export default {
       },
       search: '',
       currPage: 1,
-      historyTableFields: [
-        { key: 'avatar', label: this.$t('investors.table.name') },
-        {
-          key: 'fullName', label: '', sortable: true,
-        },
-        {
-          key: 'investorAddress', label: this.$t('investors.table.address'),
-        },
-        {
-          key: 'copy', label: '', sortable: true,
-        },
-        {
-          key: 'stake', label: this.$t('investors.table.stake'), sortable: true,
-        },
-        {
-          key: 'slots', label: this.$t('investors.table.slots'), sortable: true,
-        },
-        {
-          key: 'voting', label: this.$t('investors.table.voting'), sortable: true,
-        },
-        {
-          key: 'undelegate', label: '',
-        },
-        {
-          key: 'delegate', label: '',
-        },
-      ],
-      historyTableData: [
-        {
-          avatar: '',
-          name: 'user@gmail.com',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 1,
-        },
-        {
-          avatar: '',
-          name: 'Main Node',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 2,
-        },
-        {
-          avatar: '',
-          name: 'Turing',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 3,
-
-        },
-        {
-          avatar: '',
-          name: 'user@gmail.com',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 4,
-        },
-        {
-          avatar: '',
-          name: 'Spacebot',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 5,
-        },
-        {
-          avatar: '',
-          name: 'user@gmail.com',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 6,
-        },
-        {
-          avatar: '',
-          name: 'user@gmail.com',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 7,
-        },
-      ],
     };
   },
   computed: {
@@ -165,6 +58,19 @@ export default {
       usersData: 'user/getAllUsers',
       isConnected: 'web3/getWalletIsConnected',
     }),
+    historyTableFields() {
+      return [
+        { key: 'avatar', label: this.$t('investors.table.name') },
+        { key: 'fullName', label: '', sortable: true },
+        { key: 'investorAddress', label: this.$t('investors.table.address') },
+        { key: 'copy', label: '', sortable: true },
+        { key: 'stake', label: this.$t('investors.table.stake'), sortable: true },
+        { key: 'slots', label: this.$t('investors.table.slots'), sortable: true },
+        { key: 'voting', label: this.$t('investors.table.voting'), sortable: true },
+        { key: 'undelegate', label: '' },
+        { key: 'delegate', label: '' },
+      ];
+    },
     totalPages() {
       return Math.ceil(this.usersData.count / this.filter.limit);
     },
