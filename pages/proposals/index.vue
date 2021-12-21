@@ -28,6 +28,7 @@
                 <img
                   class="higher-level__img"
                   src="~/assets/img/ui/proposals-img.svg"
+                  alt=""
                 >
               </div>
             </div>
@@ -43,7 +44,7 @@
 import { mapGetters } from 'vuex';
 import proposalCards from '~/components/app/Cards/proposalCards';
 import modals from '~/store/modals/modals';
-import { Chains, errorCodes } from '~/utils/enums';
+import { Chains } from '~/utils/enums';
 
 export default {
   name: 'Proposals',
@@ -61,12 +62,6 @@ export default {
       isConnected: 'web3/getWalletIsConnected',
       proposalThreshold: 'proposals/proposalThreshold',
     }),
-  },
-  watch: {
-    async isConnected(newValue) {
-      // if (this.firstLoading) return;
-      // const rightChain = await this.$store.dispatch('web3/chainIsCompareToCurrent', Chains.ETHEREUM);
-    },
   },
   methods: {
     isCloseInfo() {

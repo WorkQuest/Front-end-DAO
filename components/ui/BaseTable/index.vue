@@ -15,6 +15,15 @@
       >
         <span class="table__title">{{ $props.title }}</span>
       </template>
+      <template #cell(hash)="el">
+        <a
+          :href="el.item.hashLink"
+          target="_blank"
+          class="table__link"
+        >
+          {{ el.item.hash }}
+        </a>
+      </template>
       <template #cell(tx_hash)="el">
         <span class="table__grey">{{ el.item.tx_hash }}</span>
       </template>
@@ -57,6 +66,15 @@
           mode="copy"
           class="table__copy"
         />
+      </template>
+      <template #cell(address)="el">
+        <a
+          :href="el.item.addressLink"
+          target="_blank"
+          class="table__link"
+        >
+          {{ el.item.address }}
+        </a>
       </template>
       <template #cell(vote)="el">
         <base-btn
@@ -186,7 +204,7 @@ export default {
     color: $red;
   }
   &__grey {
-    color: $black500;
+    color: $black700;
   }
   &__header {
     @include text-simple;
@@ -204,6 +222,9 @@ export default {
   &__link{
     color: #1D2127!important;
     text-decoration: none!important;
+    &:hover {
+      color: $blue!important;
+    }
   }
   @include _1199 {
     .table {

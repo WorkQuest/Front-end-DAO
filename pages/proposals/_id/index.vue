@@ -264,7 +264,7 @@ import modals from '~/store/modals/modals';
 export default {
   data() {
     return {
-      limit: 10,
+      limit: 1,
       currentPage: 1,
       historyTableData: [],
       historyCount: 0,
