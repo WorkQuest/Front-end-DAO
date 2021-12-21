@@ -44,6 +44,8 @@ export const getChainIdByChain = (chain) => {
   switch (chain) {
     case Chains.ETHEREUM:
       return isProd() ? ChainsId.ETH_MAIN : ChainsId.ETH_TEST;
+    case Chains.BINANCE:
+      return isProd() ? ChainsId.BSC_MAIN : ChainsId.BSC_TEST;
     default:
       throw error(-1, `wrong chain name: ${chain}`);
   }

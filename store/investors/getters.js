@@ -1,4 +1,8 @@
 export default {
+  getInvestorsList: (state) => state.investors.list,
+  getInvestorsCount: (state) => state.investors.count,
+  getInvestorData: (state) => state.investor,
+
   isAuth: (state) => !!(state.tokens.access && state.tokens.refresh),
   accessToken: (state) => state.tokens.access,
   refreshToken: (state) => state.tokens.refresh,
@@ -16,7 +20,7 @@ export default {
   getUserEducations: (state) => state.userData?.additionalInfo?.educations || '',
   getUserWorkExp: (state) => state.userData?.additionalInfo?.workExperiences || '',
   getUserAddress: (state) => state.userData?.additionalInfo?.address || '',
-  getUserFirstMobileNumber: (state) => state.userData?.tempPhone || '',
+  getUserFirstMobileNumber: (state) => state.userData?.additionalInfo?.firstMobileNumber || '',
   getUserSecondMobileNumber: (state) => state.userData?.additionalInfo?.secondMobileNumber || '',
   getUserEmail: (state) => state.userData?.email || '',
   getUserCEO: (state) => state.userData?.additionalInfo?.CEO || '',
@@ -26,6 +30,5 @@ export default {
   getUserLinkedin: (state) => state.userData?.additionalInfo?.socialNetwork?.linkedin || '',
   getUserFacebook: (state) => state.userData?.additionalInfo?.socialNetwork?.facebook || '',
   getUserWorkQuest: (state) => state.userData?.additionalInfo?.socialNetwork?.workQuest || '',
-  getAllUsers: (state) => state.usersData,
-  getSpecialUserData: (state) => state.specialUserData,
+  isProfileEdit: (state) => state.isProfileEdit,
 };

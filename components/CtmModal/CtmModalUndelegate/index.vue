@@ -19,26 +19,14 @@
         {{ $tc('modals.shure', options.name) }}
       </div>
       <div class="undelegate__tokens tokens">
-        <div class="tokens__title">
-          {{ $t('modals.tokensNumber') }}
-        </div>
-        <label
-          for="tokensNumber"
-          class="tokens__title_grey"
-        >{{ $t('modals.tokensDelegated') }}</label>
         <div class="tokens__footer footer">
           <base-field
             id="tokensNumber"
-            v-model="tokensAmount"
+            v-model="accountAddress.address"
+            :disabled="true"
             class="footer__body"
             :placeholder="$t('modals.placeholder')"
           />
-          <base-btn
-            class="footer__maximum"
-            mode="lightBlue"
-          >
-            {{ $t('modals.max') }}
-          </base-btn>
         </div>
       </div>
       <div class="undelegate__bottom bottom">
@@ -52,6 +40,7 @@
         <base-btn
           mode="delete"
           class="bottom__done"
+          @click="undelegate()"
         >
           {{ $t('modals.undelegate') }}
         </base-btn>
@@ -62,22 +51,51 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { Chains } from '~/utils/enums';
+import modals from '~/store/modals/modals';
 
 export default {
   name: 'Undelegate',
   data() {
     return {
       tokensAmount: '',
+      accountAddress: '',
     };
   },
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
+      isConnected: 'web3/getWalletIsConnected',
     }),
+  },
+  async mounted() {
+    this.accountAddress = await this.$store.dispatch('web3/getAccount');
   },
   methods: {
     hide() {
       this.CloseModal();
+    },
+    async undelegate() {
+      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      if (!this.isConnected) return;
+      const { callback } = this.options;
+      this.SetLoader(true);
+      const res = await this.$store.dispatch('web3/undelegate');
+      this.SetLoader(false);
+      if (res.ok) {
+        await this.hide();
+        await this.$store.dispatch('main/showToast', {
+          title: 'Undelegate',
+          text: `Undelegate ${this.tokensAmount} WQT`,
+        });
+        if (callback) await callback();
+      } else if (res.msg.includes('Not enough balance to undelegate')) {
+        await this.$store.dispatch('modals/show', {
+          key: modals.status,
+          title: 'Undelegate error', // TODO: to localization
+          subtitle: 'Not enough balance to undelegate',
+        });
+      }
     },
   },
 };
@@ -142,7 +160,7 @@ export default {
   display: flex;
   justify-content: space-between;
   &__body{
-    width: 284px!important;
+    width: 100%;
     height: 46px!important;
   }
   &__maximum{

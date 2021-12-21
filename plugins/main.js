@@ -101,7 +101,7 @@ Vue.mixin({
       };
       this.$store.dispatch('user/setCurrentPosition', payload);
     },
-    cutString(item, endFromBeginning, startToEnd) {
+    cutString(item, endFromBeginning = 6, startToEnd = 6) {
       return `${item.slice(0, endFromBeginning)}...${item.slice(item.length - startToEnd, item.length)}`;
     },
   },
