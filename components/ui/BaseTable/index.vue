@@ -15,17 +15,8 @@
       >
         <span class="table__title">{{ $props.title }}</span>
       </template>
-      <template #cell(hash)="el">
-        <a
-          :href="el.item.hashLink"
-          target="_blank"
-          class="table__link"
-        >
-          {{ el.item.hash }}
-        </a>
-      </template>
       <template #cell(tx_hash)="el">
-        <span class="table__grey">{{ el.item.tx_hash }}</span>
+        <span>{{ cutString(el.item.tx_hash, 9, 6) }}</span>
       </template>
       <template #cell(status)="el">
         <span
@@ -40,8 +31,11 @@
       <template #cell(block)="el">
         <span class="table__grey">{{ el.item.block }}</span>
       </template>
+      <template #cell(timestamp)="el">
+        <span class="table__grey">{{ el.item.timestamp }}</span>
+      </template>
       <template #cell(date)="el">
-        <span class="table__grey">{{ $moment(el.item.date).format('ll') }}</span>
+        <span>{{ $moment(el.item.date).format('ll') }}</span>
       </template>
       <template #cell(transaction_fee)="el">
         <span class="table__grey">{{ el.item.transaction_fee }}</span>
@@ -52,7 +46,7 @@
           class=" table__link"
         >
           <img
-            src="~/assets/img/ui/avatar.svg"
+            :src="(el.item.avatar && el.item.avatar.url) ? el.item.avatar.url : require('~/assets/img/app/avatar_empty.png')"
             alt="userAvatar"
             class="table__avatar"
           >
@@ -67,15 +61,6 @@
           class="table__copy"
         />
       </template>
-      <template #cell(address)="el">
-        <a
-          :href="el.item.addressLink"
-          target="_blank"
-          class="table__link"
-        >
-          {{ el.item.address }}
-        </a>
-      </template>
       <template #cell(vote)="el">
         <base-btn
           class="btn__vote"
@@ -88,6 +73,7 @@
         <base-btn
           mode="lightRed"
           class="btn__delegate"
+          :disabled="!myProfile(el.item.id)"
           :class="delegateClass(el)"
           @click="openModalUndelegate(el)"
         >
@@ -97,6 +83,7 @@
       <template #cell(delegate)="el">
         <base-btn
           mode="lightBlue"
+          :disabled="!myProfile(el.item.id)"
           class="btn__delegate"
           @click="openModalDelegate(el)"
         >
@@ -104,7 +91,7 @@
         </base-btn>
       </template>
       <template #cell(investorAddress)="el">
-        {{ el.item.investorAddress }}
+        {{ cutString(el.item.investorAddress, 5, 6) }}
       </template>
       <template
         #cell(name)="el"
@@ -121,6 +108,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
 
 export default {
@@ -143,11 +131,19 @@ export default {
     return {
     };
   },
+  computed: {
+    ...mapGetters({
+      userData: 'user/getUserData',
+    }),
+  },
   methods: {
+    myProfile(id) {
+      return this.userData.id === id;
+    },
     voteClass(el) {
       return [
-        { btn__vote_green: el.item.vote === true },
-        { btn__vote_red: el.item.vote === false },
+        { btn__vote_green: el.item.vote === 'YES' },
+        { btn__vote_red: el.item.vote === 'NO' },
       ];
     },
     delegateClass(el) {
@@ -204,7 +200,7 @@ export default {
     color: $red;
   }
   &__grey {
-    color: $black700;
+    color: $black500;
   }
   &__header {
     @include text-simple;
@@ -222,9 +218,6 @@ export default {
   &__link{
     color: #1D2127!important;
     text-decoration: none!important;
-    &:hover {
-      color: $blue!important;
-    }
   }
   @include _1199 {
     .table {
@@ -278,11 +271,9 @@ export default {
     margin-right: -30px;
     justify-content: center!important;
     &_green {
-      margin: auto auto;
       background: #22CC14 !important;
     }
     &_red {
-      margin: auto auto;
       background: #DF3333 !important;
     }
   }

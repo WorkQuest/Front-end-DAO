@@ -70,7 +70,6 @@ export default {
     async addProposalModal() {
       const connectionRes = await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
       if (!connectionRes.ok) return;
-
       this.SetLoader(true);
       const account = await this.$store.dispatch('web3/getAccount');
       let delegated;
@@ -92,12 +91,6 @@ export default {
         await this.$store.dispatch('main/showToast', {
           title: this.$t('proposal.errors.addProposal'),
           text: this.$t('proposal.errors.notEnoughFunds', { a: proposalThreshold, b: delegated }),
-        });
-        await this.$store.dispatch('modals/show', {
-          key: modals.delegate,
-          investorAddress: account.address,
-          min: +proposalThreshold,
-          callback: () => this.showAddProposal(),
         });
       } else {
         this.showAddProposal();
