@@ -88,16 +88,16 @@
         </base-btn>
       </template>
       <template #cell(investorAddress)="el">
-        {{ el.item.investorAddress }}
+        {{ cutString(el.item.investorAddress) }}
       </template>
       <template
-        #cell(name)="el"
+        #cell(fullName)="el"
       >
         <nuxt-link
           :to="`/investors/${el.item.id}`"
           class="table__link"
         >
-          <span>{{ el.item.name }}</span>
+          <span>{{ cropTxt(el.item.fullName, 15) }}</span>
         </nuxt-link>
       </template>
     </b-table>
@@ -174,6 +174,10 @@ export default {
         title: 'Copy error',
         text: value,
       });
+    },
+    cropTxt(str, maxLength = 80) {
+      if (str.toString().length > maxLength) str = `${str.slice(0, maxLength)}...`;
+      return str;
     },
   },
 };

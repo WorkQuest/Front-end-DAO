@@ -29,7 +29,7 @@
       {{ item.timestamp || $moment(item.date).format('ll') }}
     </p>
     <div
-      v-if="item.name"
+      v-if="item.fullName"
       class="item__subtitle"
     >
       <nuxt-link
@@ -38,7 +38,7 @@
       >
         <img
           class="item__image"
-          src="~/assets/img/ui/avatar.svg"
+          :src="(item.avatar && item.avatar.url) ? item.avatar.url : require('~/assets/img/app/avatar_empty.png')"
           alt="user"
         >
       </nuxt-link>
@@ -47,7 +47,7 @@
         class="item__link"
       >
         <span class="item__info_large">
-          {{ item.name }}
+          {{ item.fullName }}
         </span>
       </nuxt-link>
     </div>
@@ -297,6 +297,12 @@ export default {
       display: inline-block !important;
       width: 15px !important;
       height: 100% !important;
+    }
+    &__image {
+      width: 120px;
+      height: 120px;
+      -o-object-fit: cover;
+      object-fit: cover;
     }
   }
 </style>

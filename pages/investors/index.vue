@@ -18,10 +18,10 @@
       />
       <div class="investors__investors">
         <mobile-table-item
-          v-for="(investor, index) in historyTableData"
+          v-for="(investor, index) in usersData.users"
           :key="index"
           :item="investor"
-          :is-last="historyTableData[index] === historyTableData[historyTableData.length - 1]"
+          :is-last="usersData.users[index] === usersData.users[usersData.users.length - 1]"
         />
       </div>
       <base-pager
@@ -52,11 +52,9 @@ export default {
       search: '',
       currPage: 1,
       historyTableFields: [
+        { key: 'avatar', label: this.$t('investors.table.name') },
         {
-          key: 'avatar', label: this.$t('investors.table.name'),
-        },
-        {
-          key: 'name', label: '', sortable: true,
+          key: 'fullName', label: '', sortable: true,
         },
         {
           key: 'investorAddress', label: this.$t('investors.table.address'),

@@ -30,15 +30,8 @@ export default {
     try {
       const query = config.q ? `limit=${config.limit}&offset=${config.offset}&q=${config.q}` : `limit=${config.limit}&offset=${config.offset}`;
       const { result } = await this.$axios.$get(`/v1/profile/users?${query}`);
-      let userName = '';
       result.users.forEach((user) => {
-        userName = `${user.firstName || ''} ${user.lastName || ''}`;
-        if (userName.length > 16) {
-          user.name = userName.substring(0, userName.length - (userName.length - 16));
-          user.name += '...';
-        } else {
-          user.name = userName;
-        }
+        user.fullName = `${user.firstName || ''} ${user.lastName || ''}`;
         user.investorAddress = '0xnf8o29837hrvbn42o37hsho3b74thb3';
         user.stake = '126,613,276';
         user.slots = '147';

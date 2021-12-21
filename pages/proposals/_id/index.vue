@@ -44,7 +44,7 @@
                 class="hash__value"
                 target="_blank"
               >
-                {{ hash.length ? cutString(hash, 6, 6) : '...' }}
+                {{ hash.length ? cutString(hash) : '...' }}
               </a>
             </div>
             <div class="transactions__files files">
@@ -432,9 +432,9 @@ export default {
       for (const vote of votes) {
         result.push({
           number: id,
-          hash: this.cutString(vote.transactionHash, 6, 6),
+          hash: this.cutString(vote.transactionHash),
           date: new Date(vote.timestamp * 1000),
-          address: this.cutString(vote.voter, 6, 6),
+          address: this.cutString(vote.voter),
           vote: vote.support,
         });
         id += 1;
