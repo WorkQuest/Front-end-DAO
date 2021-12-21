@@ -344,10 +344,9 @@ export default {
 
   &__copy {
     background: #F7F8FA;
-
-    &:hover{
-      background: #F7F8FA;
-    }
+  }
+  &__copy:hover{
+    background: #F7F8FA;
   }
 
   &__address {
@@ -408,6 +407,9 @@ export default {
   }
   &__table {
     margin: 15px 0;
+  }
+  &__history {
+    display: none;
   }
 }
 
