@@ -12,7 +12,7 @@
         :src="item.img || item.url"
         alt=""
         class="image__img"
-        @click="mode !== 'default' ? showGallery(item): ''"
+        @click="mode !== 'default' ? showGallery(item) : ''"
       >
       <span class="image__size">
         {{ item.size }}
@@ -21,7 +21,7 @@
         v-if="mode === 'default'"
         class="image__icon icon"
         :class="classIcon"
-        @click="onIconClick(item.id)"
+        @click="onIconClick(item)"
       />
     </div>
   </div>
@@ -57,12 +57,14 @@ export default {
     showGallery(item) {
       this.ShowModal({ key: modals.gallery, files: item });
     },
-    onIconClick(id) {
-      if (this.isShowDownload) this.downloadImage(id);
-      else this.deleteImage(id);
+    onIconClick(item) {
+      if (this.isShowDownload) this.downloadImage(item.name);
+      else this.deleteImage(item);
     },
-    deleteImage(id) {
-      this.$emit('remove', id);
+    deleteImage(item) {
+      console.log(name);
+      this.items.filter((obj) => obj.name !== item.name);
+      this.$emit('remove', name);
     },
     downloadImage(id) {},
   },

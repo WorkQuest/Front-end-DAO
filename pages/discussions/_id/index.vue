@@ -42,7 +42,7 @@
             {{ currentDiscussion.title }}
           </div>
           <div class="discussion__date">
-            {{ $moment(currentDiscussion.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
+            {{ $moment(currentDiscussion.createdAt).format('Do MMMM YYYY, hh:mm a') }}
           </div>
           <div class="discussion__subtitle">
             {{ $t('discussions.files') }}

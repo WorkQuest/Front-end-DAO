@@ -71,8 +71,8 @@ export default {
     },
   },
   methods: {
-    remove(id) {
-      this.$emit('remove', id);
+    remove(item) {
+      this.$emit('remove', item);
     },
   },
 };

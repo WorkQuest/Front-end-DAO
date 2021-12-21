@@ -44,12 +44,14 @@
           type="all"
           :items="documents"
           :is-show-download="false"
+          @remove="remove"
         >
           <template v-slot:actionButton>
             <input
               ref="fileUpload"
               class="uploader__btn_hidden"
               type="file"
+              multiple
               :accept="accept"
               @change="handleFileSelected($event)"
             >
@@ -105,8 +107,10 @@ export default {
     this.acceptedTypes = this.accept.replace(/\s/g, '').split(',');
   },
   methods: {
-    remove(id) {
-      return this.documents.filter((item) => item.id !== id);
+    remove(item) {
+      console.log('item', item);
+      console.log('remove');
+      this.documents.filter((obj) => obj.name !== item.name);
     },
     checkContentType(file) {
       return this.acceptedTypes.indexOf(file.type) !== -1;
