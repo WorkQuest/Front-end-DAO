@@ -388,7 +388,6 @@ export default {
     if (this.isConnected) {
       await this.loadCard();
     }
-    console.log('card:', card);
     this.title = card.title;
     this.description = card.description;
     this.hash = card.txHash;
@@ -553,7 +552,6 @@ export default {
         this.$store.dispatch('web3/getVotes', account.address),
         this.$store.dispatch('web3/getVoteThreshold'),
       ]);
-      console.log(`votes: ${+delegated.result}`, `voteThreshold: ${voteThreshold.result}`);
       if (+delegated.result < +voteThreshold.result) {
         await this.$store.dispatch('main/showToast', {
           title: this.$t('proposal.errors.voteError'),

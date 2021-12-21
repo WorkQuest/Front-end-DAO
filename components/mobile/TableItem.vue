@@ -26,7 +26,7 @@
       v-if="item.timestamp || item.date"
       class="item__timestamp"
     >
-      {{ item.timestamp || item.date }}
+      {{ item.timestamp || $moment(item.date).format('ll') }}
     </p>
     <div
       v-if="item.name"
