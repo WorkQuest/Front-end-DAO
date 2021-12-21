@@ -39,8 +39,12 @@
       </div>
     </div>
     <div class="content">
+      <span v-if="!cards.length">
+        {{ $t('proposals.cards.emptyCardsList') }}
+      </span>
       <div
         v-for="(card, i) in cards"
+        v-else
         :key="i"
         class="card"
       >
@@ -114,10 +118,11 @@ export default {
       tab: 1,
       currentPage: 1,
       search: '',
+      searchTimeout: null,
       timeoutIdSearch: null,
       isDescending: true,
       cardsLimit: 12,
-      ddValue: 2,
+      ddValue: 0,
     };
   },
   computed: {
@@ -131,9 +136,11 @@ export default {
     },
     ddValues() {
       return [
-        this.$t('proposals.ui.yes'),
-        this.$t('proposals.ui.no'),
         this.$t('proposals.ui.allProposals'),
+        this.$t('proposals.cards.status.pending'),
+        this.$t('proposals.cards.status.active'),
+        this.$t('proposals.cards.status.rejected'),
+        this.$t('proposals.cards.status.accepted'),
       ];
     },
     cardLevelClass(idx) {
@@ -162,21 +169,23 @@ export default {
     async currentPage(newVal) {
       await this.loadPage(newVal);
     },
-  //   async search(newVal) {
-  //     if (newVal) await this.loadPage(1);
-  //   },
-  //   async ddValue(newVal) {
-  //     await this.loadPage(1);
-  //   },
-  //   async isDescending(newVal, prevVal) {
-  //     if (newVal !== prevVal) await this.loadPage(1);
-  //   },
+    async search() {
+      this.searchTimeout = setTimeout(async () => {
+        await this.loadPage(1);
+      }, 500);
+    },
+    async ddValue() {
+      await this.loadPage(1);
+    },
+    async isDescending(newVal, prevVal) {
+      await this.loadPage(1);
+    },
   },
   async mounted() {
     this.SetLoader(true);
     this.currentPage = this.prevFilters.lastPage || 1;
     this.search = this.prevFilters.search || '';
-    this.ddValue = this.prevFilters.sortVoteStatus || 2;
+    this.ddValue = this.prevFilters.sortVoteStatus || 0;
     this.isDescending = this.prevFilters.isDescending || true;
     await this.loadPage(this.currentPage);
     this.SetLoader(false);
@@ -210,11 +219,14 @@ export default {
     },
     async loadPage(page) {
       this.currentPage = page;
-      await this.$store.dispatch('proposals/getProposals', {
+      const params = {
         limit: this.cardsLimit,
         offset: (page - 1) * this.cardsLimit,
-        // search: this.search,
-      });
+        q: this.search || null,
+        status: this.ddValue - 1 >= 0 ? this.ddValue - 1 : null,
+        createdAt: this.isDescending ? 'desc' : 'asc',
+      };
+      await this.$store.dispatch('proposals/getProposals', params);
     },
   },
 };

@@ -532,11 +532,10 @@
     "ui": {
       "search": "Search proposal",
       "addTime": "Added time",
-      "allProposals": "All proposals",
-      "yes": "Yes",
-      "no": "No"
+      "allProposals": "All proposals"
     },
     "cards": {
+      "emptyCardsList": "Proposals list is empty",
       "status": {
         "pending": "Pending",
         "active": "Active",

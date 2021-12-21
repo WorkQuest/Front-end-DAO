@@ -12,24 +12,30 @@ export default {
       return error(errorCodes.CreateProposal, e.message, e);
     }
   },
-  async getProposals({ commit }, { offset, limit }) {
+  async getProposals({ commit }, params) {
     try {
-      const result = await this.$axios.$get('v1/proposal', {
-        params: {
-          limit,
-          offset,
-        },
-      });
+      const result = await this.$axios.$get('v1/proposal', { params });
       commit('setCards', result.proposal);
       commit('setCardsCount', result.count);
     } catch (e) {
       console.error(e.message);
     }
   },
-  async getProposal({ commit }, proposalId) {
+  async getProposal({ commit }, {
+    proposalId, params,
+  }) {
     try {
-      const { result } = await this.$axios.$get(`v1/proposal/${proposalId}`);
+      const { result } = await this.$axios.$get(`v1/proposal/${proposalId}`, { params });
       return success(result);
+    } catch (e) {
+      console.error(e.message);
+      return error(errorCodes.GetProposal, e.message, e);
+    }
+  },
+  async getProposalVotes({ commit }, { proposalId }) {
+    try {
+      const res = await this.$axios.$get(`v1/votings/${proposalId}`);
+      return success(res);
     } catch (e) {
       console.error(e.message);
       return error(errorCodes.GetProposal, e.message, e);

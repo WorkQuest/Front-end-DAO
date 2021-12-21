@@ -251,7 +251,10 @@ import modals from '~/store/modals/modals';
 export default {
   data() {
     return {
+      limit: 10,
+      currentPage: 1,
       historyTableData: [],
+      historyCount: 0,
       idCard: null,
       status: 0,
       dateStart: '',
@@ -326,11 +329,38 @@ export default {
     this.SetLoader(true);
     this.idCard = +this.$route.params.id;
 
-    const resp = await this.$store.dispatch('proposals/getProposal', this.idCard);
-    console.log(resp);
-    if (resp.ok === false) {
-      await this.$router.push('/proposals');
-      return;
+    let card = null;
+    const voteData = null;
+    if (this.cards && this.cards.length) {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const item of this.cards) {
+        if (item.proposalId === this.idCard) {
+          card = item;
+          break;
+        }
+      }
+    }
+
+    if (card === null) {
+      const [proposalRes, votingRes] = await Promise.all([
+        this.$store.dispatch('proposals/getProposal', {
+          proposalId: this.idCard,
+        }),
+        this.fetchVoting(this.currentPage),
+      ]);
+      if (!proposalRes.ok || !votingRes) {
+        this.SetLoader(false);
+        await this.$router.push('/proposals');
+        return;
+      }
+      card = proposalRes.result;
+    } else {
+      const votingRes = this.fetchVoting(this.currentPage);
+      if (!votingRes) {
+        this.SetLoader(false);
+        await this.$router.push('/proposals');
+        return;
+      }
     }
 
     await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
@@ -338,13 +368,7 @@ export default {
       await this.loadCard();
     }
 
-    let card = null;
-    let voteData = null;
-
-    const { result } = resp;
-    card = result.proposal;
-    voteData = result.vote; // TODO: подгрузить с нового роута список голосов с бэка
-
+    console.log('card:', card);
     this.title = card.title;
     this.description = card.description;
     this.hash = card.txHash;
@@ -361,11 +385,23 @@ export default {
       });
       i += 1;
     }
-    this.fillTableData(voteData.voting);
     this.isFirstLoading = false;
     this.SetLoader(false);
   },
   methods: {
+    async fetchVoting(page) {
+      const votingRes = await this.$store.dispatch('proposals/getProposalVotes', {
+        proposalId: this.idCard,
+        limit: this.limit,
+        offset: (page - 1) * this.limit,
+      });
+      if (!votingRes.ok) {
+        return false;
+      }
+      this.historyCount = votingRes.result.count;
+      this.fillTableData(votingRes.result.voting);
+      return true;
+    },
     fillTableData(votes) {
       let id = 1;
       const result = [];
@@ -420,9 +456,8 @@ export default {
       ]);
       if (!proposalRes.ok) return;
       const { result } = proposalRes.result;
-      console.log(result);
       const {
-        forVotes, againstVotes, active, succeded,
+        forVotes, againstVotes, active,
       } = result;
       const yes = +(new BigNumber(forVotes).shiftedBy(-18));
       const no = +(new BigNumber(againstVotes).shiftedBy(-18));
@@ -531,8 +566,8 @@ export default {
         this.SetLoader(false);
         return;
       }
+      await this.fetchVoting(this.currentPage);
       await this.loadCard();
-      // TODO: tut подгрузить с нового роута список голосов с бэка
       this.SetLoader(false);
     },
   },
