@@ -58,13 +58,11 @@ export default {
       this.ShowModal({ key: modals.gallery, files: item });
     },
     onIconClick(item) {
-      if (this.isShowDownload) this.downloadImage(item.name);
-      else this.deleteImage(item);
+      this.deleteImage(item);
     },
     deleteImage(item) {
       this.$emit('remove', item);
     },
-    downloadImage(id) {},
   },
 };
 </script>

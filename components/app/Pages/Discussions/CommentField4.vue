@@ -48,7 +48,7 @@
       class="subcomment__btn"
       @click="loadMoreSubs5(data.rootCommentId)"
     >
-      Show more comments
+      {{ $t('discussions.comments.showMoreComments') }}
     </base-btn>
   </div>
 </template>

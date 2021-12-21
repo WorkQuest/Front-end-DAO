@@ -79,7 +79,7 @@
         class="comment__footer footer"
       >
         <base-btn
-          class="footer__btn"
+          class="footer__btn hide"
           :disabled="!validated || !passed || invalid"
         >
           <template v-slot:left>
@@ -195,6 +195,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.hide {
+  visibility: hidden;
+}
 .comment {
   padding: 0 30px 0 0;
   display: flex;

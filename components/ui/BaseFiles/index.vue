@@ -77,7 +77,6 @@ export default {
     deleteFile(item) {
       this.$emit('remove', item);
     },
-    download(id) {},
   },
 };
 </script>

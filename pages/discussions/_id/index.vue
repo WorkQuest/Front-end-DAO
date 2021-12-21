@@ -125,7 +125,7 @@
             </div>
             <div class="response__footer footer">
               <base-btn
-                class="footer__btn"
+                class="footer__btn hide"
                 :disabled="!validated || !passed || invalid"
               >
                 <template v-slot:left>
@@ -280,6 +280,9 @@ export default {
 
 </script>
 <style lang="scss" scoped>
+.hide {
+  visibility: hidden;
+}
 .info {
   &__comment {
     background: #fff;

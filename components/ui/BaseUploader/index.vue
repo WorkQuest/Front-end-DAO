@@ -1,44 +1,20 @@
 <template>
   <div class="uploader">
-    <div
-      v-if="type === 'files'"
+    <base-files
+      v-if="type === 'files' || type === 'all'"
       class="uploader__files"
-    >
-      <base-files
-        :items="files"
-        :is-show-download="isShowDownload"
-        :is-show-empty="isShowEmpty"
-      />
-      <slot name="actionButton" />
-    </div>
-    <div
-      v-else-if="type === 'images'"
-      class="uploader__images"
-    >
-      <base-images
-        :items="images"
-        :is-show-download="isShowDownload"
-        @remove="remove"
-      />
-      <slot name="actionButton" />
-    </div>
-    <div
-      v-else-if="type === 'all'"
-      class="uploader__all"
-    >
-      <base-files
-        :items="files"
-        :is-show-download="isShowDownload"
-        :is-show-empty="isShowEmpty"
-        @remove="remove"
-      />
-      <base-images
-        :items="images"
-        :is-show-download="isShowDownload"
-        @remove="remove"
-      />
-      <slot name="actionButton" />
-    </div>
+      :items="files"
+      :is-show-download="isShowDownload"
+      :is-show-empty="isShowEmpty"
+      @remove="remove"
+    />
+    <base-images
+      v-if="type === 'images' || type === 'all'"
+      :items="images"
+      :is-show-download="isShowDownload"
+      @remove="remove"
+    />
+    <slot name="actionButton" />
   </div>
 </template>
 
@@ -80,19 +56,7 @@ export default {
 
 <style lang="scss" scoped>
 .uploader {
-
-  &__files {
-    display: flex;
-    flex-direction: column;
-  }
-  &__images {
-    display: flex;
-    flex-direction: column;
-  }
-  &__all{
-    display: flex;
-    flex-direction: column;
-  }
+  display: flex;
+  flex-direction: column;
 }
-
 </style>
