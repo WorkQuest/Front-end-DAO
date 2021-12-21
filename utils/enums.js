@@ -49,3 +49,9 @@ export const proposalStatuses = Object.freeze({
   ACCEPTED: 3,
   CANCELLED: 4,
 });
+
+export const keyCodes = {
+  Escape: 27,
+  ArrowLeft: 37,
+  ArrowRight: 39,
+};

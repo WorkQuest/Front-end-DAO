@@ -17,7 +17,7 @@
         class="file__container"
       >
         <div class="file__name">
-          {{ item.name }}
+          {{ item.name || item.id }}
         </div>
         <div class="file__size">
           {{ item.size }}
@@ -27,7 +27,7 @@
         <a
           v-if="isShowDownload"
           class="actions__download download"
-          :href="item.downloadUrl"
+          :href="item.downloadUrl || item.url"
           target="_blank"
         >
           <div class="download__icon icon">
@@ -74,10 +74,9 @@ export default {
     },
   },
   methods: {
-    deleteFile(id) {
-      this.$emit('remove', id);
+    deleteFile(item) {
+      this.$emit('remove', item);
     },
-    download(id) {},
   },
 };
 </script>

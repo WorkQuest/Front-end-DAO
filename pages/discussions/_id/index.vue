@@ -42,17 +42,22 @@
             {{ currentDiscussion.title }}
           </div>
           <div class="discussion__date">
-            {{ $moment(currentDiscussion.updatedAt).format('Do MMMM YYYY, hh:mm a') }}
+            {{ $moment(currentDiscussion.createdAt).format('Do MMMM YYYY, hh:mm a') }}
           </div>
           <div class="discussion__subtitle">
             {{ $t('discussions.files') }}
           </div>
-          <base-uploader
-            class="discussion__uploader"
-            type="all"
-            :items="documents"
-            :is-show-empty="true"
+          <base-files
+            class="discussion__files"
+            :items="pdf"
           />
+          <base-images
+            class="discussion__images"
+            mode="images"
+            :items="images"
+            :is-show-download="false"
+          />
+          <slot name="actionButton" />
           <div class="discussion__description description">
             <hr class="discussion__line">
             <div class="description__title">
@@ -120,7 +125,7 @@
             </div>
             <div class="response__footer footer">
               <base-btn
-                class="footer__btn"
+                class="footer__btn hide"
                 :disabled="!validated || !passed || invalid"
               >
                 <template v-slot:left>
@@ -131,7 +136,7 @@
                 v-model="opinion"
                 class="footer__input"
                 :placeholder="$t('discussions.input')"
-                rules="required|text-response"
+                rules="required|max:250"
                 :name="$t('discussions.response')"
                 mode="comment-field"
               />
@@ -155,14 +160,10 @@
           </div>
         </div>
       </validation-observer>
-      <div
+      <empty-data
         v-if="rootComments.count === 0"
-        class="info__comment comment "
-      >
-        <div class="comment__field">
-          {{ $t('discussions.comments.noComments') }}
-        </div>
-      </div>
+        :description="$t('discussions.comments.noComments')"
+      />
       <div
         v-for="(comment) in rootComments.comments"
         :key="comment.id"
@@ -190,6 +191,8 @@ import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
+      images: [],
+      pdf: [],
       page: 1,
       perPager: 10,
       isAddComment: false,
@@ -198,21 +201,7 @@ export default {
       totalPagesValue: 1,
       discussionId: '',
       opinion: '',
-      documents: [
-        {
-          id: '1',
-          type: 'doc',
-          name: 'Some_document.pdf',
-          size: '1.2 MB',
-          img: 'https://static6.depositphotos.com/1029473/605/i/600/depositphotos_6058054-stock-photo-abstract-3d-image.jpg',
-        },
-        { img: require('~/assets/img/ui/rectangle.svg'), id: 1, type: 'img' },
-        { img: require('~/assets/img/ui/rectangle.svg'), id: 2, type: 'img' },
-        { img: require('~/assets/img/ui/rectangle.svg'), id: 3, type: 'img' },
-        { img: require('~/assets/img/ui/rectangle.svg'), id: 4, type: 'img' },
-        { img: require('~/assets/img/ui/rectangle.svg'), id: 5, type: 'img' },
-
-      ],
+      documents: [],
     };
   },
   computed: {
@@ -236,11 +225,16 @@ export default {
     this.SetLoader(true);
     this.discussionId = this.$route.params.id;
     await this.getCurrentDiscussion();
+    this.filterMediaToTypes();
     await this.getRootComments();
     this.totalPages();
     this.SetLoader(false);
   },
   methods: {
+    filterMediaToTypes() {
+      this.pdf = this.currentDiscussion.medias.filter((file) => file.contentType === 'application/msword' || file.contentType === 'application/pdf');
+      this.images = this.currentDiscussion.medias.filter((file) => file.contentType === 'image/jpeg' || file.contentType === 'image/png');
+    },
     authorName() {
       if (this.discussionAuthor) return `${this.discussionAuthor.firstName} ${this.discussionAuthor.lastName}`;
       return this.$t('user.nameless');
@@ -286,6 +280,9 @@ export default {
 
 </script>
 <style lang="scss" scoped>
+.hide {
+  visibility: hidden;
+}
 .info {
   &__comment {
     background: #fff;
