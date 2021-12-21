@@ -74,8 +74,8 @@ export default {
     },
   },
   methods: {
-    deleteFile(id) {
-      this.$emit('remove', id);
+    deleteFile(item) {
+      this.$emit('remove', item);
     },
     download(id) {},
   },

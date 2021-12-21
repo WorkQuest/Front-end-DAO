@@ -62,9 +62,7 @@ export default {
       else this.deleteImage(item);
     },
     deleteImage(item) {
-      console.log(name);
-      this.items.filter((obj) => obj.name !== item.name);
-      this.$emit('remove', name);
+      this.$emit('remove', item);
     },
     downloadImage(id) {},
   },

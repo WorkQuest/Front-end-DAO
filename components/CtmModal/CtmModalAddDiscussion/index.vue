@@ -108,9 +108,7 @@ export default {
   },
   methods: {
     remove(item) {
-      console.log('item', item);
-      console.log('remove');
-      this.documents.filter((obj) => obj.name !== item.name);
+      this.documents = this.documents.filter((doc) => doc.name !== item.name);
     },
     checkContentType(file) {
       return this.acceptedTypes.indexOf(file.type) !== -1;
