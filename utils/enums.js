@@ -9,16 +9,15 @@ export const errorCodes = Object.freeze({
   // Proposals
   AddProposal: 100, // Добавить пропосал
   CreateProposal: 101,
-  GetAllProposals: 102, // Получение всех пропосолов
-  GetProposal: 103, //  Получить инфу о пропосоле
-  VoteProposal: 104, // Голосовать за пропосал
-  GetVoteThreshold: 105, // Минимальная делигированная сумма для голоса
-  GetProposalThreshold: 106, // Минимальная делигированная сумма для создания пропосола
-  GetReceipt: 107, // Получить квитанцию
-  ExecuteVoting: 108,
-  GetChairpersonHash: 109,
-  HasRole: 110,
-  VoteResults: 111,
+  GetProposal: 102, //  Получить инфу о пропосоле
+  VoteProposal: 103, // Голосовать за пропосал
+  GetVoteThreshold: 104, // Минимальная делигированная сумма для голоса
+  GetProposalThreshold: 105, // Минимальная делигированная сумма для создания пропосола
+  GetReceipt: 106, // Получить информацию по своему голосу
+  ExecuteVoting: 107,
+  GetChairpersonHash: 108,
+  HasRole: 109,
+  VoteResults: 110,
 
   GetBalance: 200, // Баланс WQT на адресе
   Delegate: 201, // Делегирование

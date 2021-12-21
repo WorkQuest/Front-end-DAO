@@ -103,9 +103,6 @@ export default {
   async addProposal({ commit }, { description, nonce }) {
     return await addProposal(description, nonce);
   },
-  // async getProposals({ commit }, { offset, limit }) {
-  //   return await getProposals(offset, limit);
-  // },
   async getProposalInfoById({ commit }, id) {
     return await getProposalInfoById(id);
   },
