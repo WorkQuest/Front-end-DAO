@@ -87,13 +87,17 @@ export default {
   methods: {
     async searchDiscussion() {
       this.SetLoader(true);
-      this.page = 1;
-      this.offset = 0;
-      await this.$store.dispatch('discussions/getAllDiscussions', {
-        limit: this.limit,
-        offset: this.offset,
-        q: this.search.trim(),
-      });
+      let timeOut;
+      if (timeOut !== undefined) clearTimeout(timeOut);
+      timeOut = setTimeout(async () => {
+        this.page = 1;
+        this.offset = 0;
+        await this.$store.dispatch('discussions/getAllDiscussions', {
+          limit: this.limit,
+          offset: this.offset,
+          q: this.search.trim(),
+        });
+      }, 500);
       this.SetLoader(false);
     },
     openModalAddDiscussion() {
