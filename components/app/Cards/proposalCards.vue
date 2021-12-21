@@ -177,8 +177,8 @@ export default {
     async ddValue() {
       await this.loadPage(1);
     },
-    async isDescending(newVal, prevVal) {
-      await this.loadPage(1);
+    async isDescending() {
+      await this.loadPage(this.currentPage);
     },
   },
   async mounted() {

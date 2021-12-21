@@ -32,9 +32,9 @@ export default {
       return error(errorCodes.GetProposal, e.message, e);
     }
   },
-  async getProposalVotes({ commit }, { proposalId }) {
+  async getProposalVotes({ commit }, { proposalId, params }) {
     try {
-      const res = await this.$axios.$get(`v1/votings/${proposalId}`);
+      const res = await this.$axios.$get(`v1/votings/${proposalId}`, { params });
       return success(res);
     } catch (e) {
       console.error(e.message);

@@ -212,6 +212,12 @@
           :fields="historyTableFields"
           :items="historyTableData"
         />
+        <base-pager
+          v-if="totalPages > 1"
+          v-model="currentPage"
+          class="history__pagination"
+          :total-pages="totalPages"
+        />
         <div
           v-if="!historyTableData.length"
           class="history__table history__empty"
@@ -236,6 +242,12 @@
             {{ $t('proposal.table.isEmpty') }}
           </div>
         </div>
+        <base-pager
+          v-if="totalPages > 1"
+          v-model="currentPage"
+          class="history__pagination_mobile"
+          :total-pages="totalPages"
+        />
         <!-- /mobile -->
       </div>
     </div>
@@ -287,6 +299,9 @@ export default {
       isChairperson: 'web3/isChairpersonRole',
       cards: 'proposals/cards',
     }),
+    totalPages() {
+      return Math.ceil(this.historyCount / this.limit);
+    },
     historyTableFields() {
       return [
         { key: 'number', label: this.$t('proposal.table.number'), sortable: true },
@@ -324,13 +339,21 @@ export default {
       await this.loadCard();
       this.SetLoader(false);
     },
+    async isDescending() {
+      await this.fetchVoting(this.currentPage);
+    },
+    async currentPage() {
+      await this.fetchVoting(this.currentPage);
+    },
+    async ddValue() {
+      await this.fetchVoting(1);
+    },
   },
   async mounted() {
     this.SetLoader(true);
     this.idCard = +this.$route.params.id;
 
     let card = null;
-    const voteData = null;
     if (this.cards && this.cards.length) {
       // eslint-disable-next-line no-restricted-syntax
       for (const item of this.cards) {
@@ -340,7 +363,6 @@ export default {
         }
       }
     }
-
     if (card === null) {
       const [proposalRes, votingRes] = await Promise.all([
         this.$store.dispatch('proposals/getProposal', {
@@ -362,12 +384,10 @@ export default {
         return;
       }
     }
-
     await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
     if (this.isConnected) {
       await this.loadCard();
     }
-
     console.log('card:', card);
     this.title = card.title;
     this.description = card.description;
@@ -392,8 +412,12 @@ export default {
     async fetchVoting(page) {
       const votingRes = await this.$store.dispatch('proposals/getProposalVotes', {
         proposalId: this.idCard,
-        limit: this.limit,
-        offset: (page - 1) * this.limit,
+        params: {
+          limit: this.limit,
+          offset: (page - 1) * this.limit,
+          createdAt: this.isDescending ? 'desc' : 'asc',
+          support: this.ddValue > 0 ? this.ddValue === 1 : null,
+        },
       });
       if (!votingRes.ok) {
         return false;
@@ -877,6 +901,12 @@ export default {
   &__empty {
     text-align: center;
   }
+  &__pagination {
+    margin-top: 20px;
+    &_mobile {
+      display: none;
+    }
+  }
 }
 
 .menu {
@@ -991,6 +1021,12 @@ export default {
   .history {
     &__table {
       display: none;
+    }
+    &__pagination {
+      display: none;
+      &_mobile {
+        display: block;
+      }
     }
     &__proposals {
       display: block;

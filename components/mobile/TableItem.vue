@@ -127,17 +127,8 @@
       class="item__subtitle"
     >
       {{ $t('proposal.table.vote') }}
-      <span
-        v-if="item.vote === 'YES'"
-        class="item__info_yes"
-      >
-        {{ item.vote }}
-      </span>
-      <span
-        v-else-if="item.vote === 'NO'"
-        class="item__info_no"
-      >
-        {{ item.vote }}
+      <span :class="{item__info_yes: item.vote, item__info_no: !item.vote}">
+        {{ item.vote ? $t('proposal.yes') : $t('proposal.no') }}
       </span>
     </div>
     <div
