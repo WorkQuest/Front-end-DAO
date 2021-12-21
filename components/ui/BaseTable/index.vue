@@ -43,7 +43,7 @@
           class=" table__link"
         >
           <img
-            src="~/assets/img/ui/avatar.svg"
+            :src="(el.item.avatar && el.item.avatar.url) ? el.item.avatar.url : require('~/assets/img/app/avatar_empty.png')"
             alt="userAvatar"
             class="table__avatar"
           >
@@ -70,6 +70,7 @@
         <base-btn
           mode="lightRed"
           class="btn__delegate"
+          :disabled="!myProfile(el.item.id)"
           :class="delegateClass(el)"
           @click="openModalUndelegate(el)"
         >
@@ -79,6 +80,7 @@
       <template #cell(delegate)="el">
         <base-btn
           mode="lightBlue"
+          :disabled="!myProfile(el.item.id)"
           class="btn__delegate"
           @click="openModalDelegate(el)"
         >
@@ -86,16 +88,16 @@
         </base-btn>
       </template>
       <template #cell(investorAddress)="el">
-        {{ el.item.investorAddress }}
+        {{ cutString(el.item.investorAddress) }}
       </template>
       <template
-        #cell(name)="el"
+        #cell(fullName)="el"
       >
         <nuxt-link
           :to="`/investors/${el.item.id}`"
           class="table__link"
         >
-          <span>{{ el.item.name }}</span>
+          <span>{{ cropTxt(el.item.fullName, 15) }}</span>
         </nuxt-link>
       </template>
     </b-table>
@@ -103,6 +105,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
 
 export default {
@@ -125,7 +128,15 @@ export default {
     return {
     };
   },
+  computed: {
+    ...mapGetters({
+      userData: 'user/getUserData',
+    }),
+  },
   methods: {
+    myProfile(id) {
+      return this.userData.id === id;
+    },
     voteClass(el) {
       return [
         { btn__vote_green: el.item.vote === true },
@@ -163,6 +174,10 @@ export default {
         title: 'Copy error',
         text: value,
       });
+    },
+    cropTxt(str, maxLength = 80) {
+      if (str.toString().length > maxLength) str = `${str.slice(0, maxLength)}...`;
+      return str;
     },
   },
 };

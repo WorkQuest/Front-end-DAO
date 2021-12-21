@@ -1,14 +1,16 @@
 export default () => ({
+  investors: {
+    list: [],
+    count: 0,
+  },
+  investor: null,
+
   tokens: {
     access: '',
     refresh: '',
   },
-  specialUserData: {},
+  isProfileEdit: false,
   userData: {},
-  usersData: {
-    list: [],
-    count: 0,
-  },
   currentUserPosition: null,
   userRole: {},
   userDataPassword: {},

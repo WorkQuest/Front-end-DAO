@@ -11,20 +11,22 @@
         :placeholder="$t('investors.search')"
       />
       <base-table
+        v-if="usersData.count !== 0"
         class="investors__table"
         :fields="historyTableFields"
-        :items="historyTableData"
+        :items="usersData.users"
       />
       <div class="investors__investors">
         <mobile-table-item
-          v-for="(investor, index) in historyTableData"
+          v-for="(investor, index) in usersData.users"
           :key="index"
           :item="investor"
-          :is-last="historyTableData[index] === historyTableData[historyTableData.length - 1]"
+          :is-last="usersData.users[index] === usersData.users[usersData.users.length - 1]"
         />
       </div>
       <base-pager
-        v-model="pages"
+        v-if="usersData.count > filter.limit"
+        v-model="currPage"
         class="investors__pagination"
         :total-pages="totalPages"
       />
@@ -34,123 +36,76 @@
 
 <script>
 
+import { mapGetters } from 'vuex';
+import { Chains } from '~/utils/enums';
+
 export default {
 
   data() {
     return {
+      filter: {
+        limit: 20,
+        offset: 0,
+        q: '',
+        timout: '',
+      },
       search: '',
-      pages: 1,
-      totalPages: 5,
-      historyTableFields: [
-        {
-          key: 'avatar', label: this.$t('investors.table.name'),
-        },
-        {
-          key: 'name', label: '', sortable: true,
-        },
-        {
-          key: 'investorAddress', label: this.$t('investors.table.address'),
-        },
-        {
-          key: 'copy', label: '',
-        },
-        {
-          key: 'stake', label: this.$t('investors.table.stake'), sortable: true,
-        },
-        {
-          key: 'slots', label: this.$t('investors.table.slots'), sortable: true,
-        },
-        {
-          key: 'voting', label: this.$t('investors.table.voting'), sortable: true,
-        },
-        {
-          key: 'undelegate', label: '',
-        },
-        {
-          key: 'delegate', label: '',
-        },
-      ],
-      historyTableData: [
-        {
-          avatar: '',
-          name: 'user@gmail.com',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 1,
-        },
-        {
-          avatar: '',
-          name: 'Main Node',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 2,
-        },
-        {
-          avatar: '',
-          name: 'Turing',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 3,
-
-        },
-        {
-          avatar: '',
-          name: 'user@gmail.com',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 4,
-        },
-        {
-          avatar: '',
-          name: 'Spacebot',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 5,
-        },
-        {
-          avatar: '',
-          name: 'user@gmail.com',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 6,
-        },
-        {
-          avatar: '',
-          name: 'user@gmail.com',
-          investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-          stake: '126,613,276',
-          slots: '147',
-          voting: '127 millions',
-          undelegate: 'Undelegate',
-          delegate: 'Delegate',
-          id: 7,
-        },
-      ],
+      currPage: 1,
     };
+  },
+  computed: {
+    ...mapGetters({
+      usersData: 'user/getAllUsers',
+      isConnected: 'web3/getWalletIsConnected',
+    }),
+    historyTableFields() {
+      return [
+        { key: 'avatar', label: this.$t('investors.table.name') },
+        { key: 'fullName', label: '', sortable: true },
+        { key: 'investorAddress', label: this.$t('investors.table.address') },
+        { key: 'copy', label: '', sortable: true },
+        { key: 'stake', label: this.$t('investors.table.stake'), sortable: true },
+        { key: 'slots', label: this.$t('investors.table.slots'), sortable: true },
+        { key: 'voting', label: this.$t('investors.table.voting'), sortable: true },
+        { key: 'undelegate', label: '' },
+        { key: 'delegate', label: '' },
+      ];
+    },
+    totalPages() {
+      return Math.ceil(this.usersData.count / this.filter.limit);
+    },
+  },
+  watch: {
+    async currPage() {
+      const { currPage, filter: { limit } } = this;
+
+      this.filter.offset = (currPage - 1) * limit;
+
+      this.SetLoader(true);
+      await this.getInvestors();
+      this.SetLoader(false);
+    },
+    search() {
+      this.filter.q = this.search;
+      clearTimeout(this.timout);
+      this.timout = setTimeout(() => {
+        this.getInvestors();
+      }, 1000);
+    },
+  },
+  beforeMount() {
+    this.getInvestors();
+  },
+  async mounted() {
+    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+  },
+  beforeDestroy() {
+    clearTimeout(this.timout);
+  },
+  methods: {
+    async getInvestors() {
+      await this.$store.dispatch('user/getAllUserData', this.filter);
+    },
   },
 };
 </script>
@@ -160,7 +115,7 @@ export default {
   @include main;
   @include text-simple;
   &__body {
-    margin: 30px 0 0px 0px;
+    margin-top: 30px;
     max-width: 1180px;
     height: 100%;
   }

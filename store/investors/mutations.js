@@ -1,6 +1,16 @@
 /* eslint-disable no-param-reassign */
 
 export default {
+  setInvestors(state, { count, users }) {
+    state.investors = {
+      count,
+      list: users,
+    };
+  },
+  setInvestor(state, user) {
+    state.investor = user;
+  },
+
   setOldTokens(state, { access, refresh }) {
     state.tokens.access = access;
     state.tokens.refresh = refresh;
@@ -15,12 +25,6 @@ export default {
   },
   setUserData(state, data) {
     state.userData = data;
-  },
-  setUsersData(state, data) {
-    state.usersData = data;
-  },
-  setSpecialUserData(state, data) {
-    state.specialUserData = data;
   },
   setUserRole(state, data) {
     state.userRole = data;
@@ -43,5 +47,8 @@ export default {
   },
   setImage(state, data) {
     state.userData.avatar.url = data;
+  },
+  changeProfile(state, data) {
+    state.isProfileEdit = data;
   },
 };

@@ -574,6 +574,8 @@
       "vote": "Vote",
       "isEmpty": "List is empty"
     },
+    "executeVoting": "Execute voting",
+    "proposalIsExpired": "Proposal is expired",
     "errors": {
       "addProposal": "Add proposal error",
       "voteError": "Voting error",
@@ -982,5 +984,8 @@
       "voting": "Voting power"
     },
     "profile": "Investor Profile"
+  },
+  "investor": {
+    "notFilled": "Not filled"
   }
  }

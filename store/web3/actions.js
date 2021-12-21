@@ -15,7 +15,12 @@ import {
   getVoteThreshold,
   getVotes,
   getReceipt,
-  getProposalThreshold, executeVoting, getChairpersonHash, hasRole, voteResults,
+  getProposalThreshold,
+  executeVoting,
+  getChairpersonHash,
+  hasRole,
+  undelegate,
+  voteResults,
 } from '~/utils/web3';
 import modals from '~/store/modals/modals';
 import { error, success } from '~/utils/success-error';
@@ -63,6 +68,7 @@ export default {
   async connectMetamask({ commit, dispatch }) {
     const connectRes = await connectToMetamask();
     if (connectRes.ok) {
+      commit('setAccount', connectRes.result);
       commit('setWalletIsConnected', true);
       if (!getIsHandlingStatus()) {
         handleMetamaskStatus(() => { dispatch('reconnectMetamask'); });
@@ -88,6 +94,9 @@ export default {
   },
   async delegate({ commit }, { address, amount }) {
     return await delegate(address, amount);
+  },
+  async undelegate({ commit }) {
+    return await undelegate();
   },
 
   /* Proposals */
