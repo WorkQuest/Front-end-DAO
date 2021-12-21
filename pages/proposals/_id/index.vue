@@ -70,7 +70,7 @@
           <div class="info__forum forum">
             <nuxt-link
               class="forum__link btn"
-              to="/discussions"
+              :to="discussionId ? `/discussions/${discussionId}` : '/discussions'"
             >
               <base-btn
                 mode="outline"
@@ -156,14 +156,14 @@
               <base-btn
                 mode="delete"
                 class="btn__votes btn__votes_size"
-                @click="toDelegate(false)"
+                @click="toVote(false)"
               >
                 {{ $t('proposal.no') }}
               </base-btn>
               <base-btn
                 mode="approve"
                 class="btn__votes btn__votes_size btn__votes_green"
-                @click="toDelegate(true)"
+                @click="toVote(true)"
               >
                 {{ $t('proposal.yes') }}
               </base-btn>
@@ -242,12 +242,13 @@
             {{ $t('proposal.table.isEmpty') }}
           </div>
         </div>
-        <base-pager
-          v-if="totalPages > 1"
-          v-model="currentPage"
-          class="history__pagination_mobile"
-          :total-pages="totalPages"
-        />
+        <div class="history__pagination_mobile">
+          <base-pager
+            v-if="totalPages > 1"
+            v-model="currentPage"
+            :total-pages="totalPages"
+          />
+        </div>
         <!-- /mobile -->
       </div>
     </div>
@@ -268,6 +269,7 @@ export default {
       historyTableData: [],
       historyCount: 0,
       idCard: null,
+      discussionId: null,
       status: 0,
       dateStart: '',
       dateEnd: '',
@@ -305,9 +307,9 @@ export default {
     historyTableFields() {
       return [
         { key: 'number', label: this.$t('proposal.table.number'), sortable: true },
-        { key: 'hash', label: this.$t('proposal.table.hash'), sortable: true },
+        { key: 'tx_hash', label: this.$t('proposal.table.hash'), sortable: true },
         { key: 'date', label: this.$t('proposal.table.date'), sortable: true },
-        { key: 'address', label: this.$t('proposal.table.address'), sortable: true },
+        { key: 'investorAddress', label: this.$t('proposal.table.address'), sortable: true },
         { key: 'vote', label: this.$t('proposal.table.vote'), sortable: true },
       ];
     },
@@ -388,6 +390,7 @@ export default {
     if (this.isConnected) {
       await this.loadCard();
     }
+    this.discussionId = card.discussionId;
     this.title = card.title;
     this.description = card.description;
     this.hash = card.txHash;
@@ -432,9 +435,9 @@ export default {
       for (const vote of votes) {
         result.push({
           number: id,
-          hash: this.cutString(vote.transactionHash),
+          tx_hash: vote.transactionHash,
           date: new Date(vote.timestamp * 1000),
-          address: this.cutString(vote.voter),
+          investorAddress: vote.voter,
           vote: vote.support,
         });
         id += 1;
@@ -543,7 +546,7 @@ export default {
       };
       return priority[index] || 'None';
     },
-    async toDelegate(value) {
+    async toVote(value) {
       await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
       if (!this.isConnected) return;
 
@@ -555,19 +558,14 @@ export default {
       if (+delegated.result < +voteThreshold.result) {
         await this.$store.dispatch('main/showToast', {
           title: this.$t('proposal.errors.voteError'),
-          text: this.$t('proposal.errors.notEnoughFunds', { a: +voteThreshold.result, b: +delegated.result }),
+          text: this.$t('proposal.errors.notEnoughFunds', {
+            a: +voteThreshold.result,
+            b: +delegated.result,
+          }),
         });
-        await this.$store.dispatch('modals/show', {
-          key: modals.delegate,
-          investorAddress: account.address,
-          min: +voteThreshold.result,
-          callback: async () => this.onVote(value),
-        });
-      } else {
-        await this.onVote(value);
+        return;
       }
-    },
-    async onVote(value) {
+
       this.SetLoader(true);
       if (this.$moment().isAfter(this.$moment(this.endTime))) {
         await this.$store.dispatch('main/showToast', {
@@ -903,6 +901,7 @@ export default {
     margin-top: 20px;
     &_mobile {
       display: none;
+      margin-top: 20px;
     }
   }
 }

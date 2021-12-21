@@ -107,7 +107,7 @@
               <base-btn
                 mode="lightRed"
                 class="action__undelegate"
-                :disabled="!isMyProfile()"
+                :disabled="!isMyProfile || votesPower === 0"
                 @click="openModalUndelegate"
               >
                 {{ $t('modals.undelegate') }}
@@ -115,7 +115,7 @@
               <base-btn
                 mode="lightBlue"
                 class="action__delegate"
-                :disabled="!isMyProfile()"
+                :disabled="!isMyProfile"
                 @click="openModalDelegate"
               >
                 {{ $t('modals.delegate') }}
@@ -164,6 +164,7 @@ export default {
     return {
       investor: {},
       userId: this.$route.params.id,
+      votesPower: 0,
       investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
       stake: '126,613,276',
       name: 'user@gmail.com',
@@ -259,36 +260,44 @@ export default {
         { key: 'transaction_fee', label: this.$t('wallet.table.trxFee'), sortable: true },
       ];
     },
+    isMyProfile() {
+      return this.userData.id === this.userId;
+    },
   },
   async beforeMount() {
     await this.getInvestorData();
   },
   async mounted() {
     await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+    await this.getVotesPower();
   },
   methods: {
+    async getVotesPower() {
+      const { address } = await this.$store.dispatch('web3/getAccount');
+      const response = await this.$store.dispatch('web3/getVotes', address);
+      if (response.ok) this.votesPower = +response.result;
+    },
     async getInvestorData() {
-      if (this.isMyProfile()) {
+      if (this.isMyProfile) {
         this.investor = this.userData;
       } else {
         this.investor = await this.$store.dispatch('user/getSpecialUserData', this.userId);
       }
     },
-    isMyProfile() {
-      return this.userData.id === this.userId;
-    },
-    openModalDelegate() {
+    async openModalDelegate() {
       this.ShowModal({
         key: modals.delegate,
         stake: this.stake,
         investorAddress: this.investorAddress,
+        callback: this.getVotesPower,
       });
     },
-    openModalUndelegate() {
+    async openModalUndelegate() {
       this.ShowModal({
         key: modals.undelegate,
         stake: this.stake,
         name: `${this.investor.firstName} ${this.investor.lastName}`,
+        callback: this.getVotesPower,
       });
     },
     ClipboardSuccessHandler(value) {

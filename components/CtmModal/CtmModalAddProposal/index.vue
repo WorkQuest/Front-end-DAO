@@ -112,7 +112,7 @@
 <script>
 
 import { mapGetters } from 'vuex';
-import { Chains, errorCodes } from '~/utils/enums';
+import { Chains } from '~/utils/enums';
 
 export default {
   name: 'ModalAddProposal',
@@ -159,16 +159,7 @@ export default {
         description: this.descriptionInput,
         medias,
       });
-      // TODO: create proposal
-      // const createProposalRes = await this.$store.dispatch('discussions/createDiscussion', {
-      //   title: this.votingTopicInput,
-      //   description: this.descriptionInput,
-      //   medias,
-      //   // ...proposal id еще?
-      // });
-      console.log('api', res);
       if (res.ok) {
-        // TODO: create discussion here
         const { nonce } = res.result;
         await this.$store.dispatch('web3/addProposal', { description: this.descriptionInput, nonce });
       }

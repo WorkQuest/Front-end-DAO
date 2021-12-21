@@ -222,14 +222,6 @@ export const addProposal = async (description, nonce) => {
     return error(errorCodes.AddProposal, e.message, e);
   }
 };
-export const getProposals = async (offset, limit) => {
-  try {
-    const { result } = await fetchContractData('getProposals', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [offset, limit]);
-    return success(result);
-  } catch (e) {
-    return error(errorCodes.GetAllProposals, e.message, e);
-  }
-};
 export const getProposalInfoById = async (id) => {
   try {
     const res = await fetchContractData('proposals', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [id]);

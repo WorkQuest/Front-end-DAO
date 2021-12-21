@@ -28,6 +28,7 @@
                 <img
                   class="higher-level__img"
                   src="~/assets/img/ui/proposals-img.svg"
+                  alt=""
                 >
               </div>
             </div>
@@ -43,7 +44,7 @@
 import { mapGetters } from 'vuex';
 import proposalCards from '~/components/app/Cards/proposalCards';
 import modals from '~/store/modals/modals';
-import { Chains, errorCodes } from '~/utils/enums';
+import { Chains } from '~/utils/enums';
 
 export default {
   name: 'Proposals',
@@ -62,12 +63,6 @@ export default {
       proposalThreshold: 'proposals/proposalThreshold',
     }),
   },
-  watch: {
-    async isConnected(newValue) {
-      // if (this.firstLoading) return;
-      // const rightChain = await this.$store.dispatch('web3/chainIsCompareToCurrent', Chains.ETHEREUM);
-    },
-  },
   methods: {
     isCloseInfo() {
       this.isShowInfo = !this.isShowInfo;
@@ -75,7 +70,6 @@ export default {
     async addProposalModal() {
       const connectionRes = await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
       if (!connectionRes.ok) return;
-
       this.SetLoader(true);
       const account = await this.$store.dispatch('web3/getAccount');
       let delegated;
@@ -97,12 +91,6 @@ export default {
         await this.$store.dispatch('main/showToast', {
           title: this.$t('proposal.errors.addProposal'),
           text: this.$t('proposal.errors.notEnoughFunds', { a: proposalThreshold, b: delegated }),
-        });
-        await this.$store.dispatch('modals/show', {
-          key: modals.delegate,
-          investorAddress: account.address,
-          min: +proposalThreshold,
-          callback: () => this.showAddProposal(),
         });
       } else {
         this.showAddProposal();

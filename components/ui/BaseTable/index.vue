@@ -16,7 +16,7 @@
         <span class="table__title">{{ $props.title }}</span>
       </template>
       <template #cell(tx_hash)="el">
-        <span class="table__grey">{{ el.item.tx_hash }}</span>
+        <span>{{ cutString(el.item.tx_hash, 9, 6) }}</span>
       </template>
       <template #cell(status)="el">
         <span
@@ -31,8 +31,11 @@
       <template #cell(block)="el">
         <span class="table__grey">{{ el.item.block }}</span>
       </template>
+      <template #cell(timestamp)="el">
+        <span class="table__grey">{{ el.item.timestamp }}</span>
+      </template>
       <template #cell(date)="el">
-        <span class="table__grey">{{ $moment(el.item.date).format('ll') }}</span>
+        <span>{{ $moment(el.item.date).format('ll') }}</span>
       </template>
       <template #cell(transaction_fee)="el">
         <span class="table__grey">{{ el.item.transaction_fee }}</span>
@@ -88,7 +91,7 @@
         </base-btn>
       </template>
       <template #cell(investorAddress)="el">
-        {{ cutString(el.item.investorAddress) }}
+        {{ cutString(el.item.investorAddress, 5, 6) }}
       </template>
       <template
         #cell(fullName)="el"
