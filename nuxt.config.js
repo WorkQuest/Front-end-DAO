@@ -86,6 +86,7 @@ export default {
   env: {
     PROD: process.env.PROD,
     BASE_URL: process.env.BASE_URL,
+    GMAPKEY: process.env.GMAPKEY,
 
     SECRET_SUMSUB: process.env.SECRET_SUMSUB,
     WQ_TOKEN: process.env.WQ_TOKEN,
