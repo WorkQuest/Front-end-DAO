@@ -8,8 +8,31 @@ Vue.use(VueTippy);
 Vue.component('tippy', TippyComponent);
 
 Vue.mixin({
-
   methods: {
+    async uploadFiles(files) {
+      if (!files.length) return [];
+      const fetchData = [];
+      const fetchUrlsData = [];
+      const medias = [];
+      // eslint-disable-next-line no-restricted-syntax
+      for (const item of files) {
+        if (item.mediaId) medias.push(item.mediaId);
+        fetchData.push(this.$store.dispatch('user/getUploadFileLink', { contentType: item.file.type }));
+      }
+      if (!fetchData.length) return medias;
+      const urls = await Promise.all(fetchData);
+      for (let i = 0; i < files.length; i += 1) {
+        const { file } = files[i];
+        medias.push(urls[i].mediaId);
+        fetchUrlsData.push(this.$store.dispatch('user/uploadFile', {
+          url: urls[i].url,
+          data: file,
+          contentType: file.type,
+        }));
+      }
+      await Promise.all(fetchUrlsData);
+      return medias;
+    },
     ShowModal(payload) {
       this.$store.dispatch('modals/show', {
         key: modals.default,

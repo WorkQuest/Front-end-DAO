@@ -40,24 +40,75 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import proposalCards from '~/components/app/Cards/proposalCards';
 import modals from '~/store/modals/modals';
+import { Chains, errorCodes } from '~/utils/enums';
 
 export default {
-  name: 'Index',
+  name: 'Proposals',
   components: {
     proposalCards,
   },
   data() {
     return {
       isShowInfo: true,
+      firstLoading: true,
     };
+  },
+  computed: {
+    ...mapGetters({
+      isConnected: 'web3/getWalletIsConnected',
+      proposalThreshold: 'proposals/proposalThreshold',
+    }),
+  },
+  watch: {
+    async isConnected(newValue) {
+      // if (this.firstLoading) return;
+      // const rightChain = await this.$store.dispatch('web3/chainIsCompareToCurrent', Chains.ETHEREUM);
+    },
   },
   methods: {
     isCloseInfo() {
       this.isShowInfo = !this.isShowInfo;
     },
-    addProposalModal() {
+    async addProposalModal() {
+      const connectionRes = await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      if (!connectionRes.ok) return;
+
+      this.SetLoader(true);
+      const account = await this.$store.dispatch('web3/getAccount');
+      let delegated;
+      let { proposalThreshold } = this;
+      if (!proposalThreshold) {
+        const [delegatedRes, proposalThresholdRes] = await Promise.all([
+          this.$store.dispatch('web3/getVotes', account.address),
+          this.$store.dispatch('web3/getProposalThreshold'),
+        ]);
+        delegated = delegatedRes.result;
+        proposalThreshold = proposalThresholdRes.result;
+        await this.$store.dispatch('proposals/setProposalThreshold', proposalThreshold);
+      } else {
+        const delegatedRes = await this.$store.dispatch('web3/getVotes', account.address);
+        delegated = delegatedRes.result;
+      }
+      this.SetLoader(false);
+      if (+delegated < +proposalThreshold) {
+        await this.$store.dispatch('main/showToast', {
+          title: this.$t('proposal.errors.addProposal'),
+          text: this.$t('proposal.errors.notEnoughFunds', { a: proposalThreshold, b: delegated }),
+        });
+        await this.$store.dispatch('modals/show', {
+          key: modals.delegate,
+          investorAddress: account.address,
+          min: +proposalThreshold,
+          callback: () => this.showAddProposal(),
+        });
+      } else {
+        this.showAddProposal();
+      }
+    },
+    showAddProposal() {
       this.ShowModal({
         key: modals.addProposal,
       });
