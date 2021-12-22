@@ -122,34 +122,36 @@
               </base-btn>
             </div>
           </div>
-          <div class="profile__table">
-            <base-table
-              class="profile__field"
-              :title="$t('wallet.table.trx')"
-              :items="transactionsData"
-              :fields="walletTableFields"
-            />
-          </div>
+          <!--TODO Попросила убрать роза пока не появятся данные для таблицы-->
+          <!--          <div class="profile__table">-->
+          <!--            <base-table-->
+          <!--              class="profile__field"-->
+          <!--              :title="$t('wallet.table.trx')"-->
+          <!--              :items="transactionsData"-->
+          <!--              :fields="walletTableFields"-->
+          <!--            />-->
+          <!--          </div>-->
           <!-- mobile -->
-          <div class="profile__history">
-            <p class="profile__subtitle">
-              {{ $t('wallet.table.trx') }}
-            </p>
-            <mobile-table-item
-              v-for="(transaction, index) in transactionsData"
-              :key="index"
-              :item="transaction"
-              :is-last="transactionsData[index] === transactionsData[transactionsData.length - 1]"
-            />
-          </div>
+          <!--          <div class="profile__history">-->
+          <!--            <p class="profile__subtitle">-->
+          <!--              {{ $t('wallet.table.trx') }}-->
+          <!--            </p>-->
+          <!--            <mobile-table-item-->
+          <!--              v-for="(transaction, index) in transactionsData"-->
+          <!--              :key="index"-->
+          <!--              :item="transaction"-->
+          <!--              :is-last="transactionsData[index] === transactionsData[transactionsData.length - 1]"-->
+          <!--            />-->
+          <!--          </div>-->
           <!-- /mobile -->
         </div>
       </div>
-      <base-pager
-        v-model="pages"
-        class="investor__pagination"
-        :total-pages="totalPages"
-      />
+      <!--TODO Попросила убрать роза пока не появятся данные для таблицы-->
+      <!--      <base-pager-->
+      <!--        v-model="pages"-->
+      <!--        class="investor__pagination"-->
+      <!--        :total-pages="totalPages"-->
+      <!--      />-->
     </div>
   </div>
 </template>
