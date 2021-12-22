@@ -55,7 +55,8 @@
           <div class="card__header">
             <div class="card__header_top">
               <div class="card__header_left">
-                Voting<span v-if="card.status !== 0">#{{ card.proposalId }}</span>
+                <!--                TODO delete -1 -->
+                Voting<span v-if="card.status !== 0">#{{ +card.proposalId - 1 }}</span>
               </div>
               <div class="card__header_right">
                 <div class="card__status">
