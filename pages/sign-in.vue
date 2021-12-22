@@ -72,35 +72,37 @@
             {{ $t('signIn.login') }}
           </base-btn>
         </div>
-        <div class="auth__text auth__text_wrap">
-          {{ $t('signIn.or') }}
-        </div>
+        <!--      TODO вернуть -->
+        <!--        <div class="auth__text auth__text_wrap">-->
+        <!--          {{  $t('signIn.or') }}-->
+        <!--        </div>-->
       </form>
-      <div class="auth__social">
-        <div class="auth__text auth__text_dark">
-          {{ $t('signIn.loginWith') }}
-        </div>
-        <div class="auth__icons">
-          <button
-            class="auth__btn auth__btn_workQuest"
-            @click="showSignWorkQuest()"
-          >
-            <img
-              src="~assets/img/app/logo.svg"
-              alt="WorkQuest"
-            >
-          </button>
-          <button
-            v-for="(item, key) in socials"
-            :key="key"
-            class="auth__btn"
-            :class="`auth__btn_${item}`"
-            @click="redirectSocialLink(item)"
-          >
-            <span :class="`icon-${item === 'linkedin' ? 'LinkedIn' : item}`" />
-          </button>
-        </div>
-      </div>
+      <!--      TODO вернуть -->
+      <!--      <div class="auth__social">-->
+      <!--        <div class="auth__text auth__text_dark">-->
+      <!--          {{ $t('signIn.loginWith') }}-->
+      <!--        </div>-->
+      <!--        <div class="auth__icons">-->
+      <!--          <button-->
+      <!--            class="auth__btn auth__btn_workQuest"-->
+      <!--            @click="showSignWorkQuest()"-->
+      <!--          >-->
+      <!--            <img-->
+      <!--              src="~assets/img/app/logo.svg"-->
+      <!--              alt="WorkQuest"-->
+      <!--            >-->
+      <!--          </button>-->
+      <!--          <button-->
+      <!--            v-for="(item, key) in socials"-->
+      <!--            :key="key"-->
+      <!--            class="auth__btn"-->
+      <!--            :class="`auth__btn_${item}`"-->
+      <!--            @click="redirectSocialLink(item)"-->
+      <!--          >-->
+      <!--            <span :class="`icon-${item === 'linkedin' ? 'LinkedIn' : item}`" />-->
+      <!--          </button>-->
+      <!--        </div>-->
+      <!--      </div>-->
     </div>
   </ValidationObserver>
 </template>

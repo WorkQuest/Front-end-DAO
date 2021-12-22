@@ -1,8 +1,13 @@
 <template>
   <div class="wq-profile">
     <div class="wq-profile__body">
+      <!--      TODO вернуть-->
+      <!--      <div-->
+      <!--          v-if="!localUserData.isVerified"-->
+      <!--          class="wq-profile__banner banner"-->
+      <!--      >-->
       <div
-        v-if="!localUserData.isVerified"
+        v-if="false"
         class="wq-profile__banner banner"
       >
         <transition name="fade-fast">

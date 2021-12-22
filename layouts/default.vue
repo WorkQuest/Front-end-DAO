@@ -414,10 +414,11 @@ export default {
           path: '/discussions',
           title: this.$t('ui.discussions'),
         },
-        {
-          path: '/KYC',
-          title: this.$t('ui.KYC'),
-        },
+        //  TODO Временно убрали кнопку KYC
+        // {
+        //   path: '/KYC',
+        //   title: this.$t('ui.KYC'),
+        // },
       ],
       userDDLinks: [
         {
