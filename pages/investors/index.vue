@@ -25,7 +25,7 @@
         />
       </div>
       <base-pager
-        v-if="usersData.count > filter.limit"
+        v-if="usersData.count > limit"
         v-model="currPage"
         class="investors__pagination"
         :total-pages="totalPages"
@@ -44,11 +44,9 @@ export default {
 
   data() {
     return {
-      filter: {
-        limit: 20,
-        offset: 0,
-        q: '',
-      },
+      limit: 20,
+      offset: 0,
+      q: '',
       timeout: '',
       search: '',
       currPage: 1,
@@ -86,22 +84,20 @@ export default {
       return users;
     },
     totalPages() {
-      return Math.ceil(this.usersData.count / this.filter.limit);
+      return Math.ceil(this.usersData.count / this.limit);
     },
   },
   watch: {
     async currPage() {
-      const { currPage, filter: { limit } } = this;
-
-      this.filter.offset = (currPage - 1) * limit;
+      this.offset = (this.currPage - 1) * this.limit;
 
       this.SetLoader(true);
       await this.getInvestors();
       this.SetLoader(false);
     },
     search() {
-      this.filter.q = this.search.trim();
-      this.filter.offset = 0;
+      this.q = this.search.trim();
+      this.offset = 0;
       this.currPage = 1;
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
@@ -136,10 +132,8 @@ export default {
       if (response.ok) this.votingPower = +response.result;
     },
     async getInvestors() {
-      await Promise.all([
-        this.$store.dispatch('user/getAllUserData', this.filter),
-        this.getVotingPower(),
-      ]);
+      await this.$store.dispatch('user/getAllUserData', { limit: this.limit, offset: this.offset, q: this.q });
+      await this.getVotingPower();
     },
   },
 };
