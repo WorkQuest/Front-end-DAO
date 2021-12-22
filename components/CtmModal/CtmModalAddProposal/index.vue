@@ -162,6 +162,7 @@ export default {
       if (res.ok) {
         const { nonce } = res.result;
         await this.$store.dispatch('web3/addProposal', { description: this.descriptionInput, nonce });
+        await this.$store.dispatch('proposals/getProposals', {});
       }
       this.close();
       this.SetLoader(false);

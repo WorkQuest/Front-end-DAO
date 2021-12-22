@@ -132,24 +132,6 @@
       </span>
     </div>
     <div
-      v-if="item.stake"
-      class="item__subtitle"
-    >
-      {{ $t('investors.table.stake') }}
-      <span class="item__info">
-        {{ item.stake }}
-      </span>
-    </div>
-    <div
-      v-if="item.slots"
-      class="item__subtitle"
-    >
-      {{ $t('investors.table.slots') }}
-      <span class="item__info">
-        {{ item.slots }}
-      </span>
-    </div>
-    <div
       v-if="item.voting"
       class="item__subtitle"
     >
@@ -166,6 +148,7 @@
         v-if="item.undelegate"
         mode="lightRed"
         class="btn__delegate"
+        :disabled="!myProfile(item.id) || item.voting === 0"
         @click="openModalUndelegate(item)"
       >
         {{ item.undelegate }}
@@ -174,6 +157,7 @@
         v-if="item.delegate"
         mode="lightBlue"
         class="btn__delegate"
+        :disabled="!myProfile(item.id)"
         @click="openModalDelegate(item)"
       >
         {{ item.delegate }}
@@ -182,6 +166,7 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
 
 export default {
@@ -196,7 +181,15 @@ export default {
       default: false,
     },
   },
+  computed: {
+    ...mapGetters({
+      userData: 'user/getUserData',
+    }),
+  },
   methods: {
+    myProfile(id) {
+      return this.userData.id === id;
+    },
     openModalDelegate(item) {
       this.ShowModal({
         key: modals.delegate,
