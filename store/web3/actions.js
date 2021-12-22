@@ -7,7 +7,6 @@ import {
   addProposal,
   getChainIdByChain,
   goToChain,
-  getProposals,
   getProposalInfoById,
   doVote,
   delegate,
@@ -32,6 +31,17 @@ export default {
   },
   async goToChain({ commit }, chain) {
     return await goToChain(chain);
+  },
+  // mobile browser check
+  // false - desktop, true - mobile && !metamask
+  checkIsMobileMetamaskNeed() {
+    if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      return false;
+    }
+    if (typeof window.ethereum === 'undefined') {
+      return true;
+    }
+    return false;
   },
   async checkMetamaskStatus({ getters, dispatch, commit }, chain) {
     if (typeof window.ethereum === 'undefined') {

@@ -12,7 +12,7 @@
               v-model="votingTopicInput"
               :placeholder="$t('modals.votingTopic')"
               :label="$t('modals.votingTopic')"
-              rules="required|max:100|min:3"
+              rules="required|max:78|min:3"
               :name="$t('modals.votingTopicField')"
             />
           </div>
@@ -59,7 +59,7 @@
           <div class="field__documents">
             <base-uploader
               class="uploader"
-              type="files"
+              type="all"
               :items="documents"
               :is-show-download="false"
               rules="required|alpha_num"
@@ -126,7 +126,7 @@ export default {
       fileId: 0,
       documents: [],
       docsLimit: 10,
-      accept: 'application/msword, application/pdf',
+      accept: 'application/msword, application/pdf, image/png, image/jpeg',
       acceptedTypes: [],
     };
   },
@@ -169,8 +169,8 @@ export default {
       this.close();
       this.SetLoader(false);
     },
-    removeDocument(id) {
-      this.documents = this.documents.filter((item) => item.id !== id);
+    removeDocument(doc) {
+      this.documents = this.documents.filter((item) => item.id !== doc.id);
     },
     checkContentType(file) {
       return this.acceptedTypes.indexOf(file.type) !== -1;
