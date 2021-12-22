@@ -25,7 +25,7 @@
           v-model="title"
           :placeholder="$t('modals.discussionTopic')"
           class="add-discussion__field"
-          rules="required|max:60"
+          rules="required|max:15"
           :name="$t('modals.discussionTopic')"
         />
         <div class="add-discussion__subtitle">
