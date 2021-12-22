@@ -23,13 +23,13 @@
         </div>
         <validation-provider
           name="description-title"
-          rules="required|max:15"
+          rules="required|max:78"
         >
           <base-field
             v-model="title"
             :placeholder="$t('modals.discussionTopic')"
             class="add-discussion__field"
-            rules="required|max:15"
+            rules="required|max:78"
             :name="$t('modals.discussionTopic')"
           />
         </validation-provider>
