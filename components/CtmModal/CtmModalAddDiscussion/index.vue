@@ -158,7 +158,6 @@ export default {
       this.fileId += 1;
     },
     async createDiscussion() {
-      console.log(this.medias);
       const medias = await this.uploadFiles(this.documents);
       const response = await this.$store.dispatch('discussions/createDiscussion', {
         title: this.title,
