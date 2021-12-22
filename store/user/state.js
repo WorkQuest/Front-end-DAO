@@ -6,7 +6,7 @@ export default () => ({
   specialUserData: {},
   userData: {},
   usersData: {
-    list: [],
+    users: [],
     count: 0,
   },
   currentUserPosition: null,
