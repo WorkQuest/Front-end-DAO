@@ -20,7 +20,8 @@
       <div class="proposal__content content">
         <div class="proposal__info info content__column">
           <div class="info__top info__top_blue">
-            <span>{{ `Voting #${idCard}` }}</span>
+            <!-- TODO: потом удалить -->
+            <span>{{ `Voting #${+idCard - 1}` }}</span>
             <span
               class="info__status"
               :class="cardsStatusColor(status)"
