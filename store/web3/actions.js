@@ -86,9 +86,7 @@ export default {
     return connectRes;
   },
   async reconnectMetamask({ dispatch }) {
-    // console.log('disc');
     await dispatch('disconnect');
-    console.log('reconnect');
     await dispatch('connectMetamask');
   },
   async disconnect({ commit }) {
