@@ -80,11 +80,7 @@ export default {
             title: 'Success',
             text: 'Your account has been successfully verified',
           });
-          if (this.$cookies.get('role') === 'employer') {
-            this.$router.push('/workers');
-          } else if (this.$cookies.get('role') === 'worker') {
-            this.$router.push('/quests');
-          }
+          await this.$router.push('/proposals');
         }
         this.CloseModal();
       } catch (e) {
