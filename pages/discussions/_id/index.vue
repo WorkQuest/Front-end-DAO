@@ -430,6 +430,7 @@ export default {
     top: 0;
     border-radius: 50%;
     cursor: pointer;
+    object-fit: cover;
   }
   &__name {
     @include text-usual;
