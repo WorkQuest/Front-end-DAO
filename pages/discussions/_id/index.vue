@@ -67,7 +67,7 @@
               {{ currentDiscussion.description }}
             </div>
           </div>
-          <div class="discussion__bottom bottom bottom__footer">
+          <div class="discussion__bottom bottom bottom">
             <div class="bottom__footer">
               <div class="bottom__comment">
                 <img
@@ -114,7 +114,7 @@
           </span>
         </base-btn>
       </div>
-      <validation-observer v-slot="{handleSubmit, validated, passed, invalid}">
+      <validation-observer v-slot="{ handleSubmit }">
         <div
           v-if="isAddComment"
           class="info__response response"
@@ -126,20 +126,24 @@
             <div class="response__footer footer">
               <base-btn
                 class="footer__btn hide"
-                :disabled="!validated || !passed || invalid"
               >
                 <template v-slot:left>
                   <span class="icon-link footer__chain" />
                 </template>
               </base-btn>
-              <base-field
-                v-model="opinion"
+              <validation-provider
                 class="footer__input"
-                :placeholder="$t('discussions.input')"
-                rules="required|max:250"
-                :name="$t('discussions.response')"
-                mode="comment-field"
-              />
+                rules="required|min:1|max:250"
+              >
+                <base-field
+                  v-model="opinion"
+                  :placeholder="$t('discussions.input')"
+                  rules="required|min:1|max:250"
+                  :name="$t('discussions.response')"
+                  mode="comment-field"
+                  @keyup.enter.native="handleSubmit(addRootCommentResponse)"
+                />
+              </validation-provider>
             </div>
             <div class="response__footer">
               <base-btn
@@ -151,7 +155,6 @@
               </base-btn>
               <base-btn
                 class="response__btn"
-                :disabled="!validated || !passed || invalid"
                 @click="handleSubmit(addRootCommentResponse)"
               >
                 {{ $t('discussions.add') }}
@@ -484,7 +487,6 @@ export default {
   &__comment {
     height: 18px;
     width: 18px;
-    cursor: pointer;
   }
   &__counter {
     font-size: 14px;
@@ -653,6 +655,7 @@ export default {
     line-height: 130%;
   }
   &__footer {
+    width: 100%;
     height: 40px;
     align-items: center;
     margin-top: 20px;

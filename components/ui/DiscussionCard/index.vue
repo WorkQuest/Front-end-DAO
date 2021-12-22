@@ -2,7 +2,7 @@
   <div class="discussion">
     <div class="discussion__user user">
       <img
-        :src="item.author.avatar ? item.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
+        :src="item.author && item.author.avatar ? item.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
         alt="userAvatar"
         class="user__avatar"
         @click="toInvestor(item.author.id)"
@@ -101,8 +101,10 @@ export default {
       return require('~/assets/img/app/avatar_empty.png');
     },
     getAuthorName(item) {
-      const { firstName, lastName } = item.author;
-      if (firstName || lastName) return `${firstName} ${lastName}`;
+      if (item.author) {
+        const { firstName, lastName } = item.author;
+        if (firstName || lastName) return `${firstName} ${lastName}`;
+      }
       return this.$t('user.nameless');
     },
     toInvestor(authorId) {

@@ -16,29 +16,39 @@
         </div>
       </div>
       <validation-observer
-        v-slot="{ handleSubmit, validated, passed, invalid }"
+        v-slot="{ handleSubmit }"
       >
         <div class="add-discussion__subtitle">
           {{ $t('modals.discussionTopic') }}
         </div>
-        <base-field
-          v-model="title"
-          :placeholder="$t('modals.discussionTopic')"
-          class="add-discussion__field"
-          rules="required|max:60"
-          :name="$t('modals.discussionTopic')"
-        />
+        <validation-provider
+          name="description-title"
+          rules="required|max:78"
+        >
+          <base-field
+            v-model="title"
+            :placeholder="$t('modals.discussionTopic')"
+            class="add-discussion__field"
+            rules="required|max:78"
+            :name="$t('modals.discussionTopic')"
+          />
+        </validation-provider>
         <div class="add-discussion__subtitle">
           {{ $t('modals.description') }}
         </div>
-        <base-textarea
-          v-model="discussion"
-          class="add-discussion__body"
-          :placeholder="$t('modals.description')"
+        <validation-provider
+          name="description-description"
           rules="required|max:2000"
-          mode="add-discussion"
-          :name="$t('modals.description')"
-        />
+        >
+          <base-textarea
+            v-model="discussion"
+            class="add-discussion__body"
+            :placeholder="$t('modals.description')"
+            rules="required|max:2000"
+            mode="add-discussion"
+            :name="$t('modals.description')"
+          />
+        </validation-provider>
         <base-uploader
           class="add-discussion uploader__container"
           type="all"
@@ -77,7 +87,6 @@
           </base-btn>
           <base-btn
             class="footer__buttons"
-            :disabled="!validated || !passed || invalid"
             @click="handleSubmit(createDiscussion)"
           >
             {{ $t('modals.addDiscussion') }}
@@ -149,7 +158,6 @@ export default {
       this.fileId += 1;
     },
     async createDiscussion() {
-      console.log(this.medias);
       const medias = await this.uploadFiles(this.documents);
       const response = await this.$store.dispatch('discussions/createDiscussion', {
         title: this.title,
