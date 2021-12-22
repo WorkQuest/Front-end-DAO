@@ -112,7 +112,7 @@ export default {
           title: 'Delegate',
           text: `Delegated ${this.tokensAmount} WQT`,
         });
-        await this.close();
+        this.close();
         if (callback) await callback();
       } else if (res.msg.includes('Not enough balance to delegate')) {
         await this.$store.dispatch('modals/show', {

@@ -78,7 +78,7 @@ export default {
         users.push({
           ...user,
           callback: this.getInvestors,
-          voting: user.id === this.userData.id ? this.votingPower : 'unknown',
+          voting: user.id === this.userData.id ? this.votingPower : '',
         });
       });
       return users;
@@ -114,13 +114,11 @@ export default {
         subtitle: 'Please open site from Metamask app',
       });
       await this.$router.push('/proposals');
-      return;
     }
-    await this.getInvestors();
   },
   async mounted() {
     await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-    await this.getVotingPower();
+    await this.getInvestors();
   },
   beforeDestroy() {
     clearTimeout(this.timeout);
@@ -133,8 +131,10 @@ export default {
       if (response.ok) this.votingPower = +response.result;
     },
     async getInvestors() {
-      await this.getVotingPower();
-      await this.$store.dispatch('user/getAllUserData', this.filter);
+      await Promise.all([
+        this.$store.dispatch('user/getAllUserData', this.filter),
+        this.getVotingPower(),
+      ]);
     },
   },
 };
