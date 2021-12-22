@@ -32,10 +32,8 @@ export default {
       const { result } = await this.$axios.$get(`/v1/profile/users?${query}`);
       result.users.forEach((user) => {
         user.fullName = `${user.firstName || ''} ${user.lastName || ''}`;
-        user.investorAddress = '0xnf8o29837hrvbn42o37hsho3b74thb3';
-        user.stake = '126,613,276';
-        user.slots = '147';
-        user.voting = '127 millions';
+        user.investorAddress = '****************';
+        user.voting = '';
         user.undelegate = 'Undelegate';
         user.delegate = 'Delegate';
       });

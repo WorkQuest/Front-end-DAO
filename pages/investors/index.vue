@@ -53,6 +53,7 @@ export default {
       search: '',
       currPage: 1,
       votingPower: 0,
+      investorAddress: '',
     };
   },
   computed: {
@@ -79,6 +80,7 @@ export default {
           ...user,
           callback: this.getInvestors,
           voting: user.id === this.userData.id ? this.votingPower : '',
+          investorAddress: user.id === this.userData.id ? this.investorAddress : user.investorAddress,
         });
       });
       return users;
@@ -127,6 +129,7 @@ export default {
     // TODO Когда появятся кошельки убрать это, брать информацию из сущности юзера полученной с бэка
     async getVotingPower() {
       const { address } = await this.$store.dispatch('web3/getAccount');
+      this.investorAddress = address;
       const response = await this.$store.dispatch('web3/getVotes', address);
       if (response.ok) this.votingPower = +response.result;
     },
