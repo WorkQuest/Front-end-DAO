@@ -17,6 +17,7 @@
                 </div>
                 <div class="info__btn-container">
                   <base-btn
+                    v-if="!isMobile"
                     mode="ver"
                     @click="addProposalModal"
                   >
@@ -55,6 +56,7 @@ export default {
     return {
       isShowInfo: true,
       firstLoading: true,
+      isMobile: false,
     };
   },
   computed: {
@@ -62,6 +64,9 @@ export default {
       isConnected: 'web3/getWalletIsConnected',
       proposalThreshold: 'proposals/proposalThreshold',
     }),
+  },
+  async beforeMount() {
+    this.isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
   },
   methods: {
     isCloseInfo() {

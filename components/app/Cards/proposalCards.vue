@@ -79,7 +79,10 @@
             {{ card.title }}
           </div>
           <div class="btn__container">
-            <div class="btn__wrapper">
+            <div
+              v-if="!isMobile"
+              class="btn__wrapper"
+            >
               <nuxt-link
                 v-if="card.status !== 0"
                 class="btn__link"
@@ -110,6 +113,7 @@
 
 import { mapGetters } from 'vuex';
 import { Chains, proposalStatuses } from '~/utils/enums';
+import modals from '~/store/modals/modals';
 
 export default {
   name: 'ProposalCards',
@@ -123,6 +127,7 @@ export default {
       isDescending: true,
       cardsLimit: 12,
       ddValue: 0,
+      isMobile: false,
     };
   },
   computed: {
@@ -180,6 +185,16 @@ export default {
     async isDescending() {
       await this.loadPage(this.currentPage);
     },
+  },
+  async beforeMount() {
+    this.isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
+    if (this.isMobile) {
+      this.ShowModal({
+        key: modals.status,
+        title: 'Please install Metamask!',
+        subtitle: 'Please open site from Metamask app',
+      });
+    }
   },
   async mounted() {
     this.SetLoader(true);

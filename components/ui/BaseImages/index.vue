@@ -55,7 +55,7 @@ export default {
   },
   methods: {
     showGallery(item) {
-      this.ShowModal({ key: modals.gallery, files: item });
+      this.ShowModal({ key: modals.showFile, imageSrc: item.url });
     },
     onIconClick(item) {
       this.deleteImage(item);
