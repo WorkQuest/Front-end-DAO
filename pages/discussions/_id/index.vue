@@ -67,7 +67,7 @@
               {{ currentDiscussion.description }}
             </div>
           </div>
-          <div class="discussion__bottom bottom bottom__footer">
+          <div class="discussion__bottom bottom bottom">
             <div class="bottom__footer">
               <div class="bottom__comment">
                 <img
@@ -484,7 +484,6 @@ export default {
   &__comment {
     height: 18px;
     width: 18px;
-    cursor: pointer;
   }
   &__counter {
     font-size: 14px;
