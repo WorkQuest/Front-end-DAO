@@ -46,10 +46,11 @@
                   alt=""
                 >
               </div>
-              <div class="profile__status status">
-                {{ $t('settings.verifiсated') }}
-                <span class="icon input-icon input-icon__check icon-check_all_big" />
-              </div>
+              <!--              TODO вернуть -->
+              <!--              <div class="profile__status status">-->
+              <!--                {{ $t('settings.verifiсated') }}-->
+              <!--                <span class="icon input-icon input-icon__check icon-check_all_big" />-->
+              <!--              </div>-->
               <div
                 v-for="input in mainDataArr"
                 :key="input.key"
