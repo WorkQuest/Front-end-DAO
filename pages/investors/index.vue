@@ -38,6 +38,7 @@
 
 import { mapGetters } from 'vuex';
 import { Chains } from '~/utils/enums';
+import modals from '~/store/modals/modals';
 
 export default {
 
@@ -104,8 +105,18 @@ export default {
       }, 1000);
     },
   },
-  beforeMount() {
-    this.getInvestors();
+  async beforeMount() {
+    const isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
+    if (isMobile) {
+      this.ShowModal({
+        key: modals.status,
+        title: 'Please install Metamask!',
+        subtitle: 'Please open site from Metamask app',
+      });
+      await this.$router.push('/proposals');
+      return;
+    }
+    await this.getInvestors();
   },
   async mounted() {
     await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);

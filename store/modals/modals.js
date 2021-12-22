@@ -46,4 +46,5 @@ export default {
   delegate: 'delegate',
   undelegate: 'undelegate',
   gallery: 'gallery',
+  showFile: 'showFile',
 };

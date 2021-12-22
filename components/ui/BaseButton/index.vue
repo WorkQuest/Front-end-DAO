@@ -235,7 +235,7 @@ export default {
   }
   &_disabled {
     pointer-events: none;
-    background: #D1D1CF;
+    background: #D1D1CF !important;
   }
   &_outline {
     border: 1px solid rgba(0, 131, 199, 0.1);

@@ -27,7 +27,7 @@
         <a
           v-if="isShowDownload"
           class="actions__download download"
-          :href="item.downloadUrl || item.url"
+          :href="item.url"
           target="_blank"
         >
           <div class="download__icon icon">

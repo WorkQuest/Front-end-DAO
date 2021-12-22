@@ -267,6 +267,16 @@ export default {
     },
   },
   async beforeMount() {
+    const isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
+    if (isMobile) {
+      this.ShowModal({
+        key: modals.status,
+        title: 'Please install Metamask!',
+        subtitle: 'Please open site from Metamask app',
+      });
+      await this.$router.push('/proposals');
+      return;
+    }
     await this.getInvestorData();
   },
   async mounted() {

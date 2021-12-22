@@ -53,8 +53,12 @@
               </div>
               <base-files
                 class="files__container"
-                :items="documents"
+                :items="docs"
                 :is-show-empty="true"
+              />
+              <base-images
+                :mode="''"
+                :items="images"
               />
             </div>
           </div>
@@ -131,7 +135,7 @@
           </div>
           <div class="results__buttons buttons">
             <div
-              v-if="timeIsExpired || isVoted"
+              v-if="isActive && timeIsExpired || isVoted"
               class="buttons__header"
             >
               {{ $t('proposal.results') }}
@@ -301,6 +305,14 @@ export default {
       isChairperson: 'web3/isChairpersonRole',
       cards: 'proposals/cards',
     }),
+    docs() {
+      if (!this.documents.length) return [];
+      return this.documents.filter((item) => item.type === 'doc');
+    },
+    images() {
+      if (!this.documents.length) return [];
+      return this.documents.filter((item) => item.type === 'img');
+    },
     totalPages() {
       return Math.ceil(this.historyCount / this.limit);
     },
@@ -351,6 +363,12 @@ export default {
       await this.fetchVoting(1);
     },
   },
+  async beforeMount() {
+    const isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
+    if (isMobile) {
+      await this.$router.push('/proposals');
+    }
+  },
   async mounted() {
     this.SetLoader(true);
     this.idCard = +this.$route.params.id;
@@ -399,13 +417,14 @@ export default {
     let i = 1;
     // eslint-disable-next-line no-restricted-syntax
     for (const media of card.medias) {
+      const type = media.contentType.split('/')[0] === 'image' ? 'img' : 'doc';
       this.documents.push({
         id: i,
         name: `Document ${i}`,
-        type: 'doc',
-        downloadUrl: media.url,
+        type,
+        url: media.url,
       });
-      i += 1;
+      if (type === 'doc') i += 1;
     }
     this.isFirstLoading = false;
     this.SetLoader(false);
@@ -458,6 +477,7 @@ export default {
       this.SetLoader(true);
       if (!this.isChairperson) return;
       await this.$store.dispatch('web3/executeVoting', this.idCard);
+      this.isActive = false;
       await this.updateVoteResults();
       this.SetLoader(false);
     },
@@ -819,8 +839,6 @@ export default {
 }
 
 .bar {
-  margin-bottom: 15px;
-
   &__result {
     font-size: 16px;
     line-height: 130%;
@@ -872,6 +890,7 @@ export default {
 }
 
 .buttons {
+  margin-top: 15px;
   &__header {
     font-size: 18px;
     line-height: 130%;
