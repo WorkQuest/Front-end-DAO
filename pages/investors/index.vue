@@ -13,15 +13,15 @@
       <base-table
         v-if="usersData.count !== 0"
         class="investors__table"
-        :fields="historyTableFields"
-        :items="usersData.users"
+        :fields="tableFields"
+        :items="users"
       />
       <div class="investors__investors">
         <mobile-table-item
-          v-for="(investor, index) in usersData.users"
+          v-for="(investor, index) in users"
           :key="index"
           :item="investor"
-          :is-last="usersData.users[index] === usersData.users[usersData.users.length - 1]"
+          :is-last="users[index] === users[users.length - 1]"
         />
       </div>
       <base-pager
@@ -48,29 +48,40 @@ export default {
         limit: 20,
         offset: 0,
         q: '',
-        timout: '',
+        timeout: '',
       },
       search: '',
       currPage: 1,
+      votingPower: 0,
     };
   },
   computed: {
     ...mapGetters({
+      userData: 'user/getUserData',
       usersData: 'user/getAllUsers',
       isConnected: 'web3/getWalletIsConnected',
     }),
-    historyTableFields() {
+    tableFields() {
       return [
         { key: 'avatar', label: this.$t('investors.table.name') },
         { key: 'fullName', label: '', sortable: true },
         { key: 'investorAddress', label: this.$t('investors.table.address') },
         { key: 'copy', label: '', sortable: true },
-        { key: 'stake', label: this.$t('investors.table.stake'), sortable: true },
-        { key: 'slots', label: this.$t('investors.table.slots'), sortable: true },
         { key: 'voting', label: this.$t('investors.table.voting'), sortable: true },
         { key: 'undelegate', label: '' },
         { key: 'delegate', label: '' },
       ];
+    },
+    users() {
+      const users = [];
+      this.usersData.users.forEach((user) => {
+        users.push({
+          ...user,
+          callback: this.getInvestors,
+          voting: user.id === this.userData.id ? this.votingPower : 'unknown',
+        });
+      });
+      return users;
     },
     totalPages() {
       return Math.ceil(this.usersData.count / this.filter.limit);
@@ -88,8 +99,8 @@ export default {
     },
     search() {
       this.filter.q = this.search;
-      clearTimeout(this.timout);
-      this.timout = setTimeout(() => {
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
         this.getInvestors();
       }, 1000);
     },
@@ -109,12 +120,20 @@ export default {
   },
   async mounted() {
     await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+    await this.getVotingPower();
   },
   beforeDestroy() {
-    clearTimeout(this.timout);
+    clearTimeout(this.timeout);
   },
   methods: {
+    // TODO Когда появятся кошельки убрать это, брать информацию из сущности юзера полученной с бэка
+    async getVotingPower() {
+      const { address } = await this.$store.dispatch('web3/getAccount');
+      const response = await this.$store.dispatch('web3/getVotes', address);
+      if (response.ok) this.votingPower = +response.result;
+    },
     async getInvestors() {
+      await this.getVotingPower();
       await this.$store.dispatch('user/getAllUserData', this.filter);
     },
   },

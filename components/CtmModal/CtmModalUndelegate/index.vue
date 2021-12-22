@@ -108,7 +108,7 @@ export default {
 }
 
 .undelegate {
-  max-width: 450px !important;
+  max-width: 500px !important;
   &__content {
     padding: 30px 28px 30px 28px!important;
   }

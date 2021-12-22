@@ -128,7 +128,7 @@ export default {
 
 <style lang="scss" scoped>
 .delegate {
-  max-width: 480px !important;
+  max-width: 500px !important;
   &__content {
     padding: 20px 28px 30px 28px!important;
   }

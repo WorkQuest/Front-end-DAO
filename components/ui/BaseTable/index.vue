@@ -73,7 +73,7 @@
         <base-btn
           mode="lightRed"
           class="btn__delegate"
-          :disabled="!myProfile(el.item.id)"
+          :disabled="!myProfile(el.item.id) || el.item.voting === 0"
           :class="delegateClass(el)"
           @click="openModalUndelegate(el)"
         >
@@ -157,13 +157,15 @@ export default {
         key: modals.delegate,
         stake: el.item.stake,
         investorAddress: el.item.investorAddress,
+        callback: el.item.callback,
       });
     },
     openModalUndelegate(el) {
       this.ShowModal({
         key: modals.undelegate,
         stake: el.item.stake,
-        name: el.item.name,
+        name: el.item.fullName,
+        callback: el.item.callback,
       });
     },
     ClipboardSuccessHandler(value) {

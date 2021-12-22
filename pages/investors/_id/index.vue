@@ -107,7 +107,7 @@
               <base-btn
                 mode="lightRed"
                 class="action__undelegate"
-                :disabled="!isMyProfile || votesPower === 0"
+                :disabled="!isMyProfile || votingPower === 0"
                 @click="openModalUndelegate"
               >
                 {{ $t('modals.undelegate') }}
@@ -122,34 +122,36 @@
               </base-btn>
             </div>
           </div>
-          <div class="profile__table">
-            <base-table
-              class="profile__field"
-              :title="$t('wallet.table.trx')"
-              :items="transactionsData"
-              :fields="walletTableFields"
-            />
-          </div>
+          <!--TODO Попросила убрать роза пока не появятся данные для таблицы-->
+          <!--          <div class="profile__table">-->
+          <!--            <base-table-->
+          <!--              class="profile__field"-->
+          <!--              :title="$t('wallet.table.trx')"-->
+          <!--              :items="transactionsData"-->
+          <!--              :fields="walletTableFields"-->
+          <!--            />-->
+          <!--          </div>-->
           <!-- mobile -->
-          <div class="profile__history">
-            <p class="profile__subtitle">
-              {{ $t('wallet.table.trx') }}
-            </p>
-            <mobile-table-item
-              v-for="(transaction, index) in transactionsData"
-              :key="index"
-              :item="transaction"
-              :is-last="transactionsData[index] === transactionsData[transactionsData.length - 1]"
-            />
-          </div>
+          <!--          <div class="profile__history">-->
+          <!--            <p class="profile__subtitle">-->
+          <!--              {{ $t('wallet.table.trx') }}-->
+          <!--            </p>-->
+          <!--            <mobile-table-item-->
+          <!--              v-for="(transaction, index) in transactionsData"-->
+          <!--              :key="index"-->
+          <!--              :item="transaction"-->
+          <!--              :is-last="transactionsData[index] === transactionsData[transactionsData.length - 1]"-->
+          <!--            />-->
+          <!--          </div>-->
           <!-- /mobile -->
         </div>
       </div>
-      <base-pager
-        v-model="pages"
-        class="investor__pagination"
-        :total-pages="totalPages"
-      />
+      <!--TODO Попросила убрать роза пока не появятся данные для таблицы-->
+      <!--      <base-pager-->
+      <!--        v-model="pages"-->
+      <!--        class="investor__pagination"-->
+      <!--        :total-pages="totalPages"-->
+      <!--      />-->
     </div>
   </div>
 </template>
@@ -164,7 +166,7 @@ export default {
     return {
       investor: {},
       userId: this.$route.params.id,
-      votesPower: 0,
+      votingPower: 0,
       investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
       stake: '126,613,276',
       name: 'user@gmail.com',
@@ -279,13 +281,13 @@ export default {
   },
   async mounted() {
     await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-    await this.getVotesPower();
+    await this.getVotingPower();
   },
   methods: {
-    async getVotesPower() {
+    async getVotingPower() {
       const { address } = await this.$store.dispatch('web3/getAccount');
       const response = await this.$store.dispatch('web3/getVotes', address);
-      if (response.ok) this.votesPower = +response.result;
+      if (response.ok) this.votingPower = +response.result;
     },
     async getInvestorData() {
       if (this.isMyProfile) {
@@ -299,7 +301,7 @@ export default {
         key: modals.delegate,
         stake: this.stake,
         investorAddress: this.investorAddress,
-        callback: this.getVotesPower,
+        callback: this.getVotingPower,
       });
     },
     async openModalUndelegate() {
@@ -307,7 +309,7 @@ export default {
         key: modals.undelegate,
         stake: this.stake,
         name: `${this.investor.firstName} ${this.investor.lastName}`,
-        callback: this.getVotesPower,
+        callback: this.getVotingPower,
       });
     },
     ClipboardSuccessHandler(value) {
