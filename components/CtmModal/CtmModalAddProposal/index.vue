@@ -77,6 +77,7 @@
                 <base-btn
                   mode="outline"
                   class="uploader__btn"
+                  :disabled="isDocumentsLimitReached"
                   @click="$refs.fileUpload.click()"
                 >
                   {{ $t('meta.addFile') }}
@@ -125,7 +126,6 @@ export default {
       fileId: 0,
       documents: [],
       docsLimit: 10,
-      imagesLimit: 10,
       accept: 'application/msword, application/pdf',
       acceptedTypes: [],
     };
@@ -134,6 +134,9 @@ export default {
     ...mapGetters({
       isConnected: 'web3/getWalletIsConnected',
     }),
+    isDocumentsLimitReached() {
+      return this.documents.length >= this.docsLimit;
+    },
   },
   async mounted() {
     this.acceptedTypes = this.accept.replace(/\s/g, '').split(',');
@@ -173,17 +176,12 @@ export default {
       return this.acceptedTypes.indexOf(file.type) !== -1;
     },
     handleFileSelected(e) {
+      if (this.isDocumentsLimitReached) return;
       if (!e.target.files[0]) return;
       const file = e.target.files[0];
       const type = file.type.split('/').shift() === 'image' ? 'img' : 'doc';
 
       if (!this.checkContentType(file)) {
-        return;
-      }
-      if (type === 'img' && this.documents.filter((item) => item.type === 'img').length >= this.imagesLimit) {
-        return;
-      }
-      if (type === 'doc' && this.documents.filter((item) => item.type === 'doc').length >= this.docsLimit) {
         return;
       }
 
