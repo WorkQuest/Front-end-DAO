@@ -38,19 +38,20 @@
         </div>
       </div>
     </div>
-    <div class="content">
-      <span v-if="!cards.length">
-        {{ $t('proposals.cards.emptyCardsList') }}
-      </span>
+    <empty-data
+      v-if="!cards.length"
+      :description="$t('proposals.cards.emptyCardsList')"
+    />
+    <div
+      v-else
+      class="content"
+    >
       <div
         v-for="(card, i) in cards"
-        v-else
         :key="i"
         class="card"
       >
-        <div
-          class="card__content"
-        >
+        <div class="card__content">
           <div class="card__header">
             <div class="card__header_top">
               <div class="card__header_left">
@@ -112,7 +113,7 @@
 <script>
 
 import { mapGetters } from 'vuex';
-import { Chains, proposalStatuses } from '~/utils/enums';
+import { proposalStatuses } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 
 export default {
