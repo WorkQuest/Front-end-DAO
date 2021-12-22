@@ -101,8 +101,10 @@ export default {
       return require('~/assets/img/app/avatar_empty.png');
     },
     getAuthorName(item) {
-      const { firstName, lastName } = item && item.author;
-      if (firstName || lastName) return `${firstName} ${lastName}`;
+      if (item.author) {
+        const { firstName, lastName } = item.author;
+        if (firstName || lastName) return `${firstName} ${lastName}`;
+      }
       return this.$t('user.nameless');
     },
     toInvestor(authorId) {
