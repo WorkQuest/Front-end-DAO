@@ -93,6 +93,7 @@
           rules="required|max:250"
           :name="$t('discussions.response')"
           mode="comment-field"
+          @keyup.enter.native="handleSubmit(addSubCommentResponse(comment, 2))"
         />
         <base-btn
           class="footer__btn"

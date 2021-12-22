@@ -80,11 +80,12 @@
             rules="required|max:250"
             :name="$t('discussions.response')"
             mode="comment-field"
+            @keyup.enter.native="handleSubmit(addSubCommentResponse(data, 3))"
           />
           <base-btn
             class="footer__btn"
             :disabled="!validated || !passed || invalid"
-            @click="handleSubmit(addSubCommentResponse(data, 2))"
+            @click="handleSubmit(addSubCommentResponse(data, 3))"
           >
             <template v-slot:left>
               <span class="icon-send footer__arrow" />
