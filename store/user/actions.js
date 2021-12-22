@@ -28,8 +28,8 @@ export default {
   },
   async getAllUserData({ commit }, config) {
     try {
-      const query = config.q ? `limit=${config.limit}&offset=${config.offset}&q=${config.q}` : `limit=${config.limit}&offset=${config.offset}`;
-      const { result } = await this.$axios.$get(`/v1/profile/users?${query}`);
+      if (!config.q.length) delete config.q;
+      const { result } = await this.$axios.$get('/v1/profile/users', { params: { ...config } });
       result.users.forEach((user) => {
         user.fullName = `${user.firstName || ''} ${user.lastName || ''}`;
         user.investorAddress = '****************';

@@ -48,8 +48,8 @@ export default {
         limit: 20,
         offset: 0,
         q: '',
-        timeout: '',
       },
+      timeout: '',
       search: '',
       currPage: 1,
       votingPower: 0,
@@ -100,7 +100,9 @@ export default {
       this.SetLoader(false);
     },
     search() {
-      this.filter.q = this.search;
+      this.filter.q = this.search.trim();
+      this.filter.offset = 0;
+      this.currPage = 1;
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         this.getInvestors();
