@@ -398,6 +398,7 @@
     "addDiscussion": "Add Discussion",
     "discussionTopic": "Discussion topic",
     "addFile": "Add File",
+    "filesLimit": "Files limit: {a}",
     "add": "Add",
     "cancel": "Cancel",
     "delete": "Delete",

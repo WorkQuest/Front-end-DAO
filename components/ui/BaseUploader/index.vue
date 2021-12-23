@@ -14,6 +14,12 @@
       :is-show-download="isShowDownload"
       @remove="remove"
     />
+    <div
+      v-if="limit && items.length >= limit"
+      class="uploader__error"
+    >
+      {{ $t('modals.filesLimit', { a: limit }) }}
+    </div>
     <slot name="actionButton" />
   </div>
 </template>
@@ -24,6 +30,10 @@ export default {
     items: {
       type: Array,
       default: () => [],
+    },
+    limit: {
+      type: Number,
+      default: 0,
     },
     type: {
       type: String,
@@ -58,5 +68,10 @@ export default {
 .uploader {
   display: flex;
   flex-direction: column;
+  &__error {
+    margin-top: 5px;
+    color: $red;
+    font-size: 12px;
+  }
 }
 </style>

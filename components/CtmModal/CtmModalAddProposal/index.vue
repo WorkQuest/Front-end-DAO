@@ -61,6 +61,7 @@
               class="uploader"
               type="all"
               :items="documents"
+              :limit="docsLimit"
               :is-show-download="false"
               rules="required|alpha_num"
               :name="$t('modals.recepientAddressField')"
@@ -132,7 +133,9 @@ export default {
   },
   computed: {
     ...mapGetters({
+      options: 'modals/getOptions',
       isConnected: 'web3/getWalletIsConnected',
+      prevFilters: 'proposals/filters',
     }),
     isDocumentsLimitReached() {
       return this.documents.length >= this.docsLimit;
@@ -151,6 +154,7 @@ export default {
     async addProposal() {
       await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
       if (!this.isConnected) return;
+      const { callback } = this.options;
       this.SetLoader(true);
       this.descriptionInput = this.descriptionInput.trim();
       this.votingTopicInput = this.votingTopicInput.trim();
@@ -166,6 +170,13 @@ export default {
         const { nonce } = res.result;
         await this.$store.dispatch('web3/addProposal', { description: this.descriptionInput, nonce });
         await this.$store.dispatch('proposals/getProposals', {});
+      }
+      if (callback) {
+        await callback;
+        await this.$store.dispatch('proposals/updateFilters', {
+          ...this.prevFilters,
+          lastPage: 1,
+        });
       }
       this.close();
       this.SetLoader(false);
