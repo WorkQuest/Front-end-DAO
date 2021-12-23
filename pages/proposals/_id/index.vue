@@ -136,7 +136,7 @@
           </div>
           <div class="results__buttons buttons">
             <div
-              v-if="isActive && timeIsExpired || isVoted"
+              v-if="isActive && !timeIsExpired"
               class="buttons__header"
             >
               {{ $t('proposal.voteForProposal') }}
@@ -182,7 +182,7 @@
                 {'btn__voted_red': vote === false },
               ]"
             >
-              {{ vote ? $t('proposal.agree') : $t('proposal.disagree') }}
+              {{ $t('proposal.youVoted') }} {{ vote ? $t('proposal.yes') : $t('proposal.no') }}
             </base-btn>
           </div>
         </div>
