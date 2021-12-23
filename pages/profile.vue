@@ -204,6 +204,7 @@
               mode="icon"
               type="text"
               mode-error="small"
+              class="profile-cont__social-input"
               @input="handleChangeSocial($event, cell.id)"
             >
               <template v-slot:left>
@@ -681,6 +682,15 @@ export default {
 .profile-cont {
   background-color: #fff;
   border-radius: 6px;
+
+  &__social-input {
+    height: 46px;
+  }
+
+  &__field {
+    height: 46px;
+    margin-bottom: 15px;
+  }
 
   &__grid-container {
     display: grid;

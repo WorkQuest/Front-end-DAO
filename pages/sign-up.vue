@@ -26,6 +26,7 @@
       >
         <base-field
           v-model="model.firstName"
+          class="auth__input"
           :placeholder="$t('signUp.firstName')"
           :mode="'icon'"
           autocomplete="off"
@@ -41,6 +42,7 @@
         </base-field>
         <base-field
           v-model="model.lastName"
+          class="auth__input"
           :placeholder="$t('signUp.lastName')"
           :mode="'icon'"
           :name="$t('signUp.lastName')"
@@ -55,6 +57,7 @@
         </base-field>
         <base-field
           v-model="model.email"
+          class="auth__input"
           rules="required|email"
           :name="$t('signUp.email')"
           :placeholder="$t('signUp.email')"
@@ -70,6 +73,7 @@
         </base-field>
         <base-field
           v-model="model.password"
+          class="auth__input"
           :placeholder="$t('signUp.password')"
           :mode="'icon'"
           :name="$t('signUp.password')"
@@ -87,6 +91,7 @@
         </base-field>
         <base-field
           v-model="model.passwordConfirm"
+          class="auth__input"
           :placeholder="$t('signUp.confirmPassword')"
           :mode="'icon'"
           type="password"
@@ -162,6 +167,10 @@ export default {
   &__container {
     display: grid;
     grid-template-rows: auto;
+  }
+  &__input {
+    height: 46px;
+    margin-bottom: 20px;
   }
   &__text {
     font-family: 'Inter', sans-serif;

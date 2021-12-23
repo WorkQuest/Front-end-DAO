@@ -24,6 +24,7 @@
       >
         <base-field
           v-model="model.email"
+          class="auth__input"
           rules="required|email"
           :name="$t('signUp.email')"
           :placeholder="$t('signUp.email')"
@@ -39,6 +40,7 @@
         </base-field>
         <base-field
           v-model="model.password"
+          class="auth__input"
           :placeholder="$t('signUp.password')"
           :mode="'icon'"
           :name="$t('signUp.password')"
@@ -181,6 +183,10 @@ export default {
   &__container {
     display: grid;
     grid-template-rows: auto;
+  }
+  &__input {
+    height: 46px;
+    margin-bottom: 20px;
   }
   &__text {
     font-family: 'Inter', sans-serif;
