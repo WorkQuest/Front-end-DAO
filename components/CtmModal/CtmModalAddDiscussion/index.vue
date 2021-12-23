@@ -159,6 +159,8 @@ export default {
     },
     async createDiscussion() {
       const medias = await this.uploadFiles(this.documents);
+      this.title = this.title.trim();
+      this.discussion = this.discussion.trim();
       const response = await this.$store.dispatch('discussions/createDiscussion', {
         title: this.title,
         description: this.discussion,
