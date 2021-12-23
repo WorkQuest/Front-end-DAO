@@ -188,8 +188,7 @@ export default {
       return this.acceptedTypes.indexOf(file.type) !== -1;
     },
     handleFileSelected(e) {
-      if (this.isDocumentsLimitReached) return;
-      if (!e.target.files[0]) return;
+      if (!e.target.files[0] || this.isDocumentsLimitReached) return;
       const file = e.target.files[0];
       const type = file.type.split('/').shift() === 'image' ? 'img' : 'doc';
 

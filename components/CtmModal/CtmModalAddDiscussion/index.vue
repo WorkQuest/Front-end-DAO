@@ -53,6 +53,7 @@
           class="add-discussion uploader__container"
           type="all"
           :items="documents"
+          :limit="docsLimit"
           :is-show-download="false"
           @remove="remove"
         >
@@ -107,33 +108,32 @@ export default {
       acceptedTypes: [],
       title: '',
       discussion: '',
-      imagesLimit: 5,
-      docsLimit: 5,
+      docsLimit: 10,
       documents: [],
+      fileId: 0,
     };
+  },
+  computed: {
+    docsLimitReached() {
+      return this.documents.length >= this.docsLimit;
+    },
   },
   mounted() {
     this.acceptedTypes = this.accept.replace(/\s/g, '').split(',');
   },
   methods: {
     remove(item) {
-      this.documents = this.documents.filter((doc) => doc.name !== item.name);
+      this.documents = this.documents.filter((doc) => doc.id !== item.id);
     },
     checkContentType(file) {
       return this.acceptedTypes.indexOf(file.type) !== -1;
     },
     handleFileSelected(e) {
-      if (!e.target.files[0]) return;
+      if (!e.target.files[0] || this.docsLimitReached) return;
       const file = e.target.files[0];
       const type = file.type.split('/').shift() === 'image' ? 'img' : 'doc';
 
       if (!this.checkContentType(file)) {
-        return;
-      }
-      if (type === 'img' && this.documents.filter((item) => item.type === 'img').length >= this.imagesLimit) {
-        return;
-      }
-      if (type === 'doc' && this.documents.filter((item) => item.type === 'doc').length >= this.docsLimit) {
         return;
       }
 
