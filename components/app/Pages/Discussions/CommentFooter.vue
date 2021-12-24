@@ -62,26 +62,16 @@ export default {
   },
   methods: {
     async addSubCommentResponse(comment, level) {
-      if (!comment.rootCommentId) {
-        const payload = {
-          rootCommentId: comment.id,
-          text: this.subCommentInput,
-          medias: [],
-        };
-        await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
-        await this.$parent.loadSubs(comment.id, level);
-        this.subCommentInput = '';
-      } else {
-        const payload = {
-          rootCommentId: comment.id,
-          text: this.subCommentInput,
-          medias: [],
-        };
-        await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
-        await this.$parent.loadSubs(comment.rootCommentId, level);
-        this.$parent.isReply = false;
-        this.subCommentInput = '';
-      }
+      const payload = {
+        rootCommentId: comment.id,
+        text: this.subCommentInput,
+        medias: [],
+      };
+      await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
+      this.$parent.showSubs = true;
+      this.$parent.isReply = false;
+      await this.$parent.loadSubs(comment.id, level);
+      this.subCommentInput = '';
     },
   },
 };

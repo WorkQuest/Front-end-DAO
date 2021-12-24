@@ -37,7 +37,7 @@
         <base-btn
           v-if="data.amountSubComments > 0"
           class="bottom__btn"
-          @click="!filterComments(sub5Comments, data.id).length ? loadSubs(data.id) : clearSubs()"
+          @click="toggleShowSubComments(data)"
         >
           {{ !filterComments(sub5Comments, data.id).length ? $t('discussions.show') : $t('discussions.hide') }}
         </base-btn>
@@ -106,6 +106,7 @@ export default {
   },
   data() {
     return {
+      showSubs: false,
       isReply: false,
       sub5Comments: [],
       subCommentsOnPage: 5,
@@ -123,6 +124,13 @@ export default {
     },
   },
   methods: {
+    toggleShowSubComments(comment) {
+      this.showSubs = false;
+      if (!this.filterComments(this.sub5Comments, comment.id).length || this.showSubs) {
+        this.loadSubs(comment.id);
+      }
+      this.clearSubs();
+    },
     clearSubs() {
       this.sub5Comments = [];
     },

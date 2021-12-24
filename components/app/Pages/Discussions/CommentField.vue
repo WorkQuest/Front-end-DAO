@@ -37,7 +37,7 @@
         <base-btn
           v-if="data.amountSubComments > 0"
           class="bottom__btn"
-          @click="!filterComments(sub3Comments, data.id).length ? loadSubs(data.id) : clearSubs()"
+          @click="toggleShowSubComments(data)"
         >
           {{ !filterComments(sub3Comments, data.id).length ? $t('discussions.show') : $t('discussions.hide') }}
         </base-btn>
@@ -106,6 +106,7 @@ export default {
   },
   data() {
     return {
+      showSubs: false,
       subCommentsOnPage: 5,
       isReply: false,
       sub3Comments: [],
@@ -123,6 +124,13 @@ export default {
     },
   },
   methods: {
+    toggleShowSubComments(comment) {
+      this.showSubs = false;
+      if (!this.filterComments(this.sub3Comments, comment.id).length || this.showSubs) {
+        this.loadSubs(comment.id);
+      }
+      this.clearSubs();
+    },
     async loadMoreSubs2(rootId) {
       this.$parent.increaseCounter();
       this.$parent.loadMoreSubs(rootId);
@@ -145,6 +153,7 @@ export default {
       this.sub3Comments = [];
     },
     filterComments(subComments, rootId) {
+      console.log(subComments);
       return subComments.filter((item) => item.rootCommentId === rootId);
     },
     toggleReply() {

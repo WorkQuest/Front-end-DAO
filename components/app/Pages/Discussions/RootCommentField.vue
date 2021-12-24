@@ -28,7 +28,7 @@
         <base-btn
           v-if="comment.amountSubComments > 0"
           class="comment__btn"
-          @click="!filterComments(sub2Comments, comment.id).length ? loadSubs(comment.id) : clearSubs()"
+          @click="toggleShowSubComments(comment)"
         >
           {{ !filterComments(sub2Comments, comment.id).length && comment.amountSubComments > 0 ? $t('discussions.show') : $t('discussions.hide') }}
         </base-btn>
@@ -91,6 +91,7 @@ export default {
   },
   data() {
     return {
+      showSubs: false,
       subCommentsOnPage: 5,
       comments: [],
       sub2Comments: [],
@@ -105,6 +106,13 @@ export default {
   methods: {
     clearSubs() {
       this.sub2Comments = [];
+    },
+    toggleShowSubComments(comment) {
+      this.showSubs = false;
+      if (!this.filterComments(this.sub2Comments, comment.id).length || this.showSubs) {
+        this.loadSubs(comment.id);
+      }
+      this.clearSubs();
     },
     async toggleLikeOnComment(comment) {
       await this.$store.dispatch('discussions/toggleLikeOnComment', { id: comment.id, like: comment && !Object.keys(comment.commentLikes).length > 0 });
