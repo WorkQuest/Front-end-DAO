@@ -16,6 +16,7 @@ import BaseUploader from '~/components/ui/BaseUploader';
 import BaseImages from '~/components/ui/BaseImages';
 import BasePager from '~/components/ui/BasePager';
 import BaseFiles from '~/components/ui/BaseFiles';
+import CommentFooter from '~/components/app/Pages/Discussions/CommentFooter';
 import RootCommentField from '~/components/app/Pages/Discussions/RootCommentField.vue';
 import CommentField from '~/components/app/Pages/Discussions/CommentField';
 import CommentField2 from '~/components/app/Pages/Discussions/CommentField2';
@@ -25,6 +26,7 @@ import TableItem from '~/components/mobile/TableItem.vue';
 import EmptyData from '~/components/ui/EmptyData';
 
 Vue.component('empty-data', EmptyData);
+Vue.component('comment-footer', CommentFooter);
 Vue.component('comment-field', CommentField);
 Vue.component('comment-field2', CommentField2);
 Vue.component('comment-field3', CommentField3);
