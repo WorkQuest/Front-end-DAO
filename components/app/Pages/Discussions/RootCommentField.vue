@@ -73,6 +73,7 @@
     </div>
     <validation-observer
       v-slot="{handleSubmit, validated, passed, invalid}"
+      tag="div"
     >
       <!--  Bottom -->
       <div
@@ -359,7 +360,7 @@ export default {
     border-radius: 6px;
     border: none;
     padding: 10px 15px 10px 15px;
-    margin: 0 0 20px 0;
+    //margin: 0 0 20px 0;
   }
   &__chain {
     padding: 0 0 0 5px;
