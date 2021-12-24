@@ -78,7 +78,6 @@ export default {
   },
   data() {
     return {
-      subCommentInput: '',
       subCommentsOnPage: 5,
     };
   },

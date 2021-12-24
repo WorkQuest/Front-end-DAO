@@ -112,7 +112,6 @@ export default {
     return {
       subCommentsOnPage: 5,
       isReply: false,
-      subCommentInput: '',
       sub3Comments: [],
       count: 1,
     };

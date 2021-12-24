@@ -111,7 +111,6 @@ export default {
   data() {
     return {
       isReply: false,
-      subCommentInput: '',
       sub4Comments: [],
       subCommentsOnPage: 5,
       count: 1,
