@@ -49,12 +49,12 @@
           </div>
           <base-files
             class="discussion__files"
-            :items="pdf"
+            :items="discussionDocuments"
           />
           <base-images
             class="discussion__images"
             mode="images"
-            :items="images"
+            :items="discussionImages"
             :is-show-download="false"
           />
           <slot name="actionButton" />
@@ -194,21 +194,18 @@ import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
-      images: [],
-      pdf: [],
       page: 1,
       perPager: 10,
       isAddComment: false,
-      rootCommentObjects: {},
-      rootCommentArray: [],
       totalPagesValue: 1,
       discussionId: '',
       opinion: '',
-      documents: [],
     };
   },
   computed: {
     ...mapGetters({
+      discussionImages: 'discussions/getDiscussionImages',
+      discussionDocuments: 'discussions/getDiscussionDocuments',
       discussionAuthor: 'discussions/getCurrentDiscussionAuthorData',
       currentDiscussion: 'discussions/getCurrentDiscussion',
       authorAvatarUrl: 'discussions/getCurrentDiscussionAuthorAvatarUrl',
@@ -228,15 +225,17 @@ export default {
     this.SetLoader(true);
     this.discussionId = this.$route.params.id;
     await this.getCurrentDiscussion();
-    this.filterMediaToTypes();
+    await this.filterMediaToTypes();
     await this.getRootComments();
     this.totalPages();
     this.SetLoader(false);
   },
   methods: {
-    filterMediaToTypes() {
-      this.pdf = this.currentDiscussion.medias.filter((file) => file.contentType === 'application/msword' || file.contentType === 'application/pdf');
-      this.images = this.currentDiscussion.medias.filter((file) => file.contentType === 'image/jpeg' || file.contentType === 'image/png');
+    async filterMediaToTypes() {
+      const documents = this.currentDiscussion.medias.filter((file) => file.contentType === 'application/msword' || file.contentType === 'application/pdf');
+      const images = this.currentDiscussion.medias.filter((file) => file.contentType === 'image/jpeg' || file.contentType === 'image/png');
+      await this.$store.dispatch('discussions/setDiscussionDocuments', documents);
+      await this.$store.dispatch('discussions/setDiscussionImages', images);
     },
     authorName() {
       if (this.discussionAuthor) return `${this.discussionAuthor.firstName} ${this.discussionAuthor.lastName}`;
@@ -246,12 +245,11 @@ export default {
       this.$router.push(`/investors/${authorId}`);
     },
     totalPages() {
-      return Math.ceil(this.rootCommentObjects.count / this.perPager);
+      return Math.ceil(this.rootComments.count / this.perPager);
     },
     async getRootComments(additionalValue) {
       const discussionId = this.currentDiscussion.id;
-      this.rootCommentObjects = await this.$store.dispatch('discussions/getRootComments', { discussionId, additionalValue });
-      this.rootCommentArray = this.rootCommentObjects.comments;
+      await this.$store.dispatch('discussions/getRootComments', { discussionId, additionalValue });
       this.totalPagesValue = this.totalPages();
     },
     async addRootCommentResponse() {

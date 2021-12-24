@@ -1,4 +1,10 @@
 export default {
+  setDiscussionDocuments(state, data) {
+    state.discussionDocuments = data;
+  },
+  setDiscussionImages(state, data) {
+    state.discussionImages = data;
+  },
   setCurrentDiscussion(state, data) {
     state.currentDiscussion = data;
   },
