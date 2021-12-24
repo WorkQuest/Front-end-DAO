@@ -103,10 +103,6 @@ export default {
       type: [Number, String],
       default: 2,
     },
-    discussionId: {
-      type: String,
-      default: () => '',
-    },
   },
   data() {
     return {

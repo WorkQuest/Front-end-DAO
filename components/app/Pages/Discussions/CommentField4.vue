@@ -71,10 +71,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    discussionId: {
-      type: String,
-      default: () => '',
-    },
   },
   data() {
     return {
