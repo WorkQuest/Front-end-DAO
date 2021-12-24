@@ -509,63 +509,6 @@ export default {
     margin-right: 7px;
   }
 }
-.footer {
-  display: flex;
-  &__input {
-    @include text-usual;
-    width: 100%;
-    height: 40px;
-    border-radius: 6px;
-    border: none;
-    padding: 10px 15px 10px 15px;
-    margin: 0 0 20px 0;
-  }
-  &__comment {
-    @include text-usual;
-    width: 1090px;
-    height: 40px;
-    background: #F7F8FA;
-    border-radius: 6px;
-    border: none;
-    padding: 10px 20px 10px 15px;
-    margin: 0 0 0 10px;
-  }
-  &__btn {
-    width: 40px;
-    height: 40px;
-    background: #F7F8FA;
-    cursor: pointer;
-    &:hover {
-      background: #F7F8FA;
-    }
-  }
-  &__chain {
-    display: flex;
-    padding: 0 10px;
-    width: 40px;
-    height: 40px;
-    background: #F7F8FA;
-    border-radius: 6px;
-    align-items: center;
-    justify-content: center;
-    color: #000000;
-    font-size: 25px;
-    cursor: pointer;
-  }
-  &__arrow {
-    display: flex;
-    padding: 0 10px;
-    width: 40px;
-    height: 40px;
-    background: #F7F8FA;
-    border-radius: 6px;
-    align-items: center;
-    justify-content: center;
-    font-size: 25px;
-    color: #0083C7;
-    cursor: pointer;
-  }
-}
 .discussion {
   &__title {
     font-weight: 600;
