@@ -157,26 +157,17 @@ export default {
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
     },
-    async addSubCommentResponse(comment, level) {
-      const payload = {
-        rootCommentId: comment.id,
-        text: this.subCommentInput,
-        medias: [],
-      };
-      await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
-      await this.$parent.loadSubs(comment.rootCommentId, level);
-      this.isReply = false;
-      this.subCommentInput = '';
-    },
     async toggleLikeOnComment(comment, level) {
-      if (comment && Object.keys(comment.commentLikes).length > 0) {
-        await this.$store.dispatch('discussions/toggleLikeOnComment', { id: comment.id, like: false });
-        if (comment.rootCommentId) this.$parent.loadSubs(comment.rootCommentId, level);
-        else if (!comment.rootCommentId) this.$parent.getRootComments();
-      } if (comment && Object.keys(comment.commentLikes).length === 0) {
-        await this.$store.dispatch('discussions/toggleLikeOnComment', { id: comment.id, like: true });
-        if (comment.rootCommentId) this.$parent.loadSubs(comment.rootCommentId, level);
-        else if (!comment.rootCommentId) this.$parent.getRootComments();
+      if (comment) {
+        if (Object.keys(comment.commentLikes).length > 0) {
+          await this.$store.dispatch('discussions/toggleLikeOnComment', { id: comment.id, like: false });
+          if (comment.rootCommentId) this.$parent.loadSubs(comment.rootCommentId, level);
+          else if (!comment.rootCommentId) this.$parent.getRootComments();
+        } if (Object.keys(comment.commentLikes).length === 0) {
+          await this.$store.dispatch('discussions/toggleLikeOnComment', { id: comment.id, like: true });
+          if (comment.rootCommentId) this.$parent.loadSubs(comment.rootCommentId, level);
+          else if (!comment.rootCommentId) this.$parent.getRootComments();
+        }
       }
     },
   },

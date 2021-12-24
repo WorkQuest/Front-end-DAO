@@ -79,7 +79,7 @@ export default {
         };
         await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
         await this.$parent.loadSubs(comment.rootCommentId, level);
-        this.isReply = false;
+        this.$parent.isReply = false;
         this.subCommentInput = '';
       }
     },
