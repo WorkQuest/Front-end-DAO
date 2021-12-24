@@ -261,6 +261,7 @@ export default {
   }
 }
 .footer {
+  animation: show  1s 1;
   display: flex;
   &__input {
     @include text-usual;

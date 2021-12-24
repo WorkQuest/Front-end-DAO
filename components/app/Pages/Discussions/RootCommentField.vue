@@ -200,6 +200,7 @@ export default {
   visibility: hidden;
 }
 .comment {
+  animation: show  1s 1;
   padding: 0 30px 0 0;
   display: flex;
   &__subcomment {
@@ -351,6 +352,7 @@ export default {
   }
 }
 .footer {
+  animation: show  1s 1;
   display: flex;
   &__input {
     @include text-usual;

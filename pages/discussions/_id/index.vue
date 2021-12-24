@@ -285,6 +285,7 @@ export default {
   visibility: hidden;
 }
 .info {
+  animation: show  1s 1;
   &__comment {
     background: #fff;
     width: 100%;
