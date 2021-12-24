@@ -6,7 +6,7 @@ export default {
     return response;
   },
   async signUp({ commit }, payload) {
-    const response = await this.$axios.$post('/v1/auth/register', payload);
+    const response = await this.$axios.$post('/v1/auth/dao/register', payload);
     commit('setNewTokens', response.result);
     return response;
   },
@@ -28,14 +28,12 @@ export default {
   },
   async getAllUserData({ commit }, config) {
     try {
-      const query = config.q ? `limit=${config.limit}&offset=${config.offset}&q=${config.q}` : `limit=${config.limit}&offset=${config.offset}`;
-      const { result } = await this.$axios.$get(`/v1/profile/users?${query}`);
+      if (!config.q.length) delete config.q;
+      const { result } = await this.$axios.$get('/v1/profile/users', { params: { ...config } });
       result.users.forEach((user) => {
         user.fullName = `${user.firstName || ''} ${user.lastName || ''}`;
-        user.investorAddress = '0xnf8o29837hrvbn42o37hsho3b74thb3';
-        user.stake = '126,613,276';
-        user.slots = '147';
-        user.voting = '127 millions';
+        user.investorAddress = '****************';
+        user.voting = '';
         user.undelegate = 'Undelegate';
         user.delegate = 'Delegate';
       });

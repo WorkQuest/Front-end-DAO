@@ -20,7 +20,8 @@
       <div class="proposal__content content">
         <div class="proposal__info info content__column">
           <div class="info__top info__top_blue">
-            <span>{{ `Voting #${idCard}` }}</span>
+            <!-- TODO: потом удалить -->
+            <span>{{ `Voting #${+idCard - 1}` }}</span>
             <span
               class="info__status"
               :class="cardsStatusColor(status)"
@@ -138,7 +139,7 @@
               v-if="isActive && timeIsExpired || isVoted"
               class="buttons__header"
             >
-              {{ $t('proposal.results') }}
+              {{ $t('proposal.voteForProposal') }}
             </div>
             <base-btn
               v-if="isActive && timeIsExpired && isChairperson"
@@ -181,7 +182,7 @@
                 {'btn__voted_red': vote === false },
               ]"
             >
-              {{ $t('proposal.youVoted') }} {{ vote ? $t('proposal.yes') : $t('proposal.no') }}
+              {{ vote ? $t('proposal.agree') : $t('proposal.disagree') }}
             </base-btn>
           </div>
         </div>

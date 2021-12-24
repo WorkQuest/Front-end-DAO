@@ -174,6 +174,7 @@ export default {
       top: 0;
       border-radius: 50%;
       cursor: pointer;
+      object-fit: cover;
     }
     &__star {
       margin-left: auto;

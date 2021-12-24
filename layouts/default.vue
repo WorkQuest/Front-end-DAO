@@ -397,23 +397,14 @@ export default {
       isNotFlexContainer: true,
       notification: 1,
       mobileMenuLinks: [
-        {
-          path: '/proposals',
-          title: this.$t('ui.proposals'),
-        },
+        { path: '/proposals', title: this.$t('ui.proposals') },
         //  TODO Временно убрали кнопку wallet
         // {
         //   path: '/wallet',
         //   title: this.$t('ui.wallet'),
         // },
-        {
-          path: '/investors',
-          title: this.$t('ui.investors'),
-        },
-        {
-          path: '/discussions',
-          title: this.$t('ui.discussions'),
-        },
+        { path: '/investors', title: this.$t('ui.investors') },
+        { path: '/discussions', title: this.$t('ui.discussions') },
         //  TODO Временно убрали кнопку KYC
         // {
         //   path: '/KYC',
@@ -421,44 +412,17 @@ export default {
         // },
       ],
       userDDLinks: [
-        {
-          link: '/profile',
-          title: 'My profile',
-        },
-        {
-          link: '/',
-          title: 'Logout',
-        },
+        { link: '/profile', title: 'My profile' },
+        { link: '/', title: 'Logout' },
       ],
       socialLinks: [
-        {
-          url: 'https://twitter.com/workquest_co',
-          class: 'twitter',
-        },
-        {
-          url: 'https://www.youtube.com/channel/UCpQTdOMynXejrRTVf4ksKPA',
-          class: 'youtube',
-        },
-        {
-          url: 'https://www.reddit.com/user/WorkQuest_co',
-          class: 'reddit',
-        },
-        {
-          url: 'https://m.facebook.com/WorkQuestOfficial/',
-          class: 'facebook',
-        },
-        {
-          url: 'https://www.linkedin.com/company/workquestofficial',
-          class: 'linkedin',
-        },
-        {
-          url: 'https://www.instagram.com/workquestofficial/',
-          class: 'instagram',
-        },
-        {
-          url: 'https://t.me/WorkQuest',
-          class: 'telegram',
-        },
+        { url: 'https://twitter.com/workquest_co', class: 'twitter' },
+        { url: 'https://www.youtube.com/channel/UCpQTdOMynXejrRTVf4ksKPA', class: 'youtube' },
+        { url: 'https://www.reddit.com/user/WorkQuest_co', class: 'reddit' },
+        { url: 'https://m.facebook.com/WorkQuestOfficial/', class: 'facebook' },
+        { url: 'https://www.linkedin.com/company/workquestofficial', class: 'linkedin' },
+        { url: 'https://www.instagram.com/workquestofficial/', class: 'instagram' },
+        { url: 'https://t.me/WorkQuest', class: 'telegram' },
       ],
     };
   },
@@ -471,10 +435,7 @@ export default {
     }),
     profileLinks() {
       return [
-        {
-          title: this.$t('ui.profile.myProfile'),
-          path: '/profile',
-        },
+        { title: this.$t('ui.profile.myProfile'), path: '/profile' },
       ];
     },
   },
@@ -506,17 +467,6 @@ export default {
       this.isMobileMenu = !this.isMobileMenu;
       this.isNotFlexContainer = !this.isNotFlexContainer;
       this.closeAnother('mobile');
-    },
-    toMain() {
-      if (this.userData.role === 'worker') {
-        this.$router.push('/quests');
-      }
-      if (this.userData.role === 'employer') {
-        this.$router.push('/workers');
-      }
-    },
-    createNewQuest() {
-      this.$router.push('/create-quest');
     },
     goToMessages() {
       this.$router.push('/messages');
@@ -912,6 +862,7 @@ export default {
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    object-fit: cover;
   }
   &__items {
     display: grid;

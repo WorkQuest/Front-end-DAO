@@ -267,6 +267,7 @@ export default {
     border-radius: 50%;
     margin: 0!important;
     text-align: center;
+    object-fit: cover;
   }
 }
 .btn {
