@@ -1,13 +1,12 @@
 <template>
   <validation-observer
-    v-slot="{handleSubmit, validated}"
+    v-slot="{handleSubmit, invalid}"
   >
     <div
       class="comment__footer footer"
     >
       <base-btn
         class="footer__btn hide"
-        :disabled="!validated"
       >
         <template v-slot:left>
           <span class="icon-link footer__chain" />
@@ -24,11 +23,14 @@
       />
       <base-btn
         class="footer__btn"
-        :disabled="!validated || !passed || invalid"
+        :disabled="!isComplete() || invalid"
         @click="handleSubmit(addSubCommentResponse(comment, level))"
       >
         <template v-slot:left>
-          <span class="icon-send footer__arrow" />
+          <span
+            class="icon-send footer__arrow"
+            :class="{'footer__arrow_blue': isComplete()}"
+          />
         </template>
       </base-btn>
     </div>
@@ -61,6 +63,9 @@ export default {
     }),
   },
   methods: {
+    isComplete() {
+      return this.subCommentInput;
+    },
     async addSubCommentResponse(comment, level) {
       const payload = {
         rootCommentId: comment.id,
@@ -137,8 +142,11 @@ export default {
     align-items: center;
     justify-content: center;
     font-size: 25px;
-    color: #0083C7;
+    color: $black500;
     cursor: pointer;
+    &_blue {
+      color: #0083C7;
+    }
   }
 }
 </style>

@@ -16,7 +16,7 @@
         </div>
       </div>
       <validation-observer
-        v-slot="{ handleSubmit }"
+        v-slot="{ handleSubmit, invalid }"
       >
         <div class="add-discussion__subtitle">
           {{ $t('modals.discussionTopic') }}
@@ -87,6 +87,7 @@
             {{ $t('modals.cancel') }}
           </base-btn>
           <base-btn
+            :disabled="!isComplete() || invalid"
             class="footer__buttons"
             @click="handleSubmit(createDiscussion)"
           >
@@ -122,6 +123,9 @@ export default {
     this.acceptedTypes = this.accept.replace(/\s/g, '').split(',');
   },
   methods: {
+    isComplete() {
+      return this.title && this.discussion;
+    },
     remove(item) {
       this.documents = this.documents.filter((doc) => doc.id !== item.id);
     },

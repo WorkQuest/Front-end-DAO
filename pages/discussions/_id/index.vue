@@ -114,12 +114,14 @@
           </span>
         </base-btn>
       </div>
-      <validation-observer v-slot="{ handleSubmit }">
+      <validation-observer v-slot="{ handleSubmit, invalid }">
         <div
           v-if="isAddComment"
           class="info__response response"
         >
-          <div class="response__field">
+          <div
+            class="response__field"
+          >
             <div class="response__title">
               {{ $t('discussions.responseTitle') }}
             </div>
@@ -131,19 +133,15 @@
                   <span class="icon-link footer__chain" />
                 </template>
               </base-btn>
-              <validation-provider
+              <base-field
+                v-model="opinion"
                 class="footer__input"
+                :placeholder="$t('discussions.input')"
                 rules="required|min:1|max:250"
-              >
-                <base-field
-                  v-model="opinion"
-                  :placeholder="$t('discussions.input')"
-                  rules="required|min:1|max:250"
-                  :name="$t('discussions.response')"
-                  mode="comment-field"
-                  @keyup.enter.native="handleSubmit(addRootCommentResponse)"
-                />
-              </validation-provider>
+                :name="$t('discussions.response')"
+                mode="comment-field"
+                @keyup.enter.native="handleSubmit(addRootCommentResponse)"
+              />
             </div>
             <div class="response__footer">
               <base-btn
@@ -154,6 +152,7 @@
                 {{ $t('discussions.cancel') }}
               </base-btn>
               <base-btn
+                :disabled="!isComplete() || invalid"
                 class="response__btn"
                 @click="handleSubmit(addRootCommentResponse)"
               >
@@ -231,6 +230,9 @@ export default {
     this.SetLoader(false);
   },
   methods: {
+    isComplete() {
+      return this.opinion;
+    },
     async filterMediaToTypes() {
       const documents = this.currentDiscussion.medias.filter((file) => file.contentType === 'application/msword' || file.contentType === 'application/pdf');
       const images = this.currentDiscussion.medias.filter((file) => file.contentType === 'image/jpeg' || file.contentType === 'image/png');
