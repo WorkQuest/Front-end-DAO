@@ -9,6 +9,7 @@ import {
 } from 'vee-validate';
 
 import * as rules from 'vee-validate/dist/rules';
+import { validateMnemonic } from 'bip39';
 
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
@@ -136,6 +137,15 @@ extend('linkedIn', {
     };
   },
   message: 'Please enter correct {_field_}',
+});
+extend('mnemonic', {
+  validate(value) {
+    return {
+      required: true,
+      valid: validateMnemonic(value),
+    };
+  },
+  message: 'Incorrect secret phrase',
 });
 
 export default ({ app }) => {

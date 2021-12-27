@@ -13,7 +13,9 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.13.1",
     "@nuxtjs/moment": "^1.6.1",
+    "bech32-converting": "^1.0.3",
     "bignumber.js": "^9.0.1",
+    "bip39": "^3.0.4",
     "bootstrap-vue": "^2.21.2",
     "cookie-universal-nuxt": "^2.1.4",
     "cross-env": "^7.0.3",
@@ -22,6 +24,8 @@
     "nuxt-gmaps": "^1.2.10",
     "nuxt-i18n": "^6.13.12",
     "ua-parser-js": "1.0.1",
+    "crypto-js": "^4.1.1",
+    "ethers": "^5.5.2",
     "vee-validate": "^3.4.5",
     "vue": "^2.6.12",
     "vue-click-outside": "^1.1.0",

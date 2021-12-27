@@ -54,3 +54,11 @@ export const keyCodes = {
   ArrowLeft: 37,
   ArrowRight: 39,
 };
+
+export const walletState = {
+  signPage: 1,
+  saveMnemonic: 2,
+  confirmMnemonic: 3,
+  importOrCreate: 4,
+  importMnemonic: 5,
+};
