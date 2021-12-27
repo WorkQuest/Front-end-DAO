@@ -153,7 +153,6 @@ export default {
       this.sub3Comments = [];
     },
     filterComments(subComments, rootId) {
-      console.log(subComments);
       return subComments.filter((item) => item.rootCommentId === rootId);
     },
     toggleReply() {
