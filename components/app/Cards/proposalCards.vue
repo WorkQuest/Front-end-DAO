@@ -187,6 +187,12 @@ export default {
     async isDescending() {
       await this.loadPage(this.currentPage);
     },
+    prevFilters: {
+      deep: true,
+      handler() {
+        this.currentPage = this.prevFilters.lastPage || 1;
+      },
+    },
   },
   async beforeMount() {
     this.isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');

@@ -89,6 +89,8 @@ export default {
     height: 100%;
     object-fit: contain;
     cursor: pointer;
+    transition: 0.2s all;
+    background: $grey;
   }
 
   &__size {
@@ -145,6 +147,7 @@ export default {
 
   &:hover .image__img {
     filter: brightness(60%);
+    transition: 0.2s all;
   }
 }
 @include _767 {
