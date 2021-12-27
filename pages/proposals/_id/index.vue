@@ -182,7 +182,7 @@
                 {'btn__voted_red': vote === false },
               ]"
             >
-              {{ $t('proposal.youVoted') }} {{ vote ? $t('proposal.yes') : $t('proposal.no') }}
+              {{ vote ? $t('proposal.agree') : $t('proposal.disagree') }}
             </base-btn>
           </div>
         </div>
