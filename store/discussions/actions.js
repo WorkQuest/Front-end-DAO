@@ -1,3 +1,5 @@
+import { error, success } from '~/utils/success-error';
+
 export default {
   async getAllDiscussions({ commit }, queries) {
     try {
@@ -25,9 +27,10 @@ export default {
     try {
       const response = await this.$axios.$post('/v1/discussion/create', payload);
       commit('setCurrentDiscussion', response.result);
-      return response;
+      return success(response.result);
     } catch (e) {
-      return console.log(e);
+      console.log(e);
+      return error();
     }
   },
   async sendCommentOnDiscussion({ commit }, { id, payload }) {

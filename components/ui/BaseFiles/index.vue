@@ -37,7 +37,7 @@
         <div
           v-else
           class="actions__close icon"
-          @click="deleteFile(item.id)"
+          @click="deleteFile(item)"
         >
           <span class="icon__close icon-close_big" />
         </div>

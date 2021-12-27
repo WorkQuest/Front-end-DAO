@@ -136,7 +136,7 @@
           </div>
           <div class="results__buttons buttons">
             <div
-              v-if="isActive && timeIsExpired || isVoted"
+              v-if="isActive && !timeIsExpired"
               class="buttons__header"
             >
               {{ $t('proposal.voteForProposal') }}
