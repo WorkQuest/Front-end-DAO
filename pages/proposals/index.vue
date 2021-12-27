@@ -104,6 +104,7 @@ export default {
     showAddProposal() {
       this.ShowModal({
         key: modals.addProposal,
+        callback: async () => await this.$store.dispatch('proposals/getProposals', { limit: 12, offset: 0 }),
       });
     },
   },
