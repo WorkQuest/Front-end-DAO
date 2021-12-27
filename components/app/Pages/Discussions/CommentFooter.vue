@@ -78,6 +78,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.base-btn {
+  &_disabled {
+    background: transparent !important;
+  }
+}
 .comment {
   animation: show  1s 1;
   padding: 0 30px 0 0;
@@ -103,7 +108,6 @@ export default {
     margin: 0 0 20px 0;
   }
   &__chain {
-    padding: 0 0 0 5px;
     display: flex;
     width: 40px;
     height: 40px;
@@ -116,8 +120,8 @@ export default {
     cursor: pointer;
   }
   &__btn {
-    width: 40px;
-    height: 40px;
+    width: 40px !important;
+    height: 40px !important;
     background: #F7F8FA;
     cursor: pointer;
     &:hover {
@@ -135,7 +139,6 @@ export default {
     font-size: 25px;
     color: #0083C7;
     cursor: pointer;
-    padding: 0 0 0 10px;
   }
 }
 </style>
