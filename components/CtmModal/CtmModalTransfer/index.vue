@@ -106,7 +106,8 @@ export default {
 
 .ctm-modal {
   &__content-field {
-    margin: 15px 0 0 0;
+    height: 46px;
+    margin-bottom: 50px;
   }
   &__equal {
     margin: 0 0 35px 10px;

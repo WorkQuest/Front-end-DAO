@@ -6,7 +6,9 @@
     <div class="addProposal__content content">
       <validation-observer v-slot="{ handleSubmit, valid }">
         <div class="content__voting">
-          <div class="content__field">
+          <div
+            class="content__field content__input"
+          >
             <base-field
               id="votingTopicInput"
               v-model="votingTopicInput"
@@ -149,8 +151,8 @@ export default {
       this.CloseModal();
     },
     async addProposal() {
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!this.isConnected) return;
+      // await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+      // if (!this.isConnected) return;
       this.SetLoader(true);
       this.descriptionInput = this.descriptionInput.trim();
       this.votingTopicInput = this.votingTopicInput.trim();
@@ -221,6 +223,10 @@ export default {
 }
 
 .content {
+  &__input {
+    height: 46px;
+    margin-bottom: 50px;
+  }
   &__voting {
     width: 100%;
   }

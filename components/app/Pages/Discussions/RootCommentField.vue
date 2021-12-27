@@ -87,15 +87,16 @@
             <span class="icon-link footer__chain" />
           </template>
         </base-btn>
-        <base-field
-          v-model="subCommentInput"
-          class="footer__input"
-          :placeholder="$t('discussions.input')"
-          rules="required|max:250"
-          :name="$t('discussions.response')"
-          mode="comment-field"
-          @keyup.enter.native="handleSubmit(addSubCommentResponse(comment, 2))"
-        />
+        <div class="footer__input">
+          <base-field
+            v-model="subCommentInput"
+            :placeholder="$t('discussions.input')"
+            rules="required|max:250"
+            :name="$t('discussions.response')"
+            mode="comment-field"
+            @keyup.enter.native="handleSubmit(addSubCommentResponse(comment, 2))"
+          />
+        </div>
         <base-btn
           class="footer__btn"
           :disabled="!validated || !passed || invalid"
@@ -248,7 +249,7 @@ export default {
     height: 40px;
     display: grid;
     grid-template-columns: 1fr 11fr 1fr;
-    margin: 20px;
+    margin: 0 20px 20px 20px;
     align-items: center;
   }
   &_sub2 {
@@ -359,8 +360,7 @@ export default {
     height: 40px;
     border-radius: 6px;
     border: none;
-    padding: 10px 15px 10px 15px;
-    //margin: 0 0 20px 0;
+    margin-right: 10px;
   }
   &__chain {
     padding: 0 0 0 5px;

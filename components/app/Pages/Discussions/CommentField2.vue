@@ -61,7 +61,6 @@
         v-slot="{handleSubmit, validated, passed, invalid}"
       >
         <!--  Bottom -->
-        LALALA2
         <div
           v-if="isReply"
           class="comment__footer footer"
