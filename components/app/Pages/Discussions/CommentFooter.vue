@@ -1,13 +1,13 @@
 <template>
   <validation-observer
-    v-slot="{handleSubmit, validated, passed, invalid}"
+    v-slot="{handleSubmit, validated}"
   >
     <div
       class="comment__footer footer"
     >
       <base-btn
         class="footer__btn hide"
-        :disabled="!validated || !passed || invalid"
+        :disabled="!validated"
       >
         <template v-slot:left>
           <span class="icon-link footer__chain" />
