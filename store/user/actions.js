@@ -30,8 +30,7 @@ export default {
   async confirm({ commit }, payload) {
     commit('setOldTokens', { access: this.$cookies.get('access'), refresh: this.$cookies.get('refresh') });
     this.$cookies.set('role', payload.role);
-    const response = await this.$axios.$post('/v1/auth/confirm-email', payload);
-    return response;
+    return await this.$axios.$post('/v1/auth/confirm-email', payload);
   },
   async getUserData({ commit }) {
     const response = await this.$axios.$get('/v1/profile/me');
