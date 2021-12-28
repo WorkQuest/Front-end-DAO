@@ -3,7 +3,7 @@
     <div class="comment__field">
       <div class="comment__user user">
         <img
-          :src="comment && comment.author.avatar && comment.author.avatar.url ? comment.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
+          :src="comment && comment.author && comment.author.avatar && comment.author.avatar.url ? comment.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
           alt="userAvatar"
           class="user__avatar"
           @click="toInvestor(comment.author.id)"
