@@ -1,8 +1,6 @@
 <template>
   <div class="comment">
-    <div
-      class="comment__field comment_sub"
-    >
+    <div class="comment__field comment_sub">
       <div class="comment__user user">
         <img
           :src="data && data.author.avatar && data.author.avatar.url ? data.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
@@ -69,7 +67,7 @@
     <base-btn
       v-if="isShowBtnMoreComments"
       class="subcomment__btn"
-      @click="loadMoreSubs2(data.rootCommentId)"
+      @click="loadMoreSubsPrev(data.rootCommentId)"
     >
       {{ $t('discussions.comments.showMoreComments') }}
     </base-btn>
@@ -118,7 +116,7 @@ export default {
       }
       this.clearSubs();
     },
-    async loadMoreSubs2(rootId) {
+    async loadMoreSubsPrev(rootId) {
       this.$parent.increaseCounter();
       this.$parent.loadMoreSubs(rootId);
     },

@@ -47,11 +47,19 @@
           <div class="discussion__subtitle">
             {{ $t('discussions.files') }}
           </div>
+          <div
+            v-if="!discussionDocuments.length && !discussionImages.length"
+            class="discussion__files"
+          >
+            {{ $t('discussions.noFiles') }}
+          </div>
           <base-files
+            v-if="discussionDocuments.length"
             class="discussion__files"
             :items="discussionDocuments"
           />
           <base-images
+            v-if="discussionImages.length"
             class="discussion__images"
             mode="images"
             :items="discussionImages"

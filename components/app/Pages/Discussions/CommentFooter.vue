@@ -3,12 +3,8 @@
     ref="observer"
     v-slot="{invalid}"
   >
-    <div
-      class="comment__footer footer"
-    >
-      <base-btn
-        class="footer__btn hide"
-      >
+    <div class="comment__footer footer">
+      <base-btn class="footer__btn hide">
         <template v-slot:left>
           <span class="icon-link footer__chain" />
         </template>

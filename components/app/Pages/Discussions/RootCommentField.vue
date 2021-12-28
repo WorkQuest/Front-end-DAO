@@ -1,8 +1,6 @@
 <template>
   <div class="comment">
-    <div
-      class="comment__field"
-    >
+    <div class="comment__field">
       <div class="comment__user user">
         <img
           :src="comment && comment.author.avatar && comment.author.avatar.url ? comment.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
@@ -63,9 +61,7 @@
         :array="filterComments(subComments, comment.id)"
       />
     </div>
-    <comment-footer
-      :comment="comment"
-    />
+    <comment-footer :comment="comment" />
   </div>
 </template>
 
