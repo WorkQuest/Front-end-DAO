@@ -18,11 +18,16 @@
           {{ $moment(data.createdAt).startOf('minute').fromNow() }}
         </div>
       </div>
+      <base-files
+        v-if="documents.length"
+        class="comment__files"
+        :items="documents"
+      />
       <base-images
-        v-if="data.medias.length"
+        v-if="images.length"
         class="comment__images"
         mode="images"
-        :items="data.medias"
+        :items="images"
         :is-show-download="false"
       />
       <div class="comment__description">
@@ -103,6 +108,8 @@ export default {
       isReply: false,
       subComments: [],
       count: 1,
+      documents: [],
+      images: [],
     };
   },
   computed: {
@@ -115,7 +122,14 @@ export default {
           && this.array.length !== this.array[this.array.length - 1].rootComment.amountSubComments;
     },
   },
+  async mounted() {
+    await this.filterMediaToTypes();
+  },
   methods: {
+    async filterMediaToTypes() {
+      this.documents = this.data.medias.filter((file) => file.contentType === 'application/msword' || file.contentType === 'application/pdf');
+      this.images = this.data.medias.filter((file) => file.contentType === 'image/jpeg' || file.contentType === 'image/png');
+    },
     toggleShowSubComments(comment) {
       this.showSubs = false;
       if (!this.filterComments(this.subComments, comment.id).length || this.showSubs) {
@@ -198,6 +212,9 @@ export default {
     margin: 25px 20px 25px 30px;
   }
   &__images {
+    margin-left: 20px;
+  }
+  &__files {
     margin-left: 20px;
   }
   &__description {

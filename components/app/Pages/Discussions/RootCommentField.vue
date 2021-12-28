@@ -18,11 +18,16 @@
           {{ $moment(comment.createdAt).startOf('minute').fromNow() }}
         </div>
       </div>
+      <base-files
+        v-if="documents.length"
+        class="comment__files"
+        :items="documents"
+      />
       <base-images
-        v-if="comment.medias.length"
+        v-if="images.length"
         class="comment__images"
         mode="images"
-        :items="comment.medias"
+        :items="images"
         :is-show-download="false"
       />
       <div class="comment__description">
@@ -90,6 +95,8 @@ export default {
       comments: [],
       subComments: [],
       count: 1,
+      documents: [],
+      images: [],
     };
   },
   computed: {
@@ -97,7 +104,14 @@ export default {
       currentDiscussion: 'discussions/getCurrentDiscussion',
     }),
   },
+  async mounted() {
+    await this.filterMediaToTypes();
+  },
   methods: {
+    async filterMediaToTypes() {
+      this.documents = this.comment.medias.filter((file) => file.contentType === 'application/msword' || file.contentType === 'application/pdf');
+      this.images = this.comment.medias.filter((file) => file.contentType === 'image/jpeg' || file.contentType === 'image/png');
+    },
     clearSubs() {
       this.subComments = [];
     },
@@ -163,6 +177,9 @@ export default {
     flex-direction: column;
   }
   &__images {
+    margin-left: 20px;
+  }
+  &__files {
     margin-left: 20px;
   }
   &__user {
