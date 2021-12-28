@@ -14,7 +14,7 @@
     :rules="rules"
     :name="name"
     :vid="vid"
-    mode="eager"
+    :mode="validationMode"
     slim
   >
     <div
@@ -44,6 +44,7 @@
         :autocomplete="autocomplete"
         :disabled="disabled"
         :inputmode="inputmode"
+        :mode="validationMode"
         @focus="changeFocus(true)"
         @blur="changeFocus(false)"
         @input="input"
@@ -77,6 +78,10 @@
 <script>
 export default {
   props: {
+    validationMode: {
+      type: String,
+      default: 'aggressive',
+    },
     value: {
       type: [String, Number],
       default: '',

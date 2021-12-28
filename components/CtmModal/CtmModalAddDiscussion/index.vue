@@ -21,34 +21,24 @@
         <div class="add-discussion__subtitle">
           {{ $t('modals.discussionTopic') }}
         </div>
-        <validation-provider
-          name="description-title"
+        <base-field
+          v-model="title"
+          :placeholder="$t('modals.discussionTopic')"
+          class="add-discussion__field"
           rules="required|max:78"
-        >
-          <base-field
-            v-model="title"
-            :placeholder="$t('modals.discussionTopic')"
-            class="add-discussion__field"
-            rules="required|max:78"
-            :name="$t('modals.discussionTopic')"
-          />
-        </validation-provider>
+          :name="$t('modals.discussionTopic')"
+        />
         <div class="add-discussion__subtitle">
           {{ $t('modals.description') }}
         </div>
-        <validation-provider
-          name="description-description"
+        <base-textarea
+          v-model="discussion"
+          class="add-discussion__body"
+          :placeholder="$t('modals.description')"
           rules="required|max:2000"
-        >
-          <base-textarea
-            v-model="discussion"
-            class="add-discussion__body"
-            :placeholder="$t('modals.description')"
-            rules="required|max:2000"
-            mode="add-discussion"
-            :name="$t('modals.description')"
-          />
-        </validation-provider>
+          mode="add-discussion"
+          :name="$t('modals.description')"
+        />
         <base-uploader
           class="add-discussion uploader__container"
           type="all"
@@ -87,7 +77,7 @@
             {{ $t('modals.cancel') }}
           </base-btn>
           <base-btn
-            :disabled="!isComplete() || invalid"
+            :disabled="invalid"
             class="footer__buttons"
             @click="handleSubmit(createDiscussion)"
           >
@@ -123,9 +113,6 @@ export default {
     this.acceptedTypes = this.accept.replace(/\s/g, '').split(',');
   },
   methods: {
-    isComplete() {
-      return this.title && this.discussion;
-    },
     remove(item) {
       this.documents = this.documents.filter((doc) => doc.id !== item.id);
     },
