@@ -4,123 +4,122 @@
       v-if="step === walletState.SignPage"
       v-slot="{ handleSubmit }"
       tag="div"
+      lass="auth__container"
     >
-      <div class="auth__container">
-        <div class="auth__text auth__text_title">
-          <span>{{ $t('signIn.title') }}</span>
-        </div>
-        <div class="auth__text auth__text_simple">
-          <span>{{ $t('signIn.account') }}</span>
-          <nuxt-link
-            class="auth__text auth__text_link"
-            to="/sign-up"
-          >
-            {{ $t('signIn.regs') }}
-          </nuxt-link>
-        </div>
-        <form
-          class="auth__fields"
-          action=""
-          @submit.prevent="handleSubmit(signIn)"
+      <div class="auth__text auth__text_title">
+        <span>{{ $t('signIn.title') }}</span>
+      </div>
+      <div class="auth__text auth__text_simple">
+        <span>{{ $t('signIn.account') }}</span>
+        <nuxt-link
+          class="auth__text auth__text_link"
+          to="/sign-up"
         >
-          <base-field
-            v-model="model.email"
-            rules="required|email"
-            :name="$t('signUp.email')"
-            :placeholder="$t('signUp.email')"
-            :mode="'icon'"
-            autocomplete="username"
-          >
-            <template v-slot:left>
-              <img
-                src="~assets/img/icons/email.svg"
-                alt=""
-              >
-            </template>
-          </base-field>
-          <base-field
-            v-model="model.password"
-            :placeholder="$t('signUp.password')"
-            :mode="'icon'"
-            :name="$t('signUp.password')"
-            autocomplete="current-password"
-            rules="required_if|min:8"
-            type="password"
-            vid="confirmation"
-          >
-            <template v-slot:left>
-              <img
-                src="~assets/img/icons/password.svg"
-                alt=""
-              >
-            </template>
-          </base-field>
-          <div class="auth__tools">
-            <base-checkbox
-              v-model="remember"
-              name="remember"
-              :label="$t('signIn.remember')"
-            />
-            <div
-              class="auth__text auth__text_link"
-              @click="showRestoreModal()"
+          {{ $t('signIn.regs') }}
+        </nuxt-link>
+      </div>
+      <form
+        class="auth__fields"
+        action=""
+        @submit.prevent="handleSubmit(signIn)"
+      >
+        <base-field
+          v-model="model.email"
+          rules="required|email"
+          :name="$t('signUp.email')"
+          :placeholder="$t('signUp.email')"
+          :mode="'icon'"
+          autocomplete="username"
+        >
+          <template v-slot:left>
+            <img
+              src="~assets/img/icons/email.svg"
+              alt=""
             >
-              {{ $t('signIn.forgot') }}
-            </div>
+          </template>
+        </base-field>
+        <base-field
+          v-model="model.password"
+          :placeholder="$t('signUp.password')"
+          :mode="'icon'"
+          :name="$t('signUp.password')"
+          autocomplete="current-password"
+          rules="required_if|min:8"
+          type="password"
+          vid="confirmation"
+        >
+          <template v-slot:left>
+            <img
+              src="~assets/img/icons/password.svg"
+              alt=""
+            >
+          </template>
+        </base-field>
+        <div class="auth__tools">
+          <base-checkbox
+            v-model="remember"
+            name="remember"
+            :label="$t('signIn.remember')"
+          />
+          <div
+            class="auth__text auth__text_link"
+            @click="showRestoreModal()"
+          >
+            {{ $t('signIn.forgot') }}
           </div>
-          <div class="auth__action">
-            <base-btn :disabled="inProgress">
-              {{ $t('signIn.login') }}
-            </base-btn>
-          </div>
-          <!--          <div class="auth__text auth__text_wrap">-->
-          <!--            {{ $t('signIn.or') }}-->
-          <!--          </div>-->
-        </form>
-        <div class="auth__social">
-          <!--          <div class="auth__text auth__text_dark">-->
-          <!--            {{ $t('signIn.loginWith') }}-->
-          <!--          </div>-->
-          <!--          <div class="auth__icons">-->
-          <!--            <button-->
-          <!--                class="auth__btn auth__btn_workQuest"-->
-          <!--                @click="showSignWorkQuest()"-->
-          <!--            >-->
-          <!--              <img-->
-          <!--                  src="~assets/img/app/logo.svg"-->
-          <!--                  alt="WorkQuest"-->
-          <!--              >-->
-          <!--            </button>-->
-          <!--            <button-->
-          <!--                class="auth__btn auth__btn_google"-->
-          <!--                @click="redirectSocialLink('google')"-->
-          <!--            >-->
-          <!--              <span class="icon-google" />-->
-          <!--            </button>-->
-          <!--            <button-->
-          <!--                class="auth__btn auth__btn_twitter"-->
-          <!--                @click="redirectSocialLink('twitter')"-->
-          <!--            >-->
-          <!--              <span class="icon-twitter" />-->
-          <!--            </button>-->
-          <!--            <button-->
-          <!--                class="auth__btn auth__btn_facebook"-->
-          <!--                @click="redirectSocialLink('facebook')"-->
-          <!--            >-->
-          <!--              <span class="icon-facebook" />-->
-          <!--            </button>-->
-          <!--            <button-->
-          <!--                class="auth__btn auth__btn_LinkedIn"-->
-          <!--                @click="redirectSocialLink('linkedin')"-->
-          <!--            >-->
-          <!--              <span class="icon-LinkedIn" />-->
-          <!--            </button>-->
-          <!--          </div>-->
         </div>
+        <div class="auth__action">
+          <base-btn :disabled="isLoading">
+            {{ $t('signIn.login') }}
+          </base-btn>
+        </div>
+        <!--          <div class="auth__text auth__text_wrap">-->
+        <!--            {{ $t('signIn.or') }}-->
+        <!--          </div>-->
+      </form>
+      <div class="auth__social">
+        <!--          <div class="auth__text auth__text_dark">-->
+        <!--            {{ $t('signIn.loginWith') }}-->
+        <!--          </div>-->
+        <!--          <div class="auth__icons">-->
+        <!--            <button-->
+        <!--                class="auth__btn auth__btn_workQuest"-->
+        <!--                @click="showSignWorkQuest()"-->
+        <!--            >-->
+        <!--              <img-->
+        <!--                  src="~assets/img/app/logo.svg"-->
+        <!--                  alt="WorkQuest"-->
+        <!--              >-->
+        <!--            </button>-->
+        <!--            <button-->
+        <!--                class="auth__btn auth__btn_google"-->
+        <!--                @click="redirectSocialLink('google')"-->
+        <!--            >-->
+        <!--              <span class="icon-google" />-->
+        <!--            </button>-->
+        <!--            <button-->
+        <!--                class="auth__btn auth__btn_twitter"-->
+        <!--                @click="redirectSocialLink('twitter')"-->
+        <!--            >-->
+        <!--              <span class="icon-twitter" />-->
+        <!--            </button>-->
+        <!--            <button-->
+        <!--                class="auth__btn auth__btn_facebook"-->
+        <!--                @click="redirectSocialLink('facebook')"-->
+        <!--            >-->
+        <!--              <span class="icon-facebook" />-->
+        <!--            </button>-->
+        <!--            <button-->
+        <!--                class="auth__btn auth__btn_LinkedIn"-->
+        <!--                @click="redirectSocialLink('linkedin')"-->
+        <!--            >-->
+        <!--              <span class="icon-LinkedIn" />-->
+        <!--            </button>-->
+        <!--          </div>-->
       </div>
     </ValidationObserver>
     <div
-      v-if="step > 1"
+      v-if="step > WalletState.SignPage"
       class="auth__back"
       @click="back"
     >
@@ -152,10 +151,9 @@ export default {
   },
   data() {
     return {
-      inProgress: false,
       addressAssigned: false,
       userAddress: null,
-      step: 1,
+      step: WalletState.SignPage,
       model: {
         email: '',
         password: '',
@@ -167,6 +165,7 @@ export default {
   computed: {
     ...mapGetters({
       userData: 'user/getUserData',
+      isLoading: 'main/getIsLoading',
     }),
     walletState() {
       return WalletState;
@@ -202,8 +201,8 @@ export default {
       this.step = step;
     },
     async signIn() {
-      if (this.inProgress) return;
-      this.inProgress = true;
+      if (this.isLoading) return;
+      this.SetLoader(true);
       const { email, password } = this.model;
       const response = await this.$store.dispatch('user/signIn', {
         email,
@@ -216,7 +215,7 @@ export default {
             title: this.$t('registration.emailConfirmTitle'),
             text: this.$t('registration.emailConfirm'),
           });
-          this.inProgress = false;
+          this.SetLoader(false);
           return;
         }
 
@@ -226,7 +225,7 @@ export default {
         // Wallet is not assigned to this account
         if (!address) {
           this.step = WalletState.ImportOrCreate;
-          this.inProgress = false;
+          this.SetLoader(false);
           return;
         }
 
@@ -235,7 +234,7 @@ export default {
         const storageData = JSON.parse(localStorage.getItem('mnemonic'));
         if (!sessionData && !storageData) {
           this.step = WalletState.ImportMnemonic;
-          this.inProgress = false;
+          this.SetLoader(false);
           return;
         }
 
@@ -243,7 +242,7 @@ export default {
         const storageMnemonic = storageData ? storageData[address] : null;
         if (!sessionMnemonic && !storageMnemonic) {
           this.step = WalletState.ImportMnemonic;
-          this.inProgress = false;
+          this.SetLoader(false);
           return;
         }
 
@@ -253,7 +252,7 @@ export default {
           if (wallet && wallet.address === this.userAddress) {
             this.saveMnemonic(wallet);
             this.redirectUser();
-            this.inProgress = false;
+            this.SetLoader(false);
             return;
           }
         }
@@ -265,7 +264,7 @@ export default {
           if (wallet && wallet.address === this.userAddress) {
             this.saveMnemonic(wallet);
             this.redirectUser();
-            this.inProgress = false;
+            this.SetLoader(false);
             return;
           }
         }
@@ -278,8 +277,8 @@ export default {
         // Reset mnemonic for address -> importing
         this.saveMnemonic({ address, mnemonic: '' });
         this.step = WalletState.ImportMnemonic;
-        this.inProgress = false;
       }
+      this.SetLoader(false);
     },
     async assignWallet(wallet) {
       const res = await this.$store.dispatch('user/registerWallet', {

@@ -1,14 +1,14 @@
 <template>
   <div class="auth">
     <div
-      v-if="step > 1"
+      v-if="step > walletState.SignPage"
       class="auth__back"
       @click="goStep(step - 1)"
     >
       <span class="icon-long_left" /> {{ $t('meta.back') }}
     </div>
     <ValidationObserver
-      v-if="step === 1"
+      v-if="step === walletState.SignPage"
       v-slot="{ handleSubmit, valid }"
       tag="div"
       class="auth__container"
@@ -28,7 +28,7 @@
       <form
         class="auth__fields"
         action=""
-        @submit.prevent="goStep(2)"
+        @submit.prevent="goStep(walletState.SaveMnemonic)"
       >
         <base-field
           v-model="model.firstName"
@@ -132,6 +132,7 @@ import {
   encryptStringWithKey,
   generateMnemonic,
 } from '~/utils/wallet';
+import { WalletState } from '~/utils/enums';
 
 export default {
   name: 'SignUp',
@@ -161,6 +162,11 @@ export default {
         second: '',
       },
     };
+  },
+  computed: {
+    walletState() {
+      return WalletState;
+    },
   },
   async mounted() {
     this.mnemonic = generateMnemonic();
