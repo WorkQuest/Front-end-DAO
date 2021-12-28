@@ -1,6 +1,7 @@
 <template>
   <validation-observer
-    v-slot="{handleSubmit, invalid}"
+    ref="observer"
+    v-slot="{invalid}"
   >
     <div
       class="comment__footer footer"
@@ -19,12 +20,12 @@
         rules="required|max:250"
         :name="$t('discussions.response')"
         mode="comment-field"
-        @keyup.enter.native="handleSubmit(addSubCommentResponse(comment, level))"
+        @keyup.enter.native="addSubCommentResponse(comment)"
       />
       <base-btn
         class="footer__btn"
         :disabled="!isComplete() || invalid"
-        @click="handleSubmit(addSubCommentResponse(comment, level))"
+        @click="addSubCommentResponse(comment)"
       >
         <template v-slot:left>
           <span
@@ -47,10 +48,6 @@ export default {
       type: Object,
       default: () => {},
     },
-    level: {
-      type: [String, Number],
-      default: () => '',
-    },
   },
   data() {
     return {
@@ -66,7 +63,8 @@ export default {
     isComplete() {
       return this.subCommentInput;
     },
-    async addSubCommentResponse(comment, level) {
+    async addSubCommentResponse(comment) {
+      this.$refs.observer.validate();
       const payload = {
         rootCommentId: comment.id,
         text: this.subCommentInput,
@@ -75,7 +73,7 @@ export default {
       await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
       this.$parent.showSubs = true;
       this.$parent.isReply = false;
-      await this.$parent.loadSubs(comment.id, level);
+      await this.$parent.loadSubs(comment.id);
       this.subCommentInput = '';
     },
   },

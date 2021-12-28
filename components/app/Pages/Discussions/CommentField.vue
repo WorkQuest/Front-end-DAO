@@ -1,9 +1,7 @@
 <template>
-  <!-- Level2 -->
   <div class="comment">
     <div
-      class="comment__field"
-      :class="`comment_sub${level}`"
+      class="comment__field comment_sub"
     >
       <div class="comment__user user">
         <img
@@ -27,7 +25,6 @@
       </div>
       <div class="comment__bottom bottom">
         <base-btn
-          v-if="level !== 5"
           class="bottom__btn"
           mode="blue"
           @click="toggleReply"
@@ -39,7 +36,7 @@
           class="bottom__btn"
           @click="toggleShowSubComments(data)"
         >
-          {{ !filterComments(sub3Comments, data.id).length ? $t('discussions.show') : $t('discussions.hide') }}
+          {{ !filterComments(subComments, data.id).length ? $t('discussions.show') : $t('discussions.hide') }}
         </base-btn>
         <div class="bottom__panel">
           <base-btn
@@ -49,7 +46,7 @@
             <span
               :class="{'bottom__like_chosen': data.commentLikes.length > 0}"
               class="icon-heart_fill bottom__like"
-              @click="toggleLikeOnComment(data, level)"
+              @click="toggleLikeOnComment(data)"
             />
           </base-btn>
           <div class="bottom__counter bottom__counter_right">
@@ -60,21 +57,15 @@
       <comment-footer
         v-if="isReply"
         :comment="data"
-        :level="3"
       />
     </div>
-    <div
-      v-for="(sub3) in filterComments(sub3Comments, data.id)"
-      :key="sub3.id"
-      class="footer comment__container subcomment"
-    >
-      <comment-field2
-        class="subcomment__field subcomment_lvl3"
-        :data="sub3"
-        :array="filterComments(sub3Comments, data.id)"
-        :level="3"
-      />
-    </div>
+    <comment-field
+      v-for="(sub) in filterComments(subComments, data.id)"
+      :key="sub.id"
+      class="comment comment__container subcomment subcomment__field"
+      :data="sub"
+      :array="filterComments(subComments, data.id)"
+    />
     <base-btn
       v-if="isShowBtnMoreComments"
       class="subcomment__btn"
@@ -99,17 +90,13 @@ export default {
       type: Array,
       default: () => [],
     },
-    level: {
-      type: [Number, String],
-      default: 2,
-    },
   },
   data() {
     return {
       showSubs: false,
       subCommentsOnPage: 5,
       isReply: false,
-      sub3Comments: [],
+      subComments: [],
       count: 1,
     };
   },
@@ -126,7 +113,7 @@ export default {
   methods: {
     toggleShowSubComments(comment) {
       this.showSubs = false;
-      if (!this.filterComments(this.sub3Comments, comment.id).length || this.showSubs) {
+      if (!this.filterComments(this.subComments, comment.id).length || this.showSubs) {
         this.loadSubs(comment.id);
       }
       this.clearSubs();
@@ -141,16 +128,16 @@ export default {
     async loadMoreSubs(rootId) {
       const additionalValue = `limit=${this.subCommentsOnPage * this.count}`;
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId, additionalValue });
-      if (this.sub3Comments.length > 0) this.sub3Comments = [];
-      return this.sub3Comments.push(...res.comments);
+      if (this.subComments.length > 0) this.subComments = [];
+      return this.subComments.push(...res.comments);
     },
     async loadSubs(rootId) {
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
-      if (this.sub3Comments.length > 0) this.sub3Comments = [];
-      return this.sub3Comments.push(...res.comments);
+      if (this.subComments.length > 0) this.subComments = [];
+      return this.subComments.push(...res.comments);
     },
     clearSubs() {
-      this.sub3Comments = [];
+      this.subComments = [];
     },
     filterComments(subComments, rootId) {
       return subComments.filter((item) => item.rootCommentId === rootId);
@@ -165,15 +152,15 @@ export default {
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
     },
-    async toggleLikeOnComment(comment, level) {
+    async toggleLikeOnComment(comment) {
       if (comment) {
         if (Object.keys(comment.commentLikes).length === 0) {
           await this.$store.dispatch('discussions/toggleLikeOnComment', { id: comment.id, like: true });
-          if (comment.rootCommentId) this.$parent.loadSubs(comment.rootCommentId, level);
+          if (comment.rootCommentId) this.$parent.loadSubs(comment.rootCommentId);
           else if (!comment.rootCommentId) this.$parent.getRootComments();
         } if (Object.keys(comment.commentLikes).length > 0) {
           await this.$store.dispatch('discussions/toggleLikeOnComment', { id: comment.id, like: false });
-          if (comment.rootCommentId) this.$parent.loadSubs(comment.rootCommentId, level);
+          if (comment.rootCommentId) this.$parent.loadSubs(comment.rootCommentId);
           else if (!comment.rootCommentId) this.$parent.getRootComments();
         }
       }
@@ -188,7 +175,7 @@ export default {
 }
 .comment {
   animation: show  1s 1;
-  padding: 0 30px 0 0;
+  padding: 0 0 0 15px;
   display: flex;
   &__container {
     display: flex;
@@ -215,8 +202,7 @@ export default {
     width: 100%;
     display: flex;
   }
-  &_sub2 {
-    //background: #8D96A2;
+  &_sub {
     margin-left: 15px;
   }
 }

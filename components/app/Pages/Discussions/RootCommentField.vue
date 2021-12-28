@@ -1,5 +1,4 @@
 <template>
-  <!-- Level1 -->
   <div class="comment">
     <div
       class="comment__field"
@@ -30,9 +29,8 @@
           class="comment__btn"
           @click="toggleShowSubComments(comment)"
         >
-          {{ !filterComments(sub2Comments, comment.id).length && comment.amountSubComments > 0 ? $t('discussions.show') : $t('discussions.hide') }}
+          {{ !filterComments(subComments, comment.id).length && comment.amountSubComments > 0 ? $t('discussions.show') : $t('discussions.hide') }}
         </base-btn>
-        <!-- RootComment panel -->
         <div class="bottom bottom__footer">
           <div class="bottom__footer">
             <div class="bottom__comment">
@@ -57,23 +55,16 @@
           </div>
         </div>
       </div>
-      <!--  Comments -->
-      <div
-        v-for="(sub2) in filterComments(sub2Comments, comment.id)"
-        :key="sub2.id"
-        class="comment__subcomment subcomment"
-      >
-        <comment-field
-          class="subcomment__field subcomment_lvl2"
-          :data="sub2"
-          :array="filterComments(sub2Comments, comment.id)"
-          level="2"
-        />
-      </div>
+      <comment-field
+        v-for="(sub) in filterComments(subComments, comment.id)"
+        :key="sub.id"
+        class="comment comment__subcomment subcomment subcomment__field"
+        :data="sub"
+        :array="filterComments(subComments, comment.id)"
+      />
     </div>
     <comment-footer
       :comment="comment"
-      :level="2"
     />
   </div>
 </template>
@@ -94,7 +85,7 @@ export default {
       showSubs: false,
       subCommentsOnPage: 5,
       comments: [],
-      sub2Comments: [],
+      subComments: [],
       count: 1,
     };
   },
@@ -105,11 +96,11 @@ export default {
   },
   methods: {
     clearSubs() {
-      this.sub2Comments = [];
+      this.subComments = [];
     },
     toggleShowSubComments(comment) {
       this.showSubs = false;
-      if (!this.filterComments(this.sub2Comments, comment.id).length || this.showSubs) {
+      if (!this.filterComments(this.subComments, comment.id).length || this.showSubs) {
         this.loadSubs(comment.id);
       }
       this.clearSubs();
@@ -127,13 +118,13 @@ export default {
     async loadMoreSubs(rootId) {
       const additionalValue = `limit=${this.subCommentsOnPage * this.count}`;
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId, additionalValue });
-      if (this.sub2Comments.length > 0) this.sub2Comments = [];
-      return this.sub2Comments.push(...res.comments);
+      if (this.subComments.length > 0) this.subComments = [];
+      return this.subComments.push(...res.comments);
     },
     async loadSubs(rootId) {
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
-      if (this.sub2Comments.length > 0) this.sub2Comments = [];
-      return this.sub2Comments.push(...res.comments);
+      if (this.subComments.length > 0) this.subComments = [];
+      return this.subComments.push(...res.comments);
     },
     filterComments(subComments, rootId) {
       return subComments.filter((item) => item.rootCommentId === rootId);
@@ -197,22 +188,6 @@ export default {
     word-break: break-all;
     width: 100%;
     display: flex;
-  }
-  &_sub2 {
-    background: #8D96A2;
-    margin-left: 30px;
-  }
-  &_sub3 {
-    background: #707379;
-    margin-left: 50px;
-  }
-  &_sub4 {
-    background: #505052;
-    margin-left: 70px;
-  }
-  &_sub5 {
-    background: #37373a;
-    margin-left: 90px;
   }
 }
 .user {

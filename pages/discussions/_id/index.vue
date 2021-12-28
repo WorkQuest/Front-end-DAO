@@ -114,7 +114,10 @@
           </span>
         </base-btn>
       </div>
-      <validation-observer v-slot="{ handleSubmit, invalid }">
+      <validation-observer
+        ref="observer"
+        v-slot="{ invalid }"
+      >
         <div
           v-if="isAddComment"
           class="info__response response"
@@ -140,7 +143,7 @@
                 rules="required|min:1|max:250"
                 :name="$t('discussions.response')"
                 mode="comment-field"
-                @keyup.enter.native="handleSubmit(addRootCommentResponse)"
+                @keyup.enter.native="addRootCommentResponse"
               />
             </div>
             <div class="response__footer">
@@ -154,7 +157,7 @@
               <base-btn
                 :disabled="!isComplete() || invalid"
                 class="response__btn"
-                @click="handleSubmit(addRootCommentResponse)"
+                @click="addRootCommentResponse"
               >
                 {{ $t('discussions.add') }}
               </base-btn>
@@ -255,6 +258,7 @@ export default {
       this.totalPagesValue = this.totalPages();
     },
     async addRootCommentResponse() {
+      this.$refs.observer.validate();
       const payload = {
         text: this.opinion,
         medias: [],
