@@ -83,6 +83,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.hide {
+  display: none;
+}
 .base-btn {
   &_disabled {
     background: transparent !important;
