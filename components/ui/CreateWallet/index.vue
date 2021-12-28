@@ -1,18 +1,15 @@
 <template>
   <div>
-    <ValidationObserver
-      v-if="step === walletState.saveMnemonic"
-      v-slot="{ handleSubmit }"
+    <div
+      v-if="step === walletState.SaveMnemonic"
       class="wallet__container"
     >
-      <div
-        class="wallet__text wallet__text_title"
-      >
+      <div class="wallet__text wallet__text_title">
         {{ $t('createWallet.savePhrase') }}
       </div>
       <form
         class="wallet__fields"
-        @submit.prevent="handleSubmit($emit('goStep', walletState.confirmMnemonic))"
+        @submit.prevent="$emit('goStep', walletState.ConfirmMnemonic)"
       >
         <div class="wallet__mnemonic">
           {{ mnemonic }}
@@ -46,9 +43,9 @@
           </base-btn>
         </div>
       </form>
-    </ValidationObserver>
+    </div>
     <ValidationObserver
-      v-if="step === walletState.confirmMnemonic"
+      v-if="step === walletState.ConfirmMnemonic"
       v-slot="{ handleSubmit, valid }"
       class="wallet__container"
     >
@@ -81,21 +78,21 @@
       </form>
     </ValidationObserver>
     <div
-      v-if="step === walletState.importOrCreate"
+      v-if="step === walletState.ImportOrCreate"
       class="wallet_container"
     >
       <div class="wallet__text wallet__text_title">
         {{ $t('createWallet.createOrImport') }}
       </div>
       <div class="wallet__action">
-        <base-btn @click="$emit('goStep', walletState.saveMnemonic)">
+        <base-btn @click="$emit('goStep', walletState.SaveMnemonic)">
           <slot name="actionText">
             {{ $t('createWallet.create') }}
           </slot>
         </base-btn>
       </div>
       <div class="wallet__action">
-        <base-btn @click="$emit('goStep', walletState.importMnemonic)">
+        <base-btn @click="$emit('goStep', walletState.ImportMnemonic)">
           <slot name="actionText">
             {{ $t('createWallet.importWallet') }}
           </slot>
@@ -103,7 +100,7 @@
       </div>
     </div>
     <ValidationObserver
-      v-if="step === walletState.importMnemonic"
+      v-if="step === walletState.ImportMnemonic"
       v-slot="{ handleSubmit, valid }"
       class="wallet__container"
     >
@@ -117,8 +114,8 @@
         <base-field
           v-model="mnemonicInput"
           rules="required|mnemonic"
-          :placeholder="'Type secret phrase'"
-          :name="'Secret phrase'"
+          :placeholder="$t('createWallet.typeSecretPhrase')"
+          :name="$t('createWallet.secretPhrase')"
         />
         <div class="wallet__action">
           <base-btn :disabled="!valid">
@@ -135,7 +132,7 @@
 <script>
 import { createWallet, generateMnemonic } from '~/utils/wallet';
 
-const { walletState } = require('~/utils/enums');
+const { WalletState } = require('~/utils/enums');
 
 export default {
   name: 'CreateWallet',
@@ -162,12 +159,12 @@ export default {
   },
   computed: {
     walletState() {
-      return walletState;
+      return WalletState;
     },
   },
   watch: {
     step(newVal) {
-      if (newVal === walletState.signPage) this.generate();
+      if (newVal === WalletState.SignPage) this.generate();
     },
   },
   mounted() {

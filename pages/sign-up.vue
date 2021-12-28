@@ -13,9 +13,7 @@
       tag="div"
       class="auth__container"
     >
-      <div
-        class="auth__text auth__text_title"
-      >
+      <div class="auth__text auth__text_title">
         <span>{{ $t('signUp.title') }}</span>
       </div>
       <div class="auth__text auth__text_simple">
@@ -30,7 +28,7 @@
       <form
         class="auth__fields"
         action=""
-        @submit.prevent="handleSubmit(goStep(2))"
+        @submit.prevent="goStep(2)"
       >
         <base-field
           v-model="model.firstName"

@@ -55,10 +55,16 @@ export const keyCodes = {
   ArrowRight: 39,
 };
 
-export const walletState = {
-  signPage: 1,
-  saveMnemonic: 2,
-  confirmMnemonic: 3,
-  importOrCreate: 4,
-  importMnemonic: 5,
+export const WalletState = {
+  SignPage: 1,
+  SaveMnemonic: 2,
+  ConfirmMnemonic: 3,
+  ImportOrCreate: 4,
+  ImportMnemonic: 5,
+};
+
+export const UserStatuses = {
+  Unconfirmed: 0,
+  Confirmed: 1,
+  NeedSetRole: 2,
 };

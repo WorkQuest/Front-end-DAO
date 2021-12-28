@@ -1,9 +1,8 @@
 <template>
-  <div>
+  <div class="auth">
     <ValidationObserver
-      v-if="step === walletState.signPage"
+      v-if="step === walletState.SignPage"
       v-slot="{ handleSubmit }"
-      class="auth"
       tag="div"
     >
       <div class="auth__container">
@@ -143,7 +142,7 @@ import {
   createWallet, decryptStringWitheKey, encryptStringWithKey,
 } from '~/utils/wallet';
 import CreateWallet from '~/components/ui/CreateWallet';
-import { walletState } from '~/utils/enums';
+import { UserStatuses, WalletState } from '~/utils/enums';
 
 export default {
   name: 'SignIn',
@@ -162,6 +161,7 @@ export default {
         password: '',
       },
       remember: false,
+      userStatus: null,
     };
   },
   computed: {
@@ -169,7 +169,7 @@ export default {
       userData: 'user/getUserData',
     }),
     walletState() {
-      return walletState;
+      return WalletState;
     },
     socials() {
       return ['google', 'twitter', 'facebook', 'linkedin'];
@@ -182,20 +182,20 @@ export default {
   },
   methods: {
     back() {
-      if (this.step === walletState.importOrCreate) {
-        this.step = walletState.signPage;
+      if (this.step === WalletState.ImportOrCreate) {
+        this.step = WalletState.SignPage;
         return;
       }
-      if (this.step === walletState.importMnemonic) {
-        this.step = !this.userAddress ? walletState.importOrCreate : walletState.signPage;
+      if (this.step === WalletState.ImportMnemonic) {
+        this.step = !this.userAddress ? WalletState.ImportOrCreate : WalletState.SignPage;
         return;
       }
-      if (this.step === walletState.saveMnemonic) {
-        this.step = walletState.importOrCreate;
+      if (this.step === WalletState.SaveMnemonic) {
+        this.step = WalletState.ImportOrCreate;
         return;
       }
-      if (this.step === walletState.confirmMnemonic) {
-        this.step = walletState.saveMnemonic;
+      if (this.step === WalletState.ConfirmMnemonic) {
+        this.step = WalletState.SaveMnemonic;
       }
     },
     goStep(step) {
@@ -210,7 +210,8 @@ export default {
         password,
       });
       if (response?.ok) {
-        if (response.result.userStatus === 0) { // Unconfirmed account
+        this.userStatus = response.result.userStatus;
+        if (this.userStatus === UserStatuses.Unconfirmed) { // Unconfirmed account
           await this.$store.dispatch('main/showToast', {
             title: this.$t('registration.emailConfirmTitle'),
             text: this.$t('registration.emailConfirm'),
@@ -224,7 +225,7 @@ export default {
 
         // Wallet is not assigned to this account
         if (!address) {
-          this.step = walletState.importOrCreate;
+          this.step = WalletState.ImportOrCreate;
           this.inProgress = false;
           return;
         }
@@ -233,7 +234,7 @@ export default {
         const sessionData = JSON.parse(sessionStorage.getItem('mnemonic'));
         const storageData = JSON.parse(localStorage.getItem('mnemonic'));
         if (!sessionData && !storageData) {
-          this.step = walletState.importMnemonic;
+          this.step = WalletState.ImportMnemonic;
           this.inProgress = false;
           return;
         }
@@ -241,7 +242,7 @@ export default {
         const sessionMnemonic = sessionData ? sessionData[address] : null;
         const storageMnemonic = storageData ? storageData[address] : null;
         if (!sessionMnemonic && !storageMnemonic) {
-          this.step = walletState.importMnemonic;
+          this.step = WalletState.ImportMnemonic;
           this.inProgress = false;
           return;
         }
@@ -276,7 +277,7 @@ export default {
         });
         // Reset mnemonic for address -> importing
         this.saveMnemonic({ address, mnemonic: '' });
-        this.step = walletState.importMnemonic;
+        this.step = WalletState.ImportMnemonic;
         this.inProgress = false;
       }
     },
