@@ -3,8 +3,29 @@
     ref="observer"
     v-slot="{invalid}"
   >
+    <base-uploader
+      class="uploader uploader__container"
+      type="all"
+      :items="documents"
+      :limit="docsLimit"
+      :is-show-download="false"
+      @remove="remove"
+    >
+      <template v-slot:actionButton>
+        <input
+          ref="fileUpload"
+          class="uploader__btn_hidden"
+          type="file"
+          :accept="accept"
+          @change="handleFileSelected($event)"
+        >
+      </template>
+    </base-uploader>
     <div class="comment__footer footer">
-      <base-btn class="footer__btn hide">
+      <base-btn
+        class="footer__btn"
+        @click="$refs.fileUpload.click()"
+      >
         <template v-slot:left>
           <span class="icon-link footer__chain" />
         </template>
@@ -48,23 +69,67 @@ export default {
   data() {
     return {
       subCommentInput: '',
+      accept: 'application/msword, application/pdf, image/jpeg, image/png',
+      acceptedTypes: [],
+      documents: [],
+      docsLimit: 10,
     };
   },
   computed: {
     ...mapGetters({
       currentDiscussion: 'discussions/getCurrentDiscussion',
     }),
+    docsLimitReached() {
+      return this.documents.length >= this.docsLimit;
+    },
+  },
+  mounted() {
+    this.acceptedTypes = this.accept.replace(/\s/g, '').split(',');
   },
   methods: {
+    remove(item) {
+      this.documents = this.documents.filter((doc) => doc.id !== item.id);
+    },
+    checkContentType(file) {
+      return this.acceptedTypes.indexOf(file.type) !== -1;
+    },
+    handleFileSelected(e) {
+      if (!e.target.files[0] || this.docsLimitReached) return;
+      const file = e.target.files[0];
+      const type = file.type.split('/').shift() === 'image' ? 'img' : 'doc';
+      if (!this.checkContentType(file)) {
+        return;
+      }
+      const { size, name } = file;
+      const sizeKb = size / 1000;
+      const sizeMb = sizeKb / 1000;
+      if (sizeMb > 20) return; // more 20mb
+      let fileSize;
+      if (sizeMb < 0.1) {
+        fileSize = `${Math.round(sizeKb * 10) / 10}kb`;
+      } else {
+        fileSize = `${Math.round(sizeMb * 10) / 10}mb`;
+      }
+      this.documents.push({
+        id: this.fileId,
+        img: URL.createObjectURL(file),
+        type,
+        file,
+        name,
+        size: fileSize,
+      });
+      this.fileId += 1;
+    },
     isComplete() {
       return this.subCommentInput;
     },
     async addSubCommentResponse(comment) {
       this.$refs.observer.validate();
+      const medias = await this.uploadFiles(this.documents);
       const payload = {
         rootCommentId: comment.id,
         text: this.subCommentInput,
-        medias: [],
+        medias,
       };
       await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
       this.$parent.showSubs = true;
@@ -77,6 +142,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.uploader {
+  &__container {
+    margin: 30px 0 30px 0;
+  }
+  &__btn {
+    &_hidden {
+      display: none;
+    }
+  }
+}
 .hide {
   display: none;
 }

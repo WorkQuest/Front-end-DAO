@@ -18,6 +18,13 @@
           {{ $moment(comment.createdAt).startOf('minute').fromNow() }}
         </div>
       </div>
+      <base-images
+        v-if="comment.medias.length"
+        class="comment__images"
+        mode="images"
+        :items="comment.medias"
+        :is-show-download="false"
+      />
       <div class="comment__description">
         {{ comment.text }}
       </div>
@@ -154,6 +161,9 @@ export default {
     border-radius: 8px;
     display: flex;
     flex-direction: column;
+  }
+  &__images {
+    margin-left: 20px;
   }
   &__user {
     margin: 20px 0 0 20px;

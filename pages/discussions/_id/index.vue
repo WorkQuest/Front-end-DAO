@@ -136,9 +136,28 @@
             <div class="response__title">
               {{ $t('discussions.responseTitle') }}
             </div>
+            <base-uploader
+              class="uploader uploader__container"
+              type="all"
+              :items="documents"
+              :limit="docsLimit"
+              :is-show-download="false"
+              @remove="remove"
+            >
+              <template v-slot:actionButton>
+                <input
+                  ref="fileUpload"
+                  class="uploader__btn_hidden"
+                  type="file"
+                  :accept="accept"
+                  @change="handleFileSelected($event)"
+                >
+              </template>
+            </base-uploader>
             <div class="response__footer footer">
               <base-btn
-                class="footer__btn hide"
+                class="footer__btn"
+                @click="$refs.fileUpload.click()"
               >
                 <template v-slot:left>
                   <span class="icon-link footer__chain" />
@@ -204,6 +223,10 @@ import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
+      accept: 'application/msword, application/pdf, image/jpeg, image/png',
+      acceptedTypes: [],
+      documents: [],
+      docsLimit: 10,
       page: 1,
       perPager: 10,
       isAddComment: false,
@@ -222,6 +245,9 @@ export default {
       rootComments: 'discussions/getRootComments',
       subComments: 'discussions/getSubCommentsLevel2',
     }),
+    docsLimitReached() {
+      return this.documents.length >= this.docsLimit;
+    },
   },
   watch: {
     async page() {
@@ -233,6 +259,7 @@ export default {
   },
   async mounted() {
     this.SetLoader(true);
+    this.acceptedTypes = this.accept.replace(/\s/g, '').split(',');
     this.discussionId = this.$route.params.id;
     await this.getCurrentDiscussion();
     await this.filterMediaToTypes();
@@ -241,6 +268,40 @@ export default {
     this.SetLoader(false);
   },
   methods: {
+    remove(item) {
+      this.documents = this.documents.filter((doc) => doc.id !== item.id);
+    },
+    checkContentType(file) {
+      return this.acceptedTypes.indexOf(file.type) !== -1;
+    },
+    handleFileSelected(e) {
+      if (!e.target.files[0] || this.docsLimitReached) return;
+      const file = e.target.files[0];
+      const type = file.type.split('/').shift() === 'image' ? 'img' : 'doc';
+      if (!this.checkContentType(file)) {
+        return;
+      }
+
+      const { size, name } = file;
+      const sizeKb = size / 1000;
+      const sizeMb = sizeKb / 1000;
+      if (sizeMb > 20) return; // more 20mb
+      let fileSize;
+      if (sizeMb < 0.1) {
+        fileSize = `${Math.round(sizeKb * 10) / 10}kb`;
+      } else {
+        fileSize = `${Math.round(sizeMb * 10) / 10}mb`;
+      }
+      this.documents.push({
+        id: this.fileId,
+        img: URL.createObjectURL(file),
+        type,
+        file,
+        name,
+        size: fileSize,
+      });
+      this.fileId += 1;
+    },
     isComplete() {
       return this.opinion;
     },
@@ -267,9 +328,10 @@ export default {
     },
     async addRootCommentResponse() {
       this.$refs.observer.validate();
+      const medias = await this.uploadFiles(this.documents);
       const payload = {
         text: this.opinion,
-        medias: [],
+        medias,
       };
       await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
       this.isAddComment = false;
@@ -295,6 +357,16 @@ export default {
 
 </script>
 <style lang="scss" scoped>
+.uploader {
+  &__container {
+    margin: 30px 0 30px 0;
+  }
+  &__btn {
+    &_hidden {
+      display: none;
+    }
+  }
+}
 .hide {
   visibility: hidden;
 }

@@ -18,6 +18,13 @@
           {{ $moment(data.createdAt).startOf('minute').fromNow() }}
         </div>
       </div>
+      <base-images
+        v-if="data.medias.length"
+        class="comment__images"
+        mode="images"
+        :items="data.medias"
+        :is-show-download="false"
+      />
       <div class="comment__description">
         {{ data.text }}
       </div>
@@ -189,6 +196,9 @@ export default {
   }
   &__bottom {
     margin: 25px 20px 25px 30px;
+  }
+  &__images {
+    margin-left: 20px;
   }
   &__description {
     @include text-usual;
