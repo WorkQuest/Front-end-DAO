@@ -119,7 +119,7 @@
       </div>
     </ValidationObserver>
     <div
-      v-if="step > WalletState.SignPage"
+      v-if="step > walletState.SignPage"
       class="auth__back"
       @click="back"
     >
