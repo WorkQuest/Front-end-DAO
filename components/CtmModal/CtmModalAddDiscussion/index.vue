@@ -16,7 +16,8 @@
         </div>
       </div>
       <validation-observer
-        v-slot="{ handleSubmit, invalid }"
+        ref="observer"
+        v-slot="{ invalid }"
       >
         <div class="add-discussion__subtitle">
           {{ $t('modals.discussionTopic') }}
@@ -77,9 +78,9 @@
             {{ $t('modals.cancel') }}
           </base-btn>
           <base-btn
-            :disabled="invalid"
+            :disabled="!isComplete() || invalid"
             class="footer__buttons"
-            @click="handleSubmit(createDiscussion)"
+            @click="createDiscussion"
           >
             {{ $t('modals.addDiscussion') }}
           </base-btn>
@@ -113,6 +114,9 @@ export default {
     this.acceptedTypes = this.accept.replace(/\s/g, '').split(',');
   },
   methods: {
+    isComplete() {
+      return this.title && this.discussion;
+    },
     remove(item) {
       this.documents = this.documents.filter((doc) => doc.id !== item.id);
     },
@@ -149,6 +153,7 @@ export default {
       this.fileId += 1;
     },
     async createDiscussion() {
+      this.$refs.observer.validate();
       const medias = await this.uploadFiles(this.documents);
       this.title = this.title.trim();
       this.discussion = this.discussion.trim();
