@@ -53,7 +53,6 @@
               ref="fileUpload"
               class="uploader__btn_hidden"
               type="file"
-              multiple
               :accept="accept"
               @change="handleFileSelected($event)"
             >
