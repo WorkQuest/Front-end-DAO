@@ -155,6 +155,8 @@ export default {
 <style lang="scss" scoped>
 .comment-footer {
   &__footer {
+    margin-top: 25px;
+    height: 40px;
     display: flex;
     flex-direction: row;
     align-items: center;
