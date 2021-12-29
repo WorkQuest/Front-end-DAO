@@ -136,6 +136,7 @@ export default {
         await this.$parent.loadSubs(comment.id);
         await this.$parent.getRootComments();
         this.subCommentInput = '';
+        this.documents = '';
       }
     },
   },
