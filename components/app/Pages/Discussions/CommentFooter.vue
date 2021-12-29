@@ -3,24 +3,26 @@
     ref="observer"
     v-slot="{invalid}"
   >
-    <base-uploader
-      class="uploader uploader__container"
-      type="all"
-      :items="documents"
-      :limit="docsLimit"
-      :is-show-download="false"
-      @remove="remove"
-    >
-      <template v-slot:actionButton>
-        <input
-          ref="fileUpload"
-          class="uploader__btn_hidden"
-          type="file"
-          :accept="accept"
-          @change="handleFileSelected($event)"
-        >
-      </template>
-    </base-uploader>
+    <div class="uploader">
+      <base-uploader
+        class="uploader__container"
+        type="all"
+        :items="documents"
+        :limit="docsLimit"
+        :is-show-download="false"
+        @remove="remove"
+      >
+        <template v-slot:actionButton>
+          <input
+            ref="fileUpload"
+            class="uploader__btn_hidden"
+            type="file"
+            :accept="accept"
+            @change="handleFileSelected($event)"
+          >
+        </template>
+      </base-uploader>
+    </div>
     <div class="comment__footer footer">
       <base-btn
         class="footer__btn"
@@ -144,7 +146,8 @@ export default {
 <style lang="scss" scoped>
 .uploader {
   &__container {
-    margin: 30px 0 30px 0;
+    margin-left: 15px;
+    display: flex;
   }
   &__btn {
     &_hidden {
