@@ -1,6 +1,6 @@
 <template>
   <div class="comment">
-    <div class="comment__field">
+    <div class="comment__container">
       <div class="comment__user user">
         <img
           :src="avatarUrl"
@@ -177,13 +177,16 @@ export default {
 }
 .comment {
   animation: show  1s 1;
-  padding: 0 10px 0 0;
   display: flex;
+  &:first-child {
+    margin: 0;
+  }
   &__subcomment {
     display: flex;
     flex-direction: column;
   }
   &__field {
+    padding: 20px;
     width: 100%;
     background: #FFFFFF;
     border-radius: 8px;
@@ -196,11 +199,8 @@ export default {
   &__files {
     margin-left: 20px;
   }
-  &__user {
-    margin: 20px 0 0 20px;
-  }
   &__bottom {
-    margin: 25px 20px 25px 30px;
+    margin: 0 0 0 10px;
   }
   &__btn {
     @include text-usual;
@@ -220,8 +220,7 @@ export default {
   &__description {
     @include text-usual;
     color: #7C838D;
-    align-self: stretch;
-    margin: 20px 20px 25px 20px;
+    margin: 20px 0;
     overflow-wrap: break-word;
     word-break: break-all;
     width: 100%;
@@ -284,7 +283,7 @@ export default {
     font-size: 14px;
     line-height: 18px;
     color: #1D2127;
-    margin: 0 22px 0 8px;
+    margin: 0 10px 0 8px;
     cursor: pointer;
     &_right {
       margin: 7px;
@@ -296,8 +295,7 @@ export default {
     margin-left: auto;
   }
   &__like {
-    width: 40px;
-    margin-left: auto;
+    width: 30px;
     margin-top: 5px;
     color: #E9EDF2;
     font-size: 22px;

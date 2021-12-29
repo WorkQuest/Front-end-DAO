@@ -2,10 +2,12 @@
   <validation-observer
     ref="observer"
     v-slot="{invalid}"
+    tag="div"
+    class="comment-footer"
   >
-    <div class="uploader">
+    <div class="comment-footer__uploader">
       <base-uploader
-        class="uploader__container"
+        class="uploader uploader__container"
         type="all"
         :items="documents"
         :limit="docsLimit"
@@ -23,9 +25,9 @@
         </template>
       </base-uploader>
     </div>
-    <div class="comment__footer footer">
+    <div class="comment-footer__footer">
       <base-btn
-        class="footer__btn"
+        class="footer footer__btn"
         @click="$refs.fileUpload.click()"
       >
         <span class="icon-link footer__chain" />
@@ -151,6 +153,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.comment-footer {
+  &__footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+}
 .uploader {
   &__container {
     margin-left: 15px;
@@ -186,6 +195,7 @@ export default {
   animation: show  1s 1;
   display: flex;
   &__input {
+    animation: show  1s 1;
     @include text-usual;
     width: 100%;
     height: 40px;
@@ -216,6 +226,7 @@ export default {
     height: 40px !important;
     background: #F7F8FA;
     cursor: pointer;
+    animation: show  1s 1;
     &:hover {
       background: #F7F8FA;
     }

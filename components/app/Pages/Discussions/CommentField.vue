@@ -142,11 +142,13 @@ export default {
       this.images = this.data.medias.filter((file) => file.contentType === 'image/jpeg' || file.contentType === 'image/png');
     },
     toggleShowSubComments(comment) {
+      this.SetLoader(true);
       this.showSubs = false;
       if (!this.filterComments(this.subComments, comment.id).length || this.showSubs) {
         this.loadSubs(comment.id);
       }
       this.clearSubs();
+      this.SetLoader(false);
     },
     async loadMoreSubsPrev(rootId) {
       this.$parent.increaseCounter();
@@ -162,8 +164,10 @@ export default {
       return this.subComments.push(...res.comments);
     },
     async loadSubs(rootId) {
+      this.SetLoader(true);
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
       if (this.subComments.length > 0) this.subComments = [];
+      this.SetLoader(false);
       return this.subComments.push(...res.comments);
     },
     clearSubs() {
@@ -207,6 +211,9 @@ export default {
   animation: show  1s 1;
   padding: 0 0 0 15px;
   display: flex;
+  &:first-child {
+    margin: 0;
+  }
   &__container {
     display: flex;
     flex-direction: column;
@@ -232,14 +239,14 @@ export default {
     @include text-usual;
     color: #7C838D;
     align-self: stretch;
-    margin: 20px 20px 25px 20px;
+    margin: 20px 0 20px 20px;
     overflow-wrap: break-word;
     word-break: break-all;
     width: 100%;
     display: flex;
   }
   &_sub {
-    margin-left: 15px;
+    margin-left: 20px;
   }
 }
 .subcomment {
