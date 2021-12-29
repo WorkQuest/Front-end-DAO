@@ -35,6 +35,7 @@
       </div>
       <div class="comment__bottom bottom">
         <base-btn
+          v-if="data.level !== 4"
           class="bottom__btn"
           mode="blue"
           @click="toggleReply"

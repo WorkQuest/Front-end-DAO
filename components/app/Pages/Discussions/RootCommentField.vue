@@ -34,7 +34,6 @@
         {{ comment.text }}
       </div>
       <div class="comment__bottom bottom">
-        {{ comment.amountSubComments }}
         <base-btn
           v-if="comment.amountSubComments > 0"
           class="comment__btn"
