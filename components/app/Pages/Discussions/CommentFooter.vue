@@ -127,6 +127,7 @@ export default {
       return this.subCommentInput;
     },
     async addSubCommentResponse(comment) {
+      this.SetLoader(true);
       this.$refs.observer.validate();
       if (comment.level <= 4) {
         const medias = await this.uploadFiles(this.documents);
@@ -143,6 +144,7 @@ export default {
         this.subCommentInput = '';
         this.documents = [];
       }
+      this.SetLoader(false);
     },
   },
 };

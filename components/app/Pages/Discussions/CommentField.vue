@@ -3,7 +3,7 @@
     <div class="comment__field comment_sub">
       <div class="comment__user user">
         <img
-          :src="data && data.author && data.author.avatar && data.author.avatar.url ? data.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
+          :src="avatarUrl"
           alt="userAvatar"
           class="user__avatar"
           @click="toInvestor(data.author.id)"
@@ -118,6 +118,12 @@ export default {
     ...mapGetters({
       currentDiscussion: 'discussions/getCurrentDiscussion',
     }),
+    avatarUrl() {
+      if (this.data.author.avatar && this.data.author.avatar.url) {
+        return this.data.author.avatar.url;
+      }
+      return require('~/assets/img/app/avatar_empty.png');
+    },
     isShowBtnMoreComments() {
       return this.array[this.array.length - 1].id === this.data.id
           && this.array[this.array.length - 1].rootComment.amountSubComments > this.subCommentsOnPage
@@ -253,9 +259,10 @@ export default {
     border-radius: 6px;
     border: none;
     outline: none;
+    transition: .5s;
     &:hover {
-      background: transparent;
-      color: #103D7C;
+      background: $blue;
+      color: $white;
     }
   }
 }
@@ -308,9 +315,14 @@ export default {
     border-radius: 6px;
     border: none;
     outline: none;
+    transition: .5s;
+    &:first-child {
+      width: 90px;
+      margin-right: 5px;
+    }
     &:hover {
-      background: transparent;
-      color: #103D7C;
+      background: $blue;
+      color: $white;
     }
   }
   &__like {

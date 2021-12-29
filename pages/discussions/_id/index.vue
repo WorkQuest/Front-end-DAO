@@ -331,6 +331,7 @@ export default {
       this.totalPagesValue = this.totalPages();
     },
     async addRootCommentResponse() {
+      this.SetLoader(true);
       this.$refs.observer.validate();
       const medias = await this.uploadFiles(this.documents);
       const payload = {
@@ -341,17 +342,22 @@ export default {
       this.isAddComment = false;
       this.opinion = '';
       await this.getRootComments();
+      this.SetLoader(false);
     },
     async getCurrentDiscussion() {
       await this.$store.dispatch('discussions/getCurrentDiscussion', this.discussionId);
     },
     async toggleFavorite(discussionId) {
+      this.SetLoader(true);
       await this.$store.dispatch('discussions/toggleStarOnDiscussion', { id: discussionId, like: this.currentDiscussion && !this.currentDiscussion.star });
       await this.getCurrentDiscussion();
+      this.SetLoader(false);
     },
     async toggleLikeOnDiscussion(discussionId) {
+      this.SetLoader(true);
       await this.$store.dispatch('discussions/toggleLikeOnDiscussion', { id: discussionId, like: this.currentDiscussion && !this.currentDiscussion.liked });
       await this.getCurrentDiscussion();
+      this.SetLoader(false);
     },
     addComment() {
       this.isAddComment = !this.isAddComment;

@@ -152,6 +152,7 @@ export default {
       this.fileId += 1;
     },
     async createDiscussion() {
+      this.SetLoader(true);
       this.$refs.observer.validate();
       const medias = await this.uploadFiles(this.documents);
       this.title = this.title.trim();
@@ -166,6 +167,7 @@ export default {
         await this.$router.push(`/discussions/${id}`);
       } else console.error('Something wrong, tell to developers');
       this.hide();
+      this.SetLoader(false);
     },
     hide() {
       this.CloseModal();

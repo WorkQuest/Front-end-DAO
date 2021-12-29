@@ -3,7 +3,7 @@
     <div class="comment__field">
       <div class="comment__user user">
         <img
-          :src="comment && comment.author && comment.author.avatar && comment.author.avatar.url ? comment.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
+          :src="avatarUrl"
           alt="userAvatar"
           class="user__avatar"
           @click="toInvestor(comment.author.id)"
@@ -103,6 +103,12 @@ export default {
     ...mapGetters({
       currentDiscussion: 'discussions/getCurrentDiscussion',
     }),
+    avatarUrl() {
+      if (this.comment.author.avatar && this.comment.author.avatar.url) {
+        return this.comment.author.avatar.url;
+      }
+      return require('~/assets/img/app/avatar_empty.png');
+    },
   },
   async mounted() {
     await this.filterMediaToTypes();
@@ -116,15 +122,19 @@ export default {
       this.subComments = [];
     },
     toggleShowSubComments(comment) {
+      this.SetLoader(true);
       this.showSubs = false;
       if (!this.filterComments(this.subComments, comment.id).length || this.showSubs) {
         this.loadSubs(comment.id);
       }
       this.clearSubs();
+      this.SetLoader(false);
     },
     async toggleLikeOnComment(comment) {
+      this.SetLoader(true);
       await this.$store.dispatch('discussions/toggleLikeOnComment', { id: comment.id, like: comment && !Object.keys(comment.commentLikes).length > 0 });
       await this.getRootComments();
+      this.SetLoader(false);
     },
     async getRootComments() {
       this.$parent.getRootComments();
@@ -133,14 +143,18 @@ export default {
       this.count += 1;
     },
     async loadMoreSubs(rootId) {
+      this.SetLoader(true);
       const additionalValue = `limit=${this.subCommentsOnPage * this.count}`;
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId, additionalValue });
       if (this.subComments.length > 0) this.subComments = [];
+      this.SetLoader(false);
       return this.subComments.push(...res.comments);
     },
     async loadSubs(rootId) {
+      this.SetLoader(true);
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
       if (this.subComments.length > 0) this.subComments = [];
+      this.SetLoader(false);
       return this.subComments.push(...res.comments);
     },
     filterComments(subComments, rootId) {
@@ -197,9 +211,10 @@ export default {
     border-radius: 6px;
     border: none;
     outline: none;
+    transition: .5s;
     &:hover {
-      background: transparent;
-      color: #103D7C;
+      background: $blue;
+      color: $white;
     }
   }
   &__description {
