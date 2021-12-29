@@ -36,6 +36,7 @@
         :placeholder="$t('discussions.input')"
         rules="min:1|max:250"
         :name="$t('discussions.response')"
+        :auto-focus="isReply"
         mode="comment-field"
         @keyup.enter.native="addSubCommentResponse(comment)"
       />
@@ -59,6 +60,10 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'CommentFooter',
   props: {
+    isReply: {
+      type: Boolean,
+      default: false,
+    },
     comment: {
       type: Object,
       default: () => {},

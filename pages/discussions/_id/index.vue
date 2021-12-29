@@ -162,7 +162,9 @@
                 <span class="icon-link footer__chain" />
               </base-btn>
               <base-field
+                ref="input"
                 v-model="opinion"
+                :auto-focus="isAddComment"
                 class="footer__input"
                 :placeholder="$t('discussions.input')"
                 rules="min:1|max:250"
@@ -263,9 +265,13 @@ export default {
     await this.filterMediaToTypes();
     await this.getRootComments();
     this.totalPages();
+    this.focus();
     this.SetLoader(false);
   },
   methods: {
+    focus() {
+      if (this.autoFocus) this.$refs.input.focus();
+    },
     remove(item) {
       this.documents = this.documents.filter((doc) => doc.id !== item.id);
     },

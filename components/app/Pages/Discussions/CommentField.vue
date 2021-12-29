@@ -67,6 +67,7 @@
       </div>
       <comment-footer
         v-if="isReply"
+        :is-reply.sync="isReply"
         :comment="data"
       />
     </div>

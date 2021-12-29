@@ -32,6 +32,7 @@
         <slot name="left" />
       </div>
       <input
+        ref="input"
         class="ctm-field__input"
         :class="[
           {'ctm-field__input_text-align-center' : textAlign === 'center'},
@@ -78,6 +79,10 @@
 <script>
 export default {
   props: {
+    autoFocus: {
+      type: Boolean,
+      default: false,
+    },
     validationMode: {
       type: String,
       default: 'aggressive',
@@ -161,7 +166,13 @@ export default {
       default: false,
     },
   },
+  mounted() {
+    this.focus();
+  },
   methods: {
+    focus() {
+      if (this.autoFocus) this.$refs.input.focus();
+    },
     changeFocus(arg) {
       this.$emit('focus', arg);
     },
