@@ -209,7 +209,7 @@ export default {
 }
 .comment {
   animation: show  1s 1;
-  padding: 0 0 0 15px;
+  margin-left: 30px;
   display: flex;
   &:first-child {
     margin: 0;
@@ -244,9 +244,6 @@ export default {
     word-break: break-all;
     width: 100%;
     display: flex;
-  }
-  &_sub {
-    margin-left: 20px;
   }
 }
 .subcomment {
