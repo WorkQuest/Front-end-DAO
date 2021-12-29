@@ -281,6 +281,7 @@ export default {
     margin-left: auto;
   }
   &__like {
+    width: 40px;
     margin-left: auto;
     margin-top: 5px;
     color: #E9EDF2;

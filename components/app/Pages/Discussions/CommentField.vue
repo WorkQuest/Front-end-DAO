@@ -313,6 +313,7 @@ export default {
     }
   }
   &__like {
+    width: 40px;
     margin-left: auto;
     margin-top: 0;
     color: #E9EDF2;
