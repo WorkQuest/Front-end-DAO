@@ -137,6 +137,7 @@ export default {
       this.$parent.showSubs = true;
       this.$parent.isReply = false;
       await this.$parent.loadSubs(comment.id);
+      await this.$parent.getRootComments();
       this.subCommentInput = '';
     },
   },

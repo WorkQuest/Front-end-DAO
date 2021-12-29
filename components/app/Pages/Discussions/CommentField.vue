@@ -126,6 +126,9 @@ export default {
     await this.filterMediaToTypes();
   },
   methods: {
+    async getRootComments() {
+      this.$parent.getRootComments();
+    },
     async filterMediaToTypes() {
       this.documents = this.data.medias.filter((file) => file.contentType === 'application/msword' || file.contentType === 'application/pdf');
       this.images = this.data.medias.filter((file) => file.contentType === 'image/jpeg' || file.contentType === 'image/png');
