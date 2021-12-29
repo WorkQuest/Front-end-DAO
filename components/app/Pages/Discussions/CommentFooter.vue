@@ -34,7 +34,7 @@
         v-model="subCommentInput"
         class="footer__input"
         :placeholder="$t('discussions.input')"
-        rules="required|max:250"
+        rules="min:1|max:250"
         :name="$t('discussions.response')"
         mode="comment-field"
         @keyup.enter.native="addSubCommentResponse(comment)"
