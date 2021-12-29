@@ -9,6 +9,7 @@
       class="images__image image"
     >
       <img
+        loading="lazy"
         :src="item.img || item.url"
         alt=""
         class="image__img"
@@ -74,6 +75,7 @@ export default {
 }
 
 .image {
+  animation: show  1s 1;
   position: relative;
   overflow: hidden;
   height: 90px;

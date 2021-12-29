@@ -16,39 +16,30 @@
         </div>
       </div>
       <validation-observer
-        v-slot="{ handleSubmit }"
+        ref="observer"
+        v-slot="{ invalid }"
       >
         <div class="add-discussion__subtitle">
           {{ $t('modals.discussionTopic') }}
         </div>
-        <validation-provider
-          name="description-title"
+        <base-field
+          v-model="title"
+          :placeholder="$t('modals.discussionTopic')"
+          class="add-discussion__field"
           rules="required|max:78"
-        >
-          <base-field
-            v-model="title"
-            :placeholder="$t('modals.discussionTopic')"
-            class="add-discussion__field"
-            rules="required|max:78"
-            :name="$t('modals.discussionTopic')"
-          />
-        </validation-provider>
+          :name="$t('modals.discussionTopic')"
+        />
         <div class="add-discussion__subtitle">
           {{ $t('modals.description') }}
         </div>
-        <validation-provider
-          name="description-description"
+        <base-textarea
+          v-model="discussion"
+          class="add-discussion__body"
+          :placeholder="$t('modals.description')"
           rules="required|max:2000"
-        >
-          <base-textarea
-            v-model="discussion"
-            class="add-discussion__body"
-            :placeholder="$t('modals.description')"
-            rules="required|max:2000"
-            mode="add-discussion"
-            :name="$t('modals.description')"
-          />
-        </validation-provider>
+          mode="add-discussion"
+          :name="$t('modals.description')"
+        />
         <base-uploader
           class="add-discussion uploader__container"
           type="all"
@@ -62,7 +53,6 @@
               ref="fileUpload"
               class="uploader__btn_hidden"
               type="file"
-              multiple
               :accept="accept"
               @change="handleFileSelected($event)"
             >
@@ -87,8 +77,9 @@
             {{ $t('modals.cancel') }}
           </base-btn>
           <base-btn
+            :disabled="!isComplete() || invalid"
             class="footer__buttons"
-            @click="handleSubmit(createDiscussion)"
+            @click="createDiscussion"
           >
             {{ $t('modals.addDiscussion') }}
           </base-btn>
@@ -122,6 +113,9 @@ export default {
     this.acceptedTypes = this.accept.replace(/\s/g, '').split(',');
   },
   methods: {
+    isComplete() {
+      return this.title && this.discussion;
+    },
     remove(item) {
       this.documents = this.documents.filter((doc) => doc.id !== item.id);
     },
@@ -158,6 +152,8 @@ export default {
       this.fileId += 1;
     },
     async createDiscussion() {
+      this.SetLoader(true);
+      this.$refs.observer.validate();
       const medias = await this.uploadFiles(this.documents);
       this.title = this.title.trim();
       this.discussion = this.discussion.trim();
@@ -171,6 +167,7 @@ export default {
         await this.$router.push(`/discussions/${id}`);
       } else console.error('Something wrong, tell to developers');
       this.hide();
+      this.SetLoader(false);
     },
     hide() {
       this.CloseModal();
@@ -180,6 +177,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.icon-btn_left {
+  margin: 0;
+}
 .uploader {
   &__container {
     margin: 30px 0 30px 0;

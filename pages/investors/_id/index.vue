@@ -5,15 +5,15 @@
       class="investor__profile"
     >
       <div class="investor__header header">
-        <nuxt-link
-          to="/investors"
+        <base-btn
           class="header__link link"
+          @click="$router.go(-1)"
         >
           <span class="icon-short_left link__arrow" />
           <div class="link__text">
             {{ $t('discussions.back') }}
           </div>
-        </nuxt-link>
+        </base-btn>
       </div>
       <div class="investor__title title">
         <div class="title__name">
@@ -502,6 +502,12 @@ export default {
   display: flex;
   align-items: center;
   text-decoration: none;
+  background: transparent;
+  justify-content: flex-start;
+  width: 100px;
+  &:hover {
+    background: transparent;
+  }
 
   &__text {
     font-size: 18px;

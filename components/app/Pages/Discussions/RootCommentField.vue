@@ -1,12 +1,9 @@
 <template>
-  <!-- Level1 -->
   <div class="comment">
-    <div
-      class="comment__field"
-    >
+    <div class="comment__container">
       <div class="comment__user user">
         <img
-          :src="comment && comment.author.avatar && comment.author.avatar.url ? comment.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
+          :src="avatarUrl"
           alt="userAvatar"
           class="user__avatar"
           @click="toInvestor(comment.author.id)"
@@ -21,6 +18,18 @@
           {{ $moment(comment.createdAt).startOf('minute').fromNow() }}
         </div>
       </div>
+      <base-files
+        v-if="documents.length"
+        class="comment__files"
+        :items="documents"
+      />
+      <base-images
+        v-if="images.length"
+        class="comment__images"
+        mode="images"
+        :items="images"
+        :is-show-download="false"
+      />
       <div class="comment__description">
         {{ comment.text }}
       </div>
@@ -28,11 +37,10 @@
         <base-btn
           v-if="comment.amountSubComments > 0"
           class="comment__btn"
-          @click="!filterComments(sub2Comments, comment.id).length ? loadSubs(comment.id) : clearSubs()"
+          @click="toggleShowSubComments(comment)"
         >
-          {{ !filterComments(sub2Comments, comment.id).length && comment.amountSubComments > 0 ? $t('discussions.show') : $t('discussions.hide') }}
+          {{ !filterComments(subComments, comment.id).length && comment.amountSubComments > 0 ? $t('discussions.show') : $t('discussions.hide') }}
         </base-btn>
-        <!-- RootComment panel -->
         <div class="bottom bottom__footer">
           <div class="bottom__footer">
             <div class="bottom__comment">
@@ -57,55 +65,15 @@
           </div>
         </div>
       </div>
-      <!--  Comments -->
-      <div
-        v-for="(sub2) in filterComments(sub2Comments, comment.id)"
-        :key="sub2.id"
-        class="comment__subcomment subcomment"
-      >
-        <comment-field
-          class="subcomment__field subcomment_lvl2"
-          :data="sub2"
-          :array="filterComments(sub2Comments, comment.id)"
-          level="2"
-        />
-      </div>
+      <comment-field
+        v-for="(sub) in filterComments(subComments, comment.id)"
+        :key="sub.id"
+        class="comment__subcomment subcomment subcomment__field"
+        :data="sub"
+        :array="filterComments(subComments, comment.id)"
+      />
     </div>
-    <validation-observer
-      v-slot="{handleSubmit, validated, passed, invalid}"
-    >
-      <!--  Bottom -->
-      <div
-        class="comment__footer footer"
-      >
-        <base-btn
-          class="footer__btn hide"
-          :disabled="!validated || !passed || invalid"
-        >
-          <template v-slot:left>
-            <span class="icon-link footer__chain" />
-          </template>
-        </base-btn>
-        <base-field
-          v-model="subCommentInput"
-          class="footer__input"
-          :placeholder="$t('discussions.input')"
-          rules="required|max:250"
-          :name="$t('discussions.response')"
-          mode="comment-field"
-          @keyup.enter.native="handleSubmit(addSubCommentResponse(comment, 2))"
-        />
-        <base-btn
-          class="footer__btn"
-          :disabled="!validated || !passed || invalid"
-          @click="handleSubmit(addSubCommentResponse(comment, 2))"
-        >
-          <template v-slot:left>
-            <span class="icon-send footer__arrow" />
-          </template>
-        </base-btn>
-      </div>
-    </validation-observer>
+    <comment-footer :comment="comment" />
   </div>
 </template>
 
@@ -122,47 +90,51 @@ export default {
   },
   data() {
     return {
+      showSubs: false,
       subCommentsOnPage: 5,
       comments: [],
-      sub2Comments: [],
-      subCommentInput: '',
+      subComments: [],
       count: 1,
+      documents: [],
+      images: [],
     };
   },
   computed: {
     ...mapGetters({
       currentDiscussion: 'discussions/getCurrentDiscussion',
     }),
+    avatarUrl() {
+      if (this.comment.author.avatar && this.comment.author.avatar.url) {
+        return this.comment.author.avatar.url;
+      }
+      return require('~/assets/img/app/avatar_empty.png');
+    },
+  },
+  async mounted() {
+    await this.filterMediaToTypes();
   },
   methods: {
-    clearSubs() {
-      this.sub2Comments = [];
+    async filterMediaToTypes() {
+      this.documents = this.comment.medias.filter((file) => file.contentType === 'application/msword' || file.contentType === 'application/pdf');
+      this.images = this.comment.medias.filter((file) => file.contentType === 'image/jpeg' || file.contentType === 'image/png');
     },
-    async addSubCommentResponse(comment, level) {
-      if (!comment.rootCommentId) {
-        const payload = {
-          rootCommentId: comment.id,
-          text: this.subCommentInput,
-          medias: [],
-        };
-        await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
-        await this.loadSubs(comment.id, level);
-        this.subCommentInput = '';
-      } else {
-        const payload = {
-          rootCommentId: comment.id,
-          text: this.subCommentInput,
-          medias: [],
-        };
-        await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
-        await this.loadSubs(comment.rootCommentId, level);
-        this.isReply = false;
-        this.subCommentInput = '';
+    clearSubs() {
+      this.subComments = [];
+    },
+    toggleShowSubComments(comment) {
+      this.SetLoader(true);
+      this.showSubs = false;
+      if (!this.filterComments(this.subComments, comment.id).length || this.showSubs) {
+        this.loadSubs(comment.id);
       }
+      this.clearSubs();
+      this.SetLoader(false);
     },
     async toggleLikeOnComment(comment) {
+      this.SetLoader(true);
       await this.$store.dispatch('discussions/toggleLikeOnComment', { id: comment.id, like: comment && !Object.keys(comment.commentLikes).length > 0 });
       await this.getRootComments();
+      this.SetLoader(false);
     },
     async getRootComments() {
       this.$parent.getRootComments();
@@ -171,15 +143,19 @@ export default {
       this.count += 1;
     },
     async loadMoreSubs(rootId) {
+      this.SetLoader(true);
       const additionalValue = `limit=${this.subCommentsOnPage * this.count}`;
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId, additionalValue });
-      if (this.sub2Comments.length > 0) this.sub2Comments = [];
-      return this.sub2Comments.push(...res.comments);
+      if (this.subComments.length > 0) this.subComments = [];
+      this.SetLoader(false);
+      return this.subComments.push(...res.comments);
     },
     async loadSubs(rootId) {
+      this.SetLoader(true);
       const res = await this.$store.dispatch('discussions/getSubCommentsLevel', { id: rootId });
-      if (this.sub2Comments.length > 0) this.sub2Comments = [];
-      return this.sub2Comments.push(...res.comments);
+      if (this.subComments.length > 0) this.subComments = [];
+      this.SetLoader(false);
+      return this.subComments.push(...res.comments);
     },
     filterComments(subComments, rootId) {
       return subComments.filter((item) => item.rootCommentId === rootId);
@@ -200,24 +176,31 @@ export default {
   visibility: hidden;
 }
 .comment {
-  padding: 0 30px 0 0;
+  animation: show  1s 1;
   display: flex;
+  &:first-child {
+    margin: 0;
+  }
   &__subcomment {
     display: flex;
     flex-direction: column;
   }
   &__field {
+    padding: 20px;
     width: 100%;
     background: #FFFFFF;
     border-radius: 8px;
     display: flex;
     flex-direction: column;
   }
-  &__user {
-    margin: 20px 0 0 20px;
+  &__images {
+    margin-left: 20px;
+  }
+  &__files {
+    margin-left: 20px;
   }
   &__bottom {
-    margin: 25px 20px 25px 30px;
+    margin: 0 0 0 10px;
   }
   &__btn {
     @include text-usual;
@@ -228,43 +211,20 @@ export default {
     border-radius: 6px;
     border: none;
     outline: none;
+    transition: .5s;
     &:hover {
-      background: transparent;
-      color: #103D7C;
+      background: $blue;
+      color: $white;
     }
   }
   &__description {
     @include text-usual;
     color: #7C838D;
-    align-self: stretch;
-    margin: 20px 20px 25px 20px;
+    margin: 20px 0;
     overflow-wrap: break-word;
     word-break: break-all;
     width: 100%;
     display: flex;
-  }
-  &__footer {
-    height: 40px;
-    display: grid;
-    grid-template-columns: 1fr 11fr 1fr;
-    margin: 20px;
-    align-items: center;
-  }
-  &_sub2 {
-    background: #8D96A2;
-    margin-left: 30px;
-  }
-  &_sub3 {
-    background: #707379;
-    margin-left: 50px;
-  }
-  &_sub4 {
-    background: #505052;
-    margin-left: 70px;
-  }
-  &_sub5 {
-    background: #37373a;
-    margin-left: 90px;
   }
 }
 .user {
@@ -317,13 +277,13 @@ export default {
   &__comment {
     height: 18px;
     width: 18px;
-    cursor: pointer;
+    cursor: default !important;
   }
   &__counter {
     font-size: 14px;
     line-height: 18px;
     color: #1D2127;
-    margin: 0 22px 0 8px;
+    margin: 0 10px 0 8px;
     cursor: pointer;
     &_right {
       margin: 7px;
@@ -335,7 +295,7 @@ export default {
     margin-left: auto;
   }
   &__like {
-    margin-left: auto;
+    width: 30px;
     margin-top: 5px;
     color: #E9EDF2;
     font-size: 22px;
@@ -349,52 +309,6 @@ export default {
         color: #E9EDF2;
       }
     }
-  }
-}
-.footer {
-  display: flex;
-  &__input {
-    @include text-usual;
-    width: 100%;
-    height: 40px;
-    border-radius: 6px;
-    border: none;
-    padding: 10px 15px 10px 15px;
-    margin: 0 0 20px 0;
-  }
-  &__chain {
-    padding: 0 0 0 5px;
-    display: flex;
-    width: 40px;
-    height: 40px;
-    background: #F7F8FA;
-    border-radius: 6px;
-    align-items: center;
-    justify-content: center;
-    color: #000000;
-    font-size: 25px;
-    cursor: pointer;
-  }
-  &__btn {
-    width: 40px;
-    height: 40px;
-    background: #F7F8FA;
-    cursor: pointer;
-    &:hover {
-      background: #F7F8FA;
-    }
-  }
-  &__arrow {
-    display: flex;
-    width: 40px;
-    height: 40px;
-    border-radius: 6px;
-    align-items: center;
-    justify-content: center;
-    font-size: 25px;
-    color: #0083C7;
-    cursor: pointer;
-    padding: 0 0 0 10px;
   }
 }
 </style>

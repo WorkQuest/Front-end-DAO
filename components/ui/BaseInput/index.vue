@@ -14,7 +14,7 @@
     :rules="rules"
     :name="name"
     :vid="vid"
-    mode="eager"
+    :mode="validationMode"
     slim
   >
     <div
@@ -32,6 +32,7 @@
         <slot name="left" />
       </div>
       <input
+        ref="input"
         class="ctm-field__input"
         :class="[
           {'ctm-field__input_text-align-center' : textAlign === 'center'},
@@ -44,6 +45,7 @@
         :autocomplete="autocomplete"
         :disabled="disabled"
         :inputmode="inputmode"
+        :mode="validationMode"
         @focus="changeFocus(true)"
         @blur="changeFocus(false)"
         @input="input"
@@ -77,6 +79,14 @@
 <script>
 export default {
   props: {
+    autoFocus: {
+      type: Boolean,
+      default: false,
+    },
+    validationMode: {
+      type: String,
+      default: 'aggressive',
+    },
     value: {
       type: [String, Number],
       default: '',
@@ -156,7 +166,13 @@ export default {
       default: false,
     },
   },
+  mounted() {
+    this.focus();
+  },
   methods: {
+    focus() {
+      if (this.autoFocus) this.$refs.input.focus();
+    },
     changeFocus(arg) {
       this.$emit('focus', arg);
     },
