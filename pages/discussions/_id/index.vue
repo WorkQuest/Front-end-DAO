@@ -497,7 +497,7 @@ export default {
     align-items: center;
     justify-content: center;
     width: 100px;
-    height: 43px;
+    height: 40px;
     color: #ffffff;
     font-family: 'Inter', sans-serif;
     font-style: normal;
