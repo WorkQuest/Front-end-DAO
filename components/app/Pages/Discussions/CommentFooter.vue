@@ -123,18 +123,20 @@ export default {
     },
     async addSubCommentResponse(comment) {
       this.$refs.observer.validate();
-      const medias = await this.uploadFiles(this.documents);
-      const payload = {
-        rootCommentId: comment.id,
-        text: this.subCommentInput,
-        medias,
-      };
-      await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
-      this.$parent.showSubs = true;
-      this.$parent.isReply = false;
-      await this.$parent.loadSubs(comment.id);
-      await this.$parent.getRootComments();
-      this.subCommentInput = '';
+      if (comment.level <= 4) {
+        const medias = await this.uploadFiles(this.documents);
+        const payload = {
+          rootCommentId: comment.id,
+          text: this.subCommentInput,
+          medias,
+        };
+        await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
+        this.$parent.showSubs = true;
+        this.$parent.isReply = false;
+        await this.$parent.loadSubs(comment.id);
+        await this.$parent.getRootComments();
+        this.subCommentInput = '';
+      }
     },
   },
 };
