@@ -68,7 +68,7 @@
       <comment-field
         v-for="(sub) in filterComments(subComments, comment.id)"
         :key="sub.id"
-        class="comment comment__subcomment subcomment subcomment__field"
+        class="comment__subcomment subcomment subcomment__field"
         :data="sub"
         :array="filterComments(subComments, comment.id)"
       />
