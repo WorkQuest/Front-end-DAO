@@ -175,6 +175,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.icon-btn_left {
+  margin: 0;
+}
 .uploader {
   &__container {
     margin: 30px 0 30px 0;

@@ -28,9 +28,7 @@
         class="footer__btn"
         @click="$refs.fileUpload.click()"
       >
-        <template v-slot:left>
-          <span class="icon-link footer__chain" />
-        </template>
+        <span class="icon-link footer__chain" />
       </base-btn>
       <base-field
         v-model="subCommentInput"
@@ -46,12 +44,10 @@
         :disabled="!isComplete() || invalid"
         @click="addSubCommentResponse(comment)"
       >
-        <template v-slot:left>
-          <span
-            class="icon-send footer__arrow"
-            :class="{'footer__arrow_blue': isComplete()}"
-          />
-        </template>
+        <span
+          class="icon-send footer__arrow"
+          :class="{'footer__arrow_blue': isComplete()}"
+        />
       </base-btn>
     </div>
   </validation-observer>
@@ -199,8 +195,13 @@ export default {
     color: #000000;
     font-size: 25px;
     cursor: pointer;
+    transition: .5s;
+    &:hover {
+      color: #0083C7;
+    }
   }
   &__btn {
+    padding-right: 0;
     width: 40px !important;
     height: 40px !important;
     background: #F7F8FA;
@@ -211,8 +212,9 @@ export default {
   }
   &__arrow {
     display: flex;
-    width: 40px;
-    height: 40px;
+    width: 16px;
+    height: 16px;
+    padding: 20px;
     background: #F7F8FA;
     border-radius: 6px;
     align-items: center;
@@ -220,6 +222,7 @@ export default {
     font-size: 25px;
     color: $black500;
     cursor: pointer;
+    transition: .5s;
     &_blue {
       color: #0083C7;
     }

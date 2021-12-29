@@ -159,9 +159,7 @@
                 class="footer__btn"
                 @click="$refs.fileUpload.click()"
               >
-                <template v-slot:left>
-                  <span class="icon-link footer__chain" />
-                </template>
+                <span class="icon-link footer__chain" />
               </base-btn>
               <base-field
                 v-model="opinion"
@@ -696,6 +694,9 @@ export default {
     height: 43px;
     margin-left: 20px;
     outline: none;
+    &:last-child {
+      margin-right: 15px;
+    }
   }
 }
 .filesUploader {
@@ -728,10 +729,15 @@ export default {
     color: #000000;
     font-size: 25px;
     cursor: pointer;
+    transition: .5s;
+    &:hover {
+      color: #0083C7;
+    }
   }
   &__btn {
-    width: 40px;
-    height: 40px;
+    padding-right: 5px;
+    width: 40px !important;
+    height: 40px !important;
     background: #F7F8FA;
     cursor: pointer;
     &:hover {

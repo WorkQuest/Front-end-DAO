@@ -263,7 +263,7 @@ export default {
   &__comment {
     height: 18px;
     width: 18px;
-    cursor: pointer;
+    cursor: default !important;
   }
   &__counter {
     font-size: 14px;
