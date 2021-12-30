@@ -6,9 +6,7 @@
     <div class="addProposal__content content">
       <validation-observer v-slot="{ handleSubmit, valid }">
         <div class="content__voting">
-          <div
-            class="content__field content__input"
-          >
+          <div class="content__field content__input">
             <base-field
               id="votingTopicInput"
               v-model="votingTopicInput"

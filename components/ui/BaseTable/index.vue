@@ -73,7 +73,7 @@
         <base-btn
           mode="lightRed"
           class="btn__delegate"
-          :disabled="/*!myProfile(el.item.id) || el.item.voting === 0*/ false"
+          :disabled="!myProfile(el.item.id) || el.item.voting === 0"
           :class="delegateClass(el)"
           @click="openModalUndelegate(el)"
         >

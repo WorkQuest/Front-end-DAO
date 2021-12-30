@@ -87,7 +87,7 @@
             </div>
           </div>
           <div class="content__wrap">
-            <div>
+            <div class="content__wrap-inner">
               <div class="content__title">
                 {{ $t('modals.date') }}
               </div>
@@ -101,8 +101,7 @@
                 />
               </div>
             </div>
-
-            <div>
+            <div class="content__wrap-inner">
               <div class="content__title">
                 {{ $t('modals.cvv') }}
               </div>
