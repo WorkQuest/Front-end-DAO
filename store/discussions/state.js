@@ -1,5 +1,7 @@
 export default () => ({
   currentDiscussion: {},
+  discussionDocuments: [],
+  discussionImages: [],
   discussions: {},
   discussionsCount: 0,
   usersLikesOnComment: {},

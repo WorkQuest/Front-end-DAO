@@ -134,6 +134,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .discussion {
+  animation: show  1s 1;
   width: 100%;
   height: 100%;
   background: #FFFFFF;
@@ -231,7 +232,7 @@ export default {
       height: 18px;
       width: 18px;
       margin-top: 5px;
-      cursor: default;
+      cursor: default !important;
     }
     &__counter {
       font-size: 14px;

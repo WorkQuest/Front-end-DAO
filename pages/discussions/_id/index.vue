@@ -47,14 +47,22 @@
           <div class="discussion__subtitle">
             {{ $t('discussions.files') }}
           </div>
-          <base-files
+          <div
+            v-if="!discussionDocuments.length && !discussionImages.length"
             class="discussion__files"
-            :items="pdf"
+          >
+            {{ $t('discussions.noFiles') }}
+          </div>
+          <base-files
+            v-if="discussionDocuments.length"
+            class="discussion__files"
+            :items="discussionDocuments"
           />
           <base-images
+            v-if="discussionImages.length"
             class="discussion__images"
             mode="images"
-            :items="images"
+            :items="discussionImages"
             :is-show-download="false"
           />
           <slot name="actionButton" />
@@ -114,36 +122,56 @@
           </span>
         </base-btn>
       </div>
-      <validation-observer v-slot="{ handleSubmit }">
+      <validation-observer
+        ref="observer"
+        v-slot="{ invalid }"
+      >
         <div
           v-if="isAddComment"
           class="info__response response"
         >
-          <div class="response__field">
+          <div
+            class="response__field"
+          >
             <div class="response__title">
               {{ $t('discussions.responseTitle') }}
             </div>
+            <base-uploader
+              class="uploader uploader__container"
+              type="all"
+              :items="documents"
+              :limit="docsLimit"
+              :is-show-download="false"
+              @remove="remove"
+            >
+              <template v-slot:actionButton>
+                <input
+                  ref="fileUpload"
+                  class="uploader__btn_hidden"
+                  type="file"
+                  :accept="accept"
+                  @change="handleFileSelected($event)"
+                >
+              </template>
+            </base-uploader>
             <div class="response__footer footer">
               <base-btn
-                class="footer__btn hide"
+                class="footer__btn"
+                @click="$refs.fileUpload.click()"
               >
-                <template v-slot:left>
-                  <span class="icon-link footer__chain" />
-                </template>
+                <span class="icon-link footer__chain" />
               </base-btn>
-              <validation-provider
+              <base-field
+                ref="input"
+                v-model="opinion"
+                :auto-focus="isAddComment"
                 class="footer__input"
-                rules="required|min:1|max:250"
-              >
-                <base-field
-                  v-model="opinion"
-                  :placeholder="$t('discussions.input')"
-                  rules="required|min:1|max:250"
-                  :name="$t('discussions.response')"
-                  mode="comment-field"
-                  @keyup.enter.native="handleSubmit(addRootCommentResponse)"
-                />
-              </validation-provider>
+                :placeholder="$t('discussions.input')"
+                rules="min:1|max:250"
+                :name="$t('discussions.response')"
+                mode="comment-field"
+                @keyup.enter.native="addRootCommentResponse"
+              />
             </div>
             <div class="response__footer">
               <base-btn
@@ -154,8 +182,9 @@
                 {{ $t('discussions.cancel') }}
               </base-btn>
               <base-btn
+                :disabled="!isComplete() || invalid"
                 class="response__btn"
-                @click="handleSubmit(addRootCommentResponse)"
+                @click="addRootCommentResponse"
               >
                 {{ $t('discussions.add') }}
               </base-btn>
@@ -194,27 +223,31 @@ import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
-      images: [],
-      pdf: [],
+      accept: 'application/msword, application/pdf, image/jpeg, image/png',
+      acceptedTypes: [],
+      documents: [],
+      docsLimit: 10,
       page: 1,
       perPager: 10,
       isAddComment: false,
-      rootCommentObjects: {},
-      rootCommentArray: [],
       totalPagesValue: 1,
       discussionId: '',
       opinion: '',
-      documents: [],
     };
   },
   computed: {
     ...mapGetters({
+      discussionImages: 'discussions/getDiscussionImages',
+      discussionDocuments: 'discussions/getDiscussionDocuments',
       discussionAuthor: 'discussions/getCurrentDiscussionAuthorData',
       currentDiscussion: 'discussions/getCurrentDiscussion',
       authorAvatarUrl: 'discussions/getCurrentDiscussionAuthorAvatarUrl',
       rootComments: 'discussions/getRootComments',
       subComments: 'discussions/getSubCommentsLevel2',
     }),
+    docsLimitReached() {
+      return this.documents.length >= this.docsLimit;
+    },
   },
   watch: {
     async page() {
@@ -226,17 +259,61 @@ export default {
   },
   async mounted() {
     this.SetLoader(true);
+    this.acceptedTypes = this.accept.replace(/\s/g, '').split(',');
     this.discussionId = this.$route.params.id;
     await this.getCurrentDiscussion();
-    this.filterMediaToTypes();
+    await this.filterMediaToTypes();
     await this.getRootComments();
     this.totalPages();
+    this.focus();
     this.SetLoader(false);
   },
   methods: {
-    filterMediaToTypes() {
-      this.pdf = this.currentDiscussion.medias.filter((file) => file.contentType === 'application/msword' || file.contentType === 'application/pdf');
-      this.images = this.currentDiscussion.medias.filter((file) => file.contentType === 'image/jpeg' || file.contentType === 'image/png');
+    focus() {
+      if (this.autoFocus) this.$refs.input.focus();
+    },
+    remove(item) {
+      this.documents = this.documents.filter((doc) => doc.id !== item.id);
+    },
+    checkContentType(file) {
+      return this.acceptedTypes.indexOf(file.type) !== -1;
+    },
+    handleFileSelected(e) {
+      if (!e.target.files[0] || this.docsLimitReached) return;
+      const file = e.target.files[0];
+      const type = file.type.split('/').shift() === 'image' ? 'img' : 'doc';
+      if (!this.checkContentType(file)) {
+        return;
+      }
+
+      const { size, name } = file;
+      const sizeKb = size / 1000;
+      const sizeMb = sizeKb / 1000;
+      if (sizeMb > 20) return; // more 20mb
+      let fileSize;
+      if (sizeMb < 0.1) {
+        fileSize = `${Math.round(sizeKb * 10) / 10}kb`;
+      } else {
+        fileSize = `${Math.round(sizeMb * 10) / 10}mb`;
+      }
+      this.documents.push({
+        id: this.fileId,
+        img: URL.createObjectURL(file),
+        type,
+        file,
+        name,
+        size: fileSize,
+      });
+      this.fileId += 1;
+    },
+    isComplete() {
+      return this.opinion;
+    },
+    async filterMediaToTypes() {
+      const documents = this.currentDiscussion.medias.filter((file) => file.contentType === 'application/msword' || file.contentType === 'application/pdf');
+      const images = this.currentDiscussion.medias.filter((file) => file.contentType === 'image/jpeg' || file.contentType === 'image/png');
+      await this.$store.dispatch('discussions/setDiscussionDocuments', documents);
+      await this.$store.dispatch('discussions/setDiscussionImages', images);
     },
     authorName() {
       if (this.discussionAuthor) return `${this.discussionAuthor.firstName} ${this.discussionAuthor.lastName}`;
@@ -246,34 +323,41 @@ export default {
       this.$router.push(`/investors/${authorId}`);
     },
     totalPages() {
-      return Math.ceil(this.rootCommentObjects.count / this.perPager);
+      return Math.ceil(this.rootComments.count / this.perPager);
     },
     async getRootComments(additionalValue) {
       const discussionId = this.currentDiscussion.id;
-      this.rootCommentObjects = await this.$store.dispatch('discussions/getRootComments', { discussionId, additionalValue });
-      this.rootCommentArray = this.rootCommentObjects.comments;
+      await this.$store.dispatch('discussions/getRootComments', { discussionId, additionalValue });
       this.totalPagesValue = this.totalPages();
     },
     async addRootCommentResponse() {
+      this.SetLoader(true);
+      this.$refs.observer.validate();
+      const medias = await this.uploadFiles(this.documents);
       const payload = {
         text: this.opinion,
-        medias: [],
+        medias,
       };
       await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
       this.isAddComment = false;
       this.opinion = '';
       await this.getRootComments();
+      this.SetLoader(false);
     },
     async getCurrentDiscussion() {
       await this.$store.dispatch('discussions/getCurrentDiscussion', this.discussionId);
     },
     async toggleFavorite(discussionId) {
+      this.SetLoader(true);
       await this.$store.dispatch('discussions/toggleStarOnDiscussion', { id: discussionId, like: this.currentDiscussion && !this.currentDiscussion.star });
       await this.getCurrentDiscussion();
+      this.SetLoader(false);
     },
     async toggleLikeOnDiscussion(discussionId) {
+      this.SetLoader(true);
       await this.$store.dispatch('discussions/toggleLikeOnDiscussion', { id: discussionId, like: this.currentDiscussion && !this.currentDiscussion.liked });
       await this.getCurrentDiscussion();
+      this.SetLoader(false);
     },
     addComment() {
       this.isAddComment = !this.isAddComment;
@@ -283,10 +367,21 @@ export default {
 
 </script>
 <style lang="scss" scoped>
+.uploader {
+  &__container {
+    margin: 30px 0 30px 0;
+  }
+  &__btn {
+    &_hidden {
+      display: none;
+    }
+  }
+}
 .hide {
   visibility: hidden;
 }
 .info {
+  animation: show  1s 1;
   &__comment {
     background: #fff;
     width: 100%;
@@ -370,6 +465,9 @@ export default {
 .comment {
   border-radius: 5px;
   margin: 10px 0 0 0;
+  &:first-child {
+    margin: 0;
+  }
   &__field {
     width: 100%;
     height: 100%;
@@ -399,7 +497,7 @@ export default {
     align-items: center;
     justify-content: center;
     width: 100px;
-    height: 43px;
+    height: 40px;
     color: #ffffff;
     font-family: 'Inter', sans-serif;
     font-style: normal;
@@ -510,63 +608,6 @@ export default {
     margin-right: 7px;
   }
 }
-.footer {
-  display: flex;
-  &__input {
-    @include text-usual;
-    width: 100%;
-    height: 40px;
-    border-radius: 6px;
-    border: none;
-    padding: 10px 15px 10px 15px;
-    margin: 0 0 20px 0;
-  }
-  &__comment {
-    @include text-usual;
-    width: 1090px;
-    height: 40px;
-    background: #F7F8FA;
-    border-radius: 6px;
-    border: none;
-    padding: 10px 20px 10px 15px;
-    margin: 0 0 0 10px;
-  }
-  &__btn {
-    width: 40px;
-    height: 40px;
-    background: #F7F8FA;
-    cursor: pointer;
-    &:hover {
-      background: #F7F8FA;
-    }
-  }
-  &__chain {
-    display: flex;
-    padding: 0 10px;
-    width: 40px;
-    height: 40px;
-    background: #F7F8FA;
-    border-radius: 6px;
-    align-items: center;
-    justify-content: center;
-    color: #000000;
-    font-size: 25px;
-    cursor: pointer;
-  }
-  &__arrow {
-    display: flex;
-    padding: 0 10px;
-    width: 40px;
-    height: 40px;
-    background: #F7F8FA;
-    border-radius: 6px;
-    align-items: center;
-    justify-content: center;
-    font-size: 25px;
-    color: #0083C7;
-    cursor: pointer;
-  }
-}
 .discussion {
   &__title {
     font-weight: 600;
@@ -668,12 +709,68 @@ export default {
     height: 43px;
     margin-left: 20px;
     outline: none;
+    &:last-child {
+      margin-right: 15px;
+    }
   }
 }
 .filesUploader {
   &__files{
     display: inline-flex;
     flex-direction: row;
+  }
+}
+.footer {
+  animation: show  1s 1;
+  display: flex;
+  &__input {
+    @include text-usual;
+    width: 100%;
+    height: 40px;
+    border-radius: 6px;
+    border: none;
+    padding: 10px 15px 10px 15px;
+    margin: 0 0 20px 0;
+  }
+  &__chain {
+    padding: 0 0 0 5px;
+    display: flex;
+    width: 40px;
+    height: 40px;
+    background: #F7F8FA;
+    border-radius: 6px;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
+    font-size: 25px;
+    cursor: pointer;
+    transition: .5s;
+    &:hover {
+      color: #0083C7;
+    }
+  }
+  &__btn {
+    padding-right: 5px;
+    width: 40px !important;
+    height: 40px !important;
+    background: #F7F8FA;
+    cursor: pointer;
+    &:hover {
+      background: #F7F8FA;
+    }
+  }
+  &__arrow {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    background: #F7F8FA;
+    border-radius: 6px;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    color: #0083C7;
+    cursor: pointer;
+    padding: 0 0 0 10px;
   }
 }
 @include _1199 {
