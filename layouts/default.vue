@@ -399,10 +399,10 @@ export default {
       mobileMenuLinks: [
         { path: '/proposals', title: this.$t('ui.proposals') },
         //  TODO Временно убрали кнопку wallet
-        {
-          path: '/wallet',
-          title: this.$t('ui.wallet'),
-        },
+        // {
+        //   path: '/wallet',
+        //   title: this.$t('ui.wallet'),
+        // },
         { path: '/investors', title: this.$t('ui.investors') },
         { path: '/discussions', title: this.$t('ui.discussions') },
         //  TODO Временно убрали кнопку KYC
