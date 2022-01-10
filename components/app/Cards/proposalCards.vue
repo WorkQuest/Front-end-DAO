@@ -304,6 +304,7 @@ export default {
   }
   &__inputs {
     width: 100%;
+    height: 43px;
     display: grid;
     align-items: center;
   }

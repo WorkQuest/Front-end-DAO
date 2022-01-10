@@ -30,14 +30,16 @@
             class="ctm-modal__content-field"
           >
             <label for="amount_input">{{ $t('modals.amount') }}</label>
-            <base-field
-              id="amount_input"
-              v-model="amount_input"
-              :name="$t('modals.amount')"
-              type="number"
-              rules="required"
-              :placeholder="'0 WUSD'"
-            />
+            <div class="ctm-modal__input">
+              <base-field
+                id="amount_input"
+                v-model="amount_input"
+                :name="$t('modals.amount')"
+                type="number"
+                rules="required"
+                :placeholder="'0 WUSD'"
+              />
+            </div>
           </div>
         </div>
         <div
@@ -320,6 +322,9 @@ export default {
   }
   &__equal {
     margin: 0 0 35px 10px;
+  }
+  &__input {
+    height: 46px;
   }
 }
 

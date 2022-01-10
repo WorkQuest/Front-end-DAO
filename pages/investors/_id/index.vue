@@ -400,6 +400,9 @@ export default {
     gap: 20px;
     grid-template-columns: 151px repeat(2, 1fr);
   }
+  &__main-inp-cont {
+    height: 46px;
+  }
   &__avatar {
     height: 151px;
     border-radius: 6px;
@@ -475,6 +478,12 @@ export default {
     &::placeholder {
       color: #1D2127;
     }
+  }
+}
+
+.social {
+  &__network {
+    height: 46px;
   }
 }
 

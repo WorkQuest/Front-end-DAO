@@ -10,14 +10,16 @@
             for="investorAddress"
             class="address__label"
           >{{ $t('modals.investorAddress') }}</label>
-          <base-field
-            id="invsetorAddress"
-            disabled
-            :value="accountAddress.address"
-            class="address__body"
-          >
-            {{ accountAddress.address }}
-          </base-field>
+          <div class="delegate__input">
+            <base-field
+              id="invsetorAddress"
+              disabled
+              :value="accountAddress.address"
+              class="address__body"
+            >
+              {{ accountAddress.address }}
+            </base-field>
+          </div>
         </div>
         <div class="content__tokens tokens">
           <div class="tokens__title">
@@ -140,6 +142,10 @@ export default {
   }
   &__done{
     margin-top: 25px;
+  }
+  &__input {
+    height: 46px;
+    margin-bottom: 15px;
   }
 }
 .footer {

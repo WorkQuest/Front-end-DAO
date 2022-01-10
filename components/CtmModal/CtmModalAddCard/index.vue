@@ -110,6 +110,10 @@ export default {
 
 .ctm-modal {
   @include modalKit;
+  &__content-field {
+    height: 46px;
+    margin-bottom: 50px;
+  }
 }
 
 .grid {

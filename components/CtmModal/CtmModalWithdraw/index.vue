@@ -5,15 +5,17 @@
   >
     <div class="withdrawal__content content">
       <validation-observer v-slot="{handleSubmit}">
+        <div class="content__title">
+          {{ $t('modals.amount') }}
+        </div>
         <div class="content__amount">
-          <div class="content__field field">
+          <div class="content__field content__input">
             <base-field
               id="amountInput"
               v-model="amountWDX"
               :name="$t('modals.amount')"
               type="number"
               :placeholder="'0 WDX'"
-              :label="$t('modals.amount')"
               rules="required"
             >
               <template
@@ -27,7 +29,7 @@
           <div class="content__equal">
             =
           </div>
-          <div class="content__field">
+          <div class="content__field content__input">
             <base-field
               v-model="amountUSD"
               mode="white"
@@ -43,7 +45,10 @@
             </base-field>
           </div>
         </div>
-        <div v-if="options.isCardClosed">
+        <div
+          v-if="options.isCardClosed"
+          class="content__row"
+        >
           <div class="content__field">
             <base-dd
               v-model="ddValue"
@@ -60,38 +65,55 @@
             </div>
           </div>
         </div>
-        <div v-else>
-          <div class="content__field">
-            <base-field
-              id="cardNumberInput"
-              v-model="cardNumberInput"
-              :name="$t('modals.numberOfCard')"
-              type="tel"
-              rules="max:19|required"
-              pattern="[0-9\s]{13,19}"
-              inputmode="numeric"
-              :placeholder="'1234 1234 1234 1234'"
-              :label="$t('modals.numberOfCard')"
-            />
+        <div
+          v-else
+          class="content__row"
+        >
+          <div class="content__field content__row">
+            <div class="content__title">
+              {{ $t('modals.numberOfCard') }}
+            </div>
+            <div class="content__input">
+              <base-field
+                id="cardNumberInput"
+                v-model="cardNumberInput"
+                :name="$t('modals.numberOfCard')"
+                type="tel"
+                rules="max:19|required"
+                pattern="[0-9\s]{13,19}"
+                inputmode="numeric"
+                :placeholder="'1234 1234 1234 1234'"
+              />
+            </div>
           </div>
-          <div class="content__field field">
-            <div class="field__info">
-              <base-field
-                id="dateInput"
-                v-model="dateInput"
-                :name="$t('modals.date')"
-                :placeholder="'02/24'"
-                :label="$t('modals.date')"
-                rules="max:5|required|date"
-              />
-              <base-field
-                id="cvvInput"
-                v-model="cvvInput"
-                :name="$t('modals.cvv')"
-                :placeholder="'242'"
-                :label="$t('modals.cvv')"
-                rules="max:4|required"
-              />
+          <div class="content__wrap">
+            <div class="content__wrap-inner">
+              <div class="content__title">
+                {{ $t('modals.date') }}
+              </div>
+              <div class="content__input">
+                <base-field
+                  id="dateInput"
+                  v-model="dateInput"
+                  :name="$t('modals.date')"
+                  :placeholder="'02/24'"
+                  rules="max:5|required|date"
+                />
+              </div>
+            </div>
+            <div class="content__wrap-inner">
+              <div class="content__title">
+                {{ $t('modals.cvv') }}
+              </div>
+              <div class="content__input">
+                <base-field
+                  id="cvvInput"
+                  v-model="cvvInput"
+                  :name="$t('modals.cvv')"
+                  :placeholder="'242'"
+                  rules="max:4|required"
+                />
+              </div>
             </div>
           </div>
           <base-checkbox
@@ -173,19 +195,37 @@ export default {
 }
 
 .content {
+  &__input {
+    height: 46px;
+  }
   &__amount {
     display: grid;
     grid-template-columns: 47% 6% 47%;
     justify-content: space-between;
     align-items: flex-end;
+    margin-bottom: 20px;
+  }
+  &__row{
+    margin-bottom: 20px;
   }
   &__equal {
-    margin: 0 0 35px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+  &__title {
+    margin-bottom: 5px;
+  }
+  &__wrap {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    margin-bottom: 20px;
+    gap: 10px;
   }
 }
 
 .field {
-
   &__currency {
     color: $black300;
   }
