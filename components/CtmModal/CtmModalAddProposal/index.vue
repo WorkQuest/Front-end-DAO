@@ -3,111 +3,113 @@
     class="addProposal"
     :title="$t('modals.addProposal')"
   >
-    <div class="addProposal__content content">
-      <validation-observer v-slot="{ handleSubmit, valid }">
-        <div class="content__voting">
-          <div class="content__field content__input">
-            <base-field
-              id="votingTopicInput"
-              v-model="votingTopicInput"
-              :placeholder="$t('modals.votingTopic')"
-              :label="$t('modals.votingTopic')"
-              rules="required|max:78|min:3"
-              :name="$t('modals.votingTopicField')"
+    <validation-observer
+      v-slot="{ handleSubmit, valid }"
+      class="addProposal__content content"
+      tag="div"
+    >
+      <div class="content__voting">
+        <div class="content__field content__input">
+          <base-field
+            id="votingTopicInput"
+            v-model="votingTopicInput"
+            :placeholder="$t('modals.votingTopic')"
+            :label="$t('modals.votingTopic')"
+            rules="required|max:78|min:3"
+            :name="$t('modals.votingTopicField')"
+          />
+        </div>
+      </div>
+      <div class="content__dates">
+        <div class="content__field">
+          {{ $t('modals.votingStart') }}
+          <div class="date-field">
+            {{ votingStartInput }}
+          </div>
+        </div>
+        <div class="content__field">
+          {{ $t('modals.votingEnd') }}
+          <div class="date-field">
+            {{ votingEndInput }}
+          </div>
+        </div>
+      </div>
+      <div class="content__field field">
+        <div class="content-field__description description">
+          <label
+            for="description"
+            class="description__header"
+          >
+            {{ $t('modals.description') }}
+          </label>
+          <validation-provider
+            v-slot="{ errors }"
+            rules="required|max:2000|min:20"
+          >
+            <textarea
+              id="description"
+              v-model="descriptionInput"
+              class="description__textarea"
+              name="description"
             />
-          </div>
-        </div>
-        <div class="content__dates">
-          <div class="content__field">
-            {{ $t('modals.votingStart') }}
-            <div class="date-field">
-              {{ votingStartInput }}
+            <div class="description__error">
+              {{ errors[0] }}
             </div>
-          </div>
-          <div class="content__field">
-            {{ $t('modals.votingEnd') }}
-            <div class="date-field">
-              {{ votingEndInput }}
-            </div>
-          </div>
+          </validation-provider>
         </div>
-        <div class="content__field field">
-          <div class="content-field__description description">
-            <label
-              for="description"
-              class="description__header"
-            >
-              {{ $t('modals.description') }}
-            </label>
-            <validation-provider
-              v-slot="{ errors }"
-              rules="required|max:2000|min:20"
-            >
-              <textarea
-                id="description"
-                v-model="descriptionInput"
-                class="description__textarea"
-                name="description"
-              />
-              <div class="description__error">
-                {{ errors[0] }}
-              </div>
-            </validation-provider>
-          </div>
-        </div>
-        <div class="content__field field">
-          <div class="field__documents">
-            <base-uploader
-              class="uploader"
-              type="all"
-              :items="documents"
-              :limit="docsLimit"
-              :is-show-download="false"
-              rules="required|alpha_num"
-              :name="$t('modals.recepientAddressField')"
-              @remove="removeDocument"
-            >
-              <template v-slot:actionButton>
-                <input
-                  ref="fileUpload"
-                  class="uploader__btn_hidden"
-                  type="file"
-                  :accept="accept"
-                  @change="handleFileSelected($event)"
-                >
-                <base-btn
-                  mode="outline"
-                  class="uploader__btn"
-                  :disabled="isDocumentsLimitReached"
-                  @click="$refs.fileUpload.click()"
-                >
-                  {{ $t('meta.addFile') }}
-                  <template v-slot:right>
-                    <span class="icon icon__plus icon-plus_circle_outline" />
-                  </template>
-                </base-btn>
-              </template>
-            </base-uploader>
-          </div>
-        </div>
-        <div class="field__action action">
-          <base-btn
-            mode="outline"
-            class="action__cancel"
-            @click="close()"
+      </div>
+      <div class="content__field field">
+        <div class="field__documents">
+          <base-uploader
+            class="uploader"
+            type="all"
+            :items="documents"
+            :limit="docsLimit"
+            :is-show-download="false"
+            rules="required|alpha_num"
+            :name="$t('modals.recepientAddressField')"
+            @remove="removeDocument"
           >
-            {{ $t('meta.cancel') }}
-          </base-btn>
-          <base-btn
-            class="action__add"
-            :disabled="!valid"
-            @click="handleSubmit(addProposal)"
-          >
-            {{ $t('meta.addProposal') }}
-          </base-btn>
+            <template v-slot:actionButton>
+              <input
+                ref="fileUpload"
+                class="uploader__btn_hidden"
+                type="file"
+                :accept="accept"
+                @change="handleFileSelected($event)"
+              >
+              <base-btn
+                mode="outline"
+                class="uploader__btn"
+                :disabled="isDocumentsLimitReached"
+                @click="$refs.fileUpload.click()"
+              >
+                {{ $t('meta.addFile') }}
+                <template v-slot:right>
+                  <span class="icon icon__plus icon-plus_circle_outline" />
+                </template>
+              </base-btn>
+            </template>
+          </base-uploader>
         </div>
-      </validation-observer>
-    </div>
+      </div>
+      <div class="field__action action">
+        <base-btn
+          mode="outline"
+          class="action__cancel"
+          @click="close()"
+        >
+          {{ $t('meta.cancel') }}
+        </base-btn>
+        <base-btn
+          class="action__add"
+          :disabled="!valid"
+          @click="handleSubmit(addProposal)"
+        >
+          {{ $t('meta.addProposal') }}
+        </base-btn>
+      </div>
+    </validation-observer>
   </ctm-modal-box>
 </template>
 

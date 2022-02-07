@@ -5,7 +5,7 @@
   >
     <div class="warning__content">
       <img
-        alt=""
+        alt="icon"
         src="~/assets/img/ui/warning.svg"
         class="warning__icon"
       >

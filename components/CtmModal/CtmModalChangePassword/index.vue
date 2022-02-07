@@ -3,24 +3,20 @@
     class="change"
     :is-header="false"
   >
-    <div class="ctm-modal__content">
-      <div class="change">
-        <div class="change__content">
-          <img
-            src="~assets/img/ui/password_changed.svg"
-            alt="Email"
-          >
-          <div class="ctm-modal__title">
-            {{ $t('restore.modal') }}
-          </div>
-          <base-btn
-            class="change__action"
-            @click="hide()"
-          >
-            {{ $t('meta.ok') }}
-          </base-btn>
-        </div>
+    <div class="ctm-modal__content change change__content">
+      <img
+        src="~assets/img/ui/password_changed.svg"
+        alt="Email"
+      >
+      <div class="ctm-modal__title">
+        {{ $t('restore.modal') }}
       </div>
+      <base-btn
+        class="change__action"
+        @click="hide()"
+      >
+        {{ $t('meta.ok') }}
+      </base-btn>
     </div>
   </ctm-modal-box>
 </template>

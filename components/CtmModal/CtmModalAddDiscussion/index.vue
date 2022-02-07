@@ -18,6 +18,7 @@
       <validation-observer
         ref="observer"
         v-slot="{ invalid }"
+        tag="div"
       >
         <div class="add-discussion__subtitle">
           {{ $t('modals.discussionTopic') }}

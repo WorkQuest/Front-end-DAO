@@ -7,7 +7,7 @@
       <img
         class="content__img"
         :src="options.imageSrc"
-        alt=""
+        alt="file-img"
       >
     </div>
   </ctm-modal-box>
@@ -15,7 +15,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import modals from '~/store/modals/modals';
 
 export default {
   name: 'ShowImage',
@@ -23,11 +22,6 @@ export default {
     ...mapGetters({
       options: 'modals/getOptions',
     }),
-  },
-  methods: {
-    hide() {
-      this.CloseModal();
-    },
   },
 };
 </script>
