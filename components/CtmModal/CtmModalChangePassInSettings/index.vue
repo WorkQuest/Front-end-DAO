@@ -91,17 +91,26 @@ export default {
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
+      email: 'user/getUserEmail',
     }),
   },
   methods: {
     async hide() {
+      if (this.newPassword_input.trim() !== this.confirmNewPassword_input.trim() || this.newPassword_input === '') {
+        this.errorMsg = true;
+        return;
+      }
       const payload = {
-        oldPassword: this.currentPassword_input,
-        newPassword: this.confirmNewPassword_input,
+        oldPassword: this.currentPassword_input.trim(),
+        newPassword: this.newPassword_input.trim(),
       };
       try {
         const response = await this.$store.dispatch('user/editUserPassword', payload);
         if (response?.ok) {
+          await this.$store.dispatch('user/signIn', {
+            email: this.email,
+            password: this.newPassword_input,
+          });
           this.ShowModal({
             key: modals.changePassword,
           });
