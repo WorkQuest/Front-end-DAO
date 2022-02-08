@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import modals from '~/store/modals/modals';
 
 export default {
   name: 'ModalThanksSend',

@@ -13,7 +13,7 @@ export default {
   privacy: 'privacy',
   withdraw: 'withdraw',
   review: 'review',
-  thanks: 'Thanks ',
+  thanks: 'thanks',
   confirmDetails: 'confirmDetails',
   delegate: 'delegate',
   undelegate: 'undelegate',
