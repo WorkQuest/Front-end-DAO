@@ -12,54 +12,60 @@
           for="currentPassword_input"
           class="ctm-modal__label"
         >{{ $t('modals.currentPassword') }}</label>
-        <base-field
-          id="currentPassword_input"
-          v-model="currentPassword_input"
-          :is-hide-error="true"
-          :placeholder="'******'"
-          mode="icon"
-          type="password"
-        >
-          <template v-slot:left>
-            <span class="icon-Lock" />
-          </template>
-        </base-field>
+        <div class="ctm-modal__input">
+          <base-field
+            id="currentPassword_input"
+            v-model="currentPassword_input"
+            :is-hide-error="true"
+            :placeholder="'******'"
+            mode="icon"
+            type="password"
+          >
+            <template v-slot:left>
+              <span class="icon-Lock" />
+            </template>
+          </base-field>
+        </div>
       </div>
       <div class="ctm-modal__content-field">
         <label
           for="newPassword_input"
           class="ctm-modal__label"
         >{{ $t('modals.newPassword') }}</label>
-        <base-field
-          id="newPassword_input"
-          v-model="newPassword_input"
-          :is-hide-error="true"
-          :placeholder="'******'"
-          mode="icon"
-          type="password"
-        >
-          <template v-slot:left>
-            <span class="icon-Lock" />
-          </template>
-        </base-field>
+        <div class="ctm-modal__input">
+          <base-field
+            id="newPassword_input"
+            v-model="newPassword_input"
+            :is-hide-error="true"
+            :placeholder="'******'"
+            mode="icon"
+            type="password"
+          >
+            <template v-slot:left>
+              <span class="icon-Lock" />
+            </template>
+          </base-field>
+        </div>
       </div>
       <div class="ctm-modal__content-field">
         <label
           for="confirmNewPassword_input"
           class="ctm-modal__label"
         >{{ $t('modals.confirmNewPassword') }}</label>
-        <base-field
-          id="confirmNewPassword_input"
-          v-model="confirmNewPassword_input"
-          :is-hide-error="true"
-          :placeholder="'******'"
-          mode="icon"
-          type="password"
-        >
-          <template v-slot:left>
-            <span class="icon-Lock" />
-          </template>
-        </base-field>
+        <div class="ctm-modal__input">
+          <base-field
+            id="confirmNewPassword_input"
+            v-model="confirmNewPassword_input"
+            :is-hide-error="true"
+            :placeholder="'******'"
+            mode="icon"
+            type="password"
+          >
+            <template v-slot:left>
+              <span class="icon-Lock" />
+            </template>
+          </base-field>
+        </div>
       </div>
       <div class="ctm-modal__content-btns">
         <div class="btn-group">
@@ -131,6 +137,9 @@ export default {
   @include modalKit;
   &__content-field {
     margin: 15px 0 0 0;
+  }
+  &__input {
+    height: 46px;
   }
 
   &__content-btns {

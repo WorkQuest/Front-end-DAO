@@ -12,37 +12,35 @@
         </button>
       </div>
       <div class="ctm-modal__content">
-        <div class="message">
-          <div class="message__content">
-            <div class="modal__desc">
-              <div class="message__wrapper">
-                <p class="modal__labelMessage">
-                  {{ $t('modals.couple') }}
-                </p>
-                <div>
-                  <textarea
-                    class="message__textarea"
-                    :placeholder="$t('modals.hello')"
-                  />
-                </div>
+        <div class="message message__content">
+          <div class="modal__desc">
+            <div class="message__wrapper">
+              <p class="modal__labelMessage">
+                {{ $t('modals.couple') }}
+              </p>
+              <div>
+                <textarea
+                  class="message__textarea"
+                  :placeholder="$t('modals.hello')"
+                />
               </div>
-              <div class="btn__container">
-                <div class="btn__wrapper">
-                  <base-btn
-                    class="message__action"
-                    @click="showThanksModal() "
-                  >
-                    {{ $t('meta.send') }}
-                  </base-btn>
-                </div>
-                <div class="btn__wrapper">
-                  <base-btn
-                    class="message__action"
-                    @click="hide()"
-                  >
-                    {{ $t('meta.cancel') }}
-                  </base-btn>
-                </div>
+            </div>
+            <div class="btn__container">
+              <div class="btn__wrapper">
+                <base-btn
+                  class="message__action"
+                  @click="showThanksModal() "
+                >
+                  {{ $t('meta.send') }}
+                </base-btn>
+              </div>
+              <div class="btn__wrapper">
+                <base-btn
+                  class="message__action"
+                  @click="hide()"
+                >
+                  {{ $t('meta.cancel') }}
+                </base-btn>
               </div>
             </div>
           </div>

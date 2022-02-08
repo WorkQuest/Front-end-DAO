@@ -4,7 +4,10 @@
     :title="$t('modals.deposit')"
   >
     <div class="ctm-modal__content">
-      <validation-observer v-slot="{handleSubmit}">
+      <validation-observer
+        v-slot="{handleSubmit}"
+        tag="div"
+      >
         <div
           class="step-panel"
           :class="{'hide': step === 3}"
@@ -49,39 +52,45 @@
           <div class="grid__3col">
             <div class="ctm-modal__content-field">
               <label for="amount_input2">{{ $t('modals.amount') }}</label>
-              <base-field
-                id="amount_input2"
-                v-model="amount_input"
-                :name="$t('modals.amount')"
-                type="number"
-                rules="required"
-                :placeholder="'0 WUSD'"
-              />
+              <div class="ctm-modal__input">
+                <base-field
+                  id="amount_input2"
+                  v-model="amount_input"
+                  :name="$t('modals.amount')"
+                  type="number"
+                  rules="required"
+                  :placeholder="'0 WUSD'"
+                />
+              </div>
             </div>
             <div class="ctm-modal__equal">
               =
             </div>
             <div class="ctm-modal__content-field">
-              <base-field
-                v-model="balance_input"
-                :name="$t('modals.amount')"
-                mode="white"
-                type="number"
-                rules="required"
-                :placeholder="'$ 0'"
-              />
+              <div class="ctm-modal__input">
+                <base-field
+                  v-model="balance_input"
+                  :name="$t('modals.amount')"
+                  mode="white"
+                  type="number"
+                  rules="required"
+                  :placeholder="'$ 0'"
+                />
+              </div>
             </div>
           </div>
           <div class="ctm-modal__content-field">
             <label for="cardNumber_input">{{ $t('modals.numberOfCard') }}</label>
-            <base-field
-              id="cardNumber_input"
-              v-model="cardNumber_input"
-              :name="$t('modals.numberOfCard')"
-              type="tel"
-              :placeholder="'1234 1234 1234 1234'"
-              rules="max:19|required"
-            />
+            <div class="ctm-modal__input">
+              <base-field
+                id="cardNumber_input"
+                v-model="cardNumber_input"
+                :name="$t('modals.numberOfCard')"
+                type="tel"
+                :placeholder="'1234 1234 1234 1234'"
+                rules="max:19|required"
+              />
+            </div>
           </div>
           <div
             class="grid__2col"
@@ -90,24 +99,28 @@
               class="ctm-modal__content-field"
             >
               <label for="date_input">{{ $t('modals.date') }}</label>
-              <base-field
-                id="date_input"
-                v-model="date_input"
-                :name="$t('modals.date')"
-                :placeholder="'02/24'"
-                rules="max:5|required|date"
-              />
+              <div class="ctm-modal__input">
+                <base-field
+                  id="date_input"
+                  v-model="date_input"
+                  :name="$t('modals.date')"
+                  :placeholder="'02/24'"
+                  rules="max:5|required|date"
+                />
+              </div>
             </div>
             <div class="ctm-modal__content-field">
               <label for="cvv_input">{{ $t('modals.cvv') }}</label>
-              <base-field
-                id="cvv_input"
-                v-model="cvv_input"
-                :name="$t('modals.cvv')"
-                type="number"
-                :placeholder="'242'"
-                rules="max:4|required"
-              />
+              <div class="ctm-modal__input">
+                <base-field
+                  id="cvv_input"
+                  v-model="cvv_input"
+                  :name="$t('modals.cvv')"
+                  type="number"
+                  :placeholder="'242'"
+                  rules="max:4|required"
+                />
+              </div>
             </div>
           </div>
         </div>

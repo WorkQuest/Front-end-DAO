@@ -4,25 +4,23 @@
     :is-header="false"
   >
     <div class="ctm-modal__content">
-      <div class="messageSend">
-        <div class="messageSend__content">
-          <img
-            src="~assets/img/ui/messageStar.svg"
-            alt="Thanks"
-          >
-          <div class="ctm-modal__title">
-            {{ $t('modals.thanks') }}
-          </div>
-          <div class="ctm-modal__desc">
-            {{ $t('modals.smallTemp') }}
-          </div>
-          <base-btn
-            class="email__action"
-            @click="hide()"
-          >
-            {{ $t('meta.ok') }}
-          </base-btn>
+      <div class="messageSend messageSend__content">
+        <img
+          src="~assets/img/ui/messageStar.svg"
+          alt="Thanks"
+        >
+        <div class="ctm-modal__title">
+          {{ $t('modals.thanks') }}
         </div>
+        <div class="ctm-modal__desc">
+          {{ $t('modals.smallTemp') }}
+        </div>
+        <base-btn
+          class="email__action"
+          @click="hide()"
+        >
+          {{ $t('meta.ok') }}
+        </base-btn>
       </div>
     </div>
   </ctm-modal-box>

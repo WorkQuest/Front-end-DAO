@@ -4,7 +4,10 @@
     :title="$t('modals.withdrawal')"
   >
     <div class="withdrawal__content content">
-      <validation-observer v-slot="{handleSubmit}">
+      <validation-observer
+        v-slot="{handleSubmit}"
+        tag="div"
+      >
         <div class="content__title">
           {{ $t('modals.amount') }}
         </div>

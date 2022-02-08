@@ -4,10 +4,8 @@
     :title="$t('modals.twoFAAuth')"
   >
     <div class="ctm-modal__content">
-      <validation-observer>
-        <div
-          class="step-panel"
-        >
+      <validation-observer tag="div">
+        <div class="step-panel">
           <div
             class="step-panel__step"
             :class="[
@@ -90,38 +88,32 @@
           v-if="step === 1"
           class="step__container"
         >
-          <div
-            class="ctm-modal__content-field"
-          >
-            <div>
-              <span class="content__text">{{ $t('modals.installGoogleAuth') }}</span>
+          <div class="ctm-modal__content-field">
+            <div class="content__text">
+              {{ $t('modals.installGoogleAuth') }}
             </div>
             <div class="btn__container">
               <div class="btn__wrapper">
-                <div>
-                  <base-btn mode="black">
-                    {{ $t('modals.appleStore') }}
-                    <template v-slot:left>
-                      <img
-                        :alt="$t('modals.appleStore')"
-                        src="~/assets/img/ui/apple-icon.svg"
-                      >
-                    </template>
-                  </base-btn>
-                </div>
+                <base-btn mode="black">
+                  {{ $t('modals.appleStore') }}
+                  <template v-slot:left>
+                    <img
+                      :alt="$t('modals.appleStore')"
+                      src="~/assets/img/ui/apple-icon.svg"
+                    >
+                  </template>
+                </base-btn>
               </div>
               <div class="btn__wrapper">
-                <div>
-                  <base-btn mode="black">
-                    {{ $t('modals.googlePlay') }}
-                    <template v-slot:left>
-                      <img
-                        :alt="$t('modals.googlePlay')"
-                        src="~/assets/img/ui/google-play-icon.svg"
-                      >
-                    </template>
-                  </base-btn>
-                </div>
+                <base-btn mode="black">
+                  {{ $t('modals.googlePlay') }}
+                  <template v-slot:left>
+                    <img
+                      :alt="$t('modals.googlePlay')"
+                      src="~/assets/img/ui/google-play-icon.svg"
+                    >
+                  </template>
+                </base-btn>
               </div>
             </div>
           </div>
@@ -134,7 +126,7 @@
             <span class="content__text">{{ $t('modals.useYourGoogleAuth') }}</span>
             <div class="qr__container">
               <img
-                alt=""
+                alt="qr"
                 src="~/assets/img/temp/qr.svg"
               >
             </div>
@@ -198,26 +190,30 @@
               for="confirmEmailCode_input"
               class="ctm-modal__label"
             >{{ $t('modals.conformationCodeFromMail') }}</label>
-            <base-field
-              id="confirmEmailCode_input"
-              v-model="confirmEmailCode_input"
-              :is-hide-error="true"
-              :placeholder="$t('modals.conformationCodeFromMail')"
-              mode="icon"
-            />
+            <div class="ctm-modal__input">
+              <base-field
+                id="confirmEmailCode_input"
+                v-model="confirmEmailCode_input"
+                :is-hide-error="true"
+                :placeholder="$t('modals.conformationCodeFromMail')"
+                mode="icon"
+              />
+            </div>
           </div>
           <div class="ctm-modal__content-field">
             <label
               for="twoFACode_input_input"
               class="ctm-modal__label"
             >{{ $t('modals.twoFAConfirmationCode') }}</label>
-            <base-field
-              id="twoFACode_input_input"
-              v-model="twoFACode_input"
-              :is-hide-error="true"
-              :placeholder="$t('modals.twoFAConfirmationCode')"
-              mode="icon"
-            />
+            <div class="ctm-modal__input">
+              <base-field
+                id="twoFACode_input_input"
+                v-model="twoFACode_input"
+                :is-hide-error="true"
+                :placeholder="$t('modals.twoFAConfirmationCode')"
+                mode="icon"
+              />
+            </div>
           </div>
         </div>
         <!-- Steps btns -->
@@ -469,6 +465,9 @@ export default {
   }
   &__equal {
     margin: 0 0 35px 10px;
+  }
+  &__input {
+    height: 46px;
   }
 }
 

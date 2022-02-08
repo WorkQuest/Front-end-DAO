@@ -11,7 +11,6 @@
       >
         <form
           class="restore__content"
-          action=""
           @submit.prevent="handleSubmit(restore)"
         >
           <div class="ctm-modal__desc">

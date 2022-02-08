@@ -6,7 +6,9 @@
     <validation-observer v-slot="{handleSubmit}">
       <div class="ctm-modal__content">
         <div class="ctm-modal__content-field">
-          <label for="cardNumber_input">{{ $t('modals.numberOfCard') }}</label>
+          <label for="cardNumber_input">
+            {{ $t('modals.numberOfCard') }}
+          </label>
           <base-field
             id="cardNumber_input"
             v-model="cardNumber_input"
@@ -18,7 +20,9 @@
           />
         </div>
         <div class="ctm-modal__content-field">
-          <label for="name_input">{{ $t('modals.cardholderName') }}</label>
+          <label for="name_input">
+            {{ $t('modals.cardholderName') }}
+          </label>
           <base-field
             id="name_input"
             v-model="name_input"
@@ -30,7 +34,9 @@
         </div>
         <div class="grid__2col">
           <div class="ctm-modal__content-field">
-            <label for="date_input">{{ $t('modals.date') }}</label>
+            <label for="date_input">
+              {{ $t('modals.date') }}
+            </label>
             <base-field
               id="date_input"
               v-model="date_input"
@@ -40,7 +46,9 @@
             />
           </div>
           <div class="ctm-modal__content-field">
-            <label for="cvv_input">{{ $t('modals.cvv') }}</label>
+            <label for="cvv_input">
+              {{ $t('modals.cvv') }}
+            </label>
             <base-field
               id="cvv_input"
               v-model="cvv_input"

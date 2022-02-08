@@ -4,7 +4,10 @@
     :title="$t('modals.send')"
   >
     <div class="ctm-modal__content">
-      <validation-observer v-slot="{handleSubmit}">
+      <validation-observer
+        v-slot="{handleSubmit}"
+        tag="div"
+      >
         <div class="ctm-modal__content-field">
           <label for="address_input">
             {{ $t('modals.address') }}

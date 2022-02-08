@@ -6,7 +6,7 @@
     <div class="ctm-modal__content change change__content">
       <img
         src="~assets/img/ui/password_changed.svg"
-        alt="Email"
+        alt="Lock"
       >
       <div class="ctm-modal__title">
         {{ $t('restore.modal') }}

@@ -4,52 +4,48 @@
     :title="$t('modals.addCase')"
   >
     <div class="ctm-modal__content">
-      <div class="message">
-        <div class="message__content">
-          <div class="modal__desc">
-            <Uploader />
-            <div>
-              <label
-                for="title_input"
-                class="ctm-modal__label"
-              >{{ $t('modals.title') }}</label>
-              <input
-                id="title_input"
-                class="input_grey"
-                placeholder="3 500"
+      <div class="message message__content">
+        <div class="modal__desc">
+          <Uploader />
+          <div class="message__wrapper">
+            <label
+              for="title_input"
+              class="ctm-modal__label"
+            >{{ $t('modals.title') }}</label>
+            <input
+              id="title_input"
+              class="input_grey"
+              placeholder="3 500"
+            >
+          </div>
+          <div class="message__wrapper">
+            <p class="modal__labelMessage">
+              {{ $t('modals.description') }}
+            </p>
+            <textarea
+              id="textarea"
+              v-model="text"
+              class="message__textarea"
+              :placeholder="$t('modals.hello')"
+            />
+          </div>
+          <div class="btn__container">
+            <div class="btn__wrapper">
+              <base-btn
+                class="message__action"
+                @click="showRequestSendModal() "
               >
+                {{ $t('meta.send') }}
+              </base-btn>
             </div>
-            <div class="message__wrapper">
-              <p class="modal__labelMessage">
-                {{ $t('modals.description') }}
-              </p>
-              <div>
-                <textarea
-                  id="textarea"
-                  v-model="text"
-                  class="message__textarea"
-                  :placeholder="$t('modals.hello')"
-                />
-              </div>
-            </div>
-            <div class="btn__container">
-              <div class="btn__wrapper">
-                <base-btn
-                  class="message__action"
-                  @click="showRequestSendModal() "
-                >
-                  {{ $t('meta.send') }}
-                </base-btn>
-              </div>
-              <div class="btn__wrapper">
-                <base-btn
-                  :mode="'outline'"
-                  class="message__action"
-                  @click="hide()"
-                >
-                  {{ $t('meta.cancel') }}
-                </base-btn>
-              </div>
+            <div class="btn__wrapper">
+              <base-btn
+                :mode="'outline'"
+                class="message__action"
+                @click="hide()"
+              >
+                {{ $t('meta.cancel') }}
+              </base-btn>
             </div>
           </div>
         </div>

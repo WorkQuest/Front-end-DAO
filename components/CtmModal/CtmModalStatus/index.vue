@@ -4,27 +4,25 @@
     :is-header="false"
   >
     <div class="ctm-modal__content">
-      <div class="messageSend">
-        <div class="messageSend__content">
-          <img
-            v-if="options.img"
-            :src="options.img"
-            alt="RequestSend"
-          >
-          <div class="ctm-modal__title">
-            {{ options.title }}
-          </div>
-          <div class="ctm-modal__desc">
-            <span v-if="!options.subtitle">{{ $t('modals.smallTemp') }}</span>
-            <span v-if="options.subtitle">{{ options.subtitle }}</span>
-          </div>
-          <base-btn
-            class="email__action"
-            @click="hide()"
-          >
-            {{ $t('meta.ok') }}
-          </base-btn>
+      <div class="messageSend messageSend__content">
+        <img
+          v-if="options.img"
+          :src="options.img"
+          alt="RequestSend"
+        >
+        <div class="ctm-modal__title">
+          {{ options.title }}
         </div>
+        <div class="ctm-modal__desc">
+          <span v-if="!options.subtitle">{{ $t('modals.smallTemp') }}</span>
+          <span v-if="options.subtitle">{{ options.subtitle }}</span>
+        </div>
+        <base-btn
+          class="email__action"
+          @click="hide()"
+        >
+          {{ $t('meta.ok') }}
+        </base-btn>
       </div>
     </div>
   </ctm-modal-box>
