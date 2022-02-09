@@ -136,10 +136,10 @@
           <div class="ctm-modal__content-field">
             <span class="content__text">{{ $t('modals.useYourGoogleAuth') }}</span>
             <div class="qr__container">
-              <img
-                alt=""
-                src="~/assets/img/temp/qr.svg"
-              >
+              <qrcode
+                :value="qrLink || 1"
+                :options="{ width: 200 }"
+              />
             </div>
             <span class="content__text">{{ $t('modals.ifYouCantScanBarcode') }}</span>
             <div class="flex__two-cols">

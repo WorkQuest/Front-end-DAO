@@ -253,11 +253,20 @@
             {{ $t('profile.2FA') }}
           </div>
           <base-btn
+            v-if="is2FA"
             class="security__btn"
             mode="lightBlue"
             @click="modalTwoFAAuth()"
           >
             {{ $t('profile.switchOn') }}
+          </base-btn>
+          <base-btn
+            v-else
+            class="security__btn"
+            mode="lightBlue"
+            @click="modalDisableTwoFAAuth()"
+          >
+            {{ $t('profile.switchOff') }}
           </base-btn>
         </div>
       </div>
@@ -291,6 +300,7 @@ export default {
       phoneInputsArr: [],
       nameInputsArr: [],
       coordinates: undefined,
+      is2FA: false,
     };
   },
   computed: {
@@ -309,6 +319,10 @@ export default {
       secondMobileNumber: 'user/getUserSecondMobileNumber',
       imageData: 'user/getImageData',
     }),
+  },
+  getTwoFA() {
+    this.is2FA = this.userData.totpIsActive;
+    return this.is2FA;
   },
   beforeMount() {
     this.isVerified = !!this.userData.statusKYC;
@@ -504,6 +518,11 @@ export default {
     modalTwoFAAuth() {
       this.ShowModal({
         key: modals.twoFAAuth,
+      });
+    },
+    modalDisableTwoFAAuth() {
+      this.ShowModal({
+        key: modals.disableTwoFAAuth,
       });
     },
     switch2Fa() {
