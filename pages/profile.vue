@@ -157,12 +157,13 @@
             >
               <vue-phone-number-input
                 v-if="isProfileEdit"
-                v-model="phone[`${cell.type}`]"
+                v-model="phone[`${cell.type}`].fullPhone"
                 class="input-phone"
                 error-color="#EB5757"
                 clearable
                 show-code-on-list
                 required
+                :default-country-code="phone[`${cell.type}`].codeRegion"
                 size="lg"
                 @update="updatedPhone[cell.type] = $event"
               />
@@ -369,14 +370,9 @@ export default {
         localUserData, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
       } = this;
 
-      const userPhone = this.localUserData.phone || this.localUserData.tempPhone;
-      if (userPhone) {
-        this.phone.main = userPhone.fullPhone;
-      }
+      this.phone.main = this.localUserData.phone || this.localUserData.tempPhone;
 
-      if (this.localUserData.additionalInfo?.secondMobileNumber) {
-        this.phone.second = this.localUserData.additionalInfo.secondMobileNumber?.fullPhone;
-      }
+      this.phone.second = this.localUserData.additionalInfo.secondMobileNumber;
 
       this.socialInputs = [{
         key: 'instagram',
@@ -554,17 +550,17 @@ export default {
 
       const phoneNumber = mainPhone
         ? {
-          codeRegion: `+${mainPhone.countryCallingCode}`,
-          phone: mainPhone.phoneNumber,
-          fullPhone: mainPhone.formattedNumber,
+          phone: mainPhone.nationalNumber || null,
+          fullPhone: mainPhone.formatInternational ? mainPhone.formatInternational.replace(/\s/g, '') : null,
+          codeRegion: mainPhone.countryCode || null,
         }
         : null;
 
       const secondMobileNumber = secondPhone
         ? {
-          codeRegion: `+${secondPhone.countryCallingCode}`,
-          phone: secondPhone.phoneNumber,
-          fullPhone: secondPhone.formattedNumber,
+          phone: secondPhone.nationalNumber || null,
+          fullPhone: secondPhone.formatInternational ? secondPhone.formatInternational.replace(/\s/g, '') : null,
+          codeRegion: secondPhone.countryCode || null,
         }
         : null;
 
