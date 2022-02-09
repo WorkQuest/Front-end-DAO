@@ -319,7 +319,7 @@ export default {
   &_icon {
     .ctm-field {
       &__input {
-        padding: 0 20px 0 50px;
+        padding: 12.5px 20px 12.5px 50px;
       }
       &__err{
         min-height: 36px;

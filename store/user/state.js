@@ -1,4 +1,7 @@
 export default () => ({
+  twoFACode: '',
+  userEnable2FA: {},
+  userDisable2FA: {},
   tokens: {
     access: '',
     refresh: '',

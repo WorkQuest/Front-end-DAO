@@ -4,7 +4,10 @@
     :title="$t('modals.twoFAAuth')"
   >
     <div class="ctm-modal__content">
-      <validation-observer>
+      <validation-observer
+        v-slot="{ handleSubmit }"
+        ref="twoFA"
+      >
         <div
           class="step-panel"
         >
@@ -141,11 +144,11 @@
             <span class="content__text">{{ $t('modals.ifYouCantScanBarcode') }}</span>
             <div class="flex__two-cols">
               <div class="code__container">
-                <span class="code__text">{{ code }}</span>
+                <span class="code__text">{{ twoFACode }}</span>
               </div>
               <div>
                 <button
-                  v-clipboard:copy="code"
+                  v-clipboard:copy="twoFACode"
                   v-clipboard:success="ClipboardSuccessHandler"
                   v-clipboard:error="ClipboardErrorHandler"
                   class="btn__copy"
@@ -165,13 +168,13 @@
             <span class="content__text">{{ $t('modals.pleaseSaveThisKey') }}</span>
             <div class="flex__two-cols">
               <div class="code__container">
-                <span class="code__text">{{ code }}</span>
+                <span class="code__text">{{ twoFACode }}</span>
               </div>
               <div>
                 <button
                   v-clipboard:success="ClipboardSuccessHandler"
                   v-clipboard:error="ClipboardErrorHandler"
-                  v-clipboard:copy="code"
+                  v-clipboard:copy="twoFACode"
                   class="btn__copy"
                   type="button"
                 >
@@ -193,30 +196,25 @@
               {{ $t('modals.toYourEmail') }} {{ userData.email }} {{ $t('modals.codeHasBeenSent') }}
             </div>
           </div>
-          <div class="ctm-modal__content-field">
+          <div
+            v-for="item in inputs"
+            :key="item.id"
+            class="ctm-modal__content-field"
+          >
             <label
-              for="confirmEmailCode_input"
+              :for="item.id"
               class="ctm-modal__label"
-            >{{ $t('modals.conformationCodeFromMail') }}</label>
+            >{{ item.label }}
+            </label>
             <base-field
-              id="confirmEmailCode_input"
-              v-model="confirmEmailCode_input"
-              :is-hide-error="true"
-              :placeholder="$t('modals.conformationCodeFromMail')"
+              :id="item.id"
+              v-model="models[item.model]"
+              :vid="item.id"
+              :name="item.name"
+              :is-hide-error="false"
+              :placeholder="item.placeholder"
               mode="icon"
-            />
-          </div>
-          <div class="ctm-modal__content-field">
-            <label
-              for="twoFACode_input_input"
-              class="ctm-modal__label"
-            >{{ $t('modals.twoFAConfirmationCode') }}</label>
-            <base-field
-              id="twoFACode_input_input"
-              v-model="twoFACode_input"
-              :is-hide-error="true"
-              :placeholder="$t('modals.twoFAConfirmationCode')"
-              mode="icon"
+              :rules="item.rules"
             />
           </div>
         </div>
@@ -232,7 +230,7 @@
             >
               <base-btn
                 class="message__action"
-                @click="nextStep()"
+                @click="nextStepWithEnable2FA()"
               >
                 {{ $t('meta.next') }}
               </base-btn>
@@ -270,7 +268,7 @@
             >
               <base-btn
                 class="message__action"
-                @click="hide()"
+                @click="handleSubmit(confirm)"
               >
                 {{ $t('meta.next') }}
               </base-btn>
@@ -303,18 +301,66 @@ export default {
   data() {
     return {
       step: 1,
-      confirmEmailCode_input: '',
-      twoFACode_input: '',
-      code: 'GA4HUMTLLBOXIXSASH',
+      qrLink: '',
+      models: {
+        confirmCode: '',
+        totp: '',
+      },
     };
   },
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
       userData: 'user/getUserData',
+      twoFACode: 'user/getTwoFACode',
     }),
+    inputs() {
+      return [
+        {
+          id: 'confirmCode',
+          model: 'confirmCode',
+          label: this.$t('modals.conformationCodeFromMail'),
+          placeholder: this.$t('modals.conformationCodeFromMail'),
+          rules: 'required|alpha_num',
+          name: this.$t('modals.emailVerificationCodeField'),
+        },
+        {
+          id: 'totp',
+          model: 'totp',
+          label: this.$t('modals.twoFAConfirmationCode'),
+          placeholder: this.$t('modals.twoFAConfirmationCode'),
+          rules: 'required|alpha_num',
+          name: this.$t('modals.googleVerificationCodeField'),
+        },
+      ];
+    },
   },
   methods: {
+    async enable2FA() {
+      const response = await this.$store.dispatch('user/enable2FA');
+      if (response.ok) {
+        this.qrLink = `otpauth://totp/${this.userData.email}?secret=${this.twoFACode}&issuer=WorkQuest.co`;
+      }
+    },
+    async confirm() {
+      const response = await this.$store.dispatch('user/confirmEnable2FA', {
+        confirmCode: this.models.confirmCode,
+        totp: this.models.totp,
+      });
+      if (response.ok) {
+        this.hide();
+      } else this.validationErrorFields(response.data);
+    },
+    validationErrorFields(data) {
+      data.forEach(async (obj) => {
+        const { field } = obj;
+        const { name } = this.inputs.find((input) => input.id === field);
+        const err = {
+          [field]: [this.$t('messages.excluded', { _field_: name })],
+        };
+        await this.$refs.twoFA.setErrors(err);
+      });
+    },
     hide() {
       this.CloseModal();
     },
@@ -325,6 +371,10 @@ export default {
     nextStep() {
       // eslint-disable-next-line no-plusplus
       this.step++;
+    },
+    nextStepWithEnable2FA() {
+      this.enable2FA();
+      this.step += 1;
     },
   },
 };
@@ -378,13 +428,14 @@ export default {
     border: 1px solid $black0;
     border-radius: 6px;
     justify-content: space-between;
-    padding: 12px;
+    padding: 11px 15px;
     margin: 33px 10px 0 0;
     width: 100%;
   }
   &__text {
     font-weight: 400;
     font-size: 16px;
+    line-height: 21px;
     color: $black800;
   }
 }
@@ -508,6 +559,7 @@ export default {
     border: 1px solid $black0;
     padding: 11px;
     border-radius: 6px;
+    font-size: 0px;
   }
 }
 
