@@ -1,17 +1,13 @@
 /* eslint-disable no-param-reassign */
 
 export default {
-  setOldTokens(state, { access, refresh }) {
+  setTokens(state, payload) {
+    const { access, refresh } = payload;
     state.tokens.access = access;
     state.tokens.refresh = refresh;
     this.$cookies.set('access', access, { path: '/' });
     this.$cookies.set('refresh', refresh, { path: '/' });
-  },
-  setNewTokens(state, { access, refresh }) {
-    state.tokens.access = access;
-    state.tokens.refresh = refresh;
-    this.$cookies.set('access', access, { path: '/' });
-    this.$cookies.set('refresh', refresh, { path: '/' });
+    if (payload.userStatus) { this.$cookies.set('userStatus', payload.userStatus, { path: '/' }); }
   },
   setUserData(state, data) {
     state.userData = data;
@@ -29,8 +25,13 @@ export default {
     this.$cookies.remove('access');
     this.$cookies.remove('refresh');
     this.$cookies.remove('status');
+    this.$cookies.remove('userStatus');
     this.$cookies.remove('role');
+    this.$cookies.remove('userLogin');
+    this.$cookies.remove('socialNetwork');
+    sessionStorage.clear();
     state.userData = {};
+    state.tokens = { access: '', refresh: '' };
   },
   setCurrentUserPosition(state, data) {
     state.currentUserPosition = data;

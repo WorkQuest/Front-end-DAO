@@ -1,21 +1,22 @@
 <template>
-  <ValidationObserver
-    v-slot="{ handleSubmit }"
-    class="auth"
-    tag="div"
-  >
-    <div class="auth__container">
+  <div class="auth">
+    <ValidationObserver
+      v-if="step === walletState.Default"
+      v-slot="{ handleSubmit }"
+      class="auth__container"
+      tag="div"
+    >
       <div class="auth__text auth__text_title">
         <span>{{ $t('signIn.title') }}</span>
       </div>
       <div class="auth__text auth__text_simple">
         <span>{{ $t('signIn.account') }}</span>
-        <n-link
+        <nuxt-link
           class="auth__text auth__text_link"
           to="/sign-up"
         >
           {{ $t('signIn.regs') }}
-        </n-link>
+        </nuxt-link>
       </div>
       <form
         class="auth__fields"
@@ -70,96 +71,315 @@
           </div>
         </div>
         <div class="auth__action">
-          <base-btn>
+          <base-btn :disabled="isLoading">
             {{ $t('signIn.login') }}
           </base-btn>
         </div>
-        <!--      TODO вернуть -->
-        <!--        <div class="auth__text auth__text_wrap">-->
-        <!--          {{  $t('signIn.or') }}-->
-        <!--        </div>-->
+        <div class="auth__text auth__text_wrap">
+          {{ $t('signIn.or') }}
+        </div>
       </form>
-      <!--      TODO вернуть -->
-      <!--      <div class="auth__social">-->
-      <!--        <div class="auth__text auth__text_dark">-->
-      <!--          {{ $t('signIn.loginWith') }}-->
-      <!--        </div>-->
-      <!--        <div class="auth__icons">-->
-      <!--          <button-->
-      <!--            class="auth__btn auth__btn_workQuest"-->
-      <!--            @click="showSignWorkQuest()"-->
-      <!--          >-->
-      <!--            <img-->
-      <!--              src="~assets/img/app/logo.svg"-->
-      <!--              alt="WorkQuest"-->
-      <!--            >-->
-      <!--          </button>-->
-      <!--          <button-->
-      <!--            v-for="(item, key) in socials"-->
-      <!--            :key="key"-->
-      <!--            class="auth__btn"-->
-      <!--            :class="`auth__btn_${item}`"-->
-      <!--            @click="redirectSocialLink(item)"-->
-      <!--          >-->
-      <!--            <span :class="`icon-${item === 'linkedin' ? 'LinkedIn' : item}`" />-->
-      <!--          </button>-->
-      <!--        </div>-->
-      <!--      </div>-->
+      <div class="auth__social">
+        <div class="auth__text auth__text_dark">
+          {{ $t('signIn.loginWith') }}
+        </div>
+        <div class="auth__icons">
+          <button
+            class="auth__btn auth__btn_workQuest"
+            @click="showSignWorkQuest()"
+          >
+            <img
+              src="~assets/img/app/logo.svg"
+              alt="WorkQuest"
+            >
+          </button>
+          <button
+            class="auth__btn auth__btn_google"
+            @click="redirectSocialLink('google')"
+          >
+            <span class="icon-google" />
+          </button>
+          <button
+            class="auth__btn auth__btn_twitter"
+            @click="redirectSocialLink('twitter')"
+          >
+            <span class="icon-twitter" />
+          </button>
+          <button
+            class="auth__btn auth__btn_facebook"
+            @click="redirectSocialLink('facebook')"
+          >
+            <span class="icon-facebook" />
+          </button>
+          <button
+            class="auth__btn auth__btn_LinkedIn"
+            @click="redirectSocialLink('linkedin')"
+          >
+            <span class="icon-LinkedIn" />
+          </button>
+        </div>
+      </div>
+    </ValidationObserver>
+    <div
+      v-if="step > walletState.Default"
+      class="auth__back"
+      @click="back"
+    >
+      <span class="icon-chevron_big_left" /> <span>{{ $t('meta.back') }}</span>
     </div>
-  </ValidationObserver>
+    <CreateWallet
+      :step="step"
+      @goStep="goStep"
+      @submit="assignWallet"
+      @import="importWallet"
+    />
+  </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
+import {
+  createWallet, decryptStringWitheKey, encryptStringWithKey, initWallet, setCipherKey,
+} from '~/utils/wallet';
+import CreateWallet from '~/components/ui/CreateWallet';
+import {
+  Path, UserStatuses, WalletState,
+} from '~/utils/enums';
 
 export default {
   name: 'SignIn',
   layout: 'auth',
-  data: () => ({
-    model: {
-      email: '',
-      password: '',
-    },
-    remember: false,
-  }),
+  components: {
+    CreateWallet,
+  },
+  data() {
+    return {
+      addressAssigned: false,
+      userWalletAddress: null,
+      step: WalletState.Default,
+      model: { email: '', password: '', totp: '' },
+      remember: false,
+      userStatus: null,
+      isLoginWithSocial: false,
+    };
+  },
   computed: {
     ...mapGetters({
       userData: 'user/getUserData',
+      isLoading: 'main/getIsLoading',
     }),
+    walletState() {
+      return WalletState;
+    },
     socials() {
       return ['google', 'twitter', 'facebook', 'linkedin'];
     },
   },
   async mounted() {
-    this.SetLoader(true);
-    this.SetLoader(false);
+    this.isLoginWithSocial = this.$cookies.get('socialNetwork');
+    const access = this.$cookies.get('access');
+    const refresh = this.$cookies.get('refresh');
+    const userStatus = this.$cookies.get('userStatus');
+    if (this.isLoginWithSocial && access && +userStatus === UserStatuses.Confirmed) {
+      this.SetLoader(true);
+      await this.$store.dispatch('user/getUserData');
+      this.userWalletAddress = this.userData?.wallet?.address;
+      this.SetLoader(false);
+      if (!this.userWalletAddress) return;
+      this.step = WalletState.ImportMnemonic;
+      this.$store.commit('user/setTokens', {
+        access,
+        refresh,
+        userStatus,
+        social: this.isLoginWithSocial,
+      });
+    }
+  },
+  beforeDestroy() {
+    if (!this.addressAssigned && !this.$cookies.get('access') && !this.$cookies.get('userStatus')) {
+      this.$store.dispatch('user/logout');
+    }
   },
   methods: {
+    back() {
+      if (this.step === WalletState.ImportOrCreate) {
+        this.step = WalletState.Default;
+        return;
+      }
+      if (this.step === WalletState.ImportMnemonic) {
+        if (this.isLoginWithSocial) {
+          this.step = WalletState.Default;
+          this.$store.dispatch('user/logout');
+        } else this.step = !this.userWalletAddress ? WalletState.ImportOrCreate : WalletState.Default;
+        return;
+      }
+      if (this.step === WalletState.SaveMnemonic) {
+        this.step = WalletState.ImportOrCreate;
+        return;
+      }
+      if (this.step === WalletState.ConfirmMnemonic) {
+        this.step = WalletState.SaveMnemonic;
+      }
+    },
+    goStep(step) {
+      this.step = step;
+    },
+    redirectUser() {
+      this.addressAssigned = true;
+      this.$cookies.set('userLogin', true, { path: '/' });
+      // redirect to confirm access if token exists & unconfirmed account
+      const confirmToken = JSON.parse(sessionStorage.getItem('confirmToken'));
+      if (this.userStatus === UserStatuses.Unconfirmed && confirmToken) {
+        this.$router.push(`/confirm/?token=${confirmToken}`);
+        return;
+      }
+      sessionStorage.removeItem('confirmToken');
+      if (this.userStatus === UserStatuses.NeedSetRole) this.$router.push(Path.ROLE);
+      else this.$router.push(Path.PROPOSALS);
+    },
     async signIn() {
-      try {
-        const { email, password } = this.model;
-        const response = await this.$store.dispatch('user/signIn', {
-          email,
-          password,
-        });
-        if (response?.ok) {
-          if (this.userData.role === 'employer') {
-            this.$router.push('/proposals');
-          } else if (this.userData.role === 'worker') {
-            this.$router.push('/proposals');
+      if (this.isLoading) return;
+      this.SetLoader(true);
+      this.model.email = this.model.email.trim();
+      const { email, password, totp } = this.model;
+      let payload = {
+        email,
+        password,
+      };
+      if (totp !== '') {
+        payload = { ...payload, totp };
+      }
+      const response = await this.$store.dispatch('user/signIn', payload);
+      if (response?.ok) {
+        this.userStatus = response.result.userStatus;
+        const confirmToken = sessionStorage.getItem('confirmToken');
+        // Unconfirmed account w/o confirm token
+        if (this.userStatus === UserStatuses.Unconfirmed && !confirmToken) {
+          await this.$store.dispatch('main/showToast', {
+            title: this.$t('registration.emailConfirmTitle'),
+            text: this.$t('registration.emailConfirm'),
+          });
+          this.SetLoader(false);
+          return;
+        }
+
+        // Redirect to confirm account
+        if (confirmToken) {
+          this.redirectUser();
+          this.SetLoader(false);
+          return;
+        }
+
+        const { address } = response.result;
+
+        // Wallet is not assigned to this account
+        if (!address) {
+          setCipherKey(this.model.password);
+          await this.$router.push(Path.ROLE);
+          this.SetLoader(false);
+          return;
+        }
+        this.userWalletAddress = address.toLowerCase();
+
+        // Wallet assigned, checking storage
+        const sessionData = JSON.parse(sessionStorage.getItem('mnemonic'));
+        const storageData = JSON.parse(localStorage.getItem('mnemonic'));
+        if (!sessionData && !storageData) {
+          this.step = WalletState.ImportMnemonic;
+          this.SetLoader(false);
+          return;
+        }
+
+        const sessionMnemonic = sessionData ? sessionData[address.toLowerCase()] : null;
+        const storageMnemonic = storageData ? storageData[address.toLowerCase()] : null;
+        if (!sessionMnemonic && !storageMnemonic) {
+          this.step = WalletState.ImportMnemonic;
+          this.SetLoader(false);
+          return;
+        }
+
+        // Check in session if exists
+        if (sessionMnemonic) {
+          const wallet = createWallet(sessionMnemonic);
+          if (wallet && wallet.address.toLowerCase() === this.userWalletAddress) {
+            this.saveToStorage(wallet);
+            this.redirectUser();
+            this.SetLoader(false);
+            return;
           }
         }
-        // if (response?.ok) {
-        //   const response =
-        //   if (response?.ok) {
-        //     this.$cookies.set('role', profile.role, { path: '/' });
-        //     this.$router.push('/quests');
-        //   }
-        // }
-      } catch (e) {
-        console.log(e);
+
+        // Check in storage
+        if (storageMnemonic) {
+          const mnemonic = decryptStringWitheKey(storageMnemonic, this.model.password);
+          const wallet = createWallet(mnemonic);
+          if (wallet && wallet.address.toLowerCase() === this.userWalletAddress) {
+            this.saveToStorage(wallet);
+            this.redirectUser();
+            this.SetLoader(false);
+            return;
+          }
+        }
+
+        // Session & Storage invalid mnemonics
+        await this.$store.dispatch('main/showToast', {
+          title: this.$t('toasts.error'),
+          text: this.$t('messages.mnemonic'),
+        });
+        this.step = WalletState.ImportMnemonic;
       }
+      this.SetLoader(false);
+    },
+    async assignWallet(wallet) {
+      const res = await this.$store.dispatch('user/registerWallet', {
+        address: wallet.address.toLowerCase(),
+        publicKey: wallet.publicKey,
+      });
+      if (res.ok) {
+        this.saveToStorage(wallet);
+        this.redirectUser();
+        return;
+      }
+      if (res.code === 400011) {
+        // На данный mnemonic уже привязан какой-то аккаунт
+        await this.$store.dispatch('main/showToast', {
+          title: this.$t('toasts.error'),
+          text: this.$t('messages.mnemonic'),
+        });
+      }
+    },
+    async importWallet(wallet) {
+      // Correct phrase, but not assigned to this account
+      if (!this.userWalletAddress) {
+        await this.assignWallet(wallet);
+        return;
+      }
+      // All ok
+      if (wallet.address.toLowerCase() === this.userWalletAddress) {
+        this.saveToStorage(wallet);
+        this.redirectUser();
+        return;
+      }
+      // Phrase not assigned to this account
+      await this.$store.dispatch('main/showToast', {
+        title: this.$t('toasts.error'),
+        text: this.$t('messages.mnemonic'),
+      });
+    },
+    saveToStorage(wallet) {
+      initWallet(wallet.address, wallet.privateKey);
+      if (!this.isLoginWithSocial) {
+        localStorage.setItem('mnemonic', JSON.stringify({
+          ...JSON.parse(localStorage.getItem('mnemonic')),
+          [wallet.address.toLowerCase()]: encryptStringWithKey(wallet.mnemonic.phrase, this.model.password),
+        }));
+      }
+      sessionStorage.setItem('mnemonic', JSON.stringify({
+        ...JSON.parse(sessionStorage.getItem('mnemonic')),
+        [wallet.address.toLowerCase()]: wallet.mnemonic.phrase,
+      }));
+      this.$store.dispatch('wallet/connectWallet', { userWalletAddress: wallet.address, userPassword: this.model.password });
     },
     async redirectSocialLink(socialNetwork) {
       window.location = `${process.env.BASE_URL}v1/auth/login/${socialNetwork}`;

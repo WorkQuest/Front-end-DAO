@@ -47,4 +47,5 @@ export default {
   undelegate: 'undelegate',
   gallery: 'gallery',
   showFile: 'showFile',
+  transactionReceipt: 'transactionReceipt',
 };

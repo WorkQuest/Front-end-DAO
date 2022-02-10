@@ -27,6 +27,18 @@ export const errorCodes = Object.freeze({
   axiosFetchError: 5000,
 });
 
+export const Path = Object.freeze({
+  SIGN_IN: '/sign-in',
+  SIGN_UP: '/sign-up',
+  PROPOSALS: '/proposals',
+  ROLE: '/role',
+});
+
+export const UserRole = Object.freeze({
+  WORKER: 'worker',
+  EMPLOYER: 'employer',
+});
+
 export const ChainsId = Object.freeze({
   ETH_MAIN: '0x1',
   ETH_TEST: '0x4',
@@ -54,3 +66,22 @@ export const keyCodes = {
   ArrowLeft: 37,
   ArrowRight: 39,
 };
+
+export const TokenSymbols = Object.freeze({
+  WQT: 'WQT',
+  WUSD: 'WUSD',
+});
+
+export const WalletState = Object.freeze({
+  Default: 1,
+  SaveMnemonic: 2,
+  ConfirmMnemonic: 3,
+  ImportOrCreate: 4,
+  ImportMnemonic: 5,
+});
+
+export const UserStatuses = Object.freeze({
+  Unconfirmed: 0,
+  Confirmed: 1,
+  NeedSetRole: 2,
+});

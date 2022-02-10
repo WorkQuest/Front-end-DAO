@@ -104,5 +104,14 @@ Vue.mixin({
     cutString(item, endFromBeginning = 6, startToEnd = 6) {
       return `${item.slice(0, endFromBeginning)}...${item.slice(item.length - startToEnd, item.length)}`;
     },
+    ShowToast(text, title = null) {
+      this.$bvToast.toast(text, {
+        title: title || this.$t('modals.error'),
+        variant: 'warning',
+        solid: true,
+        toaster: 'b-toaster-bottom-right',
+        appendToast: true,
+      });
+    },
   },
 });

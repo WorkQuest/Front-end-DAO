@@ -59,9 +59,11 @@
       <CtmModalSignWorkQuest v-if="modals.signWorkQuest === currentModalKey" />
       <CtmModalGallery v-if="modals.gallery === currentModalKey" />
       <CtmModalShowFile v-if="modals.showFile === currentModalKey" />
+      <CtmModalTransactionReceipt v-if="modals.transactionReceipt === currentModalKey" />
     </div>
   </transition>
 </template>
+
 <script>
 import { mapGetters } from 'vuex';
 import modals from '@/store/modals/modals';
@@ -112,6 +114,7 @@ import CtmModalUndelegate from './CtmModalUndelegate';
 import CtmModalDelegate from './CtmModalDelegate';
 import CtmModalWarning from './CtmModalWarning';
 import CtmModalSignWorkQuest from './CtmModalSignWorkQuest';
+import CtmModalTransactionReceipt from './CtmModalTransactionReceipt';
 
 export default {
   name: 'ModalBox',
@@ -163,6 +166,7 @@ export default {
     CtmModalUndelegate,
     CtmModalWarning,
     CtmModalSignWorkQuest,
+    CtmModalTransactionReceipt,
   },
   data: () => ({
     modals,
