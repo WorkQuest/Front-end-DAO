@@ -110,6 +110,7 @@ export default {
     try {
       const response = await this.$axios.$post('/v1/totp/confirm', payload);
       commit('setEnable2FA', response.result);
+      commit('setTwoFAStatus', true);
       return response;
     } catch (e) {
       const response = {
@@ -141,7 +142,6 @@ export default {
     try {
       const response = await this.$axios.$post('/v1/totp/enable', payload);
       commit('setTwoFACode', response.result);
-      commit('setTwoFAStatus', true);
       return response;
     } catch (e) {
       const response = {

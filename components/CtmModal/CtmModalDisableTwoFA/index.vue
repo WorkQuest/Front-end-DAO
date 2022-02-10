@@ -105,7 +105,7 @@ export default {
   transform: translate(-50%, -50%)
 }
 .disable-2fa {
-    padding: 20px 10px 20px;
+    padding: 20px;
     gap: 20px;
     max-width: 430px;
     &__hader {

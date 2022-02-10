@@ -56,6 +56,21 @@
             >
           </template>
         </base-field>
+        <base-field
+          v-model="model.totp"
+          :placeholder="$t('signUp.totp')"
+          mode="icon"
+          :name="$t('signUp.totp')"
+          rules="min:6|max:6"
+          class="auth__input"
+        >
+          <template v-slot:left>
+            <img
+              src="~assets/img/icons/password.svg"
+              alt=""
+            >
+          </template>
+        </base-field>
         <div class="auth__tools">
           <base-checkbox
             v-model="remember"
@@ -120,6 +135,7 @@ export default {
     model: {
       email: '',
       password: '',
+      totp: '',
     },
     remember: false,
   }),
@@ -138,11 +154,15 @@ export default {
   methods: {
     async signIn() {
       try {
-        const { email, password } = this.model;
-        const response = await this.$store.dispatch('user/signIn', {
+        const { email, password, totp } = this.model;
+        let payload = {
           email,
           password,
-        });
+        };
+        if (totp !== '') {
+          payload = { ...payload, totp };
+        }
+        const response = await this.$store.dispatch('user/signIn', payload);
         if (response?.ok) {
           if (this.userData.role === 'employer') {
             this.$router.push('/proposals');
