@@ -370,9 +370,9 @@ export default {
         localUserData, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
       } = this;
 
-      this.phone.main = this.localUserData.phone || this.localUserData.tempPhone;
+      this.phone.main = localUserData.phone || localUserData.tempPhone;
 
-      this.phone.second = this.localUserData.additionalInfo.secondMobileNumber;
+      this.phone.second = localUserData.additionalInfo.secondMobileNumber;
 
       this.socialInputs = [{
         key: 'instagram',
