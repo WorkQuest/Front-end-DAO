@@ -137,7 +137,8 @@
             <span class="content__text">{{ $t('modals.useYourGoogleAuth') }}</span>
             <div class="qr__container">
               <qrcode
-                :value="qrLink || 1"
+                v-if="qrLink"
+                :value="qrLink"
                 :options="{ width: 200 }"
               />
             </div>
@@ -213,7 +214,6 @@
               :name="item.name"
               :is-hide-error="false"
               :placeholder="item.placeholder"
-              mode="icon"
               :rules="item.rules"
             />
           </div>
@@ -349,6 +349,7 @@ export default {
       });
       if (response.ok) {
         this.hide();
+        this.showModalSuccess();
       } else this.validationErrorFields(response.data);
     },
     validationErrorFields(data) {
@@ -359,6 +360,14 @@ export default {
           [field]: [this.$t('messages.excluded', { _field_: name })],
         };
         await this.$refs.twoFA.setErrors(err);
+      });
+    },
+    showModalSuccess() {
+      this.ShowModal({
+        key: modals.status,
+        img: require('~/assets/img/ui/questAgreed.svg'),
+        title: this.$t('modals.2FAStatus'),
+        subtitle: this.$t('modals.2FAEnabled'),
       });
     },
     hide() {

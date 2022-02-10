@@ -190,7 +190,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .ctm-field {
-  height: 100%;
   &__selector {
     position: absolute;
     width: 100%;
@@ -288,6 +287,7 @@ export default {
   }
   &_default {
     .ctm-field__input {
+      padding: 12.5px 12.5px 12.5px 12.5px;
       color: $black700;
       background: #F7F8FA;
       border-radius: 6px;

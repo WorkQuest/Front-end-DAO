@@ -1,41 +1,44 @@
 <template>
   <ctm-modal-box
     class="disable-2fa"
-    :title="$t('modals.disable2Fa')"
+    :is-header="false"
   >
-    <div class="disable-2fa__content">
-      <validation-observer
-        v-slot="{ handleSubmit, validated, passed, invalid }"
-        ref="twoFA"
-      >
-        <base-field
-          id="twoFACode"
-          ref="totp"
-          v-model="twoFACode"
-          vid="totp"
-          :placeholder="errorMessage || $t('modals.enterCode')"
-          rules="required|min:6|numeric"
-          name="disable 2FA"
-          :is-hide-error="false"
-        />
-        <div class="disable-2fa__buttons">
-          <base-btn
-            class="message__action"
-            :disabled="!validated || !passed || invalid"
-            @click="handleSubmit(disable2FA)"
-          >
-            {{ $t('meta.disable') }}
-          </base-btn>
-          <base-btn
-            :mode="'outline'"
-            class="message__action"
-            @click="hide"
-          >
-            {{ $t('meta.cancel') }}
-          </base-btn>
-        </div>
-      </validation-observer>
+    <div class="disable-2fa__hader">
+      {{ $t('modals.disable2Fa') }}
     </div>
+    <validation-observer
+      v-slot="{ handleSubmit, validated, passed, invalid }"
+      ref="twoFA"
+      tag="div"
+      class="disable-2fa__body"
+    >
+      <base-field
+        id="twoFACode"
+        ref="totp"
+        v-model="twoFACode"
+        vid="totp"
+        :placeholder="errorMessage || $t('modals.enterCode')"
+        rules="required|min:6|numeric"
+        name="disable 2FA"
+        :is-hide-error="false"
+      />
+      <div class="disable-2fa__buttons">
+        <base-btn
+          :mode="'outline'"
+          class="message__action"
+          @click="hide"
+        >
+          {{ $t('meta.cancel') }}
+        </base-btn>
+        <base-btn
+          class="message__action"
+          :disabled="!validated || !passed || invalid"
+          @click="handleSubmit(disable2FA)"
+        >
+          {{ $t('meta.disable') }}
+        </base-btn>
+      </div>
+    </validation-observer>
   </ctm-modal-box>
 </template>
 
@@ -93,11 +96,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.ctm-modal__box {
+  display: grid !important;
+  height: auto;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%)
+}
 .disable-2fa {
+    padding: 20px 10px 20px;
+    gap: 20px;
     max-width: 430px;
-    padding: 10px;
-    display: grid;
-    gap: 10px;
+    &__hader {
+      font-size: 23px;
+      line-height: 30px;
+      font-weight: 500;
+    }
     &__buttons {
         display: flex;
         gap: 10px;

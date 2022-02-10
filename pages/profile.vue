@@ -253,7 +253,7 @@
             {{ $t('profile.2FA') }}
           </div>
           <base-btn
-            v-if="is2FA"
+            v-if="!userData.totpIsActive"
             class="security__btn"
             mode="lightBlue"
             @click="modalTwoFAAuth()"
@@ -300,7 +300,6 @@ export default {
       phoneInputsArr: [],
       nameInputsArr: [],
       coordinates: undefined,
-      is2FA: false,
     };
   },
   computed: {
@@ -319,10 +318,6 @@ export default {
       secondMobileNumber: 'user/getUserSecondMobileNumber',
       imageData: 'user/getImageData',
     }),
-  },
-  getTwoFA() {
-    this.is2FA = this.userData.totpIsActive;
-    return this.is2FA;
   },
   beforeMount() {
     this.isVerified = !!this.userData.statusKYC;

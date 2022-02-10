@@ -44,6 +44,9 @@ export default {
   setImage(state, data) {
     state.userData.avatar.url = data;
   },
+  setTwoFAStatus(state, data) {
+    state.userData.totpIsActive = data;
+  },
   setTwoFACode(state, data) {
     state.twoFACode = data;
   },
