@@ -172,9 +172,6 @@ export default {
     walletState() {
       return WalletState;
     },
-    socials() {
-      return ['google', 'twitter', 'facebook', 'linkedin'];
-    },
   },
   async mounted() {
     this.isLoginWithSocial = this.$cookies.get('socialNetwork');

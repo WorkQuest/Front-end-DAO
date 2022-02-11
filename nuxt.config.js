@@ -47,11 +47,6 @@ export default {
       key: process.env.GMAPKEY,
     }],
   ],
-  router: {
-    scrollBehavior() {
-      return { x: 0, y: 0 };
-    },
-  },
   build: {
     loaders: {
       scss: { sourceMap: false },
