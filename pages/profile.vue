@@ -152,27 +152,27 @@
             </base-field>
             <div
               v-for="cell in phoneInputsArr"
-              :key="cell.id"
+              :key="cell.type"
               class="profile-cont__field"
             >
               <vue-phone-number-input
                 v-if="isProfileEdit"
-                v-model="localUserData.additionalInfo.secondMobileNumber"
+                v-model="phone[`${cell.type}`].fullPhone"
                 class="input-phone"
                 error-color="#EB5757"
                 clearable
                 show-code-on-list
                 required
+                :default-country-code="phone[`${cell.type}`].codeRegion"
                 size="lg"
-                @update="updatedPhone = $event"
+                @update="updatedPhone[cell.type] = $event"
               />
               <base-field
                 v-else
-                v-model="cell.model"
-                :placeholder="cell.placeholder || $t('settings.telInput')"
+                :value="cell.fullNumber"
+                :placeholder="cell.placeholder"
                 :disabled="true"
                 is-hide-error
-                inputmode="numeric"
                 mode="icon"
               >
                 <template v-slot:left>
@@ -270,13 +270,17 @@
 import { mapGetters } from 'vuex';
 import { GeoCode } from 'geo-coder';
 import modals from '~/store/modals/modals';
+import { UserRole } from '~/utils/enums';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 
 export default {
   name: 'Settings',
   data() {
     return {
-      updatedPhone: null,
+      updatedPhone: {
+        main: null,
+        second: null,
+      },
       isProfileEdit: false,
       isPositionSearch: false,
       isGeoInputOnFocus: false,
@@ -288,9 +292,12 @@ export default {
       localUserData: null,
       avatar_change: null,
       socialInputs: [],
-      phoneInputsArr: [],
       nameInputsArr: [],
       coordinates: undefined,
+      phone: {
+        main: '',
+        second: '',
+      },
     };
   },
   computed: {
@@ -309,10 +316,44 @@ export default {
       secondMobileNumber: 'user/getUserSecondMobileNumber',
       imageData: 'user/getImageData',
     }),
+    phoneInputsArr() {
+      const phones = [];
+      const { phone, tempPhone, additionalInfo } = this.userData;
+      const mainPhone = {
+        type: 'main',
+        fullNumber: null,
+        placeholder: this.$t('settings.mainNumberMissing'),
+        isVerify: false,
+      };
+      if (phone) {
+        mainPhone.fullNumber = phone.fullPhone;
+        mainPhone.placeholder = phone.fullPhone;
+        mainPhone.isVerify = true;
+      }
+      if (tempPhone) {
+        mainPhone.fullNumber = tempPhone.fullPhone;
+        mainPhone.placeholder = tempPhone.fullPhone;
+      }
+      phones.push(mainPhone);
+
+      if (this.userRole === UserRole.EMPLOYER) {
+        const secondPhone = {
+          type: 'second',
+          fullNumber: null,
+          placeholder: this.$t('settings.secondNumberMissing'),
+          isVerify: false,
+        };
+        if (additionalInfo.secondMobileNumber) {
+          secondPhone.fullNumber = additionalInfo.secondMobileNumber.fullPhone;
+          secondPhone.placeholder = additionalInfo.secondMobileNumber.fullPhone;
+        }
+        phones.push(secondPhone);
+      }
+      return phones;
+    },
   },
   beforeMount() {
     this.isVerified = !!this.userData.statusKYC;
-
     this.setCurrData();
   },
   mounted() {
@@ -326,12 +367,12 @@ export default {
       this.localUserData = JSON.parse(JSON.stringify(this.userData));
 
       const {
-        localUserData, firstMobileNumber, secondMobileNumber, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
+        localUserData, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
       } = this;
 
-      const {
-        instagram, facebook, linkedin, twitter,
-      } = localUserData.additionalInfo.socialNetwork;
+      this.phone.main = localUserData.phone || localUserData.tempPhone;
+
+      this.phone.second = localUserData.additionalInfo.secondMobileNumber;
 
       this.socialInputs = [{
         key: 'instagram',
@@ -353,22 +394,6 @@ export default {
         placeholder: userTwitter,
         imgClass: 'icon-twitter',
       }];
-
-      // TODO add verif phone number
-
-      // this.phoneInputsArr = [{
-      //   id: 'firstMobileNumber',
-      //   model: localUserData.tempPhone,
-      //   placeholder: firstMobileNumber,
-      // }];
-
-      // if (this.userRole === 'employer') {
-      this.phoneInputsArr = [{
-        id: 'secondMobileNumber',
-        model: localUserData.additionalInfo.secondMobileNumber,
-        placeholder: secondMobileNumber,
-      }];
-      // }
 
       this.nameInputsArr = [{
         key: 'firstName',
@@ -520,11 +545,24 @@ export default {
         }, priority, workplace, wagePerHour, userSpecializations, educations, workExperiences,
       } = this.localUserData;
 
-      const { isValid, formatInternational } = this.updatedPhone;
+      const mainPhone = this.updatedPhone.main;
+      const secondPhone = this.updatedPhone.second;
 
-      const secondMobileNumber = formatInternational.replace(/\s/g, '') || '';
+      const phoneNumber = mainPhone
+        ? {
+          phone: mainPhone.nationalNumber || null,
+          fullPhone: mainPhone.formatInternational ? mainPhone.formatInternational.replace(/\s/g, '') : null,
+          codeRegion: mainPhone.countryCode || null,
+        }
+        : null;
 
-      if (!firstName || !lastName || (secondMobileNumber && !isValid)) return;
+      const secondMobileNumber = secondPhone
+        ? {
+          phone: secondPhone.nationalNumber || null,
+          fullPhone: secondPhone.formatInternational ? secondPhone.formatInternational.replace(/\s/g, '') : null,
+          codeRegion: secondPhone.countryCode || null,
+        }
+        : null;
 
       const { avatar_change, userRole } = this;
 
@@ -545,21 +583,25 @@ export default {
         avatarId,
         firstName,
         lastName,
-        location,
+        phoneNumber,
+        locationFull: {
+          location,
+          locationPlaceName: this.localUserData.additionalInfo.address,
+        },
       };
 
       const additionalInfo = {
         address,
         socialNetwork,
         description,
-        secondMobileNumber,
       };
 
-      if (userRole === 'employer') {
+      if (userRole === UserRole.EMPLOYER) {
         config = {
           ...config,
           additionalInfo: {
             ...additionalInfo,
+            secondMobileNumber,
             company,
             CEO,
             website,

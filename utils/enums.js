@@ -54,3 +54,8 @@ export const keyCodes = {
   ArrowLeft: 37,
   ArrowRight: 39,
 };
+
+export const UserRole = {
+  EMPLOYER: 'employer',
+  WORKER: 'worker',
+};

@@ -640,7 +640,9 @@
     "savingProduct": "Savings product",
     "crediting": "Crediting",
     "liquidityMining": "Liquidity mining",
-    "aboutMe": "About Me"
+    "aboutMe": "About Me",
+    "mainNumberMissing": "The main number is missing",
+    "secondNumberMissing": "The second number is missing"
   },
   "disputes": {
     "disputes": "Disputes",
