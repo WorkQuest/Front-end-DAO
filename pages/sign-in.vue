@@ -173,6 +173,9 @@ export default {
       return WalletState;
     },
   },
+  created() {
+    window.addEventListener('beforeunload', this.unloadHandler);
+  },
   async mounted() {
     this.isLoginWithSocial = this.$cookies.get('socialNetwork');
     const access = this.$cookies.get('access');
@@ -199,6 +202,10 @@ export default {
     }
   },
   methods: {
+    unloadHandler() {
+      if (this.addressAssigned) return;
+      this.$store.dispatch('user/logout');
+    },
     back() {
       if (this.step === WalletState.ImportOrCreate) {
         this.step = WalletState.Default;
@@ -397,6 +404,13 @@ export default {
 
 <style lang="scss" scoped>
 .auth {
+  &__back {
+    cursor: pointer;
+    display: table-cell;
+    & > span {
+      color: $black700;
+    }
+  }
   &__container {
     display: grid;
     grid-template-rows: auto;

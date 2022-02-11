@@ -41,11 +41,6 @@ export default {
       refresh: 'user/refreshToken',
     }),
   },
-  created() {
-    if (this.access || this.refresh || localStorage.getItem('access') || localStorage.getItem('refresh')) {
-      this.$router.push('/proposals');
-    }
-  },
   async beforeMount() {
     const { access, refresh, userStatus } = this.$route.query;
     if (access && refresh && userStatus) {
@@ -71,7 +66,7 @@ export default {
   },
   methods: {
     toMain() {
-      this.$router.push('/sign-in');
+      this.$router.push(Path.SIGN_IN);
     },
   },
 };

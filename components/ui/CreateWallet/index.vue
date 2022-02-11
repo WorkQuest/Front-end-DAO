@@ -340,6 +340,7 @@ export default {
     height: 100%;
   }
   &__confirm-phrase {
+    margin-top: 20px;
     display: flex;
     align-items: center;
     &_label {
