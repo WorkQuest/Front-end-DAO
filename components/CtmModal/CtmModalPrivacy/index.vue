@@ -38,7 +38,7 @@
         <base-btn
           class="privacy__action"
           :disabled="!isAllChecked"
-          @click="hide()"
+          @click="onSubmit()"
         >
           {{ $t('meta.ok') }}
         </base-btn>
@@ -49,6 +49,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { Path, UserStatuses } from '~/utils/enums';
 
 export default {
   name: 'PrivacyModal',
@@ -62,30 +63,43 @@ export default {
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
+      userData: 'user/getUserData',
     }),
     isAllChecked() {
       return this.privacy && this.terms && this.aml;
     },
   },
   methods: {
-    async hide() {
-      try {
+    async onSubmit() {
+      // Role page & select role
+      if (this.$cookies.get('userStatus') === UserStatuses.NeedSetRole) {
+        const response = await this.$store.dispatch('user/setUserRole', { role: this.options.role });
+        if (response?.ok) {
+          this.$cookies.set('role', this.options.role, { path: '/' });
+          this.$cookies.set('userStatus', 1, { path: '/' });
+          this.options.callback();
+          this.CloseModal();
+          return;
+        }
+      } else { // Confirm account page
         const payload = {
           confirmCode: this.options.confirmCode,
           role: this.options.role,
         };
         const response = await this.$store.dispatch('user/confirm', payload);
         if (response?.ok) {
-          await this.$store.dispatch('main/showToast', {
-            title: 'Success',
-            text: 'Your account has been successfully verified',
-          });
-          await this.$router.push('/proposals');
+          this.$cookies.set('role', this.options.role, { path: '/' });
+          this.$cookies.set('userStatus', 1, { path: '/' });
+          sessionStorage.removeItem('confirmToken');
+          this.ShowToast(this.$t('modals.yourAccountVerified'), this.$t('modals.success'));
+          await this.$router.push(Path.ROLE);
+        } else {
+          // Wrong confirm token
+          await this.$store.dispatch('user/logout');
+          await this.$router.push(Path.SIGN_IN);
         }
-        this.CloseModal();
-      } catch (e) {
-        console.log(e);
       }
+      this.CloseModal();
     },
   },
 };
