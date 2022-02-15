@@ -149,6 +149,9 @@ export default {
       return WalletState;
     },
   },
+  created() {
+    window.addEventListener('beforeunload', this.clearCookies);
+  },
   async beforeMount() {
     const access = this.$cookies.get('access');
     const refresh = this.$cookies.get('refresh');
@@ -182,6 +185,12 @@ export default {
     if (!this.isWalletAssigned && !this.isConfirmingPass) this.$store.dispatch('user/logout');
   },
   methods: {
+    clearCookies(event) {
+      this.$cookies.remove('access');
+      this.$cookies.remove('refresh');
+      this.$cookies.remove('userLogin');
+      this.$cookies.remove('userStatus');
+    },
     toSign() {
       this.$store.dispatch('user/logout');
       this.$router.push(Path.SIGN_IN);
