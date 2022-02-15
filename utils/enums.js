@@ -30,8 +30,11 @@ export const errorCodes = Object.freeze({
 export const Path = Object.freeze({
   SIGN_IN: '/sign-in',
   SIGN_UP: '/sign-up',
-  PROPOSALS: '/proposals',
   ROLE: '/role',
+  PROPOSALS: '/proposals',
+  INVESTORS: '/investors',
+  DISCUSSIONS: '/discussions',
+  WALLET: '/wallet',
 });
 
 export const UserRole = Object.freeze({

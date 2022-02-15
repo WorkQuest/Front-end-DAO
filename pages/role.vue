@@ -157,6 +157,7 @@ export default {
       await this.$router.push(Path.SIGN_IN);
       return;
     }
+    if (!this.userData.id) await this.$store.dispatch('user/getUserData');
     if (this.userData.wallet?.address && userStatus === UserStatuses.Confirmed) {
       this.isConfirmingPass = true;
       await this.redirectUser();
@@ -187,6 +188,7 @@ export default {
     },
     goStep(step) {
       if (this.step === WalletState.ImportMnemonic) this.step = WalletState.ImportOrCreate;
+      else if (this.step === WalletState.SaveMnemonic) this.step = WalletState.ImportOrCreate;
       else this.step = step;
     },
     showPrivacy(role) {
@@ -197,12 +199,12 @@ export default {
       });
     },
     goToAssignWallet() {
+      this.isClearOnDestroy = true;
       this.step = WalletState.ImportOrCreate;
     },
     async redirectUser() {
       await this.$store.dispatch('user/getUserData');
-      if (this.userData.role === UserRole.EMPLOYER) await this.$router.push(Path.WORKERS);
-      else if (this.userData.role === UserRole.WORKER) await this.$router.push(Path.QUESTS);
+      await this.$router.push(Path.PROPOSALS);
     },
     async assignWallet(wallet) {
       this.isConfirmingPass = false;
@@ -211,11 +213,14 @@ export default {
         address: wallet.address.toLowerCase(),
         publicKey: wallet.publicKey,
       });
+      this.SetLoader(false);
       if (!res.ok) {
-        console.log(res);
+        if (res.msg.includes('Wallet already exists')) {
+          return;
+        }
+        this.isClearOnDestroy = true;
         await this.$store.dispatch('user/logout');
         await this.$router.push(Path.SIGN_IN);
-        this.SetLoader(false);
         return;
       }
       this.isWalletAssigned = true;

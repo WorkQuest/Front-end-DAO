@@ -2,11 +2,11 @@
 
 export default {
   setTokens(state, payload) {
-    const { access, refresh } = payload;
-    state.tokens.access = access;
-    state.tokens.refresh = refresh;
-    this.$cookies.set('access', access, { path: '/' });
-    this.$cookies.set('refresh', refresh, { path: '/' });
+    state.tokens.access = payload.access;
+    state.tokens.refresh = payload.refresh;
+    this.$cookies.set('socialNetwork', payload.social, { path: '/' });
+    this.$cookies.set('access', payload.access, { path: '/' });
+    this.$cookies.set('refresh', payload.refresh, { path: '/' });
     if (payload.userStatus) { this.$cookies.set('userStatus', payload.userStatus, { path: '/' }); }
   },
   setUserData(state, data) {
