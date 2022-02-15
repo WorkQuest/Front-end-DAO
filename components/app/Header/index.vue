@@ -2,7 +2,7 @@
   <div class="header">
     <div class="header__container">
       <div class="header__body">
-        <n-link
+        <nuxt-link
           tag="div"
           class="header__logo"
           to="/about"
@@ -11,7 +11,7 @@
             src="~assets/img/app/logo.svg"
             alt=""
           >
-        </n-link>
+        </nuxt-link>
         <div class="header__info">
           <div
             class="header__route"

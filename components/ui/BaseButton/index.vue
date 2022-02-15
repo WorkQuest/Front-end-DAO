@@ -22,13 +22,20 @@
     :class="btnClass"
     @click="$emit('click')"
   >
-    <div class="icon-btn_left">
+    {{ text }}
+    <span
+      v-if="$slots.left"
+      class="icon icon-btn_left"
+    >
       <slot name="left" />
-    </div>
+    </span>
     <slot />
-    <div class="icon-btn_right">
+    <span
+      v-if="$slots.right"
+      class="icon icon-btn_right"
+    >
       <slot name="right" />
-    </div>
+    </span>
   </button>
 </template>
 <script>
@@ -43,12 +50,20 @@ export default {
       default: '',
     },
     disabled: {
-      type: Boolean,
+      type: [Boolean, String],
       default: false,
     },
     mode: {
       type: String,
       default: '',
+    },
+    text: {
+      type: String,
+      default: '',
+    },
+    padding: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -58,7 +73,6 @@ export default {
         { 'base-btn_disabled': disabled },
         { 'base-btn_light': mode === 'light' },
         { 'base-btn_outline': mode === 'outline' },
-        { 'base-btn_like': mode === 'like' },
         { 'base-btn_borderless-left': mode === 'borderless-left' },
         { 'base-btn_borderless-right': mode === 'borderless-right' },
         { 'base-btn_tag': mode === 'tag' },
@@ -68,16 +82,19 @@ export default {
         { 'base-btn_messages': mode === 'goToMessages' },
         { 'base-btn_show-messages': mode === 'showYourMessage' },
         { 'base-btn_delete': mode === 'delete' },
+        { 'base-btn_cross': mode === 'cross' },
         { 'base-btn_approve': mode === 'approve' },
         { 'base-btn_back': mode === 'back' },
         { 'base-btn_grey': mode === 'grey' },
         { 'base-btn_verification': mode === 'ver' },
         { 'base-btn_black': mode === 'black' },
-        { 'base-btn_blue': mode === 'blue' },
-        { 'base-btn_lightBlue': mode === 'lightBlue' },
-        { 'base-btn_lightRed': mode === 'lightRed' },
-        { 'base-btn_copy icon-copy': mode === 'copy' },
-        { 'base-btn_transparent': mode === 'transparent' },
+        { 'base-btn_max': mode === 'max' },
+        { 'base-btn_share': mode === 'share' },
+        { 'base-btn_add': mode === 'add' },
+        { 'base-btn_portfolio-edit': mode === 'portfolioEdit' },
+        { 'base-btn_portfolio-close': mode === 'portfolioClose' },
+        { 'base-btn_share-user-info': mode === 'share-btn' },
+        { 'base-btn_padding': this.padding },
       ];
     },
   },
@@ -87,10 +104,10 @@ export default {
 .icon {
   &-btn {
     &_left {
-      margin: 0 5px 0 0;
+      padding-right: 5px;
     }
     &_right {
-      margin: 0 0 0 5px;
+      padding-left: 5px;
     }
   }
 }
@@ -99,7 +116,7 @@ export default {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 43px;
+  height: 46px;
   color: #ffffff;
   font-family: 'Inter', sans-serif;
   font-style: normal;
@@ -113,158 +130,189 @@ export default {
   &:hover {
     background: #103D7C;
   }
-  &_like {
-    background: transparent;
+  &_padding {
+    padding: 0 10px;
+  }
+  &_portfolio-edit {
+    position: absolute;
+    left: 30px;
+    top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    width: 20px;
+    border-radius: 6px;
+    padding: 2px;
+    transition: 0.5s;
+    background: $yellow;
+    filter: grayscale(50%);
     &:hover {
-      background: transparent;
+      filter: grayscale(0);
+      background: $yellow;
+    }
+  }
+  &_portfolio-close {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    width: 20px;
+    border-radius: 6px;
+    padding: 2px;
+    transition: 0.5s;
+    filter: grayscale(50%);
+    background: $red;
+    &:hover {
+      filter: grayscale(0);
+      background: $red;
     }
   }
   &_black {
-    background: $black800;
-    color: $white;
+    background: $black800 !important;
+    color: $white !important;
     &:hover {
-      background: $black700;
+      background: $black700 !important;
     }
   }
   &_verification {
-    background: $white;
-    color: $blue;
+    background: $white !important;
+    color: $blue !important;
     &:hover {
-      background: $black100;
+      background: $black100 !important;
     }
   }
   &_grey {
-    background-color: $black100;
+    background-color: $black0 !important;
     &:hover {
-      background: $black200;
+      background: $black100 !important;
+    }
+  }
+  &_share {
+    background-color: $black0;
+    &:hover {
+      background: $blue;
+    }
+  }
+  &_max {
+    background-color: $black0;
+    color: $blue;
+    font-weight: 600;
+    font-size: 16px;
+    height:40px;
+    line-height: 130%;
+    &:hover {
+      background-color: $black0;
     }
   }
   &_back {
-    transition: .3s;
-    background-color: transparent;
-    color: $black500;
+    padding: 0 17px;
+    transition: .3s !important;
+    background-color: transparent !important;
+    color: $black800 !important;
+    opacity: 1;
     &:hover {
-      background-color: transparent;
-      color: $black500;
+      background-color: transparent !important;
+      opacity: 0.8;
     }
   }
   &_approve {
-    background-color: $green;
-    color: $white;
-    border-radius: 6px;
-    border: 1px solid $green;
+    background-color: $green !important;
+    color: $white !important;
+    border-radius: 6px !important;
+    border: 1px solid $green !important;
     &:hover {
-      background-color: $white;
-      color: $green;
-      border-radius: 6px;
+      background-color: $white !important;
+      color: $green !important;
+      border-radius: 6px !important;
     }
   }
   &_agree {
-    background-color: $green;
-    color: $white;
+    background-color: $green !important;
+    color: $white !important;
+    padding: 0;
     &:hover {
-      background-color: $green;
-      color: $white;
-      box-shadow: 0 0 5px rgba(0,0,0,0.5);
+      background-color: $green !important;
+      color: $white !important;
+      box-shadow: 0 0 5px rgba(0,0,0,0.5) !important;
+    }
+  }
+  &_cross {
+    background: transparent !important;
+    color: $red !important;
+    &:hover {
+      color: #cc0000 !important;
     }
   }
   &_delete {
-    background-color: $red;
-    color: $white;
+    background-color: $red !important;
+    color: $white !important;
     &:hover {
-      background-color: #cc0000;
-      color: $white;
+      background-color: #cc0000 !important;
+      color: $white !important;
     }
   }
   &_show-messages {
-    background-color: transparent;
-    color: $blue;
-  }
-  &_blue {
-    background-color: transparent;
-    color: $blue;
-    &:hover {
-      color: #ffffff;
-      background-color: $blue;
-      transition: .3s;
-    }
-  }
-  &_lightBlue {
-    background-color: $white;
-    color: $blue ;
-    border: 0.5px solid  #e6f7ff;
-    &:hover{
-      background-color: #e6f7ff;
-    }
-  }
-  &_lightRed {
-    background-color: $white;
-    color: #DF3333 ;
-    border: 0.5px solid rgba(223, 51, 51, 0.1);;
-    &:hover{
-      background-color: rgba(223, 51, 51, 0.1);;
-    }
+    background-color: transparent !important;
+    color: $blue !important;
   }
   &_messages {
-    background-color: $white;
-    color: $green;
-    transition: .3s;
-    font-size: 12px;
+    background-color: $white !important;
+    color: $green !important;
+    transition: .3s !important;
+    font-size: 12px !important;
     &:hover {
-      color: #77e377;
-      background-color: $white;
+      color: #77e377 !important;
+      background-color: $white !important;
     }
   }
   &_goToChat {
-    background-color: $white;
-    color: $green;
-    border: 1px solid $black400;
+    background-color: $white !important;
+    color: $green !important;
+    border: 1px solid rgba(0, 170, 91, 0.1) !important;
     &:hover {
-      background-color: $white;
-      color: $green;
-      border: 1px solid $black600;
-      box-shadow: 0 0 2px rgba(0,0,0,0.5);
+      background-color: $white !important;
+      color: $green !important;
+      border: 1px solid rgba(0, 170, 91, 0.2) !important;
+      box-shadow: 0 0 2px rgba(0,0,0,0.5) !important;
     }
   }
   &_dispute {
-    background-color: $red;
+    background-color: $red !important;
     &:hover {
-      box-shadow: 0 0 5px rgba(0,0,0,0.5);
-      background-color: $red;
+      box-shadow: 0 0 5px rgba(0,0,0,0.5) !important;
+      background-color: $red !important;
     }
   }
   &_disabled {
-    pointer-events: none;
-    background: #D1D1CF !important;
+    pointer-events: none !important;
+    color: $black200 !important;
+    background: $black0 !important;
   }
   &_outline {
-    border: 1px solid rgba(0, 131, 199, 0.1);
-    background: #FFFFFF;
-    color: $blue;
+    width: 100%;
+    border: 1px solid rgba(0, 131, 199, 0.1) !important;
+    background: #FFFFFF !important;
+    color: $blue !important;
+    padding: 0;
     &:hover {
-      background: #F7F8FA;
-      color: $blue;
-    }
-  }
-  &_copy {
-    background: #FFFFFF;
-    color: $blue;
-    font-size: 25px;
-    &:hover {
-      background: #FFFFFF;
-      color: $blue;
+      background: #F7F8FA !important;
+      color: $blue !important;
     }
   }
   &_borderless {
-    background: #FFFFFF;
-    color: $blue;
+    background: #FFFFFF !important;
+    color: $blue !important;
     &-left {
       @extend .base-btn_borderless;
-      justify-content: flex-start;
+      justify-content: flex-start !important;
     }
     &-right {
       @extend .base-btn_borderless;
-      justify-content: flex-end;
+      justify-content: flex-end !important;
     }
     &:hover {
       color: #3992ff;
@@ -272,22 +320,28 @@ export default {
     }
   }
   &_tag {
-    background: rgba(0, 131, 199, 0.1);
-    border-radius: 3px;
-    color: $blue;
+    background: rgba(0, 131, 199, 0.1) !important;
+    border-radius: 3px !important;
+    color: $blue !important;
     &:hover {
-      background: rgba(0, 131, 199, 0.2);
+      background: rgba(0, 131, 199, 0.2) !important;
     }
   }
   &_light {
-    background: #FFFFFF;
-    color: $black800;
+    background: #FFFFFF !important;
+    color: $black800 !important;
+    transition: 0.5s;
     &:hover {
-      background: $black100;
+      background: $black100 !important;
     }
   }
-  &_transparent {
-    background: transparent;
+  &_add {
+    background-color: $white;
+    color: $blue;
+    &:hover {
+      background-color: $blue;
+      color: $white;
+    }
   }
 }
 </style>

@@ -37,8 +37,7 @@ export default {
   computed: {
     ...mapGetters({
       isLoading: 'main/getIsLoading',
-      access: 'user/accessToken',
-      refresh: 'user/refreshToken',
+      userData: 'user/getUserData',
     }),
   },
   async beforeMount() {

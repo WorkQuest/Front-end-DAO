@@ -60,6 +60,7 @@
       <CtmModalGallery v-if="modals.gallery === currentModalKey" />
       <CtmModalShowFile v-if="modals.showFile === currentModalKey" />
       <CtmModalTransactionReceipt v-if="modals.transactionReceipt === currentModalKey" />
+      <CtmModalGiveTransfer v-if="modals.giveTransfer === currentModalKey" />
     </div>
   </transition>
 </template>
@@ -67,6 +68,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '@/store/modals/modals';
+import CtmModalGiveTransfer from './CtmModalGiveTransfer';
 import CtmModalShowFile from './CtmModalShowFile';
 import CtmModalGallery from './CtmModalGallery';
 import CtmModalConfirmEmail from './CtmModalConfirmEmail';
@@ -119,6 +121,7 @@ import CtmModalTransactionReceipt from './CtmModalTransactionReceipt';
 export default {
   name: 'ModalBox',
   components: {
+    CtmModalGiveTransfer,
     CtmModalShowFile,
     CtmModalGallery,
     CtmModalConfirmEmail,

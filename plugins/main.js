@@ -101,8 +101,9 @@ Vue.mixin({
       };
       this.$store.dispatch('user/setCurrentPosition', payload);
     },
-    cutString(item, endFromBeginning = 6, startToEnd = 6) {
-      return `${item.slice(0, endFromBeginning)}...${item.slice(item.length - startToEnd, item.length)}`;
+    CutTxn(txn, first = 10, second = 10) {
+      if (!txn) return '';
+      return `${txn.slice(0, first)}...${txn.slice(-second)}`;
     },
     ShowToast(text, title = null) {
       this.$bvToast.toast(text, {

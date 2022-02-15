@@ -180,6 +180,15 @@
     "signUp": "Sign Up",
     "forgotYourPass": "Forgot your password?"
   },
+  "securityCheck": {
+    "title": "Security check",
+    "confCode": "Google confirmation code",
+    "placeholder": "Placeholder",
+    "confCodeDesc": "Enter the 6-digit code from the Google Authentication app",
+    "confCodeField": "google verification",
+    "confirmAccess": "Confirm access",
+    "confirmPassToContinue": "You need to confirm your password to continue"
+  },
   "signUp": {
     "title": "Sign Up",
     "haveAccount": "Already have an account?",
@@ -306,6 +315,11 @@
     "startQuest": "Start quest"
   },
   "modals": {
+    "error": "Error",
+    "selectToken": "Select token",
+    "from": "From",
+    "to": "To",
+    "transfer": "Transfer",
     "toYourEmail": "To your email address",
     "codeHasBeenSent": "code has been sent",
     "switchOnGoogleAuth": "Switch on Google Authenticator",
@@ -435,7 +449,7 @@
     "investorAddress": "Investor address",
     "tokensNumber": "Tokens Number",
     "tokensDelegated": "Enter number of tokens that will be delegated",
-    "max": "Maximum",
+    "max": "MAX",
     "placeholder": "Placeholder",
     "votingEnd": "Voting end",
     "votingEndField": "voting End",
@@ -505,26 +519,28 @@
     }
   },
   "wallet": {
+    "WUSD": "WUSD wallet",
     "cryptoWallet": "Crypto wallet",
     "bankCard": "Bank card",
     "send": "Send",
     "toThisAddress": "to this address",
     "wallet": "Wallet",
     "balance": "Balance",
-    "deposit": "Deposit",
+    "deposit": "Receive",
     "withdraw": "Withdraw",
-    "transfer": "Transfer",
-    "addCardProposal": "Add your own card for easy withdrawal",
+    "transfer": "Buy / Send",
+    "addCardProposal": "Add bank card for easy withdrawal",
     "addCard": "Add card",
     "table": {
-      "trx": "Transaction History",
-      "txHash": "Tx hash",
+      "trx": "Transactions",
+      "txHash": "Txn Hash",
       "status": "Status",
       "block": "Block",
       "timestamp": "Timestamp",
-      "transferred": "Transferred",
-      "value": "Value",
-      "trxFee": "Transaction fee"
+      "transferred": "Tokens Transferred",
+      "value": "Quantity",
+      "trxFee": "Transaction fee",
+      "empty": "Transactions list is empty"
     }
   },
   "kyc": {

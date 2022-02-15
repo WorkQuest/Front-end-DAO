@@ -109,14 +109,17 @@ const sendTransaction = async (_method, abiName, _abi, _address, params) => {
   });
 };
 
-export const fetchContractData = async (_method, abiName, _abi, _address, _params) => {
+export const fetchContractData = async (_method, _abi, _address, _params, _provider = web3Wallet) => {
   try {
-    const inst = getContractInstance(abiName, _abi, _address);
-    const res = await inst.methods[_method].apply(this, _params).call();
-    return success(res);
+    if (!_provider) {
+      console.error('_provider is undefined');
+      return {};
+    }
+    const Contract = new _provider.eth.Contract(_abi, _address);
+    return await Contract.methods[_method].apply(this, _params).call();
   } catch (e) {
-    console.error('fetch data: [', _method, ']', e.message);
-    return error(errorCodes.FetchContractData, '', e);
+    console.error(`Fetch contract data [${_method}]: ${e.message}`);
+    return false;
   }
 };
 

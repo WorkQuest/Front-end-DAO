@@ -48,4 +48,5 @@ export default {
   gallery: 'gallery',
   showFile: 'showFile',
   transactionReceipt: 'transactionReceipt',
+  giveTransfer: 'giveTransfer',
 };

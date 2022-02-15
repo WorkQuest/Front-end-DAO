@@ -11,6 +11,7 @@ import {
 import * as rules from 'vee-validate/dist/rules';
 import { validateMnemonic } from 'bip39';
 import BigNumber from 'bignumber.js';
+import { utils } from 'ethers';
 
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
@@ -160,6 +161,16 @@ extend('mnemonic', {
     };
   },
   message: 'Incorrect secret phrase',
+});
+
+extend('address', {
+  validate(value) {
+    return {
+      required: true,
+      valid: utils.isAddress(value),
+    };
+  },
+  message: 'Type correct address',
 });
 
 extend('max_bn', {
