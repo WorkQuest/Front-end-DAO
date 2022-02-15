@@ -5,10 +5,10 @@ import {
   getTransferFeeData, getWalletAddress, GetWalletProvider,
   transfer,
   transferToken,
+  fetchWalletContractData,
 } from '~/utils/wallet';
 import abi from '~/abi/index';
 import { TokenSymbols } from '~/utils/enums';
-import { fetchContractData } from '~/utils/web3';
 
 export default {
   async getTransactions({ commit }, params) {
@@ -85,12 +85,11 @@ export default {
     });
   },
   async getBalanceWQT({ commit }, userAddress) {
-    const res = await fetchContractData(
+    const res = await fetchWalletContractData(
       'balanceOf',
       abi.ERC20,
       process.env.WQT_TOKEN,
       [userAddress],
-      GetWalletProvider(),
     );
     commit('setBalance', {
       symbol: TokenSymbols.WQT,

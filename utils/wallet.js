@@ -188,6 +188,20 @@ export const getTransferFeeData = async (recipient, value) => {
 };
 
 /** CONTRACTS */
+export const fetchWalletContractData = async (_method, _abi, _address, _params) => {
+  try {
+    if (!web3) {
+      console.error('Provider is undefined');
+      return {};
+    }
+    const inst = new web3.eth.Contract(_abi, _address);
+    return await inst.methods[_method].apply(this, _params).call();
+  } catch (e) {
+    console.error(`Fetch contract data [${_method}]: ${e.message}`);
+    return false;
+  }
+};
+
 export const transferToken = async (recipient, value) => {
   try {
     value = new BigNumber(value).shiftedBy(18).toString();
