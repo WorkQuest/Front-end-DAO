@@ -106,7 +106,22 @@ export default {
       },
     });
   },
-
+  async confirmEnable2FA({ commit }, payload) {
+    try {
+      const response = await this.$axios.$post('/v1/totp/confirm', payload);
+      commit('setEnable2FA', response.result);
+      commit('setTwoFAStatus', true);
+      return response;
+    } catch (e) {
+      const response = {
+        ok: e.response.data.ok,
+        code: e.response.data.code,
+        msg: e.response.data.msg,
+        data: e.response.data.data,
+      };
+      return response;
+    }
+  },
   async disable2FA({ commit }, payload) {
     try {
       const response = await this.$axios.$post('/v1/totp/disable', payload);
@@ -114,12 +129,13 @@ export default {
       commit('setTwoFAStatus', false);
       return response;
     } catch (e) {
-      return {
+      const response = {
         ok: e.response.data.ok,
         code: e.response.data.code,
         msg: e.response.data.msg,
         data: e.response.data.data,
       };
+      return response;
     }
   },
   async enable2FA({ commit }, payload) {
@@ -128,55 +144,13 @@ export default {
       commit('setTwoFACode', response.result);
       return response;
     } catch (e) {
-      return {
+      const response = {
         ok: e.response.data.ok,
         code: e.response.data.code,
         msg: e.response.data.msg,
         data: e.response.data.data,
       };
-    }
-  },
-  async confirmEnable2FA({ commit }, payload) {
-    try {
-      const response = await this.$axios.$post('/v1/totp/confirm', payload);
-      commit('setEnable2FA', response.result);
-      commit('setTwoFAStatus', true);
       return response;
-    } catch (e) {
-      return {
-        ok: e.response.data.ok,
-        code: e.response.data.code,
-        msg: e.response.data.msg,
-        data: e.response.data.data,
-      };
-    }
-  },
-
-  async sendPhone({ commit }, payload) {
-    try {
-      const response = await this.$axios.$post('/v1/profile/phone/send-code', payload);
-      commit('setVerificationCode', response.result);
-      return response.result;
-    } catch (e) {
-      return console.log(e);
-    }
-  },
-  async confirmPhone({ commit }, payload) {
-    try {
-      const response = await this.$axios.$post('/v1/profile/phone/confirm', payload);
-      return response.ok;
-    } catch (e) {
-      console.log('user/confirmPhone');
-      return false;
-    }
-  },
-  async validateTOTP({ commit }, payload) {
-    try {
-      const response = await this.$axios.$post('/v1/auth/validate-totp', payload);
-      return response.result.isValid;
-    } catch (e) {
-      console.log('user/validateTOTP');
-      return false;
     }
   },
 };

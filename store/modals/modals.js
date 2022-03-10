@@ -41,6 +41,7 @@ export default {
   transfer: 'transfer',
   changePassInSettings: 'changePassInSettings',
   twoFAAuth: 'twoFAAuth',
+  disableTwoFAAuth: 'disableTwoFAAuth',
   addDiscussion: 'addDiscussion',
   addProposal: 'addProposal',
   delegate: 'delegate',

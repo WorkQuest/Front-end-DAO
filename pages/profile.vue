@@ -253,11 +253,20 @@
             {{ $t('profile.2FA') }}
           </div>
           <base-btn
+            v-if="!userData.totpIsActive"
             class="security__btn"
             mode="lightBlue"
             @click="modalTwoFAAuth()"
           >
             {{ $t('profile.switchOn') }}
+          </base-btn>
+          <base-btn
+            v-else
+            class="security__btn"
+            mode="lightBlue"
+            @click="modalDisableTwoFAAuth()"
+          >
+            {{ $t('profile.switchOff') }}
           </base-btn>
         </div>
       </div>
@@ -529,6 +538,11 @@ export default {
     modalTwoFAAuth() {
       this.ShowModal({
         key: modals.twoFAAuth,
+      });
+    },
+    modalDisableTwoFAAuth() {
+      this.ShowModal({
+        key: modals.disableTwoFAAuth,
       });
     },
     switch2Fa() {

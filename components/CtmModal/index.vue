@@ -51,6 +51,7 @@
       <CtmModalTransfer v-if="modals.transfer === currentModalKey" />
       <CtmModalChangePassInSettings v-if="modals.changePassInSettings === currentModalKey" />
       <CtmModalTwoFAAuth v-if="modals.twoFAAuth === currentModalKey" />
+      <CtmModalDisableTwoFA v-if="modals.disableTwoFAAuth === currentModalKey" />
       <CtmModalAddDiscussion v-if="modals.addDiscussion === currentModalKey" />
       <CtmModalAddProposal v-if="modals.addProposal === currentModalKey" />
       <CtmModalDelegate v-if="modals.delegate === currentModalKey" />
@@ -111,6 +112,7 @@ import CtmModalNotice from './CtmModalNotice';
 import CtmModalTransfer from './CtmModalTransfer';
 import CtmModalChangePassInSettings from './CtmModalChangePassInSettings';
 import CtmModalTwoFAAuth from './CtmModalTwoFAAuth';
+import CtmModalDisableTwoFA from './CtmModalDisableTwoFA';
 import CtmModalAddProposal from './CtmModalAddProposal';
 import CtmModalAddDiscussion from './CtmModalAddDiscussion';
 import CtmModalUndelegate from './CtmModalUndelegate';
@@ -165,6 +167,7 @@ export default {
     CtmModalTransfer,
     CtmModalChangePassInSettings,
     CtmModalTwoFAAuth,
+    CtmModalDisableTwoFA,
     CtmModalAddDiscussion,
     CtmModalAddProposal,
     CtmModalDelegate,

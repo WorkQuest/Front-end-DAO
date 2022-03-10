@@ -106,6 +106,7 @@
     "2FA": "2FA Authentication",
     "changePass": "Change password",
     "switchOn": "Switch On",
+    "switchOff": "Switch Off",
     "change": "Change",
     "save": "Save",
     "raiseViews": "Raise views",
@@ -147,6 +148,7 @@
     "details": "View details",
     "cancel": "Cancel",
     "submit": "Submit",
+    "disable": "Disable",
     "showAllReviews": "Show all reviews",
     "later": "Later",
     "iAgree": "I agree",
@@ -197,6 +199,7 @@
     "lastName": "Last name",
     "email": "Email",
     "password": "Password",
+    "totp": "TOTP",
     "confirmPassword": "Repeat password",
     "create": "Create account",
     "back": "back"
@@ -325,6 +328,11 @@
     "switchOnGoogleAuth": "Switch on Google Authenticator",
     "conformationCodeFromMail": "Confirmation code from email",
     "twoFAConfirmationCode": "2FA confirmation code",
+    "disable2Fa": "Disable 2FA",
+    "2FAEnabled": "2FA enabled successfully!",
+    "2FADisabled": "2FA disabled successfully!",
+    "2FAStatus": "2FA Status",
+    "enterCode": "Enter the 6-digit code from the Google Authentication app",
     "appleStore": "Apple store",
     "googlePlay": "Google play",
     "useYourGoogleAuth": "Use your Google Authenticator app to scan the barcode",
@@ -478,7 +486,9 @@
     "signWorkQuest": {
       "title": "Connection to Work Quest",
       "desc": "If you already have an account created on one of the Work Quest products, you can log in using its login details"
-    }
+    },
+    "emailVerificationCodeField": "email verification",
+    "googleVerificationCodeField": "google verification"
   },
   "ui": {
     "workers": "Workers",

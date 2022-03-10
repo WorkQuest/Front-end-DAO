@@ -163,7 +163,7 @@ export default {
       addressAssigned: false,
       userWalletAddress: null,
       step: WalletState.Default,
-      model: { email: '', password: '', totp: '' },
+      model: { email: '', password: '' },
       remember: false,
       userStatus: null,
       isLoginWithSocial: false,

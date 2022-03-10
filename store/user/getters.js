@@ -29,4 +29,5 @@ export default {
   getUserWorkQuest: (state) => state.userData?.additionalInfo?.socialNetwork?.workQuest || '',
   getAllUsers: (state) => state.usersData,
   getSpecialUserData: (state) => state.specialUserData,
+  getTwoFACode: (state) => state.twoFACode,
 };
