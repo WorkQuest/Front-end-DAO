@@ -13,8 +13,8 @@ import { TokenSymbols } from '~/utils/enums';
 export default {
   async getTransactions({ commit }, params) {
     try {
-      const res = await this.$axios({ url: `/account/${getWalletAddress()}/txs`, baseURL: process.env.WQ_EXPLORER, params });
-      commit('setTransactions', res.data.result.txs);
+      const res = await this.$axios({ url: `/account/${getWalletAddress()}/transactions`, baseURL: process.env.WQ_EXPLORER, params });
+      commit('setTransactions', res.data.result.transactions);
       commit('setTransactionsCount', res.data.result.count);
     } catch (e) {
       commit('setTransactions', []);

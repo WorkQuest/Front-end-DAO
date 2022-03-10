@@ -75,6 +75,15 @@ export const TokenSymbols = Object.freeze({
   WUSD: 'WUSD',
 });
 
+export const TokenSymbolByContract = Object.freeze({
+  [process.env.WQT_TOKEN.toLowerCase()]: TokenSymbols.WQT,
+});
+
+export const WalletTables = Object.freeze({
+  TXS: 'TXS',
+  COLLATERAL: 'COLLATERAL',
+});
+
 export const WalletState = Object.freeze({
   Default: 1,
   SaveMnemonic: 2,

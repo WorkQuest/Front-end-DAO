@@ -183,7 +183,7 @@
   "securityCheck": {
     "title": "Security check",
     "confCode": "Google confirmation code",
-    "placeholder": "Placeholder",
+    "placeholder": "123456",
     "confCodeDesc": "Enter the 6-digit code from the Google Authentication app",
     "confCodeField": "google verification",
     "confirmAccess": "Confirm access",
@@ -601,6 +601,8 @@
       "yes": "Yes",
       "no": "No"
     },
+    "allTransactions": "All Transactions",
+    "collateralTransactions": "Collateral Transactions",
     "proposalHistory": "Proposal history",
     "table": {
       "number": "#",

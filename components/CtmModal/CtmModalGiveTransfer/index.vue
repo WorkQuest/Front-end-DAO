@@ -58,7 +58,7 @@
         </div>
         <div class="content__buttons buttons">
           <base-btn
-            :mode="'outline'"
+            mode="outline"
             class="buttons__action"
             @click="hide"
           >

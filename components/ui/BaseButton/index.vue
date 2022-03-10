@@ -5,6 +5,7 @@
     :class="btnClass"
     :href="link"
     target="_blank"
+    :data-selector="`BASE-BTN-LINK-${link}`"
   >
     <slot />
   </a>
@@ -12,6 +13,7 @@
     v-else-if="nuxtLink !==''"
     class="base-btn"
     :class="btnClass"
+    :data-selector="`BASE-BTN-LINK-${link}`"
     :to="nuxtLink"
   >
     <slot />
@@ -20,22 +22,16 @@
     v-else
     class="base-btn"
     :class="btnClass"
+    :data-selector="`BASE-BTN-LINK-${link}`"
     @click="$emit('click')"
   >
-    {{ text }}
-    <span
-      v-if="$slots.left"
-      class="icon icon-btn_left"
-    >
+    <div class="icon-btn_left">
       <slot name="left" />
-    </span>
+    </div>
     <slot />
-    <span
-      v-if="$slots.right"
-      class="icon icon-btn_right"
-    >
+    <div class="icon-btn_right">
       <slot name="right" />
-    </span>
+    </div>
   </button>
 </template>
 <script>
@@ -49,21 +45,17 @@ export default {
       type: String,
       default: '',
     },
+    selector: {
+      type: String,
+      default: '',
+    },
     disabled: {
-      type: [Boolean, String],
+      type: Boolean,
       default: false,
     },
     mode: {
       type: String,
       default: '',
-    },
-    text: {
-      type: String,
-      default: '',
-    },
-    padding: {
-      type: Boolean,
-      default: false,
     },
   },
   computed: {
@@ -73,6 +65,7 @@ export default {
         { 'base-btn_disabled': disabled },
         { 'base-btn_light': mode === 'light' },
         { 'base-btn_outline': mode === 'outline' },
+        { 'base-btn_like': mode === 'like' },
         { 'base-btn_borderless-left': mode === 'borderless-left' },
         { 'base-btn_borderless-right': mode === 'borderless-right' },
         { 'base-btn_tag': mode === 'tag' },
@@ -82,19 +75,16 @@ export default {
         { 'base-btn_messages': mode === 'goToMessages' },
         { 'base-btn_show-messages': mode === 'showYourMessage' },
         { 'base-btn_delete': mode === 'delete' },
-        { 'base-btn_cross': mode === 'cross' },
         { 'base-btn_approve': mode === 'approve' },
         { 'base-btn_back': mode === 'back' },
         { 'base-btn_grey': mode === 'grey' },
         { 'base-btn_verification': mode === 'ver' },
         { 'base-btn_black': mode === 'black' },
-        { 'base-btn_max': mode === 'max' },
-        { 'base-btn_share': mode === 'share' },
-        { 'base-btn_add': mode === 'add' },
-        { 'base-btn_portfolio-edit': mode === 'portfolioEdit' },
-        { 'base-btn_portfolio-close': mode === 'portfolioClose' },
-        { 'base-btn_share-user-info': mode === 'share-btn' },
-        { 'base-btn_padding': this.padding },
+        { 'base-btn_blue': mode === 'blue' },
+        { 'base-btn_lightBlue': mode === 'lightBlue' },
+        { 'base-btn_lightRed': mode === 'lightRed' },
+        { 'base-btn_copy icon-copy': mode === 'copy' },
+        { 'base-btn_transparent': mode === 'transparent' },
       ];
     },
   },
@@ -104,10 +94,10 @@ export default {
 .icon {
   &-btn {
     &_left {
-      padding-right: 5px;
+      margin: 0 5px 0 0;
     }
     &_right {
-      padding-left: 5px;
+      margin: 0 0 0 5px;
     }
   }
 }
@@ -116,7 +106,7 @@ export default {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 46px;
+  height: 43px;
   color: #ffffff;
   font-family: 'Inter', sans-serif;
   font-style: normal;
@@ -130,189 +120,158 @@ export default {
   &:hover {
     background: #103D7C;
   }
-  &_padding {
-    padding: 0 10px;
-  }
-  &_portfolio-edit {
-    position: absolute;
-    left: 30px;
-    top: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 20px;
-    width: 20px;
-    border-radius: 6px;
-    padding: 2px;
-    transition: 0.5s;
-    background: $yellow;
-    filter: grayscale(50%);
+  &_like {
+    background: transparent;
     &:hover {
-      filter: grayscale(0);
-      background: $yellow;
-    }
-  }
-  &_portfolio-close {
-    position: absolute;
-    left: 5px;
-    top: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 20px;
-    width: 20px;
-    border-radius: 6px;
-    padding: 2px;
-    transition: 0.5s;
-    filter: grayscale(50%);
-    background: $red;
-    &:hover {
-      filter: grayscale(0);
-      background: $red;
+      background: transparent;
     }
   }
   &_black {
-    background: $black800 !important;
-    color: $white !important;
+    background: $black800;
+    color: $white;
     &:hover {
-      background: $black700 !important;
+      background: $black700;
     }
   }
   &_verification {
-    background: $white !important;
-    color: $blue !important;
+    background: $white;
+    color: $blue;
     &:hover {
-      background: $black100 !important;
+      background: $black100;
     }
   }
   &_grey {
-    background-color: $black0 !important;
+    background-color: $black100;
     &:hover {
-      background: $black100 !important;
-    }
-  }
-  &_share {
-    background-color: $black0;
-    &:hover {
-      background: $blue;
-    }
-  }
-  &_max {
-    background-color: $black0;
-    color: $blue;
-    font-weight: 600;
-    font-size: 16px;
-    height:40px;
-    line-height: 130%;
-    &:hover {
-      background-color: $black0;
+      background: $black200;
     }
   }
   &_back {
-    padding: 0 17px;
-    transition: .3s !important;
-    background-color: transparent !important;
-    color: $black800 !important;
-    opacity: 1;
+    transition: .3s;
+    background-color: transparent;
+    color: $black500;
     &:hover {
-      background-color: transparent !important;
-      opacity: 0.8;
+      background-color: transparent;
+      color: $black500;
     }
   }
   &_approve {
-    background-color: $green !important;
-    color: $white !important;
-    border-radius: 6px !important;
-    border: 1px solid $green !important;
+    background-color: $green;
+    color: $white;
+    border-radius: 6px;
+    border: 1px solid $green;
     &:hover {
-      background-color: $white !important;
-      color: $green !important;
-      border-radius: 6px !important;
+      background-color: $white;
+      color: $green;
+      border-radius: 6px;
     }
   }
   &_agree {
-    background-color: $green !important;
-    color: $white !important;
-    padding: 0;
+    background-color: $green;
+    color: $white;
     &:hover {
-      background-color: $green !important;
-      color: $white !important;
-      box-shadow: 0 0 5px rgba(0,0,0,0.5) !important;
-    }
-  }
-  &_cross {
-    background: transparent !important;
-    color: $red !important;
-    &:hover {
-      color: #cc0000 !important;
+      background-color: $green;
+      color: $white;
+      box-shadow: 0 0 5px rgba(0,0,0,0.5);
     }
   }
   &_delete {
-    background-color: $red !important;
-    color: $white !important;
+    background-color: $red;
+    color: $white;
     &:hover {
-      background-color: #cc0000 !important;
-      color: $white !important;
+      background-color: #cc0000;
+      color: $white;
     }
   }
   &_show-messages {
-    background-color: transparent !important;
-    color: $blue !important;
+    background-color: transparent;
+    color: $blue;
+  }
+  &_blue {
+    background-color: transparent;
+    color: $blue;
+    &:hover {
+      color: #ffffff;
+      background-color: $blue;
+      transition: .3s;
+    }
+  }
+  &_lightBlue {
+    background-color: $white;
+    color: $blue ;
+    border: 0.5px solid  #e6f7ff;
+    &:hover{
+      background-color: #e6f7ff;
+    }
+  }
+  &_lightRed {
+    background-color: $white;
+    color: #DF3333 ;
+    border: 0.5px solid rgba(223, 51, 51, 0.1);;
+    &:hover{
+      background-color: rgba(223, 51, 51, 0.1);;
+    }
   }
   &_messages {
-    background-color: $white !important;
-    color: $green !important;
-    transition: .3s !important;
-    font-size: 12px !important;
+    background-color: $white;
+    color: $green;
+    transition: .3s;
+    font-size: 12px;
     &:hover {
-      color: #77e377 !important;
-      background-color: $white !important;
+      color: #77e377;
+      background-color: $white;
     }
   }
   &_goToChat {
-    background-color: $white !important;
-    color: $green !important;
-    border: 1px solid rgba(0, 170, 91, 0.1) !important;
+    background-color: $white;
+    color: $green;
+    border: 1px solid $black400;
     &:hover {
-      background-color: $white !important;
-      color: $green !important;
-      border: 1px solid rgba(0, 170, 91, 0.2) !important;
-      box-shadow: 0 0 2px rgba(0,0,0,0.5) !important;
+      background-color: $white;
+      color: $green;
+      border: 1px solid $black600;
+      box-shadow: 0 0 2px rgba(0,0,0,0.5);
     }
   }
   &_dispute {
-    background-color: $red !important;
+    background-color: $red;
     &:hover {
-      box-shadow: 0 0 5px rgba(0,0,0,0.5) !important;
-      background-color: $red !important;
+      box-shadow: 0 0 5px rgba(0,0,0,0.5);
+      background-color: $red;
     }
   }
   &_disabled {
-    pointer-events: none !important;
-    color: $black200 !important;
-    background: $black0 !important;
+    pointer-events: none;
+    background: #D1D1CF !important;
   }
   &_outline {
-    width: 100%;
-    border: 1px solid rgba(0, 131, 199, 0.1) !important;
-    background: #FFFFFF !important;
-    color: $blue !important;
-    padding: 0;
+    border: 1px solid rgba(0, 131, 199, 0.1);
+    background: #FFFFFF;
+    color: $blue;
     &:hover {
-      background: #F7F8FA !important;
-      color: $blue !important;
+      background: #F7F8FA;
+      color: $blue;
+    }
+  }
+  &_copy {
+    background: #FFFFFF;
+    color: $blue;
+    font-size: 25px;
+    &:hover {
+      background: #FFFFFF;
+      color: $blue;
     }
   }
   &_borderless {
-    background: #FFFFFF !important;
-    color: $blue !important;
+    background: #FFFFFF;
+    color: $blue;
     &-left {
       @extend .base-btn_borderless;
-      justify-content: flex-start !important;
+      justify-content: flex-start;
     }
     &-right {
       @extend .base-btn_borderless;
-      justify-content: flex-end !important;
+      justify-content: flex-end;
     }
     &:hover {
       color: #3992ff;
@@ -320,28 +279,22 @@ export default {
     }
   }
   &_tag {
-    background: rgba(0, 131, 199, 0.1) !important;
-    border-radius: 3px !important;
-    color: $blue !important;
+    background: rgba(0, 131, 199, 0.1);
+    border-radius: 3px;
+    color: $blue;
     &:hover {
-      background: rgba(0, 131, 199, 0.2) !important;
+      background: rgba(0, 131, 199, 0.2);
     }
   }
   &_light {
-    background: #FFFFFF !important;
-    color: $black800 !important;
-    transition: 0.5s;
+    background: #FFFFFF;
+    color: $black800;
     &:hover {
-      background: $black100 !important;
+      background: $black100;
     }
   }
-  &_add {
-    background-color: $white;
-    color: $blue;
-    &:hover {
-      background-color: $blue;
-      color: $white;
-    }
+  &_transparent {
+    background: transparent;
   }
 }
 </style>

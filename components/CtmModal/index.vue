@@ -61,6 +61,7 @@
       <CtmModalShowFile v-if="modals.showFile === currentModalKey" />
       <CtmModalTransactionReceipt v-if="modals.transactionReceipt === currentModalKey" />
       <CtmModalGiveTransfer v-if="modals.giveTransfer === currentModalKey" />
+      <CtmModalSecurityCheck v-if="modals.securityCheck === currentModalKey" />
     </div>
   </transition>
 </template>
@@ -117,6 +118,7 @@ import CtmModalDelegate from './CtmModalDelegate';
 import CtmModalWarning from './CtmModalWarning';
 import CtmModalSignWorkQuest from './CtmModalSignWorkQuest';
 import CtmModalTransactionReceipt from './CtmModalTransactionReceipt';
+import CtmModalSecurityCheck from './CtmModalSecurityCheck';
 
 export default {
   name: 'ModalBox',
@@ -170,6 +172,7 @@ export default {
     CtmModalWarning,
     CtmModalSignWorkQuest,
     CtmModalTransactionReceipt,
+    CtmModalSecurityCheck,
   },
   data: () => ({
     modals,

@@ -49,4 +49,6 @@ export default {
   showFile: 'showFile',
   transactionReceipt: 'transactionReceipt',
   giveTransfer: 'giveTransfer',
+  collateralTransaction: 'collateralTransaction',
+  securityCheck: 'securityCheck',
 };

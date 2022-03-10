@@ -46,6 +46,7 @@
             </div>
             <div class="balance__bottom">
               <base-btn
+                selector="SHOW-DEPOSIT-MODAL"
                 :disabled="true"
                 mode="outline"
                 class="balance__btn"
@@ -55,6 +56,7 @@
               </base-btn>
               <base-btn
                 :disabled="true"
+                selector="SHOW-WITHDRAW-MODAL"
                 mode="outline"
                 class="balance__btn"
                 @click="showWithdrawModal()"
@@ -62,8 +64,9 @@
                 {{ $t('wallet.withdraw') }}
               </base-btn>
               <base-btn
+                selector="SHOW-TRANSFER-MODAL"
                 class="balance__btn"
-                @click=" showTransferModal()"
+                @click="showTransferModal()"
               >
                 {{ $t('modals.transfer') }}
               </base-btn>
@@ -79,6 +82,7 @@
               @click="closeCard()"
             />
             <base-btn
+              selector="SHOW-ADD-CARD-MODAL"
               :disabled="true"
               class="card__btn"
               mode="outline"
@@ -88,24 +92,49 @@
             </base-btn>
           </div>
         </div>
-        <div class="wallet__table table">
-          <base-table
-            class="table__txs"
-            :title="$t('wallet.table.trx')"
-            :items="styledTransactions"
-            :fields="walletTableFields"
-          />
-          <empty-data
-            v-if="!totalPages"
-            :description="$t('wallet.table.empty')"
-            class="table__empty"
+        <div class="wallet__switch-table">
+          <base-btn
+            :mode="getSwitchButtonMode(walletTables.TXS)"
+            @click="selectedWalletTable = walletTables.TXS"
+          >
+            {{ $t('wallet.allTransactions') }}
+          </base-btn>
+          <base-btn
+            :mode="getSwitchButtonMode(walletTables.COLLATERAL)"
+            @click="selectedWalletTable = walletTables.COLLATERAL"
+          >
+            {{ $t('wallet.collateralTransactions') }}
+          </base-btn>
+        </div>
+        <div
+          v-if="selectedWalletTable === walletTables.TXS"
+          class="wallet__txs"
+        >
+          <div class="wallet__table table">
+            <base-table
+              class="table__txs"
+              :title="$t('wallet.table.trx')"
+              :items="styledTransactions"
+              :fields="walletTableFields"
+            />
+            <empty-data
+              v-if="!totalPages"
+              :description="$t('wallet.table.empty')"
+              class="table__empty"
+            />
+          </div>
+          <base-pager
+            v-if="totalPages > 1"
+            v-model="currentPage"
+            :total-pages="totalPages"
           />
         </div>
-        <base-pager
-          v-if="totalPages > 1"
-          v-model="currentPage"
-          :total-pages="totalPages"
-        />
+        <div
+          v-else
+          class="wallet__txs"
+        >
+          <CollateralTable />
+        </div>
       </div>
     </div>
   </div>
@@ -115,20 +144,22 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
-import { TokenSymbols } from '~/utils/enums';
+import { TokenSymbolByContract, TokenSymbols, WalletTables } from '~/utils/enums';
 import { getStyledAmount } from '~/utils/wallet';
 import EmptyData from '~/components/app/Info/EmptyData';
+import CollateralTable from '~/components/app/Pages/Wallet/CollateralTable';
 
 export default {
   name: 'Wallet',
   middleware: 'auth',
-  components: { EmptyData },
+  components: { EmptyData, CollateralTable },
   data() {
     return {
       cardClosed: false,
       ddValue: 0,
       txsPerPage: 10,
       currentPage: 1,
+      selectedWalletTable: WalletTables.TXS,
     };
   },
   computed: {
@@ -142,6 +173,9 @@ export default {
       balance: 'wallet/getBalanceData',
       selectedToken: 'wallet/getSelectedToken',
     }),
+    walletTables() {
+      return WalletTables;
+    },
     totalPages() {
       if (!this.transactionsCount) return 0;
       return Math.ceil(this.transactionsCount / this.txsPerPage);
@@ -151,15 +185,16 @@ export default {
       const res = [];
       // eslint-disable-next-line no-restricted-syntax
       for (const t of txs) {
+        const symbol = TokenSymbolByContract[t.to_address_hash.hex] || TokenSymbols.WUSD;
         res.push({
-          tx_hash: t.id,
-          block: t.blockNumber,
-          timestamp: this.$moment(t.timestamp).format('lll'),
+          tx_hash: t.hash,
+          block: t.block_number,
+          timestamp: this.$moment(t.block.timestamp).format('lll'),
           status: !!t.status,
-          value: getStyledAmount(t.value),
-          transaction_fee: new BigNumber(t.gasPrice).multipliedBy(t.gasUsed),
-          from_address: t.fromAddress,
-          to_address: t.toAddress,
+          value: `${getStyledAmount(t.tokenTransfers[0]?.amount || t.value)} ${symbol}`,
+          transaction_fee: new BigNumber(t.gas_price).multipliedBy(t.gas_used),
+          from_address: t.from_address_hash.hex,
+          to_address: t.to_address_hash.hex,
         });
       }
       return res;
@@ -176,8 +211,8 @@ export default {
         { key: 'status', label: this.$t('wallet.table.status'), sortable: true },
         { key: 'block', label: this.$t('wallet.table.block'), sortable: false },
         { key: 'timestamp', label: this.$t('wallet.table.timestamp'), sortable: true },
-        { key: 'from_address', label: this.$t('modals.from'), sortable: true },
-        { key: 'to_address', label: this.$t('modals.to'), sortable: true },
+        { key: 'from_address', label: this.$t('modals.fromAddress'), sortable: true },
+        { key: 'to_address', label: this.$t('modals.toAddress'), sortable: true },
         { key: 'value', label: this.$t('wallet.table.transferred'), sortable: true },
         { key: 'transaction_fee', label: this.$t('wallet.table.trxFee'), sortable: false },
       ];
@@ -199,7 +234,7 @@ export default {
     },
   },
   beforeMount() {
-    this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt, userAddress: this.userWalletAddress });
+    this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
   },
   async mounted() {
     if (!this.isWalletConnected) return;
@@ -208,6 +243,10 @@ export default {
     await this.loadData();
   },
   methods: {
+    getSwitchButtonMode(btn) {
+      if (btn === this.selectedWalletTable) return '';
+      return 'outline';
+    },
     async getTransactions() {
       await this.$store.dispatch('wallet/getTransactions', {
         limit: this.txsPerPage,
@@ -238,23 +277,22 @@ export default {
         callback: async () => await this.loadData(),
       });
     },
-    // TODO: добавить логику методам после реалзиации на основной платформе
     showDepositModal() {
-      // this.ShowModal({
-      //   key: modals.giveDeposit,
-      // });
+      this.ShowModal({
+        key: modals.giveDeposit,
+      });
     },
     showWithdrawModal() {
-      // this.ShowModal({
-      //   key: modals.takeWithdraw,
-      //   branch: 'withdraw',
-      // });
+      this.ShowModal({
+        key: modals.takeWithdraw,
+        branch: 'withdraw',
+      });
     },
     showAddCardModal() {
-      // this.ShowModal({
-      //   key: modals.addingCard,
-      //   branch: 'adding',
-      // });
+      this.ShowModal({
+        key: modals.addingCard,
+        branch: 'adding',
+      });
     },
   },
 };
@@ -343,6 +381,14 @@ export default {
       grid-template-columns: 1fr;
     }
   }
+
+  &__switch-table {
+    display: grid;
+    grid-template-columns: repeat(2, 210px);
+    grid-gap: 10px;
+    margin-bottom: 20px;
+  }
+
   &__table {
     position: relative;
     box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
@@ -550,8 +596,11 @@ export default {
       display: block;
     }
   }
+  .wallet__switch-table {
+    grid-template-columns: 1fr;
+  }
 }
-@include _380 {
+@include _350 {
   .wallet {
     &__nav {
       flex-direction: column;

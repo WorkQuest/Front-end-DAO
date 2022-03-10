@@ -13,6 +13,7 @@
         <span>{{ $t('signIn.account') }}</span>
         <nuxt-link
           class="auth__text auth__text_link"
+          data-selector="ACTION-BTN-TO-REGISTRATION"
           to="/sign-up"
         >
           {{ $t('signIn.regs') }}
@@ -65,13 +66,17 @@
           />
           <div
             class="auth__text auth__text_link"
+            data-selector="ACTION-BTN-FORGOT-PASSWORD"
             @click="showRestoreModal()"
           >
             {{ $t('signIn.forgot') }}
           </div>
         </div>
         <div class="auth__action">
-          <base-btn :disabled="isLoading">
+          <base-btn
+            :disabled="isLoading"
+            selector="LOGIN"
+          >
             {{ $t('signIn.login') }}
           </base-btn>
         </div>
@@ -246,93 +251,100 @@ export default {
       if (this.isLoading) return;
       this.SetLoader(true);
       this.model.email = this.model.email.trim();
-      const { email, password, totp } = this.model;
-      let payload = {
+      const { email, password } = this.model;
+      const payload = {
         email,
         password,
       };
-      if (totp !== '') {
-        payload = { ...payload, totp };
-      }
-      const response = await this.$store.dispatch('user/signIn', payload);
-      if (response?.ok) {
-        this.userStatus = response.result.userStatus;
-        const confirmToken = sessionStorage.getItem('confirmToken');
-        // Unconfirmed account w/o confirm token
-        if (this.userStatus === UserStatuses.Unconfirmed && !confirmToken) {
-          await this.$store.dispatch('main/showToast', {
-            title: this.$t('registration.emailConfirmTitle'),
-            text: this.$t('registration.emailConfirm'),
+      const { ok, result } = await this.$store.dispatch('user/signIn', payload);
+      if (ok) {
+        this.userStatus = result.userStatus;
+        this.userWalletAddress = result.address ? result.address.toLowerCase() : '';
+        if (result.totpIsActive) {
+          await this.ShowModal({
+            key: modals.securityCheck,
+            actionMethod: async () => await this.nextStepAction(),
           });
-          this.SetLoader(false);
-          return;
+        } else {
+          await this.nextStepAction();
         }
+      }
+      this.SetLoader(false);
+    },
+    async nextStepAction() {
+      const confirmToken = sessionStorage.getItem('confirmToken');
+      // Unconfirmed account w/o confirm token
+      if (this.userStatus === UserStatuses.Unconfirmed && !confirmToken) {
+        await this.$store.dispatch('main/showToast', {
+          title: this.$t('registration.emailConfirmTitle'),
+          text: this.$t('registration.emailConfirm'),
+        });
+        this.SetLoader(false);
+        return;
+      }
 
-        // Redirect to confirm account
-        if (confirmToken) {
+      // Redirect to confirm account
+      if (confirmToken) {
+        setCipherKey(this.model.password);
+        this.redirectUser();
+        this.SetLoader(false);
+        return;
+      }
+
+      // Wallet is not assigned to this account
+      if (!this.userWalletAddress) {
+        setCipherKey(this.model.password);
+        this.$cookies.set('userLogin', true, { path: '/' });
+        await this.$router.push(Path.ROLE);
+        this.SetLoader(false);
+        return;
+      }
+
+      // Wallet assigned, checking storage
+      const sessionData = JSON.parse(sessionStorage.getItem('mnemonic'));
+      const storageData = JSON.parse(localStorage.getItem('mnemonic'));
+      if (!sessionData && !storageData) {
+        this.step = WalletState.ImportMnemonic;
+        this.SetLoader(false);
+        return;
+      }
+
+      const sessionMnemonic = sessionData ? sessionData[this.userWalletAddress] : null;
+      const storageMnemonic = storageData ? storageData[this.userWalletAddress] : null;
+      if (!sessionMnemonic && !storageMnemonic) {
+        this.step = WalletState.ImportMnemonic;
+        this.SetLoader(false);
+        return;
+      }
+
+      // Check in session if exists
+      if (sessionMnemonic) {
+        const wallet = createWallet(sessionMnemonic);
+        if (wallet && wallet.address.toLowerCase() === this.userWalletAddress) {
+          this.saveToStorage(wallet);
           this.redirectUser();
           this.SetLoader(false);
           return;
         }
-
-        const { address } = response.result;
-
-        // Wallet is not assigned to this account
-        if (!address) {
-          setCipherKey(this.model.password);
-          await this.$router.push(Path.ROLE);
-          this.SetLoader(false);
-          return;
-        }
-        this.userWalletAddress = address.toLowerCase();
-
-        // Wallet assigned, checking storage
-        const sessionData = JSON.parse(sessionStorage.getItem('mnemonic'));
-        const storageData = JSON.parse(localStorage.getItem('mnemonic'));
-        if (!sessionData && !storageData) {
-          this.step = WalletState.ImportMnemonic;
-          this.SetLoader(false);
-          return;
-        }
-
-        const sessionMnemonic = sessionData ? sessionData[address.toLowerCase()] : null;
-        const storageMnemonic = storageData ? storageData[address.toLowerCase()] : null;
-        if (!sessionMnemonic && !storageMnemonic) {
-          this.step = WalletState.ImportMnemonic;
-          this.SetLoader(false);
-          return;
-        }
-
-        // Check in session if exists
-        if (sessionMnemonic) {
-          const wallet = createWallet(sessionMnemonic);
-          if (wallet && wallet.address.toLowerCase() === this.userWalletAddress) {
-            this.saveToStorage(wallet);
-            this.redirectUser();
-            this.SetLoader(false);
-            return;
-          }
-        }
-
-        // Check in storage
-        if (storageMnemonic) {
-          const mnemonic = decryptStringWitheKey(storageMnemonic, this.model.password);
-          const wallet = createWallet(mnemonic);
-          if (wallet && wallet.address.toLowerCase() === this.userWalletAddress) {
-            this.saveToStorage(wallet);
-            this.redirectUser();
-            this.SetLoader(false);
-            return;
-          }
-        }
-
-        // Session & Storage invalid mnemonics
-        await this.$store.dispatch('main/showToast', {
-          title: this.$t('toasts.error'),
-          text: this.$t('messages.mnemonic'),
-        });
-        this.step = WalletState.ImportMnemonic;
       }
+
+      // Check in storage
+      if (storageMnemonic) {
+        const mnemonic = decryptStringWitheKey(storageMnemonic, this.model.password);
+        const wallet = createWallet(mnemonic);
+        if (wallet && wallet.address.toLowerCase() === this.userWalletAddress) {
+          this.saveToStorage(wallet);
+          this.redirectUser();
+          this.SetLoader(false);
+          return;
+        }
+      }
+
+      // Session & Storage invalid mnemonics
+      await this.$store.dispatch('main/showToast', {
+        title: this.$t('toasts.error'),
+        text: this.$t('messages.mnemonic'),
+      });
       this.SetLoader(false);
     },
     async assignWallet(wallet) {
