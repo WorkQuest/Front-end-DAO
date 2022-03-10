@@ -287,6 +287,7 @@ export default {
 }
 .max{
   &__button{
+    color: $black700 !important;
     margin-right: 10px!important;
     background-color: transparent!important;
   }

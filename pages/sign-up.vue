@@ -117,6 +117,7 @@
 
 <script>
 import modals from '~/store/modals/modals';
+import { Path } from '~/utils/enums';
 
 export default {
   name: 'SignUp',
@@ -132,26 +133,20 @@ export default {
       },
     };
   },
-  async mounted() {
-    this.SetLoader(true);
-    this.SetLoader(false);
-  },
   methods: {
     async signUp() {
-      try {
-        const payload = {
-          firstName: this.model.firstName,
-          lastName: this.model.lastName,
-          email: this.model.email,
-          password: this.model.password,
-        };
-        const response = await this.$store.dispatch('user/signUp', payload);
-        if (response?.ok) {
-          this.showConfirmEmailModal();
-        }
-      } catch (e) {
-        console.log(e);
+      const payload = {
+        firstName: this.model.firstName,
+        lastName: this.model.lastName,
+        email: this.model.email,
+        password: this.model.password,
+      };
+      const response = await this.$store.dispatch('user/signUp', payload);
+      if (response?.ok) {
+        this.showConfirmEmailModal();
+        await this.$router.push(Path.SIGN_IN);
       }
+      this.SetLoader(false);
     },
     showConfirmEmailModal() {
       this.ShowModal({

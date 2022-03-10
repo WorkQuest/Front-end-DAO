@@ -92,7 +92,7 @@
       <div
         v-if="step !== walletState.ImportOrCreate || step === walletState.Default"
         class="wallet-step__back"
-        @click="goStep(step - 1)"
+        @click="stepBack"
       >
         <span class="icon-chevron_big_left" /><span>{{ $t('meta.back') }}</span>
       </div>
@@ -182,10 +182,11 @@ export default {
     right.addEventListener('mouseleave', () => left.classList.remove('role__card_minimized'));
   },
   beforeDestroy() {
-    if (!this.isWalletAssigned && !this.isConfirmingPass) this.$store.dispatch('user/logout');
+    if (!this.isClearOnDestroy || this.isWalletAssigned) return;
+    this.$store.dispatch('user/logout');
   },
   methods: {
-    clearCookies(event) {
+    clearCookies() {
       this.$cookies.remove('access');
       this.$cookies.remove('refresh');
       this.$cookies.remove('userLogin');
@@ -195,10 +196,12 @@ export default {
       this.$store.dispatch('user/logout');
       this.$router.push(Path.SIGN_IN);
     },
-    goStep(step) {
-      if (this.step === WalletState.ImportMnemonic) this.step = WalletState.ImportOrCreate;
-      else if (this.step === WalletState.SaveMnemonic) this.step = WalletState.ImportOrCreate;
-      else this.step = step;
+    goStep(nextStep) {
+      this.step = nextStep;
+    },
+    stepBack() {
+      if (this.step === WalletState.ImportMnemonic || this.step === WalletState.SaveMnemonic) this.step = WalletState.ImportOrCreate;
+      else this.step -= 1;
     },
     showPrivacy(role) {
       this.ShowModal({

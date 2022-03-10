@@ -318,6 +318,7 @@
     "startQuest": "Start quest"
   },
   "modals": {
+    "textCopy": "Text has been copied",
     "success": "Success",
     "fromAddress": "From",
     "toAddress": "To",

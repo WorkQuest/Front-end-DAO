@@ -226,7 +226,6 @@ export default {
     align-items: center;
     position: relative;
     width: 100%;
-    height: 100%;
   }
   &__header {
     letter-spacing: -0.025em;
@@ -259,7 +258,6 @@ export default {
     padding: 0 20px;
     transition: .3s;
     width: 100%;
-
     &_comment {
       height: 40px;
     }

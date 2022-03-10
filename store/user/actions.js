@@ -1,14 +1,30 @@
+import { error } from '~/utils/success-error';
+
 export default {
   async signIn({ commit, dispatch }, payload) {
-    const response = await this.$axios.$post('/v1/auth/login', payload);
-    commit('setTokens', response.result);
-    // await dispatch('getUserData');
-    return response;
+    try {
+      const response = await this.$axios.$post('/v1/auth/login', payload);
+      commit('setTokens', response.result);
+      return response;
+    } catch (e) {
+      return error(e.response.data.code, e.response.data.msg);
+    }
+  },
+  async registerWallet({ commit }, payload) {
+    try {
+      return await this.$axios.$post('/v1/auth/register/wallet', payload);
+    } catch (e) {
+      return error(e.response.data.code, e.response.data.msg);
+    }
   },
   async signUp({ commit }, payload) {
-    const response = await this.$axios.$post('/v1/auth/dao/register', payload);
-    commit('setTokens', response.result);
-    return response;
+    try {
+      const response = await this.$axios.$post('/v1/auth/dao/register', payload);
+      commit('setTokens', response.result);
+      return response;
+    } catch (e) {
+      return error();
+    }
   },
   async confirm({ commit }, payload) {
     commit('setTokens', { access: this.$cookies.get('access'), refresh: this.$cookies.get('refresh') });
