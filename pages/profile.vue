@@ -304,8 +304,14 @@ export default {
       nameInputsArr: [],
       coordinates: undefined,
       phone: {
-        main: '',
-        second: '',
+        main: {
+          fullPhone: null,
+          codeRegion: null,
+        },
+        second: {
+          fullPhone: null,
+          codeRegion: null,
+        },
       },
     };
   },
@@ -381,7 +387,7 @@ export default {
 
       this.phone.main = localUserData.phone || localUserData.tempPhone;
 
-      this.phone.second = localUserData.additionalInfo.secondMobileNumber;
+      this.phone.second = localUserData.additionalInfo.secondMobileNumber || { fullPhone: null, codeRegion: null };
 
       this.socialInputs = [{
         key: 'instagram',

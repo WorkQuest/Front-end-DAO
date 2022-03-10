@@ -153,4 +153,13 @@ export default {
       return response;
     }
   },
+  async validateTOTP({ commit }, payload) {
+    try {
+      const response = await this.$axios.$post('/v1/auth/validate-totp', payload);
+      return response.result.isValid;
+    } catch (e) {
+      console.log('user/validateTOTP');
+      return false;
+    }
+  },
 };

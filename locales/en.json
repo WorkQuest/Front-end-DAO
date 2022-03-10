@@ -318,6 +318,9 @@
     "startQuest": "Start quest"
   },
   "modals": {
+    "success": "Success",
+    "fromAddress": "From",
+    "toAddress": "To",
     "error": "Error",
     "selectToken": "Select token",
     "from": "From",
@@ -529,6 +532,8 @@
     }
   },
   "wallet": {
+    "allTransactions": "All Transactions",
+    "collateralTransactions": "Collateral Transactions",
     "WUSD": "WUSD wallet",
     "cryptoWallet": "Crypto wallet",
     "bankCard": "Bank card",
@@ -611,8 +616,6 @@
       "yes": "Yes",
       "no": "No"
     },
-    "allTransactions": "All Transactions",
-    "collateralTransactions": "Collateral Transactions",
     "proposalHistory": "Proposal history",
     "table": {
       "number": "#",
