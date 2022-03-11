@@ -88,7 +88,7 @@ export default {
     GMAPKEY: process.env.GMAPKEY,
 
     SECRET_SUMSUB: process.env.SECRET_SUMSUB,
-    WQ_TOKEN: process.env.WQ_TOKEN,
+    WQT_TOKEN: process.env.WQT_TOKEN,
     WQ_DAO_VOTING: process.env.WQ_DAO_VOTING,
     WQ_PROVIDER: process.env.WQ_PROVIDER,
     WQ_EXPLORER: process.env.WQ_EXPLORER,

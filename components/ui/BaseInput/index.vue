@@ -190,6 +190,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .ctm-field {
+  height: 100%;
   &__selector {
     position: absolute;
     width: 100%;
@@ -226,6 +227,7 @@ export default {
     align-items: center;
     position: relative;
     width: 100%;
+    height: 100%;
   }
   &__header {
     letter-spacing: -0.025em;
@@ -252,12 +254,13 @@ export default {
     }
   }
   &__input {
-    height: 46px;
     border-radius: 6px;
     border: 2px solid transparent;
     padding: 0 20px;
     transition: .3s;
     width: 100%;
+    height: 100%;
+
     &_comment {
       height: 40px;
     }

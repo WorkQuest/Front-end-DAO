@@ -31,7 +31,7 @@ jobs:
           GMAPKEY: ${{ secrets.GMAPKEY }}
           SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
 
-          WQ_TOKEN: ${{ secrets.WQ_TOKEN }}
+          WQT_TOKEN: ${{ secrets.WQT_TOKEN }}
           WQ_DAO_VOTING: ${{ secrets.WQ_DAO_VOTING }}
 
           WQ_PROVIDER: ${{ secrets.WQ_PROVIDER }}
@@ -74,7 +74,7 @@ jobs:
           GMAPKEY: ${{ secrets.GMAPKEY }}
           SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
 
-          WQ_TOKEN: ${{ secrets.WQ_TOKEN }}
+          WQT_TOKEN: ${{ secrets.WQT_TOKEN }}
           WQ_DAO_VOTING: ${{ secrets.WQ_DAO_VOTING }}
 
           WQ_PROVIDER: ${{ secrets.WQ_PROVIDER }}

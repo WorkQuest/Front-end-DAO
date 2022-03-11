@@ -1,10 +1,9 @@
 /* eslint-disable no-param-reassign */
 
 export default {
-  setTokens(state, payload) {
-    const {
-      access, refresh, social, userStatus,
-    } = payload;
+  setTokens(state, {
+    access, refresh, social, userStatus,
+  }) {
     state.tokens.access = access;
     state.tokens.refresh = refresh;
     this.$cookies.set('socialNetwork', social, { path: '/' });
