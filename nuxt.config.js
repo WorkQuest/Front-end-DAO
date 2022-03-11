@@ -89,7 +89,7 @@ export default {
 
     SECRET_SUMSUB: process.env.SECRET_SUMSUB,
     WQT_TOKEN: process.env.WQT_TOKEN,
-    WQ_DAO_VOTING: process.env.WQ_DAO_VOTING,
+    WORKNET_VOTING: process.env.WORKNET_VOTING,
     WQ_PROVIDER: process.env.WQ_PROVIDER,
     WQ_EXPLORER: process.env.WQ_EXPLORER,
   },
