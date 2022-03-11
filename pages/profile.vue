@@ -156,13 +156,13 @@
               >
                 <vue-phone-number-input
                   v-if="isProfileEdit"
-                  v-model="phone[`${cell.type}`].fullPhone"
+                  v-model="phone[cell.type].fullPhone"
                   class="input-phone"
                   error-color="#EB5757"
                   clearable
                   show-code-on-list
                   required
-                  :default-country-code="phone[`${cell.type}`].codeRegion"
+                  :default-country-code="phone[cell.type].codeRegion"
                   size="lg"
                   @update="updatedPhone[cell.type] = $event"
                 />
@@ -385,7 +385,7 @@ export default {
         localUserData, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
       } = this;
 
-      this.phone.main = localUserData.phone || localUserData.tempPhone;
+      this.phone.main = localUserData.phone || localUserData.tempPhone || { fullPhone: null, codeRegion: null };
 
       this.phone.second = localUserData.additionalInfo.secondMobileNumber || { fullPhone: null, codeRegion: null };
 
