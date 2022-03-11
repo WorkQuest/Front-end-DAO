@@ -24,7 +24,7 @@
       />
       <div class="disable-2fa__buttons">
         <base-btn
-          :mode="'outline'"
+          mode="outline"
           class="message__action"
           @click="hide"
         >
