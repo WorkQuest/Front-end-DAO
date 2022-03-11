@@ -399,7 +399,7 @@ export default {
       this.$store.dispatch('wallet/connectWallet', { userWalletAddress: wallet.address, userPassword: this.model.password });
     },
     async redirectSocialLink(socialNetwork) {
-      window.location = `${process.env.BASE_URL}v1/auth/login/${socialNetwork}`;
+      window.location = `${process.env.BASE_URL}v1/auth/login/dao/${socialNetwork}`;
     },
     showSignWorkQuest() {
       this.ShowModal({
