@@ -146,7 +146,7 @@ import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
 import { TokenSymbolByContract, TokenSymbols, WalletTables } from '~/utils/enums';
 import { getStyledAmount } from '~/utils/wallet';
-import EmptyData from '~/components/app/Info/EmptyData';
+import EmptyData from '~/components/app/EmptyData';
 import CollateralTable from '~/components/app/Pages/Wallet/CollateralTable';
 
 export default {

@@ -84,6 +84,7 @@
           :placeholder="$t('createWallet.typeSecret', { a: confirmMnemonicData.firstIndex })"
           :name="$t('createWallet.secret', { a: confirmMnemonicData.firstIndex })"
           type="password"
+          class="wallet__fields_input"
         />
         <base-field
           v-model="confirmMnemonic.second"
@@ -91,6 +92,7 @@
           :placeholder="$t('createWallet.typeSecret', { a: confirmMnemonicData.secondIndex })"
           :name="$t('createWallet.secret', { a: confirmMnemonicData.secondIndex })"
           type="password"
+          class="wallet__fields_input"
         />
         <div class="wallet__action">
           <base-btn :disabled="!valid || isLoading">
@@ -306,10 +308,12 @@ export default {
   &__fields {
     padding-top: 30px;
     display: grid;
-    grid-template-columns: 1fr;
+    &_input {
+      min-height: 43px;
+    }
   }
   &__action {
-    padding-top: 30px;
+    padding-top: 20px;
   }
   &__mnemonic {
     position: relative;
