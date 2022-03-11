@@ -29,8 +29,7 @@ export default {
   async confirm({ commit }, payload) {
     commit('setTokens', { access: this.$cookies.get('access'), refresh: this.$cookies.get('refresh') });
     this.$cookies.set('role', payload.role);
-    const response = await this.$axios.$post('/v1/auth/confirm-email', payload);
-    return response;
+    return await this.$axios.$post('/v1/auth/confirm-email', payload);
   },
   async getUserData({ commit }) {
     const response = await this.$axios.$get('/v1/profile/me');
@@ -48,7 +47,7 @@ export default {
       const { result } = await this.$axios.$get('/v1/profile/users', { params: { ...config } });
       result.users.forEach((user) => {
         user.fullName = `${user.firstName || ''} ${user.lastName || ''}`;
-        user.investorAddress = '****************';
+        user.investorAddress = user.wallet;
         user.voting = '';
         user.undelegate = 'Undelegate';
         user.delegate = 'Delegate';

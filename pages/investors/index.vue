@@ -41,7 +41,7 @@ import { Chains } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 
 export default {
-
+  name: 'Investors',
   data() {
     return {
       limit: 20,
@@ -59,6 +59,7 @@ export default {
       userData: 'user/getUserData',
       usersData: 'user/getAllUsers',
       isConnected: 'web3/getWalletIsConnected',
+      lastPage: 'investors/getLastPage',
     }),
     tableFields() {
       return [
@@ -90,10 +91,8 @@ export default {
   watch: {
     async currPage() {
       this.offset = (this.currPage - 1) * this.limit;
-
-      this.SetLoader(true);
       await this.getInvestors();
-      this.SetLoader(false);
+      await this.$store.dispatch('investors/setLastPage', this.currPage);
     },
     search() {
       this.q = this.search.trim();
@@ -106,18 +105,10 @@ export default {
     },
   },
   async beforeMount() {
-    const isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
-    if (isMobile) {
-      this.ShowModal({
-        key: modals.status,
-        title: 'Please install Metamask!',
-        subtitle: 'Please open site from Metamask app',
-      });
-      await this.$router.push('/proposals');
-    }
+    if (this.lastPage) this.currPage = this.lastPage;
+    await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
   },
   async mounted() {
-    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
     await this.getInvestors();
   },
   beforeDestroy() {
@@ -132,8 +123,10 @@ export default {
       if (response.ok) this.votingPower = +response.result;
     },
     async getInvestors() {
+      this.SetLoader(true);
       await this.$store.dispatch('user/getAllUserData', { limit: this.limit, offset: this.offset, q: this.q });
-      await this.getVotingPower();
+      // await this.getVotingPower();
+      this.SetLoader(false);
     },
   },
 };

@@ -57,6 +57,7 @@
       </template>
       <template #cell(copy)="el">
         <base-btn
+          v-if="el.item.investorAddress"
           v-clipboard:copy="el.item.investorAddress"
           v-clipboard:success="ClipboardSuccessHandler"
           v-clipboard:error="ClipboardErrorHandler"
@@ -74,6 +75,7 @@
       </template>
       <template #cell(undelegate)="el">
         <base-btn
+          v-if="el.item.investorAddress"
           mode="lightRed"
           class="btn__delegate"
           :disabled="!myProfile(el.item.id) || el.item.voting === 0"
@@ -85,6 +87,7 @@
       </template>
       <template #cell(delegate)="el">
         <base-btn
+          v-if="el.item.investorAddress"
           mode="lightBlue"
           :disabled="!myProfile(el.item.id)"
           class="btn__delegate"

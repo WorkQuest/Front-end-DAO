@@ -38,4 +38,7 @@ export default {
   changeProfile(state, data) {
     state.isProfileEdit = data;
   },
+  setLastPage(state, page) {
+    state.lastPage = page;
+  },
 };

@@ -26,6 +26,9 @@ export default {
       console.log(e);
     }
   },
+  setLastPage({ commit }, page) {
+    commit('setLastPage', page);
+  },
 
   async signIn({ commit, dispatch }, payload) {
     const response = await this.$axios.$post('/v1/auth/login', payload);

@@ -15,4 +15,5 @@ export default () => ({
   userRole: {},
   userDataPassword: {},
   imageLink: {},
+  lastPage: 1,
 });
