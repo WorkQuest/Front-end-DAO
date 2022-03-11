@@ -28,7 +28,7 @@
           v-model="model.firstName"
           class="auth__input"
           :placeholder="$t('signUp.firstName')"
-          :mode="'icon'"
+          mode="icon"
           autocomplete="off"
           :name="$t('signUp.firstName')"
           rules="required_if|alpha_spaces"
@@ -44,7 +44,7 @@
           v-model="model.lastName"
           class="auth__input"
           :placeholder="$t('signUp.lastName')"
-          :mode="'icon'"
+          mode="icon"
           :name="$t('signUp.lastName')"
           rules="required_if|alpha_spaces"
         >
@@ -61,7 +61,7 @@
           rules="required|email"
           :name="$t('signUp.email')"
           :placeholder="$t('signUp.email')"
-          :mode="'icon'"
+          mode="icon"
           autocomplete="username"
         >
           <template v-slot:left>
@@ -75,7 +75,7 @@
           v-model="model.password"
           class="auth__input"
           :placeholder="$t('signUp.password')"
-          :mode="'icon'"
+          mode="icon"
           :name="$t('signUp.password')"
           autocomplete="current-password"
           rules="required_if|min:8"
@@ -93,7 +93,7 @@
           v-model="model.passwordConfirm"
           class="auth__input"
           :placeholder="$t('signUp.confirmPassword')"
-          :mode="'icon'"
+          mode="icon"
           type="password"
           :name="$t('signUp.confirmPassword')"
           rules="required_if|min:8|confirmed:confirmation"
@@ -117,6 +117,7 @@
 
 <script>
 import modals from '~/store/modals/modals';
+import { Path } from '~/utils/enums';
 
 export default {
   name: 'SignUp',
@@ -132,26 +133,20 @@ export default {
       },
     };
   },
-  async mounted() {
-    this.SetLoader(true);
-    this.SetLoader(false);
-  },
   methods: {
     async signUp() {
-      try {
-        const payload = {
-          firstName: this.model.firstName,
-          lastName: this.model.lastName,
-          email: this.model.email,
-          password: this.model.password,
-        };
-        const response = await this.$store.dispatch('user/signUp', payload);
-        if (response?.ok) {
-          this.showConfirmEmailModal();
-        }
-      } catch (e) {
-        console.log(e);
+      const payload = {
+        firstName: this.model.firstName,
+        lastName: this.model.lastName,
+        email: this.model.email,
+        password: this.model.password,
+      };
+      const response = await this.$store.dispatch('user/signUp', payload);
+      if (response?.ok) {
+        this.showConfirmEmailModal();
+        await this.$router.push(Path.SIGN_IN);
       }
+      this.SetLoader(false);
     },
     showConfirmEmailModal() {
       this.ShowModal({

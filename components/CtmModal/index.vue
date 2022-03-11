@@ -51,6 +51,7 @@
       <CtmModalTransfer v-if="modals.transfer === currentModalKey" />
       <CtmModalChangePassInSettings v-if="modals.changePassInSettings === currentModalKey" />
       <CtmModalTwoFAAuth v-if="modals.twoFAAuth === currentModalKey" />
+      <CtmModalDisableTwoFA v-if="modals.disableTwoFAAuth === currentModalKey" />
       <CtmModalAddDiscussion v-if="modals.addDiscussion === currentModalKey" />
       <CtmModalAddProposal v-if="modals.addProposal === currentModalKey" />
       <CtmModalDelegate v-if="modals.delegate === currentModalKey" />
@@ -59,12 +60,17 @@
       <CtmModalSignWorkQuest v-if="modals.signWorkQuest === currentModalKey" />
       <CtmModalGallery v-if="modals.gallery === currentModalKey" />
       <CtmModalShowFile v-if="modals.showFile === currentModalKey" />
+      <CtmModalTransactionReceipt v-if="modals.transactionReceipt === currentModalKey" />
+      <CtmModalGiveTransfer v-if="modals.giveTransfer === currentModalKey" />
+      <CtmModalSecurityCheck v-if="modals.securityCheck === currentModalKey" />
     </div>
   </transition>
 </template>
+
 <script>
 import { mapGetters } from 'vuex';
 import modals from '@/store/modals/modals';
+import CtmModalGiveTransfer from './CtmModalGiveTransfer';
 import CtmModalShowFile from './CtmModalShowFile';
 import CtmModalGallery from './CtmModalGallery';
 import CtmModalConfirmEmail from './CtmModalConfirmEmail';
@@ -106,16 +112,20 @@ import CtmModalNotice from './CtmModalNotice';
 import CtmModalTransfer from './CtmModalTransfer';
 import CtmModalChangePassInSettings from './CtmModalChangePassInSettings';
 import CtmModalTwoFAAuth from './CtmModalTwoFAAuth';
+import CtmModalDisableTwoFA from './CtmModalDisableTwoFA';
 import CtmModalAddProposal from './CtmModalAddProposal';
 import CtmModalAddDiscussion from './CtmModalAddDiscussion';
 import CtmModalUndelegate from './CtmModalUndelegate';
 import CtmModalDelegate from './CtmModalDelegate';
 import CtmModalWarning from './CtmModalWarning';
 import CtmModalSignWorkQuest from './CtmModalSignWorkQuest';
+import CtmModalTransactionReceipt from './CtmModalTransactionReceipt';
+import CtmModalSecurityCheck from './CtmModalSecurityCheck';
 
 export default {
   name: 'ModalBox',
   components: {
+    CtmModalGiveTransfer,
     CtmModalShowFile,
     CtmModalGallery,
     CtmModalConfirmEmail,
@@ -157,12 +167,15 @@ export default {
     CtmModalTransfer,
     CtmModalChangePassInSettings,
     CtmModalTwoFAAuth,
+    CtmModalDisableTwoFA,
     CtmModalAddDiscussion,
     CtmModalAddProposal,
     CtmModalDelegate,
     CtmModalUndelegate,
     CtmModalWarning,
     CtmModalSignWorkQuest,
+    CtmModalTransactionReceipt,
+    CtmModalSecurityCheck,
   },
   data: () => ({
     modals,

@@ -16,17 +16,20 @@
         <span class="table__title">{{ $props.title }}</span>
       </template>
       <template #cell(tx_hash)="el">
-        <span>{{ cutString(el.item.tx_hash, 9, 6) }}</span>
+        <a
+          :href="getTransactionUrl(el.item.tx_hash)"
+          target="_blank"
+          class="table__url"
+        >
+          {{ CutTxn(el.item.tx_hash, 8, 4) }}
+        </a>
       </template>
       <template #cell(status)="el">
         <span
-          v-if="el.item.status === 'Success'"
-          class="table__success"
-        >{{ el.item.status }}</span>
-        <span
-          v-else
-          class="table__failed"
-        >{{ el.item.status }}</span>
+          :class="{table__success: el.item.status, table__failed: !el.item.status}"
+        >
+          {{ el.item.status ? $t('modals.success') : $t('modals.failed') }}
+        </span>
       </template>
       <template #cell(block)="el">
         <span class="table__grey">{{ el.item.block }}</span>
@@ -91,11 +94,27 @@
         </base-btn>
       </template>
       <template #cell(investorAddress)="el">
-        {{ cutString(el.item.investorAddress, 5, 6) }}
+        {{ CutTxn(el.item.investorAddress, 5, 6) }}
       </template>
-      <template
-        #cell(fullName)="el"
-      >
+      <template #cell(from_address)="el">
+        <a
+          :href="getAddressUrl(el.item.from_address)"
+          target="_blank"
+          class="table__url"
+        >
+          {{ CutTxn(el.item.from_address, 4, 4) }}
+        </a>
+      </template>
+      <template #cell(to_address)="el">
+        <a
+          :href="getAddressUrl(el.item.to_address)"
+          target="_blank"
+          class="table__url"
+        >
+          {{ CutTxn(el.item.to_address, 4, 4) }}
+        </a>
+      </template>
+      <template #cell(fullName)="el">
         <nuxt-link
           :to="`/investors/${el.item.id}`"
           class="table__link"
@@ -112,7 +131,6 @@ import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
 
 export default {
-
   props: {
     title: {
       type: String,
@@ -129,6 +147,7 @@ export default {
   },
   data() {
     return {
+      isProd: process.env.PROD === 'true',
     };
   },
   computed: {
@@ -137,6 +156,18 @@ export default {
     }),
   },
   methods: {
+    getTransactionUrl(hash) {
+      if (this.isProd) {
+        return `https://dev-explorer.workquest.co/transactions/${hash}`;
+      }
+      return `https://dev-explorer.workquest.co/transactions/${hash}`;
+    },
+    getAddressUrl(address) {
+      if (this.isProd) {
+        return `https://dev-explorer.workquest.co/address/${address}`;
+      }
+      return `https://dev-explorer.workquest.co/address/${address}`;
+    },
     myProfile(id) {
       return this.userData.id === id;
     },
@@ -226,14 +257,6 @@ export default {
     text-decoration: none!important;
   }
   @include _1199 {
-    .table {
-       &__row {
-        font-size: 13px !important;
-      }
-      &__header {
-        font-size: 10px !important;
-      }
-    }
     .btn__delegate {
       width: 80px !important;
       font-size: 13px;
@@ -242,16 +265,10 @@ export default {
   @include _991 {
     .table {
       width: 99%;
-      &__row {
-        font-size: 10px !important;
-      }
-      &__header {
-        font-size: 8px !important;
-      }
       .btn__delegate {
-      width: 60px !important;
-      font-size: 10px;
-    }
+        width: 60px !important;
+        font-size: 10px;
+      }
     }
     &__copy {
       font-size: 10px;

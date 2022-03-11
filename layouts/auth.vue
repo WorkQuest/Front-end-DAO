@@ -28,6 +28,8 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { Path, UserStatuses } from '~/utils/enums';
+import { getIsWalletConnected } from '~/utils/wallet';
 
 export default {
   scrollToTop: true,
@@ -35,18 +37,35 @@ export default {
   computed: {
     ...mapGetters({
       isLoading: 'main/getIsLoading',
-      access: 'user/accessToken',
-      refresh: 'user/refreshToken',
+      userData: 'user/getUserData',
     }),
   },
-  created() {
-    if (this.access || this.refresh || localStorage.getItem('access') || localStorage.getItem('refresh')) {
-      this.$router.push('/proposals');
+  async beforeMount() {
+    const { access, refresh, userStatus } = this.$route.query;
+    if (access && refresh && userStatus) {
+      this.$store.commit('user/setTokens', {
+        access, refresh, userStatus, social: true,
+      });
+      await this.$store.dispatch('user/getUserData');
+      // To set role or assign wallet
+      if (+userStatus === UserStatuses.NeedSetRole || !this.userData?.wallet?.address) {
+        this.$cookies.set('userLogin', true, { path: '/' });
+        await this.$router.push(Path.ROLE);
+        return;
+      }
+      // To import mnemonic for login
+      if (+userStatus === UserStatuses.Confirmed && !getIsWalletConnected()) {
+        await this.$router.push(Path.SIGN_IN);
+        return;
+      }
+      await this.$store.dispatch('user/getStatistic');
+      await this.$store.dispatch('user/getNotifications');
+      await this.$router.push(Path.PROPOSALS);
     }
   },
   methods: {
     toMain() {
-      this.$router.push('/sign-in');
+      this.$router.push(Path.SIGN_IN);
     },
   },
 };
