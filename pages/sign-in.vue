@@ -30,7 +30,7 @@
           rules="required|email"
           :name="$t('signUp.email')"
           :placeholder="$t('signUp.email')"
-          :mode="'icon'"
+          mode="icon"
           autocomplete="username"
         >
           <template v-slot:left>
@@ -44,7 +44,7 @@
           v-model="model.password"
           class="auth__input"
           :placeholder="$t('signUp.password')"
-          :mode="'icon'"
+          mode="icon"
           :name="$t('signUp.password')"
           autocomplete="current-password"
           rules="required_if|min:8"

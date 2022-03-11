@@ -4,57 +4,59 @@
     :title="$t('modals.transfer')"
   >
     <div class="transfer__content content">
-      <validation-observer v-slot="{handleSubmit, invalid}">
-        <div class="content__container">
-          <div class="content__input input">
-            <span class="input__title">
-              {{ $t('modals.recepientAddress') }}
-            </span>
-            <base-field
-              v-model="recipient"
-              class="input__field"
-              :placeholder="$t('modals.address')"
-              rules="required|address"
-              :name="$t('modals.addressField')"
-            />
-          </div>
-          <div class="content__input input">
-            <span class="input__title">
-              {{ $t('modals.selectToken') }}
-            </span>
-            <base-dd
-              v-model="ddValue"
-              :items="tokenSymbolsDd"
-            />
-          </div>
-          <div class="content__input input">
-            <span class="input__title">
-              {{ $t('modals.amount') }}
-            </span>
-            <base-field
-              v-model="amount"
-              class="input__field"
-              :placeholder="$t('modals.amount')"
-              :rules="`required|decimal|is_not:0|max_bn:${maxAmount}|decimalPlaces:18`"
-              :name="$t('modals.amountField')"
-              @input="replaceDot"
+      <validation-observer
+        v-slot="{handleSubmit, invalid}"
+        tag="div"
+        class="content_container"
+      >
+        <div class="content__input input">
+          <span class="input__title">
+            {{ $t('modals.recepientAddress') }}
+          </span>
+          <base-field
+            v-model="recipient"
+            class="input__field"
+            :placeholder="$t('modals.address')"
+            rules="required|address"
+            :name="$t('modals.addressField')"
+          />
+        </div>
+        <div class="content__input input">
+          <span class="input__title">
+            {{ $t('modals.selectToken') }}
+          </span>
+          <base-dd
+            v-model="ddValue"
+            :items="tokenSymbolsDd"
+          />
+        </div>
+        <div class="content__input input">
+          <span class="input__title">
+            {{ $t('modals.amount') }}
+          </span>
+          <base-field
+            v-model="amount"
+            class="input__field"
+            :placeholder="$t('modals.amount')"
+            :rules="`required|decimal|is_not:0|max_bn:${maxAmount}|decimalPlaces:18`"
+            :name="$t('modals.amountField')"
+            @input="replaceDot"
+          >
+            <template
+              v-slot:right-absolute
+              class="content__max max"
             >
-              <template
-                v-slot:right-absolute
-                class="content__max max"
+              <base-btn
+                mode="max"
+                class="max__button"
+                @click="maxBalance"
               >
-                <base-btn
-                  mode="max"
-                  class="max__button"
-                  @click="maxBalance"
-                >
-                  <span class="max__text">
-                    {{ $t('modals.max') }}
-                  </span>
-                </base-btn>
-              </template>
-            </base-field>
-          </div>
+                <span class="max__text">
+                  {{ $t('modals.max') }}
+                </span>
+              </base-btn>
+            </template>
+          </base-field>
         </div>
         <div class="content__buttons buttons">
           <base-btn
@@ -164,7 +166,7 @@ export default {
     maxBalance() {
       if (this.selectedToken === TokenSymbols.WUSD) {
         const max = new BigNumber(this.maxAmount).minus(this.maxFee[this.selectedToken]);
-        this.amount = max.isGreaterThan(0) ? max.toString() : 0;
+        this.amount = max.isGreaterThan(0) ? max.toString() : '0';
         return;
       }
       this.amount = this.maxAmount;
