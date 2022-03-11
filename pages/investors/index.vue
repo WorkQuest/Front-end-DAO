@@ -7,8 +7,9 @@
       <base-field
         v-model="search"
         class="body__search"
-        :is-search="true"
+        is-search
         :placeholder="$t('investors.search')"
+        mode="icon"
       />
       <base-table
         v-if="usersData.count !== 0"

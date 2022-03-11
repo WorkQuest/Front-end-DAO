@@ -84,7 +84,7 @@
           :placeholder="$t('createWallet.typeSecret', { a: confirmMnemonicData.firstIndex })"
           :name="$t('createWallet.secret', { a: confirmMnemonicData.firstIndex })"
           type="password"
-          class="wallet__fields_input"
+          class="wallet__input"
         />
         <base-field
           v-model="confirmMnemonic.second"
@@ -92,7 +92,7 @@
           :placeholder="$t('createWallet.typeSecret', { a: confirmMnemonicData.secondIndex })"
           :name="$t('createWallet.secret', { a: confirmMnemonicData.secondIndex })"
           type="password"
-          class="wallet__fields_input"
+          class="wallet__input"
         />
         <div class="wallet__action">
           <base-btn :disabled="!valid || isLoading">
@@ -143,6 +143,7 @@
           :placeholder="$t('createWallet.typeSecretPhrase')"
           :name="$t('createWallet.secretPhrase')"
           :type="inputType"
+          class="wallet__input"
         />
         <div class="wallet__confirm-phrase">
           <input
@@ -278,6 +279,10 @@ export default {
   &__back {
     cursor: pointer;
   }
+  &__input {
+    height: 46px;
+    margin-bottom: 30px;
+  }
   &__container {
     display: grid;
     grid-template-rows: auto;
@@ -308,9 +313,6 @@ export default {
   &__fields {
     padding-top: 30px;
     display: grid;
-    &_input {
-      min-height: 43px;
-    }
   }
   &__action {
     padding-top: 20px;
@@ -321,7 +323,7 @@ export default {
     background: $grey;
     border-radius: 12px;
     font-weight: 500;
-    min-height: 50px;
+    max-height: 46px;
     margin-bottom: 20px;
     ::before {
       color: $black600;

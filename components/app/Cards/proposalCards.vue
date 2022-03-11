@@ -31,7 +31,7 @@
                 is-search
                 class="search__input"
                 :placeholder="$t('proposals.ui.search')"
-                :mode="'icon'"
+                mode="icon"
               />
             </div>
           </div>

@@ -669,6 +669,7 @@ export default {
     height: 100%;
   }
   &__header {
+    color: $black800;
     font-weight: 600;
     font-size: 28px;
     line-height: 36px;
@@ -698,7 +699,6 @@ export default {
 }
 
 .banner {
-  background-color: #0083C7;
   color: #FFFFFF;
   border-radius: 6px;
   margin-top: 30px;

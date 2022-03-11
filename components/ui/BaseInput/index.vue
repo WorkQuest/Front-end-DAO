@@ -227,6 +227,7 @@ export default {
     align-items: center;
     position: relative;
     width: 100%;
+    height: 100%;
   }
   &__header {
     letter-spacing: -0.025em;
@@ -258,6 +259,8 @@ export default {
     padding: 0 20px;
     transition: .3s;
     width: 100%;
+    height: 100%;
+
     &_comment {
       height: 40px;
     }
@@ -317,7 +320,7 @@ export default {
   &_icon {
     .ctm-field {
       &__input {
-        padding: 12.5px 20px 12.5px 50px;
+        padding: 0 20px 0 50px;
       }
       &__err{
         min-height: 36px;

@@ -92,49 +92,24 @@
             </base-btn>
           </div>
         </div>
-        <div class="wallet__switch-table">
-          <base-btn
-            :mode="getSwitchButtonMode(walletTables.TXS)"
-            @click="selectedWalletTable = walletTables.TXS"
-          >
-            {{ $t('wallet.allTransactions') }}
-          </base-btn>
-          <base-btn
-            :mode="getSwitchButtonMode(walletTables.COLLATERAL)"
-            @click="selectedWalletTable = walletTables.COLLATERAL"
-          >
-            {{ $t('wallet.collateralTransactions') }}
-          </base-btn>
-        </div>
-        <div
-          v-if="selectedWalletTable === walletTables.TXS"
-          class="wallet__txs"
-        >
-          <div class="wallet__table table">
-            <base-table
-              class="table__txs"
-              :title="$t('wallet.table.trx')"
-              :items="styledTransactions"
-              :fields="walletTableFields"
-            />
-            <empty-data
-              v-if="!totalPages"
-              :description="$t('wallet.table.empty')"
-              class="table__empty"
-            />
-          </div>
-          <base-pager
-            v-if="totalPages > 1"
-            v-model="currentPage"
-            :total-pages="totalPages"
+        <div class="wallet__table table">
+          <base-table
+            class="table__txs"
+            :title="$t('wallet.table.trx')"
+            :items="styledTransactions"
+            :fields="walletTableFields"
+          />
+          <empty-data
+            v-if="!totalPages"
+            :description="$t('wallet.table.empty')"
+            class="table__empty"
           />
         </div>
-        <div
-          v-else
-          class="wallet__txs"
-        >
-          <CollateralTable />
-        </div>
+        <base-pager
+          v-if="totalPages > 1"
+          v-model="currentPage"
+          :total-pages="totalPages"
+        />
       </div>
     </div>
   </div>
@@ -147,12 +122,11 @@ import modals from '~/store/modals/modals';
 import { TokenSymbolByContract, TokenSymbols, WalletTables } from '~/utils/enums';
 import { getStyledAmount } from '~/utils/wallet';
 import EmptyData from '~/components/app/EmptyData';
-import CollateralTable from '~/components/app/Pages/Wallet/CollateralTable';
 
 export default {
   name: 'Wallet',
   middleware: 'auth',
-  components: { EmptyData, CollateralTable },
+  components: { EmptyData },
   data() {
     return {
       cardClosed: false,
@@ -382,13 +356,6 @@ export default {
     }
   }
 
-  &__switch-table {
-    display: grid;
-    grid-template-columns: repeat(2, 210px);
-    grid-gap: 10px;
-    margin-bottom: 20px;
-  }
-
   &__table {
     position: relative;
     box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
@@ -593,12 +560,10 @@ export default {
   }
   .balance__usd {
     display: none;
+
     &_mobile {
       display: block;
     }
-  }
-  .wallet__switch-table {
-    grid-template-columns: 1fr;
   }
 }
 @include _350 {

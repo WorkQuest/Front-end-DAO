@@ -533,8 +533,6 @@
     }
   },
   "wallet": {
-    "allTransactions": "All Transactions",
-    "collateralTransactions": "Collateral Transactions",
     "WUSD": "WUSD wallet",
     "cryptoWallet": "Crypto wallet",
     "bankCard": "Bank card",
