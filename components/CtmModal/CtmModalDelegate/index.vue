@@ -6,18 +6,16 @@
     <div class="delegate__content content">
       <validation-observer v-slot="{handleSubmit, valid}">
         <div class="content__address address">
-          <label
-            for="investorAddress"
-            class="address__label"
-          >{{ $t('modals.investorAddress') }}</label>
+          <label class="address__label">
+            {{ $t('modals.investorAddress') }}
+          </label>
           <div class="delegate__input">
             <base-field
-              id="invsetorAddress"
               disabled
-              :value="accountAddress.address"
+              :value="investorAddress"
               class="address__body"
             >
-              {{ accountAddress.address }}
+              {{ investorAddress }}
             </base-field>
           </div>
         </div>
@@ -25,13 +23,11 @@
           <div class="tokens__title">
             {{ $t('modals.tokensNumber') }}
           </div>
-          <label
-            for="tokensNumber"
-            class="tokens__title_grey"
-          >{{ $t('modals.tokensDelegated') }}</label>
+          <label class="tokens__title_grey">
+            {{ $t('modals.tokensDelegated') }}
+          </label>
           <div class="tokens__footer footer">
             <base-field
-              id="tokensNumber"
               v-model="tokensAmount"
               class="footer__body"
               placeholder="10000"
@@ -70,51 +66,50 @@ export default {
     return {
       tokensAmount: '',
       balance: 0,
-      accountAddress: '',
+      investorAddress: '',
     };
   },
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
-      isConnected: 'web3/getWalletIsConnected',
+      isWalletConnected: 'wallet/getIsWalletConnected',
+      balanceData: 'wallet/getBalanceData',
     }),
     min() {
       return this.options?.min ? `|min_value:${this.options.min}` : '';
     },
   },
-  watch: {
-    isConnected() {
-      this.close();
-    },
+  beforeMount() {
+    if (!this.isWalletConnected) {
+      this.$store.dispatch('wallet/checkWalletConnected');
+      this.CloseModal();
+    }
+    this.investorAddress = this.options.investorAddress;
   },
   async mounted() {
-    const res = await this.$store.dispatch('web3/getBalance');
-    this.accountAddress = await this.$store.dispatch('web3/getAccount');
-    if (res.ok) {
-      this.balance = res.result;
-    }
+    // TODO: update balance
+    await this.$store.dispatch('wallet/getBalance');
+    // const res = await this.$store.dispatch('web3/getBalance');
+    // this.accountAddress = await this.$store.dispatch('web3/getAccount');
+    // if (res.ok) {
+    //   this.balance = res.result;
+    // }
   },
   methods: {
-    close() {
-      this.CloseModal();
-    },
     maxDelegate() {
       this.tokensAmount = this.balance;
     },
     async delegate() {
-      const connectionRes = await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!connectionRes.ok) return;
-
       const { callback } = this.options;
       this.SetLoader(true);
-      const res = await this.$store.dispatch('web3/delegate', { address: this.accountAddress.address, amount: this.tokensAmount });
+      const res = await this.$store.dispatch('web3/delegate', { address: this.investorAddress, amount: this.tokensAmount });
       this.SetLoader(false);
       if (res.ok) {
         await this.$store.dispatch('main/showToast', {
           title: 'Delegate',
           text: `Delegated ${this.tokensAmount} WQT`,
         });
-        this.close();
+        this.CloseModal();
         if (callback) await callback();
       } else if (res.msg.includes('Not enough balance to delegate')) {
         await this.$store.dispatch('modals/show', {
@@ -136,9 +131,9 @@ export default {
   }
   &__body{
     @include text-usual;
-    color: #1D2127;
+    color: $black800;
     margin: 25px 0;
-    background-color: #FFFFFF!important;
+    background-color: $white!important;
   }
   &__done{
     margin-top: 25px;
@@ -151,8 +146,9 @@ export default {
 .footer {
   display: flex;
   justify-content: space-between;
+  grid-gap: 10px;
   &__body{
-    width: 284px!important;
+    width: 100%;
     height: 46px!important;
   }
   &__maximum{
@@ -163,7 +159,7 @@ export default {
 .address{
   &__label{
     @include text-usual;
-    color: #1D2127;
+    color: $black800;
     margin: 0!important;
   }
   &__body{
@@ -173,10 +169,10 @@ export default {
 .tokens{
   &__title{
     @include text-usual;
-    color: #1D2127;
+    color: $black800;
     margin-bottom: 5px;
     &_grey{
-      color: #7C838D;
+      color: $black400;
       margin-bottom: 10px!important;
     }
   }

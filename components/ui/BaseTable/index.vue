@@ -78,7 +78,6 @@
           v-if="el.item.investorAddress"
           mode="lightRed"
           class="btn__delegate"
-          :disabled="!myProfile(el.item.id) || el.item.voting === 0"
           :class="delegateClass(el)"
           @click="openModalUndelegate(el)"
         >
@@ -89,7 +88,6 @@
         <base-btn
           v-if="el.item.investorAddress"
           mode="lightBlue"
-          :disabled="!myProfile(el.item.id)"
           class="btn__delegate"
           @click="openModalDelegate(el)"
         >
@@ -226,9 +224,8 @@ export default {
 .table {
   @include text-usual;
   overflow-x: hidden;
-  background: #FFFFFF;
+  background: $white;
   border-radius: 6px;
-  text-align: center;
   &__title {
     margin: 10px;
     color: $black800;
@@ -256,7 +253,7 @@ export default {
     line-height: 40px;
   }
   &__link{
-    color: #1D2127!important;
+    color: $black800 !important;
     text-decoration: none!important;
   }
   @include _1199 {
@@ -278,7 +275,7 @@ export default {
     }
   }
   &__copy{
-    color:#0083C7;
+    color: $blue;
     font-size: 25px;
   }
   &__avatar{
@@ -299,11 +296,11 @@ export default {
     justify-content: center!important;
     &_green {
       margin: auto auto;
-      background: #22CC14 !important;
+      background: $green !important;
     }
     &_red {
       margin: auto auto;
-      background: #DF3333 !important;
+      background: $red !important;
     }
   }
   &__delegate{

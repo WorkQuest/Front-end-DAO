@@ -91,17 +91,15 @@ export default {
   watch: {
     async currPage() {
       this.offset = (this.currPage - 1) * this.limit;
-      await this.getInvestors();
       await this.$store.dispatch('investors/setLastPage', this.currPage);
+      await this.getInvestors();
     },
     search() {
       this.q = this.search.trim();
       this.offset = 0;
       this.currPage = 1;
       clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this.getInvestors();
-      }, 1000);
+      this.timeout = setTimeout(() => { this.getInvestors(); }, 1000);
     },
   },
   async beforeMount() {
@@ -157,11 +155,11 @@ export default {
     font-weight: 600;
     font-size: 28px;
     line-height: 36px;
-    color: #000000;
+    color: $black800;
   }
   &__search{
     margin: 20px 0 20px 0;
-    background-color: #FFFFFF;
+    background-color: $white;
     width: 1180px;
     height: 43px;
     border-radius: 6px;

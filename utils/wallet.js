@@ -256,3 +256,8 @@ export const getContractFeeData = async (_method, _abi, _contractAddress, data, 
     return error(1000, e.message);
   }
 };
+
+/** Investors */
+export const delegate = async (toAddress, amount) => {
+  amount = new BigNumber(amount).shiftedBy(+18).toString();
+};

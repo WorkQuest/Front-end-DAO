@@ -114,7 +114,7 @@ export default {
   }
   &__body{
     @include text-usual;
-    color: #1D2127;
+    color: $black800;
     margin: 20px 0 25px 0;
   }
   &__bottom{
@@ -130,7 +130,7 @@ export default {
     line-height: 130%;
   }
   &__close{
-    color: black;
+    color: $black800;
     font-size: 25px;
     cursor: pointer;
   }
@@ -148,10 +148,10 @@ export default {
 .tokens{
   &__title{
     @include text-usual;
-    color: #1D2127;
+    color: $black800;
     margin-bottom: 5px;
     &_grey{
-      color: #7C838D;
+      color: $black400;
       margin-bottom: 10px!important;
     }
   }

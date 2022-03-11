@@ -268,27 +268,17 @@ export default {
     },
   },
   async beforeMount() {
-    const isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
-    if (isMobile) {
-      this.ShowModal({
-        key: modals.status,
-        title: 'Please install Metamask!',
-        subtitle: 'Please open site from Metamask app',
-      });
-      await this.$router.push('/proposals');
-      return;
-    }
+    await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
     await this.getInvestorData();
   },
   async mounted() {
-    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
     await this.getVotingPower();
   },
   methods: {
     async getVotingPower() {
-      const { address } = await this.$store.dispatch('web3/getAccount');
-      const response = await this.$store.dispatch('web3/getVotes', address);
-      if (response.ok) this.votingPower = +response.result;
+      // const { address } = await this.$store.dispatch('web3/getAccount');
+      // const response = await this.$store.dispatch('web3/getVotes', address);
+      // if (response.ok) this.votingPower = +response.result;
     },
     async getInvestorData() {
       if (this.isMyProfile) {
@@ -334,7 +324,7 @@ export default {
 .investor {
   @include main;
   @include text-simple;
-  color: #1D2127;
+  color: $black800;
   &__profile {
     width: 100%;
     max-width: 1180px;
@@ -365,10 +355,10 @@ export default {
   display: table;
 
   &__copy {
-    background: #F7F8FA;
+    background: $black0;
   }
   &__copy:hover{
-    background: #F7F8FA;
+    background: $black0;
   }
 
   &__address {
@@ -391,7 +381,7 @@ export default {
     display: grid;
     gap: 20px;
     padding: 20px;
-    background: #FFFFFF;
+    background: $white;
     border-radius: 6px;
     margin-top: 15px;
   }
@@ -420,7 +410,7 @@ export default {
     height: 34px;
     padding: 0 13px;
     background: rgba(0, 131, 199, 0.1);
-    color: #0083C7;
+    color: $blue;
     border-radius: 36px;
     font-size: 14px;
   }
@@ -439,14 +429,12 @@ export default {
 }
 
 .contacts {
-
   &__name{
-    color: #1D2127 !important;
+    color: $black800 !important;
   }
 }
 
 .avatar {
-
   &__img {
     width: 100%;
     height: 100%;
@@ -459,7 +447,7 @@ export default {
   flex-direction: column;
 
   &__title {
-    color: #1D2127;
+    color: $black800;
     font-size: 16px;
     line-height: 21px;
     margin-bottom: 5px;
@@ -472,11 +460,11 @@ export default {
     resize: none;
     font-size: 14px;
     line-height: 18.2px;
-    background-color: #FFFFFF;
-    border: 1px solid #F7F8FA;
+    background-color: $white;
+    border: 1px solid $black0;
 
     &::placeholder {
-      color: #1D2127;
+      color: $black800;
     }
   }
 }
@@ -489,7 +477,7 @@ export default {
 
 .input-icon {
   font-size: 23px;
-  color: #0083C7;
+  color: $blue;
   line-height: 36px;
 }
 
@@ -523,12 +511,12 @@ export default {
     line-height: 130%;
     font-weight: 500;
     align-items: center;
-    color: #4C5767;
+    color: $black600;
   }
 
   &__arrow {
     margin: 6px 10px 6px 0;
-    color:  #4C5767;
+    color: $black600;
     font-size: 25px;
     cursor: pointer;
   }
