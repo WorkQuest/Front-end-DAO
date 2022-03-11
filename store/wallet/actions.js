@@ -24,10 +24,7 @@ export default {
   async checkPassword({ commit }, password) {
     try {
       const res = await this.$axios.$post('/v1/auth/validate-password', { password });
-      if (res.ok) {
-        return res.result.isValid;
-      }
-      return false;
+      return res?.result?.isValid;
     } catch (e) {
       return false;
     }
@@ -39,17 +36,12 @@ export default {
   },
   /**
    * Check wallet is connected
+   * @returns boolean
    */
-  checkWalletConnected({ commit, getters }, { nuxt, callbackLayout, userAddress }) {
+  checkWalletConnected({ commit, getters }, { nuxt, callbackLayout }) {
     const connected = getIsWalletConnected();
     commit('setIsOnlyConfirm', false);
     if (!connected) {
-      if (userAddress) {
-        if (connectWithMnemonic(userAddress)) {
-          commit('setIsWalletConnected', true);
-          return;
-        }
-      }
       if (callbackLayout) commit('setCallbackLayout', callbackLayout);
       nuxt.setLayout('confirmPassword');
     } else {
