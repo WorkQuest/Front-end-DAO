@@ -48,10 +48,7 @@ export default {
           .withConf({
             lang: 'en',
             email: applicantEmail,
-            phone: applicantPhone, // if available
-            onMessage: (type, payload) => {
-              console.log('WebSDK onMessage', type, payload);
-            },
+            phone: applicantPhone,
             onError: (error) => {
               console.log('WebSDK onError', error);
             },
