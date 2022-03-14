@@ -243,7 +243,7 @@ export default {
         { key: 'location', icon: 'icon-location', isVisible: true },
         { key: 'email', icon: 'icon-mail', isVisible: true },
         { key: 'phone', icon: 'icon-phone', isVisible: true },
-        { key: 'secondPhone', icon: 'icon-phone', isVisible: this.investor.role === 'worker' },
+        { key: 'secondPhone', icon: 'icon-phone', isVisible: this.investor.role === 'employer' },
       ];
     },
     socialInputsArr() {
