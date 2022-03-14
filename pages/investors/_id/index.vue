@@ -61,7 +61,7 @@
                   :is-hide-error="true"
                   mode="iconWhite"
                   :disabled="true"
-                  :value="investor.additionalInfo ? (input.key === 'location' ? investor.additionalInfo.address : investor[input.key]) : ''"
+                  :value="fillInputs(input)"
                   :placeholder="$t('investor.notFilled')"
                 >
                   <template v-slot:left>
@@ -241,7 +241,7 @@ export default {
         { key: 'lastName', icon: 'icon-user' },
         { key: 'location', icon: 'icon-location' },
         { key: 'email', icon: 'icon-mail' },
-        { key: 'secondMobileNumber', icon: 'icon-phone' },
+        { key: 'phone', icon: 'icon-phone' },
       ];
     },
     socialInputsArr() {
@@ -290,12 +290,17 @@ export default {
       const response = await this.$store.dispatch('web3/getVotes', address);
       if (response.ok) this.votingPower = +response.result;
     },
-    async getInvestorData() {
-      if (this.isMyProfile) {
-        this.investor = this.userData;
-      } else {
-        this.investor = await this.$store.dispatch('user/getSpecialUserData', this.userId);
+    fillInputs(input) {
+      if (this.investor.additionalInfo) {
+        if (input.key === 'location') return this.investor.additionalInfo.address;
+        if (input.key === 'phone' && this.investor.phone) return this.investor.phone.fullPhone;
+        return this.investor[input.key];
       }
+      return '';
+    },
+    async getInvestorData() {
+      if (this.isMyProfile) this.investor = this.userData;
+      else this.investor = await this.$store.dispatch('user/getSpecialUserData', this.userId);
     },
     async openModalDelegate() {
       this.ShowModal({
