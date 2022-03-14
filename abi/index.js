@@ -1,15 +1,15 @@
 import ERC20 from '~/abi/ERC20';
 import WQToken from '~/abi/WQToken';
-import WQDAOVoting from '~/abi/WQDAOVoting';
+import WORKNET_VOTING from '~/abi/WORKNET_VOTING';
 
 export default {
   ERC20,
   WQToken,
-  WQDAOVoting,
+  WORKNET_VOTING,
 };
 
 export const abiNames = {
   ERC20: 'ERC20',
   WQToken: 'WQToken',
-  WQDAOVoting: 'WQDAOVoting',
+  WORKNET_VOTING: 'WORKNET_VOTING',
 };

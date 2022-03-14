@@ -7,9 +7,10 @@
       <base-field
         v-model="search"
         class="discussions__search"
-        :is-hide-error="true"
-        :is-search="true"
+        is-hide-error
+        is-search
         :placeholder="$t('discussions.seacrhField')"
+        mode="icon"
         @input="searchDiscussion"
       />
       <base-btn

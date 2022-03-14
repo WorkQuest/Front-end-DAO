@@ -1,7 +1,7 @@
 <template>
   <div class="auth">
     <ValidationObserver
-      v-if="step === walletState.Default"
+      v-if="step === $options.WalletState.Default"
       v-slot="{ handleSubmit }"
       class="auth__container"
       tag="div"
@@ -126,7 +126,7 @@
       </div>
     </ValidationObserver>
     <div
-      v-if="step > walletState.Default"
+      v-if="step > $options.WalletState.Default"
       class="auth__back"
       @click="back"
     >
@@ -158,6 +158,7 @@ export default {
   components: {
     CreateWallet,
   },
+  WalletState,
   data() {
     return {
       addressAssigned: false,
@@ -174,9 +175,6 @@ export default {
       userData: 'user/getUserData',
       isLoading: 'main/getIsLoading',
     }),
-    walletState() {
-      return WalletState;
-    },
   },
   created() {
     window.addEventListener('beforeunload', this.unloadHandler);
@@ -399,7 +397,7 @@ export default {
       this.$store.dispatch('wallet/connectWallet', { userWalletAddress: wallet.address, userPassword: this.model.password });
     },
     async redirectSocialLink(socialNetwork) {
-      window.location = `${process.env.BASE_URL}v1/auth/login/${socialNetwork}`;
+      window.location = `${process.env.BASE_URL}v1/auth/login/dao/${socialNetwork}`;
     },
     showSignWorkQuest() {
       this.ShowModal({
