@@ -134,54 +134,65 @@ export default {
 </script>
 <style lang="scss" scoped>
 .discussion {
-  animation: show  1s 1;
+  animation: show 1s 1;
   width: 100%;
   height: 100%;
   background: #FFFFFF;
   border-radius: 8px;
   padding: 20px;
+
   &__title {
     font-weight: 600;
     font-size: 24px;
     line-height: 32px;
     margin: 18px 0 10px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
+
   &__date {
     font-size: 14px;
     line-height: 130%;
     margin-bottom: 20px;
     color: #AAB0B9;
   }
+
   &__line {
     margin-top: 20px;
   }
 }
+
 .user {
-    display: flex;
-    align-items: center;
-    &__name {
-      font-size: 16px;
-      line-height: 130%;
-      color: #1D2127;
-      padding: 10px;
-      cursor: pointer;
-    }
-    &__avatar {
-      flex: 0 0 0 32px;
-      width: 32px;
-      height: 32px;
-      left: 0;
-      top: 0;
-      border-radius: 50%;
-      cursor: pointer;
-      object-fit: cover;
-    }
-    &__star {
-      margin-left: auto;
-      width: 20px;
-      height: 20px;
-    }
+  display: flex;
+  align-items: center;
+
+  &__name {
+    font-size: 16px;
+    line-height: 130%;
+    color: #1D2127;
+    padding: 10px;
+    cursor: pointer;
   }
+
+  &__avatar {
+    flex: 0 0 0 32px;
+    width: 32px;
+    height: 32px;
+    left: 0;
+    top: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    object-fit: cover;
+  }
+
+  &__star {
+    margin-left: auto;
+    width: 20px;
+    height: 20px;
+  }
+}
+
 .description {
   &__item {
     font-size: 16px;
@@ -189,77 +200,104 @@ export default {
     color: #7C838D;
     align-self: stretch;
     margin-bottom: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
+
   &__title {
     font-size: 18px;
     line-height: 130%;
     font-weight: 600;
     margin: 20px 0 10px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }
+
 .bottom {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  &__footer {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: space-between;
-    &__footer {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    &__like {
-      margin-left: auto;
-      margin-top: 5px;
-      color: #E9EDF2;
-      font-size: 22px;
-      transition: 0.5s;
-      &:hover {
-        color: #0083C7;
-      }
-      &_chosen {
-        color: #0083C7;
-      }
-    }
-    &__arrow {
-      margin-top: 10px;
-      margin-left: auto;
-      margin-right: 7px;
-      text-align: center;
-      font-size: 25px;
+    justify-content: center;
+  }
+
+  &__like {
+    margin-left: auto;
+    margin-top: 5px;
+    color: #E9EDF2;
+    font-size: 22px;
+    transition: 0.5s;
+
+    &:hover {
       color: #0083C7;
     }
-    &__comment {
-      height: 18px;
-      width: 18px;
-      margin-top: 5px;
-      cursor: default !important;
-    }
-    &__counter {
-      font-size: 14px;
-      line-height: 18px;
-      color: #1D2127;
-      margin: 0 22px 0 8px;
-      cursor: pointer;
-      &_right {
-        margin: 7px;
-      }
+
+    &_chosen {
+      color: #0083C7;
     }
   }
+
+  &__arrow {
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: 7px;
+    text-align: center;
+    font-size: 25px;
+    color: #0083C7;
+  }
+
+  &__comment {
+    height: 18px;
+    width: 18px;
+    margin-top: 5px;
+    cursor: default !important;
+  }
+
+  &__counter {
+    font-size: 14px;
+    line-height: 18px;
+    color: #1D2127;
+    margin: 0 22px 0 8px;
+    cursor: pointer;
+
+    &_right {
+      margin: 7px;
+    }
+  }
+}
+
 .link {
   display: flex;
   justify-content: center;
   text-align: center;
   align-items: center;
   text-decoration: none;
+
   &__text {
-  margin: 7px 14px 7px 10px;
-  font-size: 16px;
-  line-height: 130%;
+    margin: 7px 14px 7px 10px;
+    font-size: 16px;
+    line-height: 130%;
   }
+
   &__arrow {
     margin-top: 4px;
     font-size: 25px;
     color: #0083C7;
+  }
+}
+
+@include _480 {
+  .user__name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }
 </style>

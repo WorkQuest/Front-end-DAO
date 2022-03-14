@@ -143,10 +143,14 @@ export default {
     line-height: 130%;
   }
 
+  &__card {
+    min-width: 0;
+  }
+
   &__cards {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-gap: 20px 20px;
+    grid-gap: 20px;
     margin-bottom: 15px;
   }
 
@@ -163,6 +167,10 @@ export default {
 @include _1199 {
   .discussions {
     padding: 20px 15px;
+
+    &__cards {
+      grid-template-columns: 1fr;
+    }
   }
 }
 
