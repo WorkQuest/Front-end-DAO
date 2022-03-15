@@ -3,7 +3,7 @@ import { AES, enc } from 'crypto-js';
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
 import { error, success } from '~/utils/success-error';
-import abi, { abiNames } from '~/abi/index';
+import abi from '~/abi/index';
 import { errorCodes } from '~/utils/enums';
 
 const bip39 = require('bip39');
@@ -297,17 +297,47 @@ export const getContractFeeData = async (_method, _abi, _contractAddress, data, 
   }
 };
 
-/** Investors */
+/* Investors */
+export const getDelegates = async () => {
+  try {
+    const res = await fetchWalletContractData(
+      'delegates',
+      abi.WQToken,
+      process.env.WQT_TOKEN,
+      [wallet.address],
+    );
+    console.log('getDelegates res');
+    return success(res);
+  } catch (e) {
+    console.error('getDelegates; ', e);
+    return error(errorCodes.Undelegate, e.message, e);
+  }
+};
 export const delegate = async (toAddress, amount) => {
-  amount = new BigNumber(amount).shiftedBy(+18).toString();
+  try {
+    amount = new BigNumber(amount).shiftedBy(+18).toString();
+    const res = await sendWalletTransaction('delegate', {
+      abi: abi.WQToken,
+      address: process.env.WQT_TOKEN,
+      data: [toAddress, amount],
+    });
+    console.log('delegate res', res);
+    return success(res);
+  } catch (e) {
+    console.error('delegate:', e);
+    return error(errorCodes.Delegate, e.message, e);
+  }
 };
 export const undelegate = async () => {
   try {
-    // const res = await sendWalletTransaction('undelegate', {
-    //   abi: abiNames.WQToken,
-    // });
-    return success();
+    const res = await sendWalletTransaction('undelegate', {
+      abi: abi.WQToken,
+      address: process.env.WQT_TOKEN,
+    });
+    console.log('undelegate res');
+    return success(res);
   } catch (e) {
+    console.error('undelegate: ', e);
     return error(errorCodes.Undelegate, e.message, e);
   }
 };

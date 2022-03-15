@@ -30,9 +30,10 @@
             <base-field
               v-model="tokensAmount"
               class="footer__body"
-              placeholder="10000"
+              placeholder="10000 WQT"
               :name="$t('modals.tokensNumber')"
-              :rules="`required${min}`"
+              :rules="`required${min}|max_bn:${balance}|decimalPlaces:18`"
+              @input="replaceDot"
             />
             <base-btn
               class="footer__maximum"
@@ -57,8 +58,10 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { Chains } from '~/utils/enums';
+import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
+import { TokenSymbols } from '~/utils/enums';
+import abi from '~/abi/index';
 
 export default {
   name: 'Delegate',
@@ -74,50 +77,73 @@ export default {
       options: 'modals/getOptions',
       isWalletConnected: 'wallet/getIsWalletConnected',
       balanceData: 'wallet/getBalanceData',
+      userWalletAddress: 'user/getUserWalletAddress',
     }),
     min() {
       return this.options?.min ? `|min_value:${this.options.min}` : '';
     },
   },
-  beforeMount() {
+  async beforeMount() {
     if (!this.isWalletConnected) {
-      this.$store.dispatch('wallet/checkWalletConnected');
+      await this.$store.dispatch('wallet/checkWalletConnected');
       this.CloseModal();
     }
     this.investorAddress = this.options.investorAddress;
   },
   async mounted() {
-    // TODO: update balance
-    await this.$store.dispatch('wallet/getBalance');
-    // const res = await this.$store.dispatch('web3/getBalance');
-    // this.accountAddress = await this.$store.dispatch('web3/getAccount');
-    // if (res.ok) {
-    //   this.balance = res.result;
-    // }
+    await Promise.all([
+      this.$store.dispatch('wallet/getBalance'),
+      this.$store.dispatch('wallet/getBalanceWQT', this.userWalletAddress),
+    ]);
+    this.balance = this.balanceData.WQT.fullBalance;
   },
   methods: {
+    replaceDot() {
+      this.tokensAmount.replace(/,/g, '.');
+    },
     maxDelegate() {
       this.tokensAmount = this.balance;
     },
     async delegate() {
       const { callback } = this.options;
+      const { investorAddress, tokensAmount, userWalletAddress } = this;
+      this.CloseModal();
       this.SetLoader(true);
-      const res = await this.$store.dispatch('web3/delegate', { address: this.investorAddress, amount: this.tokensAmount });
-      this.SetLoader(false);
-      if (res.ok) {
-        await this.$store.dispatch('main/showToast', {
-          title: 'Delegate',
-          text: `Delegated ${this.tokensAmount} WQT`,
-        });
-        this.CloseModal();
-        if (callback) await callback();
-      } else if (res.msg.includes('Not enough balance to delegate')) {
-        await this.$store.dispatch('modals/show', {
-          key: modals.status,
-          title: this.$t('errors.delegate.title'),
-          subtitle: this.$t('errors.delegate.notEnoughBalance'),
-        });
-      }
+      const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
+        method: 'delegate',
+        _abi: abi.ERC20,
+        contractAddress: process.env.WQT_TOKEN,
+        data: [investorAddress, new BigNumber(tokensAmount).shiftedBy(18).toString()],
+      });
+      console.log(feeRes);
+      this.ShowModal({
+        key: modals.transactionReceipt,
+        title: this.$t('modals.delegate'),
+        fields: {
+          from: { name: this.$t('modals.fromAddress'), value: userWalletAddress },
+          to: { name: this.$t('modals.toAddress'), value: process.env.WQT_TOKEN },
+          amount: {
+            name: this.$t('modals.amount'),
+            value: this.tokensAmount,
+            symbol: TokenSymbols.WQT,
+          },
+          fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
+        },
+        submitMethod: async () => {
+          const res = await this.$store.dispatch('wallet/delegate', {
+            toAddress: investorAddress,
+            amount: tokensAmount,
+          });
+          this.SetLoader(false);
+          if (res.ok) {
+            this.ShowToast(`Delegated ${tokensAmount} WQT`, this.$t('modals.delegate'));
+            if (callback) await callback();
+          } else if (res.msg.includes('Not enough balance to delegate')) {
+            this.ShowToast('Not enough balance', this.$t('modals.delegate'));
+          }
+        },
+        callback,
+      });
     },
   },
 };

@@ -5,10 +5,11 @@ import {
   getTransferFeeData, getWalletAddress, GetWalletProvider,
   transfer,
   transferToken,
-  fetchWalletContractData,
+  fetchWalletContractData, delegate, getDelegates,
 } from '~/utils/wallet';
 import abi from '~/abi/index';
-import { TokenSymbols } from '~/utils/enums';
+import { errorCodes, TokenSymbols } from '~/utils/enums';
+import { error, success } from '~/utils/success-error';
 
 export default {
   async getTransactions({ commit }, params) {
@@ -124,5 +125,39 @@ export default {
     method, _abi, contractAddress, data, recipient, amount,
   }) {
     return await getContractFeeData(method, _abi, contractAddress, data, recipient, amount);
+  },
+
+  /** Investors */
+  /**
+   * Get votes
+   * @param commit
+   * @param addresses - Array [address, ...]
+   */
+  async getVotesByAddresses({ commit }, addresses) {
+    try {
+      const res = await fetchWalletContractData('getVotes', abi.WQToken, process.env.WQT_TOKEN, [addresses]);
+      return success(res);
+    } catch (e) {
+      console.error('getVotes');
+      return error(errorCodes.GetVotes, e.message, e);
+    }
+  },
+  async getDelegates({ commit, dispatch }) {
+    const res = await getDelegates();
+    if (res.ok) {
+      const address = res.result;
+      // TODO: вернуть данные юзера когда починят на бэке
+      // const userDataRes = await dispatch('user/getUserDataByWalletAddress', address, { root: true });
+      const userDataRes = { };
+      commit(
+        'investors/setDelegatedToUser',
+        { address: address.toLowerCase(), userData: userDataRes.result }, { root: true },
+      );
+    } else {
+      commit('investors/setDelegatedToUser', null, { root: true });
+    }
+  },
+  async delegate({ commit }, { toAddress, amount }) {
+    return await delegate(toAddress, amount);
   },
 };

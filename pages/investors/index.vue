@@ -11,6 +11,9 @@
         :placeholder="$t('investors.search')"
         mode="icon"
       />
+      <div v-if="delegatedToUser">
+        Delegated to: {{ delegatedToUser }}
+      </div>
       <base-table
         v-if="usersData.count !== 0"
         class="investors__table"
@@ -59,8 +62,9 @@ export default {
     ...mapGetters({
       userData: 'user/getUserData',
       usersData: 'user/getAllUsers',
-      isConnected: 'web3/getWalletIsConnected',
+      isWalletConnected: 'wallet/getIsWalletConnected',
       lastPage: 'investors/getLastPage',
+      delegatedToUser: 'investors/getDelegatedToUser',
     }),
     tableFields() {
       return [
@@ -79,7 +83,6 @@ export default {
         users.push({
           ...user,
           callback: this.getInvestors,
-          voting: user.id === this.userData.id ? this.votingPower : '',
           investorAddress: user.id === this.userData.id ? this.investorAddress : user.investorAddress,
         });
       });
@@ -108,23 +111,19 @@ export default {
     await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
   },
   async mounted() {
+    if (!this.isWalletConnected) return;
     await this.getInvestors();
   },
   beforeDestroy() {
     clearTimeout(this.timeout);
   },
   methods: {
-    // TODO Когда появятся кошельки убрать это, брать информацию из сущности юзера полученной с бэка
-    async getVotingPower() {
-      const { address } = await this.$store.dispatch('web3/getAccount');
-      this.investorAddress = address;
-      const response = await this.$store.dispatch('web3/getVotes', address);
-      if (response.ok) this.votingPower = +response.result;
-    },
     async getInvestors() {
       this.SetLoader(true);
-      await this.$store.dispatch('user/getAllUserData', { limit: this.limit, offset: this.offset, q: this.q });
-      // await this.getVotingPower();
+      await Promise.all([
+        this.$store.dispatch('user/getAllUserData', { limit: this.limit, offset: this.offset, q: this.q }),
+        this.$store.dispatch('wallet/getDelegates'),
+      ]);
       this.SetLoader(false);
     },
   },

@@ -3,6 +3,7 @@ export default {
   getInvestorsCount: (state) => state.investors.count,
   getInvestorData: (state) => state.investor,
   getLastPage: (state) => state.lastPage,
+  getDelegatedToUser: (state) => state.delegatedToUser,
 
   isAuth: (state) => !!(state.tokens.access && state.tokens.refresh),
   accessToken: (state) => state.tokens.access,

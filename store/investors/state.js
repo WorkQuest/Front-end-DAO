@@ -16,4 +16,8 @@ export default () => ({
   userDataPassword: {},
   imageLink: {},
   lastPage: 1,
+  delegatedToUser: {
+    address: null,
+    userData: null,
+  },
 });

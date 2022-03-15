@@ -11,7 +11,7 @@
         <div class="header__close">
           <span
             class="icon-close_big header__close"
-            @click="hide"
+            @click="CloseModal"
           />
         </div>
       </div>
@@ -33,7 +33,7 @@
         <base-btn
           class="bottom__cancel"
           mode="lightBlue"
-          @click="hide()"
+          @click="CloseModal"
         >
           {{ $t('modals.cancel') }}
         </base-btn>
@@ -69,12 +69,9 @@ export default {
     }),
   },
   async mounted() {
-    this.accountAddress = await this.$store.dispatch('web3/getAccount');
+    await this.$store.dispatch('wallet/getBalance');
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     async undelegate() {
       await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
       if (!this.isConnected) return;
@@ -82,8 +79,8 @@ export default {
       this.SetLoader(true);
       const res = await this.$store.dispatch('web3/undelegate');
       this.SetLoader(false);
+      this.CloseModal();
       if (res.ok) {
-        await this.hide();
         await this.$store.dispatch('main/showToast', {
           title: 'Undelegate',
           text: `Undelegate ${this.tokensAmount} WQT`,

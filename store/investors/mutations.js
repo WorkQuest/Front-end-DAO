@@ -41,4 +41,7 @@ export default {
   setLastPage(state, page) {
     state.lastPage = page;
   },
+  setDelegatedToUser(state, data) {
+    state.delegatedToUser = data;
+  },
 };

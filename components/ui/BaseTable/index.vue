@@ -75,7 +75,7 @@
       </template>
       <template #cell(undelegate)="el">
         <base-btn
-          v-if="el.item.investorAddress"
+          v-if="delegatedToUser && el.item.investorAddress === delegatedToUser.address"
           mode="lightRed"
           class="btn__delegate"
           :class="delegateClass(el)"
@@ -95,7 +95,15 @@
         </base-btn>
       </template>
       <template #cell(investorAddress)="el">
-        {{ CutTxn(el.item.investorAddress, 5, 6) }}
+        <span v-if="el.item.investorAddress">
+          {{ CutTxn(el.item.investorAddress, 5, 6) }}
+        </span>
+        <span
+          v-else
+          class="table__grey"
+        >
+          {{ $t('messages.walletNotLinked') }}
+        </span>
       </template>
       <template #cell(from_address)="el">
         <a
@@ -154,6 +162,7 @@ export default {
   computed: {
     ...mapGetters({
       userData: 'user/getUserData',
+      delegatedToUser: 'investors/getDelegatedToUser',
     }),
   },
   methods: {

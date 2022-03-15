@@ -20,7 +20,6 @@ export default {
     try {
       const { result } = await this.$axios.$get(`/v1/profile/${userId}`);
       result.secondMobileNumber = result.additionalInfo.secondMobileNumber;
-
       commit('setInvestor', result);
     } catch (e) {
       console.log(e);
@@ -41,11 +40,10 @@ export default {
     commit('setTokens', response.result);
     return response;
   },
-  async confirm({ commit }, payload) {
+  async confirm({ commit }, payload) { // TODO: проверить нужны ли эти методы вообще
     commit('setTokens', { access: this.$cookies.get('access'), refresh: this.$cookies.get('refresh') });
     this.$cookies.set('role', payload.role);
-    const response = await this.$axios.$post('/v1/auth/confirm-email', payload);
-    return response;
+    return await this.$axios.$post('/v1/auth/confirm-email', payload);
   },
   async getUserData({ commit }) {
     const response = await this.$axios.$get('/v1/profile/me');
