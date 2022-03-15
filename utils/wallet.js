@@ -273,6 +273,10 @@ export const transferToken = async (recipient, value) => {
  */
 export const getContractFeeData = async (_method, _abi, _contractAddress, data, recipient = null, amount = 0) => {
   try {
+    if (!web3) {
+      console.error('fetchWalletData: web3 is undefined!');
+      return error(errorCodes.ProviderIsNull, 'provider is null');
+    }
     const inst = new web3.eth.Contract(_abi, _contractAddress);
     const tx = {
       from: wallet.address,
@@ -282,6 +286,7 @@ export const getContractFeeData = async (_method, _abi, _contractAddress, data, 
       amount = new BigNumber(amount).shiftedBy(18).toString();
       tx.value = amount;
     }
+    console.log(_method, _abi, _contractAddress, data);
     const [gasPrice, gasEstimate] = await Promise.all([
       web3.eth.getGasPrice(),
       inst.methods[_method].apply(null, data).estimateGas(tx),
@@ -306,7 +311,6 @@ export const getDelegates = async () => {
       process.env.WQT_TOKEN,
       [wallet.address],
     );
-    console.log('getDelegates res');
     return success(res);
   } catch (e) {
     console.error('getDelegates; ', e);

@@ -111,11 +111,11 @@ export default {
       this.SetLoader(true);
       const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
         method: 'delegate',
-        _abi: abi.ERC20,
+        _abi: abi.WQToken,
         contractAddress: process.env.WQT_TOKEN,
         data: [investorAddress, new BigNumber(tokensAmount).shiftedBy(18).toString()],
       });
-      console.log(feeRes);
+      this.SetLoader(false);
       this.ShowModal({
         key: modals.transactionReceipt,
         title: this.$t('modals.delegate'),
@@ -130,6 +130,7 @@ export default {
           fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
         },
         submitMethod: async () => {
+          this.SetLoader(true);
           const res = await this.$store.dispatch('wallet/delegate', {
             toAddress: investorAddress,
             amount: tokensAmount,
