@@ -149,6 +149,7 @@
     "cancel": "Cancel",
     "submit": "Submit",
     "disable": "Disable",
+    "confirm": "Confirm",
     "showAllReviews": "Show all reviews",
     "later": "Later",
     "iAgree": "I agree",
@@ -318,6 +319,7 @@
     "startQuest": "Start quest"
   },
   "modals": {
+    "txInfo": "Transaction info",
     "textCopy": "Text has been copied",
     "success": "Success",
     "fromAddress": "From",
