@@ -59,8 +59,8 @@
                 <base-field
                   class="contacts__name"
                   :is-hide-error="true"
-                  mode="iconWhite"
                   :disabled="true"
+                  mode="left"
                   :value="investor.additionalInfo ? (input.key === 'location' ? investor.additionalInfo.address : investor[input.key]) : ''"
                   :placeholder="$t('investor.notFilled')"
                 >
@@ -80,7 +80,7 @@
               <textarea
                 id="textarea"
                 class="about__textarea"
-                :title="'test'"
+                title="test"
                 :disabled="true"
                 :placeholder="investor.additionalInfo ? (investor.additionalInfo.description || $t('investor.notFilled')) : ''"
               />
@@ -91,8 +91,8 @@
                 :key="input.key"
                 class="social__network"
                 :disabled="true"
+                mode="left"
                 :is-hide-error="true"
-                mode="iconWhite"
                 :value="investor.additionalInfo && investor.additionalInfo.socialNetwork ? investor.additionalInfo.socialNetwork[input.key] : ''"
                 :placeholder="$t('investor.notFilled')"
               >
@@ -335,13 +335,16 @@ export default {
   @include main;
   @include text-simple;
   color: #1D2127;
+
   &__profile {
     width: 100%;
     max-width: 1180px;
   }
+
   &__pagination {
     margin-top: 10px;
   }
+
   &__header {
     display: flex;
     justify-content: left;
@@ -353,7 +356,8 @@ export default {
 .title {
   display: flex;
   justify-content: space-between;
-  &__name{
+
+  &__name {
     font-weight: 600;
     font-size: 28px;
     line-height: 36px;
@@ -367,7 +371,8 @@ export default {
   &__copy {
     background: #F7F8FA;
   }
-  &__copy:hover{
+
+  &__copy:hover {
     background: #F7F8FA;
   }
 
@@ -383,10 +388,12 @@ export default {
 .profile {
   @include main;
   @include text-simple;
+
   &__body {
     max-width: 1180px;
     height: 100%;
   }
+
   &__grid-container {
     display: grid;
     gap: 20px;
@@ -395,14 +402,17 @@ export default {
     border-radius: 6px;
     margin-top: 15px;
   }
+
   &__main-data {
     display: grid;
     gap: 20px;
     grid-template-columns: 151px repeat(2, 1fr);
   }
+
   &__main-inp-cont {
     height: 46px;
   }
+
   &__avatar {
     height: 151px;
     border-radius: 6px;
@@ -410,7 +420,8 @@ export default {
     grid-column: 1;
     grid-row: 1/5;
   }
-  &__status{
+
+  &__status {
     grid-column: 2/4;
     display: grid;
     grid-template-columns: repeat(2, max-content);
@@ -430,9 +441,11 @@ export default {
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
   }
+
   &__table {
     margin: 15px 0;
   }
+
   &__history {
     display: none;
   }
@@ -440,7 +453,7 @@ export default {
 
 .contacts {
 
-  &__name{
+  &__name {
     color: #1D2127 !important;
   }
 }
@@ -514,6 +527,7 @@ export default {
   background: transparent;
   justify-content: flex-start;
   width: 100px;
+
   &:hover {
     background: transparent;
   }
@@ -528,7 +542,7 @@ export default {
 
   &__arrow {
     margin: 6px 10px 6px 0;
-    color:  #4C5767;
+    color: #4C5767;
     font-size: 25px;
     cursor: pointer;
   }
@@ -545,12 +559,15 @@ export default {
     &__main-data {
       grid-template-columns: 151px 1fr;
     }
+
     &__avatar {
       grid-row: 1/7;
     }
+
     &__status {
       grid-column: 2;
     }
+
     &__social {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -574,23 +591,28 @@ export default {
     }
   }
 }
+
 @include _767 {
   .investor {
     width: 100vw;
     display: block;
     margin: 0;
+
     &__header {
       margin: 15px 10px;
     }
   }
   .info {
     grid-template-rows: 3fr 1fr auto;
+
     &__base {
       grid-template-columns: 1fr;
     }
+
     &__additional {
       grid-template-columns: 1fr;
     }
+
     &__avatar {
       height: 100%;
       width: 340px;
@@ -603,12 +625,14 @@ export default {
     &__table {
       display: none;
     }
+
     &__history {
       display: block;
       background: $white;
       padding: 16px;
       margin: 15px 0;
     }
+
     &__subtitle {
       font-size: 20px;
     }
@@ -617,6 +641,7 @@ export default {
     margin: 0 15px;
   }
 }
+
 @include _575 {
   .title {
     flex-direction: column;

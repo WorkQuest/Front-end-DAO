@@ -319,6 +319,10 @@
     "startQuest": "Start quest"
   },
   "modals": {
+    "metamask": {
+      "install": "Please install Metamask!",
+      "subtitle": "Please open site from Metamask app"
+    },
     "txInfo": "Transaction info",
     "textCopy": "Text has been copied",
     "success": "Success",

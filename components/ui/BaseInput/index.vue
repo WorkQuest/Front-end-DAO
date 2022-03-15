@@ -43,7 +43,8 @@
         ref="input"
         class="ctm-field__input"
         :class="[{'ctm-field__input_error': errors[0]},
-                 {'ctm-field__input_padding-r' : $slots['right-absolute'] || (value && isSearch && !isBusySearch)}]"
+                 {'ctm-field__input_padding-r' : $slots['right-absolute'] || (value && isSearch && !isBusySearch)},
+                 {'ctm-field__input_left' : mode === 'left'}]"
         :placeholder="placeholder"
         :data-selector="`BASE-INPUT-FIELD-${dataSelector.toUpperCase()}`"
         :value="mode === 'convertDate' ? convertDate(value) : value"
@@ -286,6 +287,10 @@ export default {
     padding: 0 20px;
     transition: .3s;
     width: 100%;
+
+    &_left {
+      padding: 0 46px;
+    }
 
     &_error {
       border: 1px solid red !important
