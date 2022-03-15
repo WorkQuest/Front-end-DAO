@@ -68,7 +68,8 @@ export default {
     },
     comment: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
     },
   },
   data() {
@@ -156,35 +157,40 @@ export default {
 .comment-footer {
   &__footer {
     margin-top: 25px;
-    height: 40px;
     display: flex;
     flex-direction: row;
     align-items: center;
   }
 }
+
 .uploader {
   &__container {
     margin-left: 15px;
     display: flex;
   }
+
   &__btn {
     &_hidden {
       display: none;
     }
   }
 }
+
 .hide {
   display: none;
 }
+
 .base-btn {
   &_disabled {
     background: transparent !important;
   }
 }
+
 .comment {
-  animation: show  1s 1;
+  animation: show 1s 1;
   padding: 0 30px 0 0;
   display: flex;
+
   &__footer {
     height: 40px;
     display: grid;
@@ -193,11 +199,13 @@ export default {
     align-items: center;
   }
 }
+
 .footer {
-  animation: show  1s 1;
+  animation: show 1s 1;
   display: flex;
+
   &__input {
-    animation: show  1s 1;
+    animation: show 1s 1;
     @include text-usual;
     width: 100%;
     height: 40px;
@@ -206,10 +214,11 @@ export default {
     padding: 10px 15px 10px 15px;
     margin: 0 0 20px 0;
   }
+
   &__chain {
     display: flex;
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
     background: #F7F8FA;
     border-radius: 6px;
     align-items: center;
@@ -218,21 +227,26 @@ export default {
     font-size: 25px;
     cursor: pointer;
     transition: .5s;
+
     &:hover {
       color: #0083C7;
     }
   }
+
   &__btn {
     padding-right: 0;
-    width: 40px !important;
-    height: 40px !important;
+    width: 46px !important;
+    height: 46px !important;
     background: #F7F8FA;
+    margin: 5px 0 0 0;
     cursor: pointer;
-    animation: show  1s 1;
+    animation: show 1s 1;
+
     &:hover {
       background: #F7F8FA;
     }
   }
+
   &__arrow {
     display: flex;
     width: 16px;
@@ -246,6 +260,7 @@ export default {
     color: $black500;
     cursor: pointer;
     transition: .5s;
+
     &_blue {
       color: #0083C7;
     }
