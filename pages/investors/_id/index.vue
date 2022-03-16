@@ -297,7 +297,12 @@ export default {
         if (input.key === 'location') return this.investor.locationPlaceName;
         if (input.key === 'phone' && this.investor.phone) return this.investor.phone.fullPhone;
         if (input.key === 'phone' && this.investor.tempPhone) return this.investor.tempPhone.fullPhone;
-        if (input.key === 'secondPhone' && this.investor.secondMobileNumber) return this.investor.secondMobileNumber.fullPhone;
+        if (input.key === 'secondPhone') {
+          if (this.userData.id === this.userId && this.investor.additionalInfo.secondMobileNumber) {
+            return this.investor.additionalInfo.secondMobileNumber.fullPhone;
+          }
+          if (this.investor.secondMobileNumber) return this.investor.secondMobileNumber.fullPhone;
+        }
         return this.investor[input.key];
       }
       return '';
