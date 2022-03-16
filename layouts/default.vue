@@ -589,6 +589,10 @@ export default {
   &-container {
     &__avatar {
       padding: 15px;
+      max-width: 80px;
+      max-height: 80px;
+      width: 100%;
+      height: 100%;
     }
 
     &__user {
@@ -614,8 +618,8 @@ export default {
 
   &__avatar {
     max-height: 40px;
-    max-width: 40px;
     height: 100%;
+    max-width: 40px;
     width: 100%;
     border-radius: 137px;
   }
@@ -624,6 +628,9 @@ export default {
     font-weight: 500;
     font-size: 16px;
     color: $black800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__role {
@@ -889,14 +896,20 @@ export default {
   }
 
   &__avatar {
+    display: flex;
+    flex-wrap: nowrap;
     max-width: 40px;
     max-height: 40px;
+    width: 100%;
+    height: 100%;
     border-radius: 100%;
   }
 
   &__img {
-    width: 40px;
-    height: 40px;
+    max-width: 40px;
+    max-height: 40px;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     object-fit: cover;
   }
