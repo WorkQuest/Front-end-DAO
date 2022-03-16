@@ -6,11 +6,11 @@
       </div>
       <div class="kyc__content">
         <div
-          v-if="statusKYC === 0"
+          v-if="statusKYC === $options.SumSubStatuses.NOT_VERIFIED"
           id="sumsub-websdk-container"
         />
         <div
-          v-if="statusKYC === 1"
+          v-if="statusKYC === $options.SumSubStatuses.VERIFIED"
           class="kyc__verified"
         >
           <img
@@ -30,9 +30,11 @@
 <script>
 import snsWebSdk from '@sumsub/websdk';
 import { mapGetters } from 'vuex';
+import { SumSubStatuses } from '~/utils/enums';
 
 export default {
   name: 'KYC',
+  SumSubStatuses,
   computed: {
     ...mapGetters({
       accessToken: 'sumsub/getSumSubBackendToken',
@@ -48,31 +50,28 @@ export default {
   },
   methods: {
     async createAccessToken() {
-      if (this.statusKYC === 0) await this.$store.dispatch('sumsub/createAccessTokenBackend', { userId: this.accessToken.userId });
+      if (this.statusKYC === SumSubStatuses.NOT_VERIFIED) await this.$store.dispatch('sumsub/createAccessTokenBackend', { userId: this.accessToken.userId });
     },
     initSumSub() {
-      if (this.statusKYC === 0) {
-        const accessToken = this.accessToken.token;
-        const applicantEmail = this.userData.email;
-        const applicantPhone = this.userData.phone;
+      if (this.statusKYC === SumSubStatuses.VERIFIED) return;
+      const accessToken = this.accessToken.token;
+      const { email, phone } = this.userData;
+      try {
+        const snsWebSdkInstance = snsWebSdk.Builder('https://test-api.sumsub.com', 'basic-kyc')
+          .withAccessToken(accessToken, () => {
+          })
+          .withConf({
+            lang: 'en',
+            email,
+            phone,
+            onError: (error) => {
+              console.log('WebSDK onError', error);
+            },
+          }).build();
 
-        try {
-          const snsWebSdkInstance = snsWebSdk.Builder('https://test-api.sumsub.com', 'basic-kyc')
-            .withAccessToken(accessToken, () => {
-            })
-            .withConf({
-              lang: 'en',
-              email: applicantEmail,
-              phone: applicantPhone,
-              onError: (error) => {
-                console.log('WebSDK onError', error);
-              },
-            }).build();
-
-          snsWebSdkInstance.launch('#sumsub-websdk-container');
-        } catch (e) {
-          console.error('Error with snsWebSdkInstance. ', e);
-        }
+        snsWebSdkInstance.launch('#sumsub-websdk-container');
+      } catch (e) {
+        console.error('Error with snsWebSdkInstance. ', e);
       }
     },
   },
