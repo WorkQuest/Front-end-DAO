@@ -81,7 +81,7 @@
               <textarea
                 id="textarea"
                 class="about__textarea"
-                :title="'test'"
+                title="test"
                 :disabled="true"
                 :placeholder="investor.additionalInfo ? (investor.additionalInfo.description || $t('investor.notFilled')) : ''"
               />
@@ -161,7 +161,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
-import { Chains } from '~/utils/enums';
+import { Chains, UserRole } from '~/utils/enums';
 
 export default {
   data() {
@@ -243,7 +243,7 @@ export default {
         { key: 'location', icon: 'icon-location', isVisible: true },
         { key: 'email', icon: 'icon-mail', isVisible: true },
         { key: 'phone', icon: 'icon-phone', isVisible: true },
-        { key: 'secondPhone', icon: 'icon-phone', isVisible: this.investor.role === 'employer' },
+        { key: 'secondPhone', icon: 'icon-phone', isVisible: this.investor.role === UserRole.EMPLOYER },
       ];
     },
     socialInputsArr() {

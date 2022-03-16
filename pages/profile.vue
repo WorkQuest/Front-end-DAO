@@ -422,11 +422,8 @@ export default {
       }];
     },
     handleClickEditBtn() {
-      if (this.isProfileEdit) {
-        this.editUserData();
-      } else {
-        this.showModalWarning();
-      }
+      if (this.isProfileEdit) this.editUserData();
+      else this.showModalWarning();
     },
     handleChangeSocial(val, key) {
       if (!val) this.localUserData.additionalInfo.socialNetwork[key] = null;
@@ -664,10 +661,12 @@ export default {
 .wq-profile {
   @include main;
   @include text-simple;
+
   &__body {
     max-width: 1180px;
     height: 100%;
   }
+
   &__header {
     color: $black800;
     font-weight: 600;
@@ -679,6 +678,7 @@ export default {
       margin-top: 0;
     }
   }
+
   &__info {
     display: grid;
     grid-template-rows: 151px 112px 43px;
@@ -775,7 +775,7 @@ export default {
     grid-row: 1/5;
   }
 
-  &__status{
+  &__status {
     grid-column: 2/4;
     margin-bottom: 15px;
   }
@@ -806,7 +806,8 @@ export default {
     grid-gap: 20px;
     height: 100%;
   }
-  &__space{
+
+  &__space {
     height: 44px;
   }
 }
@@ -829,6 +830,7 @@ export default {
 
   font-size: 14px;
   line-height: 18px;
+
   &__icon {
     font-size: 23px;
     color: #AAB0B9;
@@ -849,14 +851,17 @@ export default {
 
 .avatar {
   border: 1px solid $black0;
+
   &:hover .edit {
     opacity: 1;
   }
+
   &__img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
+
   &__edit {
     position: relative;
     top: -60%;
@@ -876,6 +881,7 @@ export default {
 
     &:hover {
       background: #0083C7;
+
       & .edit__icon {
         color: #FFFFFF;
       }
@@ -885,6 +891,7 @@ export default {
 
 .edit {
   cursor: pointer;
+
   &__validator {
     width: 100%;
     height: 100%;
@@ -892,11 +899,13 @@ export default {
     overflow: hidden;
     position: absolute;
     z-index: -1;
+
     & input {
       width: 100%;
       height: 100%;
     }
   }
+
   &__icon {
     position: absolute;
     top: 50%;
@@ -911,6 +920,7 @@ export default {
 .about {
   display: flex;
   flex-direction: column;
+
   &__title {
     color: #1D2127;
     font-size: 16px;
@@ -918,6 +928,7 @@ export default {
 
     margin-bottom: 5px;
   }
+
   &__textarea {
     height: 86px;
     padding: 10px 10px 0 10px;
@@ -936,6 +947,7 @@ export default {
       background-color: #FFFFFF;
       border: 1px solid #F3F7FA;
     }
+
     &::placeholder {
       color: #D8DFE3;
     }
@@ -952,6 +964,7 @@ export default {
 .action {
   display: flex;
   justify-content: flex-end;
+
   &__btn {
     max-width: 250px;
   }
@@ -959,6 +972,7 @@ export default {
 
 .security {
   margin-top: 20px;
+
   &__title {
     font-weight: 500;
     font-size: 22px;
@@ -970,6 +984,7 @@ export default {
   &__btn {
     width: 250px;
   }
+
   &__password {
     display: flex;
     flex-direction: row;
@@ -979,6 +994,7 @@ export default {
     border-radius: 6px;
     padding: 20px;
   }
+
   &__auth {
     @extend .security__password;
   }
@@ -996,15 +1012,18 @@ export default {
   @include box;
   width: 100%;
   z-index: 140;
+
   &_hide {
     display: none;
   }
+
   &__items {
     background: #FFFFFF;
     display: grid;
     grid-template-columns: 1fr;
     width: 100%;
   }
+
   &__item {
     @include text-simple;
     padding: 15px 20px;
@@ -1014,6 +1033,7 @@ export default {
     color: $black800;
     cursor: pointer;
     transition: .3s;
+
     &:hover {
       background: #F3F7FA;
     }
@@ -1045,6 +1065,7 @@ export default {
     &__body {
       grid-template-columns: 1fr;
     }
+
     &__image {
       grid-row: 1;
     }
@@ -1053,12 +1074,15 @@ export default {
     &__main-data {
       grid-template-columns: 151px 1fr;
     }
+
     &__avatar {
       grid-row: 1/7;
     }
+
     &__status {
       grid-column: 2;
     }
+
     &__social {
       grid-template-columns: repeat(2, 1fr);
     }
