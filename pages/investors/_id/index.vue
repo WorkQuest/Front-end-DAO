@@ -295,8 +295,7 @@ export default {
     fillInputs(input) {
       if (this.investor.additionalInfo) {
         if (input.key === 'location') return this.investor.locationPlaceName;
-        if (input.key === 'phone' && this.investor.phone) return this.investor.phone.fullPhone;
-        if (input.key === 'phone' && this.investor.tempPhone) return this.investor.tempPhone.fullPhone;
+        if (input.key === 'phone') return this.investor.phone?.fullPhone || this.investor.tempPhone?.fullPhone;
         if (input.key === 'secondPhone' && this.investor.additionalInfo.secondMobileNumber) {
           return this.investor.additionalInfo.secondMobileNumber.fullPhone;
         }
