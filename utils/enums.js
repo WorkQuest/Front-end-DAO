@@ -27,6 +27,8 @@ export const errorCodes = Object.freeze({
   axiosFetchError: 5000,
 });
 
+export const SumSubStatuses = { NOT_VERIFIED: 0, VERIFIED: 1 };
+
 export const Path = Object.freeze({
   SIGN_IN: '/sign-in',
   SIGN_UP: '/sign-up',
