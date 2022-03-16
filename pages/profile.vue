@@ -494,52 +494,26 @@ export default {
         output.src = URL.createObjectURL(file);
         output.onload = () => {
           URL.revokeObjectURL(output.src);
-          this.showModal({
-            key: 'status',
+          this.ShowModal({
+            key: modals.status,
             img: require('~/assets/img/ui/questAgreed.svg'),
             title: this.$t('modals.imageLoadedSuccessful'),
             subtitle: this.$t('modals.pleasePressSaveButton'),
           });
         };
-
         reader.onerror = (evt) => {
           console.error(evt);
         };
       }
     },
-    showModal({
-      key, img, title, subtitle,
-    }) {
-      this.ShowModal({
-        key: modals[key],
-        img,
-        title,
-        subtitle,
-      });
-    },
-    // showModalImageOk() {
-    //   this.ShowModal({
-    //     key: modals.status,
-    //     img: require('~/assets/img/ui/questAgreed.svg'),
-    //     title: this.$t('modals.imageLoadedSuccessful'),
-    //     subtitle: this.$t('modals.pleasePressSaveButton'),
-    //   });
-    // },
     showModalSave() {
       this.isProfileEdit = false;
-      this.showModal({
-        key: 'status',
+      this.ShowModal({
+        key: modals.status,
         img: require('~/assets/img/ui/questAgreed.svg'),
         title: this.$t('modals.saved'),
         subtitle: this.$t('modals.userDataHasBeenSaved'),
       });
-
-      // this.ShowModal({
-      //   key: modals.status,
-      //   img: require('~/assets/img/ui/questAgreed.svg'),
-      //   title: this.$t('modals.saved'),
-      //   subtitle: this.$t('modals.userDataHasBeenSaved'),
-      // });
     },
     showModalWarning() {
       this.ShowModal({
