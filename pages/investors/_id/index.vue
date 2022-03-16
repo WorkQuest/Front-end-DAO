@@ -57,11 +57,12 @@
                 class="profile__main-inp-cont"
               >
                 <base-field
+                  v-if="input.isVisible"
                   class="contacts__name"
                   :is-hide-error="true"
                   :disabled="true"
                   mode="left"
-                  :value="investor.additionalInfo ? (input.key === 'location' ? investor.additionalInfo.address : investor[input.key]) : ''"
+                  :value="fillInputs(input)"
                   :placeholder="$t('investor.notFilled')"
                 >
                   <template v-slot:left>
@@ -160,7 +161,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
-import { Chains } from '~/utils/enums';
+import { Chains, UserRole } from '~/utils/enums';
 
 export default {
   data() {
@@ -237,11 +238,12 @@ export default {
     }),
     mainDataArr() {
       return [
-        { key: 'firstName', icon: 'icon-user' },
-        { key: 'lastName', icon: 'icon-user' },
-        { key: 'location', icon: 'icon-location' },
-        { key: 'email', icon: 'icon-mail' },
-        { key: 'secondMobileNumber', icon: 'icon-phone' },
+        { key: 'firstName', icon: 'icon-user', isVisible: true },
+        { key: 'lastName', icon: 'icon-user', isVisible: true },
+        { key: 'location', icon: 'icon-location', isVisible: true },
+        { key: 'email', icon: 'icon-mail', isVisible: true },
+        { key: 'phone', icon: 'icon-phone', isVisible: true },
+        { key: 'secondPhone', icon: 'icon-phone', isVisible: this.investor.role === UserRole.EMPLOYER },
       ];
     },
     socialInputsArr() {
@@ -290,12 +292,18 @@ export default {
       const response = await this.$store.dispatch('web3/getVotes', address);
       if (response.ok) this.votingPower = +response.result;
     },
-    async getInvestorData() {
-      if (this.isMyProfile) {
-        this.investor = this.userData;
-      } else {
-        this.investor = await this.$store.dispatch('user/getSpecialUserData', this.userId);
+    fillInputs(input) {
+      if (this.investor.additionalInfo) {
+        if (input.key === 'location') return this.investor.locationPlaceName;
+        if (input.key === 'phone') return this.investor.phone?.fullPhone || this.investor.tempPhone?.fullPhone;
+        if (input.key === 'secondPhone') return this.investor.additionalInfo.secondMobileNumber?.fullPhone;
+        return this.investor[input.key];
       }
+      return '';
+    },
+    async getInvestorData() {
+      if (this.isMyProfile) this.investor = this.userData;
+      else this.investor = await this.$store.dispatch('user/getSpecialUserData', this.userId);
     },
     async openModalDelegate() {
       this.ShowModal({
