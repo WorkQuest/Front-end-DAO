@@ -182,27 +182,18 @@ export default {
     ...mapGetters({
       userData: 'user/getUserData',
       delegatedToUser: 'investors/getDelegatedToUser',
-      lastInvestorsPage: 'investors/getLastPage',
     }),
   },
   methods: {
     myProfile(id) {
       return this.userData.id === id;
     },
-    async updateInvestorsData() {
-      this.SetLoader(true);
-      await Promise.all([
-        this.$store.dispatch('user/getAllUserData', { limit: 20, offset: this.lastInvestorsPage * 20, q: null }),
-        this.$store.dispatch('wallet/getDelegates'),
-      ]);
-      this.SetLoader(false);
-    },
     openModalDelegate(item) {
       this.ShowModal({
         key: modals.delegate,
         stake: item.stake,
         investorAddress: item.investorAddress,
-        callback: async () => this.updateInvestorsData(),
+        callback: item.callback,
       });
     },
     openModalUndelegate(item) {
@@ -212,9 +203,8 @@ export default {
         name: item.fullName,
         tokensAmount: item.voting,
         investorAddress: item.investorAddress,
-        callback: async () => this.updateInvestorsData(),
+        callback: item.callback,
       });
-      // TODO [!!!]: Cannot read properties of undefined (reading 'forEach') after callback
     },
   },
 };
