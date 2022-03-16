@@ -51,7 +51,7 @@ export default {
     async initSumSub() {
       if (this.statusKYC === SumSubStatuses.VERIFIED) return;
       const accessToken = this.accessToken.token;
-      const { email, phone } = this.userData;
+      const { email } = this.userData;
       try {
         await this.$store.dispatch('sumsub/createAccessTokenBackend', { userId: this.accessToken.userId });
         const snsWebSdkInstance = snsWebSdk.Builder('https://test-api.sumsub.com', 'basic-kyc')
@@ -60,7 +60,6 @@ export default {
           .withConf({
             lang: 'en',
             email,
-            phone,
             onError: (error) => {
               console.log('WebSDK onError', error);
             },

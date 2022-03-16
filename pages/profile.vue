@@ -2,7 +2,7 @@
   <div class="wq-profile">
     <div class="wq-profile__body">
       <div
-        v-if="userData.statusKYC === 0"
+        v-if="userData.statusKYC === $options.SumSubStatuses.NOT_VERIFIED"
         class="wq-profile__banner banner"
       >
         <transition name="fade-fast">
@@ -67,9 +67,11 @@
             </div>
             <div
               class="profile-cont__status status"
-              :class="{ 'status_verified': userData.statusKYC === 1 }"
+              :class="{ 'status_verified': userData.statusKYC === $options.SumSubStatuses.VERIFIED }"
             >
-              {{ $t(`settings.${userData.statusKYC === 1 ? 'verified' : 'notVerified'}`) }}
+              {{
+                $t(`settings.${userData.statusKYC === $options.SumSubStatuses.VERIFIED ? 'verified' : 'notVerified'}`)
+              }}
               <span class="status__icon icon icon-check_all_big" />
             </div>
             <base-field
@@ -265,11 +267,12 @@
 import { mapGetters } from 'vuex';
 import { GeoCode } from 'geo-coder';
 import modals from '~/store/modals/modals';
-import { UserRole } from '~/utils/enums';
+import { UserRole, SumSubStatuses } from '~/utils/enums';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 
 export default {
   name: 'Settings',
+  SumSubStatuses,
   data() {
     return {
       updatedPhone: {
@@ -491,7 +494,12 @@ export default {
         output.src = URL.createObjectURL(file);
         output.onload = () => {
           URL.revokeObjectURL(output.src);
-          this.showModalImageOk();
+          this.showModal({
+            key: 'status',
+            img: require('~/assets/img/ui/questAgreed.svg'),
+            title: this.$t('modals.imageLoadedSuccessful'),
+            subtitle: this.$t('modals.pleasePressSaveButton'),
+          });
         };
 
         reader.onerror = (evt) => {
@@ -499,23 +507,39 @@ export default {
         };
       }
     },
-    showModalImageOk() {
+    showModal({
+      key, img, title, subtitle,
+    }) {
       this.ShowModal({
-        key: modals.status,
-        img: require('~/assets/img/ui/questAgreed.svg'),
-        title: this.$t('modals.imageLoadedSuccessful'),
-        subtitle: this.$t('modals.pleasePressSaveButton'),
+        key: modals[key],
+        img,
+        title,
+        subtitle,
       });
     },
+    // showModalImageOk() {
+    //   this.ShowModal({
+    //     key: modals.status,
+    //     img: require('~/assets/img/ui/questAgreed.svg'),
+    //     title: this.$t('modals.imageLoadedSuccessful'),
+    //     subtitle: this.$t('modals.pleasePressSaveButton'),
+    //   });
+    // },
     showModalSave() {
       this.isProfileEdit = false;
-
-      this.ShowModal({
-        key: modals.status,
+      this.showModal({
+        key: 'status',
         img: require('~/assets/img/ui/questAgreed.svg'),
         title: this.$t('modals.saved'),
         subtitle: this.$t('modals.userDataHasBeenSaved'),
       });
+
+      // this.ShowModal({
+      //   key: modals.status,
+      //   img: require('~/assets/img/ui/questAgreed.svg'),
+      //   title: this.$t('modals.saved'),
+      //   subtitle: this.$t('modals.userDataHasBeenSaved'),
+      // });
     },
     showModalWarning() {
       this.ShowModal({
