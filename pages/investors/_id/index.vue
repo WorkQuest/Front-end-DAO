@@ -298,7 +298,7 @@ export default {
         if (input.key === 'phone' && this.investor.phone) return this.investor.phone.fullPhone;
         if (input.key === 'phone' && this.investor.tempPhone) return this.investor.tempPhone.fullPhone;
         if (input.key === 'secondPhone') {
-          if (this.userData.id === this.userId && this.investor.additionalInfo.secondMobileNumber) {
+          if (this.investor.id === this.userId && this.investor.additionalInfo.secondMobileNumber) {
             return this.investor.additionalInfo.secondMobileNumber.fullPhone;
           }
           if (this.investor.secondMobileNumber) return this.investor.secondMobileNumber.fullPhone;
