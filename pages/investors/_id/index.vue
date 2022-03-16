@@ -479,17 +479,20 @@ export default {
   }
 
   &__textarea {
+    @include text-simple;
     height: 86px;
     padding: 10px 10px 0 10px;
     border-radius: 6px;
     resize: none;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 18.2px;
-    background-color: #FFFFFF;
+    background-color: #F3F7FA;
     border: 1px solid #F7F8FA;
 
     &::placeholder {
-      color: #1D2127;
+      padding-left: 30px;
+      padding-top: 20px;
+      color: #a9b1b9;
     }
   }
 }
@@ -593,6 +596,10 @@ export default {
 }
 
 @include _767 {
+  .title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
   .investor {
     width: 100vw;
     display: block;
@@ -642,10 +649,4 @@ export default {
   }
 }
 
-@include _575 {
-  .title {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
 </style>
