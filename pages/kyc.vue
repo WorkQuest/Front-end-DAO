@@ -93,7 +93,7 @@ export default {
     font-weight: 600;
     font-size: 28px;
     line-height: 36px;
-    color: #000000;
+    color: $black800;
     margin: 30px 0 20px;
   }
 
@@ -116,7 +116,7 @@ export default {
   &__content {
     display: flex;
     height: calc(100% - 86px);
-    background: #FFFFFF;
+    background: $white;
     border-radius: 6px;
     justify-content: center;
     align-items: center;
