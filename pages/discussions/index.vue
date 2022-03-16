@@ -166,10 +166,19 @@ export default {
 
 @include _1199 {
   .discussions {
-    padding: 20px 15px;
+    &__title {
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+
+    &__header {
+      margin-left: 20px;
+      margin-right: 20px;
+    }
 
     &__cards {
       grid-template-columns: 1fr;
+      margin: 20px;
     }
   }
 }
@@ -189,6 +198,12 @@ export default {
     &__cards {
       grid-template-columns: 1fr;
     }
+  }
+}
+
+@include _480 {
+  .discussions__btn {
+    font-size: 12px;
   }
 }
 </style>

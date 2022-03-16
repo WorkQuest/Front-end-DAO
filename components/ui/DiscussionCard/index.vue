@@ -22,7 +22,7 @@
       </button>
     </div>
     <div class="discussion__title">
-      {{ cropTxt(item.title, 30) }}
+      {{ item.title }}
     </div>
     <div class="discussion__date">
       {{ $moment(item.createdAt).format('Do MMMM YYYY, hh:mm a') }}
@@ -33,7 +33,7 @@
         {{ $t('discussions.descriptionTitle') }}
       </div>
       <div class="description__item">
-        {{ cropTxt(item.description) }}
+        {{ item.description }}
       </div>
     </div>
     <div class="bottom discussion__bottom">
@@ -79,7 +79,8 @@ export default {
   props: {
     item: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
     },
   },
   data() {
@@ -125,10 +126,6 @@ export default {
       this.amountLikes = !this.isLiked ? this.amountLikes + 1 : this.amountLikes - 1;
       this.isLiked = !this.isLiked;
     },
-    cropTxt(str, maxLength = 80) {
-      if (str.length > maxLength) str = `${str.slice(0, maxLength)}...`;
-      return str;
-    },
   },
 };
 </script>
@@ -137,7 +134,7 @@ export default {
   animation: show 1s 1;
   width: 100%;
   height: 100%;
-  background: #FFFFFF;
+  background: $white;
   border-radius: 8px;
   padding: 20px;
 
@@ -170,9 +167,12 @@ export default {
   &__name {
     font-size: 16px;
     line-height: 130%;
-    color: #1D2127;
+    color: $black800;
     padding: 10px;
     cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   &__avatar {
@@ -289,15 +289,8 @@ export default {
   &__arrow {
     margin-top: 4px;
     font-size: 25px;
-    color: #0083C7;
+    color: $blue;
   }
 }
 
-@include _480 {
-  .user__name {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-}
 </style>
