@@ -9,7 +9,10 @@
           v-if="statusKYC === 0"
           id="sumsub-websdk-container"
         />
-        <div class="kyc__verified">
+        <div
+          v-if="statusKYC === 1"
+          class="kyc__verified"
+        >
           <img
             class="kyc__image"
             src="~/assets/img/ui/questAgreed.svg"
