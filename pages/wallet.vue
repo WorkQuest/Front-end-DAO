@@ -47,19 +47,17 @@
             <div class="balance__bottom">
               <base-btn
                 selector="SHOW-DEPOSIT-MODAL"
-                :disabled="true"
                 mode="outline"
                 class="balance__btn"
-                @click="showDepositModal()"
+                @click="showModal({key: 'deposit'})"
               >
                 {{ $t('wallet.deposit') }}
               </base-btn>
               <base-btn
-                :disabled="true"
                 selector="SHOW-WITHDRAW-MODAL"
                 mode="outline"
                 class="balance__btn"
-                @click="showWithdrawModal()"
+                @click="showModal({key: 'withdraw', branchText: 'withdraw' })"
               >
                 {{ $t('wallet.withdraw') }}
               </base-btn>
@@ -83,10 +81,9 @@
             />
             <base-btn
               selector="SHOW-ADD-CARD-MODAL"
-              :disabled="true"
               class="card__btn"
               mode="outline"
-              @click="showAddCardModal()"
+              @click="showModal({key: 'addCard', branchText: 'adding' })"
             >
               {{ $t('wallet.addCard') }}
             </base-btn>
@@ -245,27 +242,16 @@ export default {
     closeCard() {
       this.cardClosed = true;
     },
+    showModal({ key, branchText }) {
+      this.ShowModal({
+        key: modals[key],
+        branch: branchText,
+      });
+    },
     showTransferModal() {
       this.ShowModal({
         key: modals.giveTransfer,
         callback: async () => await this.loadData(),
-      });
-    },
-    showDepositModal() {
-      this.ShowModal({
-        key: modals.giveDeposit,
-      });
-    },
-    showWithdrawModal() {
-      this.ShowModal({
-        key: modals.takeWithdraw,
-        branch: 'withdraw',
-      });
-    },
-    showAddCardModal() {
-      this.ShowModal({
-        key: modals.addingCard,
-        branch: 'adding',
       });
     },
   },
@@ -286,6 +272,7 @@ export default {
     font-size: 16px;
     color: $black800;
   }
+
   &__date {
     font-weight: 400;
     font-size: 14px;
@@ -307,22 +294,27 @@ export default {
     display: flex;
     justify-content: center;
   }
+
   &__card {
     box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
   }
+
   &__balance {
     box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
   }
+
   &__body {
     max-width: 1180px;
     width: calc(100vw - 40px);
   }
+
   &__nav {
     margin-top: 20px;
     display: flex;
     justify-content: space-between;
     font-size: 16px;
   }
+
   &__address {
     @include text-simple;
     display: flex;
@@ -334,6 +326,7 @@ export default {
   &__icon {
     margin-left: 22px;
     font-size: 24px;
+
     &::before {
       color: $blue;
     }
@@ -351,6 +344,7 @@ export default {
     display: grid;
     grid-template-columns: 1fr 479px;
     grid-gap: 20px;
+
     &_full {
       grid-template-columns: 1fr;
     }
@@ -380,11 +374,13 @@ export default {
     font-size: 14px;
     color: $black300;
   }
+
   &__number {
     font-weight: 700;
     font-size: 25px;
     color: $blue;
   }
+
   &__title {
     font-weight: 400;
     font-size: 16px;
@@ -442,6 +438,7 @@ export default {
     @include text-simple;
     color: $blue;
     height: 24px;
+
     &_mobile {
       display: none;
       height: 33px;
@@ -495,6 +492,7 @@ export default {
     display: flex;
     justify-content: flex-end;
     z-index: 2;
+
     &:before {
       cursor: pointer;
       font-size: 20px;
@@ -505,10 +503,12 @@ export default {
 
 .table {
   background: #FFFFFF;
+
   &__txs {
     margin: 0 !important;
     border-radius: 6px !important;
   }
+
   &__empty {
     background: #FFFFFF !important;
     margin: 10px 0 !important;
@@ -528,6 +528,7 @@ export default {
     height: 240px;
   }
 }
+
 @include _991 {
   .wallet {
     &__table {
@@ -539,6 +540,7 @@ export default {
     width: 1180px;
   }
 }
+
 @include _767 {
   .card {
     grid-template-columns: repeat(2, 1fr);
@@ -547,6 +549,7 @@ export default {
     gap: 10px;
   }
 }
+
 @include _480 {
   .balance {
     &__currency {
@@ -554,6 +557,7 @@ export default {
       flex-direction: column;
       align-items: unset;
     }
+
     &__token {
       margin-top: 5px;
     }
@@ -566,6 +570,7 @@ export default {
     }
   }
 }
+
 @include _350 {
   .wallet {
     &__nav {
