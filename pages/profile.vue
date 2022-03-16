@@ -2,272 +2,260 @@
   <div class="wq-profile">
     <div class="wq-profile__body">
       <div
-        v-if="!localUserData.isVerified"
+        v-if="userData.statusKYC === $options.SumSubStatuses.NOT_VERIFIED"
         class="wq-profile__banner banner"
       >
-        <div
-          v-if="false"
-          class="wq-profile__banner banner"
-        >
-          <transition name="fade-fast">
-            <div class="banner__body">
-              <div class="banner__container">
-                <div class="banner__title">
-                  {{ $t('settings.addInfo') }}
-                </div>
-                <div class="banner__subtitle">
-                  {{ $t('settings.alsoRating') }}
-                </div>
-                <div class="banner__verification">
-                  <base-btn
-                    mode="ver"
-                    @click="getVerification"
-                  >
-                    {{ $t('settings.getVerification') }}
-                  </base-btn>
-                </div>
+        <transition name="fade-fast">
+          <div class="banner__body">
+            <div class="banner__container">
+              <div class="banner__title">
+                {{ $t('settings.addInfo') }}
               </div>
-              <div class="banner__image">
-                <img src="~/assets/img/ui/goldStatus.svg">
+              <div class="banner__subtitle">
+                {{ $t('settings.alsoRating') }}
+              </div>
+              <div class="banner__verification">
+                <base-btn
+                  mode="ver"
+                  @click="getVerification"
+                >
+                  {{ $t('settings.getVerification') }}
+                </base-btn>
               </div>
             </div>
-          </transition>
-        </div>
-        <div
-          class="wq-profile__header"
-          :class="{ 'wq-profile__header_noMarginTop': localUserData.isVerified }"
-        >
-          {{ $t('profile.title') }}
-        </div>
-        <div class="profile-cont">
-          <div class="profile-cont__grid-container">
-            <div class="profile-cont__main-data">
-              <div class="profile-cont__avatar avatar">
-                <img
-                  id="userAvatar"
-                  class="avatar__img"
-                  :src="imageData || require('~/assets/img/app/avatar_empty.png')"
-                  :alt="imageData ? 'avatar' : 'empty avatar'"
+            <div class="banner__image">
+              <img
+                src="~/assets/img/ui/goldStatus.svg"
+                alt=""
+              >
+            </div>
+          </div>
+        </transition>
+      </div>
+      <div class="wq-profile__header">
+        {{ $t('profile.title') }}
+      </div>
+      <div class="profile-cont">
+        <div class="profile-cont__grid-container">
+          <div class="profile-cont__main-data">
+            <div class="profile-cont__avatar avatar">
+              <img
+                id="userAvatar"
+                class="avatar__img"
+                :src="imageData || require('~/assets/img/app/avatar_empty.png')"
+                :alt="imageData ? 'avatar' : 'empty avatar'"
+              >
+              <label
+                v-if="isProfileEdit"
+                class="avatar__edit edit"
+              >
+                <span class="edit__icon icon-edit" />
+                <ValidationProvider
+                  v-slot="{ validate }"
+                  class="edit__validator"
+                  rules="required|ext:png,jpeg,jpg"
+                  tag="div"
                 >
-                <label
-                  v-if="isProfileEdit"
-                  class="avatar__edit edit"
-                >
-                  <span class="edit__icon icon-edit" />
-                  <ValidationProvider
-                    v-slot="{ validate }"
-                    class="edit__validator"
-                    rules="required|ext:png,jpeg,jpg"
-                    tag="div"
+                  <input
+                    id="coverUpload"
+                    type="file"
+                    accept="image/*"
+                    @change="processFile($event, validate)"
                   >
-                    <input
-                      id="coverUpload"
-                      type="file"
-                      accept="image/*"
-                      @change="processFile($event, validate)"
+                </ValidationProvider>
+              </label>
+            </div>
+            <div
+              class="profile-cont__status status"
+              :class="{ 'status_verified': userData.statusKYC === $options.SumSubStatuses.VERIFIED }"
+            >
+              {{
+                $t(`settings.${userData.statusKYC === $options.SumSubStatuses.VERIFIED ? 'verified' : 'notVerified'}`)
+              }}
+              <span class="status__icon icon icon-check_all_big" />
+            </div>
+            <base-field
+              v-for="(cell, i) in nameInputsArr"
+              :key="i"
+              v-model="localUserData[cell.key]"
+              :placeholder="cell.placeholder || $t('settings.nameInput')"
+              :disabled="!isProfileEdit"
+              rules="required"
+              :name="$t('modals.nameField')"
+              mode="icon"
+              mode-error="small"
+              class="profile-cont__field"
+            >
+              <template v-slot:left>
+                <span class="icon icon__input icon-user" />
+              </template>
+            </base-field>
+            <base-field
+              v-model="localUserData.additionalInfo.address"
+              :placeholder="address || $t('settings.addressInput')"
+              :disabled="!isProfileEdit"
+              :is-with-loader="true"
+              mode="icon"
+              :name="$t('modals.addressField')"
+              mode-error="small"
+              class="profile-cont__field"
+              @focus="changeFocusValue"
+              @input="getPositionData"
+            >
+              <template v-slot:left>
+                <span class="icon icon__input icon-location" />
+              </template>
+              <template v-slot:right-absolute>
+                <div
+                  v-if="isPositionSearch"
+                  class="loader-cont"
+                >
+                  <loader
+                    class="loader-cont__loader"
+                    is-mini-loader
+                  />
+                </div>
+              </template>
+              <template v-slot:selector>
+                <div
+                  v-if="addresses.length && isGeoInputOnFocus"
+                  class="selector"
+                >
+                  <div class="selector__items">
+                    <div
+                      v-for="(address, i) in addresses"
+                      :key="i"
+                      class="selector__item"
+                      @click="selectAddress(address)"
                     >
-                  </ValidationProvider>
-                </label>
-              </div>
-              <div
-                class="profile-cont__status status"
-                :class="{ 'status_verified': localUserData.isVerified }"
-              >
-                {{ $t(`settings.${localUserData.isVerified ? 'verified' : 'notVerified'}`) }}
-                <span class="status__icon icon icon-check_all_big" />
-              </div>
-              <base-field
-                v-for="(cell, i) in nameInputsArr"
-                :key="i"
-                v-model="localUserData[cell.key]"
-                :placeholder="cell.placeholder || $t('settings.nameInput')"
-                :disabled="!isProfileEdit"
-                rules="required"
-                :name="$t('modals.nameField')"
-                mode="icon"
-                mode-error="small"
-                class="profile-cont__field"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-user" />
-                </template>
-              </base-field>
-              <base-field
-                v-model="localUserData.additionalInfo.address"
-                :placeholder="address || $t('settings.addressInput')"
-                :disabled="!isProfileEdit"
-                :is-with-loader="true"
-                mode="icon"
-                :name="$t('modals.addressField')"
-                mode-error="small"
-                class="profile-cont__field"
-                @focus="changeFocusValue"
-                @input="getPositionData"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-location" />
-                </template>
-                <template v-slot:right-absolute>
-                  <div
-                    v-if="isPositionSearch"
-                    class="loader-cont"
-                  >
-                    <loader
-                      class="loader-cont__loader"
-                      is-mini-loader
-                    />
-                  </div>
-                </template>
-                <template v-slot:selector>
-                  <div
-                    v-if="addresses.length && isGeoInputOnFocus"
-                    class="selector"
-                  >
-                    <div class="selector__items">
-                      <div
-                        v-for="(address, i) in addresses"
-                        :key="i"
-                        class="selector__item"
-                        @click="selectAddress(address)"
-                      >
-                        {{ address.formatted }}
-                      </div>
+                      {{ address.formatted }}
                     </div>
                   </div>
-                </template>
-              </base-field>
-              <base-field
-                v-model="localUserData.email"
-                :placeholder="localUserData.email || $t('settings.addressInput')"
-                disabled
-                mode="icon"
-                :name="$t('modals.emailField')"
-                mode-error="small"
-                class="profile-cont__field"
-              >
-                <template v-slot:left>
-                  <span class="icon icon__input icon-mail" />
-                </template>
-              </base-field>
-              <div
-                v-for="cell in phoneInputsArr"
-                :key="cell.type"
-                class="profile-cont__field"
-              >
-                <vue-phone-number-input
-                  v-if="isProfileEdit"
-                  v-model="phone[cell.type].fullPhone"
-                  class="input-phone"
-                  error-color="#EB5757"
-                  clearable
-                  show-code-on-list
-                  required
-                  :default-country-code="phone[cell.type].codeRegion"
-                  size="lg"
-                  @update="updatedPhone[cell.type] = $event"
-                />
-                <base-field
-                  v-else
-                  :value="cell.fullNumber"
-                  :placeholder="cell.placeholder"
-                  :disabled="true"
-                  is-hide-error
-                  mode="icon"
-                >
-                  <template v-slot:left>
-                    <span class="icon icon__input icon-phone" />
-                  </template>
-                </base-field>
-              </div>
-            </div>
-            <div class="profile-cont__about about">
-              <div class="about__title">
-                {{ $t('profile.aboutMe') }}
-              </div>
-              <textarea
-                v-model="localUserData.additionalInfo.description"
-                class="about__textarea"
-                :class="{ 'about__textarea_disabled': !isProfileEdit }"
-                :placeholder="$t('profile.aboutMe')"
-                :disabled="!isProfileEdit"
+                </div>
+              </template>
+            </base-field>
+            <base-field
+              v-model="localUserData.email"
+              :placeholder="localUserData.email || $t('settings.addressInput')"
+              disabled
+              mode="icon"
+              :name="$t('modals.emailField')"
+              mode-error="small"
+              class="profile-cont__field"
+            >
+              <template v-slot:left>
+                <span class="icon icon__input icon-mail" />
+              </template>
+            </base-field>
+            <div
+              v-for="cell in phoneInputsArr"
+              :key="cell.type"
+              class="profile-cont__field"
+            >
+              <vue-phone-number-input
+                v-if="isProfileEdit"
+                v-model="phone[cell.type].fullPhone"
+                class="input-phone"
+                error-color="#EB5757"
+                clearable
+                show-code-on-list
+                required
+                :default-country-code="phone[cell.type].codeRegion"
+                size="lg"
+                @update="updatedPhone[cell.type] = $event"
               />
-            </div>
-            <div class="profile-cont__social social">
               <base-field
-                v-for="cell in socialInputs"
-                :key="cell.key"
-                v-model="localUserData.additionalInfo.socialNetwork[cell.key]"
-                :placeholder="cell.placeholder || $t('settings.socialInput')"
-                :disabled="!isProfileEdit"
+                v-else
+                :value="cell.fullNumber"
+                :placeholder="cell.placeholder"
+                :disabled="true"
                 is-hide-error
                 mode="icon"
-                type="text"
-                mode-error="small"
-                class="profile-cont__social-input"
-                @input="handleChangeSocial($event, cell.id)"
               >
                 <template v-slot:left>
-                  <span
-                    class="icon icon__input"
-                    :class="cell.imgClass"
-                  />
+                  <span class="icon icon__input icon-phone" />
                 </template>
               </base-field>
             </div>
-            <div class="profile-cont__action action">
-              <base-btn
-                mode="lightBlue"
-                class="action__btn"
-                @click="handleClickEditBtn"
-              >
-                {{ $t(`profile.${isProfileEdit ? 'save' : 'change'}`) }}
-              </base-btn>
+          </div>
+          <div class="profile-cont__about about">
+            <div class="about__title">
+              {{ $t('profile.aboutMe') }}
             </div>
+            <textarea
+              v-model="localUserData.additionalInfo.description"
+              class="about__textarea"
+              :class="{ 'about__textarea_disabled': !isProfileEdit }"
+              :placeholder="$t('profile.aboutMe')"
+              :disabled="!isProfileEdit"
+            />
+          </div>
+          <div class="profile-cont__social social">
+            <base-field
+              v-for="cell in socialInputs"
+              :key="cell.key"
+              v-model="localUserData.additionalInfo.socialNetwork[cell.key]"
+              :placeholder="cell.placeholder || $t('settings.socialInput')"
+              :disabled="!isProfileEdit"
+              is-hide-error
+              mode="icon"
+              type="text"
+              mode-error="small"
+              class="profile-cont__social-input"
+              @input="handleChangeSocial($event, cell.id)"
+            >
+              <template v-slot:left>
+                <span
+                  class="icon icon__input"
+                  :class="cell.imgClass"
+                />
+              </template>
+            </base-field>
+          </div>
+          <div class="profile-cont__action action">
+            <base-btn
+              mode="lightBlue"
+              class="action__btn"
+              @click="handleClickEditBtn"
+            >
+              {{ $t(`profile.${isProfileEdit ? 'save' : 'change'}`) }}
+            </base-btn>
           </div>
         </div>
-        <div
-          v-if="isProfileEdit"
-          class="wq-profile__header"
-        >
-          {{ $t('profile.security') }}
+      </div>
+      <div
+        v-if="isProfileEdit"
+        class="wq-profile__header"
+      >
+        {{ $t('profile.security') }}
+      </div>
+      <div
+        v-if="isProfileEdit"
+        class="wq-profile__security security"
+      >
+        <div class="security__password">
+          <div class="security__title">
+            {{ $t('profile.changePass') }}
+          </div>
+          <base-btn
+            class="security__btn"
+            mode="lightBlue"
+            @click="modalChangePassword()"
+          >
+            {{ $t('profile.change') }}
+          </base-btn>
         </div>
-        <div
-          v-if="isProfileEdit"
-          class="wq-profile__security security"
-        >
-          <div class="security__password">
-            <div class="security__title">
-              {{ $t('profile.changePass') }}
-            </div>
-            <base-btn
-              class="security__btn"
-              mode="lightBlue"
-              @click="modalChangePassword()"
-            >
-              {{ $t('profile.change') }}
-            </base-btn>
+        <div class="security__auth">
+          <div class="security__title">
+            {{ $t('profile.2FA') }}
           </div>
-          <div class="security__auth">
-            <div class="security__title">
-              {{ $t('profile.2FA') }}
-            </div>
-            <base-btn
-              v-if="!userData.totpIsActive"
-              class="security__btn"
-              mode="lightBlue"
-              @click="modalTwoFAAuth()"
-            >
-              {{ $t('profile.switchOn') }}
-            </base-btn>
-            <base-btn
-              v-else
-              class="security__btn"
-              mode="lightBlue"
-              @click="modalDisableTwoFAAuth()"
-            >
-              {{ $t('profile.switchOff') }}
-            </base-btn>
-          </div>
+          <base-btn
+            class="security__btn"
+            mode="lightBlue"
+            @click="totpToggle"
+          >
+            {{ userData.totpIsActive ? $t('profile.switchOff') : $t('profile.switchOn') }}
+          </base-btn>
         </div>
       </div>
     </div>
@@ -279,11 +267,12 @@
 import { mapGetters } from 'vuex';
 import { GeoCode } from 'geo-coder';
 import modals from '~/store/modals/modals';
-import { UserRole } from '~/utils/enums';
+import { UserRole, SumSubStatuses } from '~/utils/enums';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 
 export default {
   name: 'Settings',
+  SumSubStatuses,
   data() {
     return {
       updatedPhone: {
@@ -375,6 +364,12 @@ export default {
     this.SetLoader(false);
   },
   methods: {
+    totpToggle() {
+      const mode = this.userData.totpIsActive ? 'disableTwoFAAuth' : 'twoFAAuth';
+      this.ShowModal({
+        key: modals[mode],
+      });
+    },
     getVerification() {
       this.$router.push('/KYC');
     },
@@ -499,25 +494,20 @@ export default {
         output.src = URL.createObjectURL(file);
         output.onload = () => {
           URL.revokeObjectURL(output.src);
-          this.showModalImageOk();
+          this.ShowModal({
+            key: modals.status,
+            img: require('~/assets/img/ui/questAgreed.svg'),
+            title: this.$t('modals.imageLoadedSuccessful'),
+            subtitle: this.$t('modals.pleasePressSaveButton'),
+          });
         };
-
         reader.onerror = (evt) => {
           console.error(evt);
         };
       }
     },
-    showModalImageOk() {
-      this.ShowModal({
-        key: modals.status,
-        img: require('~/assets/img/ui/questAgreed.svg'),
-        title: this.$t('modals.imageLoadedSuccessful'),
-        subtitle: this.$t('modals.pleasePressSaveButton'),
-      });
-    },
     showModalSave() {
       this.isProfileEdit = false;
-
       this.ShowModal({
         key: modals.status,
         img: require('~/assets/img/ui/questAgreed.svg'),
@@ -536,16 +526,6 @@ export default {
     modalChangePassword() {
       this.ShowModal({
         key: modals.changePassInSettings,
-      });
-    },
-    modalTwoFAAuth() {
-      this.ShowModal({
-        key: modals.twoFAAuth,
-      });
-    },
-    modalDisableTwoFAAuth() {
-      this.ShowModal({
-        key: modals.disableTwoFAAuth,
       });
     },
     switch2Fa() {
@@ -706,7 +686,8 @@ export default {
   &__body {
     display: grid;
     grid-template-columns: 1fr 1fr;
-
+    background: $blue;
+    border-radius: 6px;
     width: 100%;
   }
 
