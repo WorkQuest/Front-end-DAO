@@ -44,19 +44,16 @@ export default {
   },
   async mounted() {
     this.SetLoader(true);
-    await this.createAccessToken();
-    this.initSumSub();
+    await this.initSumSub();
     this.SetLoader(false);
   },
   methods: {
-    async createAccessToken() {
-      if (this.statusKYC === SumSubStatuses.NOT_VERIFIED) await this.$store.dispatch('sumsub/createAccessTokenBackend', { userId: this.accessToken.userId });
-    },
-    initSumSub() {
+    async initSumSub() {
       if (this.statusKYC === SumSubStatuses.VERIFIED) return;
       const accessToken = this.accessToken.token;
       const { email, phone } = this.userData;
       try {
+        await this.$store.dispatch('sumsub/createAccessTokenBackend', { userId: this.accessToken.userId });
         const snsWebSdkInstance = snsWebSdk.Builder('https://test-api.sumsub.com', 'basic-kyc')
           .withAccessToken(accessToken, () => {
           })
