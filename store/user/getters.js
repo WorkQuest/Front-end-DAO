@@ -1,5 +1,6 @@
 export default {
   isAuth: (state) => !!(state.tokens.access && state.tokens.refresh),
+  getStatusKYC: (state) => state.userData.statusKYC,
   accessToken: (state) => state.tokens.access,
   refreshToken: (state) => state.tokens.refresh,
   getUserData: (state) => state.userData,
