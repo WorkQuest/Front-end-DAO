@@ -396,7 +396,9 @@
     "votingStart": "Voting start",
     "votingStartField": "voting start",
     "undelegate": "Undelegate",
-    "shure": "Are you shure to undelegate {n}?",
+    "shureToUndelegate": "Are you shure to undelegate {n}?",
+    "willBeUndelegate": "{n} tokens will be undelegate",
+    "undelegateAmount": "Undelegate {n} WQT",
     "delegate": "Delegate",
     "investorAddress": "Investor address",
     "tokensNumber": "Tokens Number",
@@ -675,10 +677,9 @@
   },
   "errors": {
     "incorrectPass": "Oops, something went wrong. Check the data and try again.",
-    "delegate": {
-      "title": "Delegate error",
-      "notEnoughBalance": "Not enough balance to delegate"
-    }
+    "delegateTitle": "Delegate error",
+    "undelegateTitle": "Undelegate error",
+    "notEnoughBalance": "Not enough balance"
   },
   "discussions": {
     "showComments": "Show comments",
@@ -710,6 +711,7 @@
   "investors": {
     "title": "Investors",
     "search": "Search investor",
+    "youDelegated": "You delegated {n} WQT",
     "table": {
       "name": "Name",
       "address": "Address",

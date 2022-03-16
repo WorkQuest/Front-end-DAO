@@ -11,8 +11,19 @@
         :placeholder="$t('investors.search')"
         mode="icon"
       />
-      <div v-if="delegatedToUser">
-        Delegated to: {{ delegatedToUser }}
+      <div
+        v-if="delegatedToUser.address"
+        class="body__delegated"
+      >
+        <div>{{ $tc('investors.youDelegated', delegatedToUser.tokensAmount) }}</div>
+        <div>{{ $t('modals.to') }} {{ delegatedToUser.address }}</div>
+        <base-btn
+          mode="lightRed"
+          class="btn__delegate"
+          @click="openModalUndelegate"
+        >
+          {{ $t('modals.undelegate') }}
+        </base-btn>
       </div>
       <base-table
         v-if="usersData.count !== 0"
@@ -41,7 +52,6 @@
 <script>
 
 import { mapGetters } from 'vuex';
-import { Chains } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 
 export default {
@@ -118,6 +128,13 @@ export default {
     clearTimeout(this.timeout);
   },
   methods: {
+    openModalUndelegate() {
+      this.ShowModal({
+        key: modals.undelegate,
+        tokensAmount: this.delegatedToUser.tokensAmount,
+        callback: async () => await this.getInvestors(),
+      });
+    },
     async getInvestors() {
       this.SetLoader(true);
       await Promise.all([
@@ -164,6 +181,11 @@ export default {
     height: 43px;
     border-radius: 6px;
   }
+  &__delegated {
+    margin-bottom: 20px;
+    color: $black800;
+    font-size: 16px;
+  }
 }
 @include _1199 {
   .body {
@@ -176,6 +198,9 @@ export default {
 @include _767 {
   .body {
     max-width: 100vw;
+    &__delegated {
+      white-space: nowrap;
+    }
   }
   .investors {
     &__table {

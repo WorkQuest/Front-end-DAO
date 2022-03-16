@@ -141,26 +141,23 @@
       </span>
     </div>
     <div
-      v-if="item.delegate || item.undelegate"
+      v-if="item.investorAddress"
       class="item__buttons"
     >
       <base-btn
-        v-if="item.undelegate"
+        v-if="delegatedToUser && item.investorAddress === delegatedToUser.address"
         mode="lightRed"
         class="btn__delegate"
-        :disabled="!myProfile(item.id) || item.voting === 0"
         @click="openModalUndelegate(item)"
       >
-        {{ item.undelegate }}
+        {{ $t('modals.undelegate') }}
       </base-btn>
       <base-btn
-        v-if="item.delegate"
         mode="lightBlue"
         class="btn__delegate"
-        :disabled="!myProfile(item.id)"
         @click="openModalDelegate(item)"
       >
-        {{ item.delegate }}
+        {{ $t('modals.delegate') }}
       </base-btn>
     </div>
   </div>
@@ -184,25 +181,40 @@ export default {
   computed: {
     ...mapGetters({
       userData: 'user/getUserData',
+      delegatedToUser: 'investors/getDelegatedToUser',
+      lastInvestorsPage: 'investors/getLastPage',
     }),
   },
   methods: {
     myProfile(id) {
       return this.userData.id === id;
     },
+    async updateInvestorsData() {
+      this.SetLoader(true);
+      await Promise.all([
+        this.$store.dispatch('user/getAllUserData', { limit: 20, offset: this.lastInvestorsPage * 20, q: null }),
+        this.$store.dispatch('wallet/getDelegates'),
+      ]);
+      this.SetLoader(false);
+    },
     openModalDelegate(item) {
       this.ShowModal({
         key: modals.delegate,
         stake: item.stake,
         investorAddress: item.investorAddress,
+        callback: async () => this.updateInvestorsData(),
       });
     },
     openModalUndelegate(item) {
       this.ShowModal({
         key: modals.undelegate,
         stake: item.stake,
-        name: item.name,
+        name: item.fullName,
+        tokensAmount: item.voting,
+        investorAddress: item.investorAddress,
+        callback: async () => this.updateInvestorsData(),
       });
+      // TODO [!!!]: Cannot read properties of undefined (reading 'forEach') after callback
     },
   },
 };

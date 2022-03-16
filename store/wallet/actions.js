@@ -5,7 +5,7 @@ import {
   getTransferFeeData, getWalletAddress, GetWalletProvider,
   transfer,
   transferToken,
-  fetchWalletContractData, delegate, getDelegates,
+  fetchWalletContractData, delegate, getDelegates, undelegate,
 } from '~/utils/wallet';
 import abi from '~/abi/index';
 import { errorCodes, TokenSymbols } from '~/utils/enums';
@@ -145,13 +145,15 @@ export default {
   async getDelegates({ commit, dispatch }) {
     const res = await getDelegates();
     if (res.ok) {
-      const address = res.result;
-      // TODO: вернуть данные юзера когда починят на бэке
-      // const userDataRes = await dispatch('user/getUserDataByWalletAddress', address, { root: true });
-      const userDataRes = { };
+      const address = !+res.result ? null : res.result.toLowerCase();
+      let votingPowerArray = null;
+      if (address) votingPowerArray = await dispatch('getVotesByAddresses', [address]);
       commit(
         'investors/setDelegatedToUser',
-        { address: address.toLowerCase(), userData: userDataRes.result }, { root: true },
+        {
+          address,
+          tokensAmount: votingPowerArray ? getStyledAmount(votingPowerArray.result[0]) : null,
+        }, { root: true },
       );
     } else {
       commit('investors/setDelegatedToUser', null, { root: true });
@@ -159,5 +161,8 @@ export default {
   },
   async delegate({ commit }, { toAddress, amount }) {
     return await delegate(toAddress, amount);
+  },
+  async undelegate({ commit }) {
+    return await undelegate();
   },
 };

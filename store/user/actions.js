@@ -46,25 +46,17 @@ export default {
     try {
       if (!config.q.length) delete config.q;
       const { result } = await this.$axios.$get('/v1/profile/users', { params: { ...config, walletRequired: true } });
+      console.log(result);
       const addresses = result.users.map((user) => user.wallet?.address).filter((n) => n);
       const votes = await dispatch('wallet/getVotesByAddresses', addresses, { root: true });
       result.users.forEach((user) => {
         user.fullName = `${user.firstName || ''} ${user.lastName || ''}`;
         user.investorAddress = user.wallet?.address || '';
         user.voting = user.wallet?.address ? `${getStyledAmount(votes.result[addresses.indexOf(user.wallet.address)])} WQT` : '';
-        user.undelegate = 'Undelegate';
-        user.delegate = 'Delegate';
       });
       commit('setUsersData', result);
     } catch (e) {
-      console.log(e);
-    }
-  },
-  async getUserDataByWalletAddress({ commit }, address) {
-    try {
-      return await this.$axios.$get('/v1/profile/users', { params: { address } });
-    } catch (e) {
-      return error();
+      commit('setUsersData', []);
     }
   },
   async setUserRole({ commit }) {

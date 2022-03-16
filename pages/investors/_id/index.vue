@@ -21,7 +21,7 @@
         </div>
         <div class="title__panel panel">
           <div class="panel__address">
-            {{ investorAddress }}
+            {{ CutTxn(investorAddress, 8, 8) }}
           </div>
           <div class="panel__picture">
             <base-btn
@@ -609,6 +609,18 @@ export default {
   .title {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .info__action {
+    flex-direction: column;
+    margin: 0;
+  }
+  .action__delegate {
+    margin-top: 10px;
+    max-width: 100%
+  }
+  .action__undelegate {
+    margin: 0;
+    max-width: 100%
   }
 }
 </style>

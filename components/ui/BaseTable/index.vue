@@ -81,7 +81,7 @@
           :class="delegateClass(el)"
           @click="openModalUndelegate(el)"
         >
-          {{ el.item.undelegate }}
+          {{ $t('modals.undelegate') }}
         </base-btn>
       </template>
       <template #cell(delegate)="el">
@@ -91,7 +91,7 @@
           class="btn__delegate"
           @click="openModalDelegate(el)"
         >
-          {{ el.item.delegate }}
+          {{ $t('modals.delegate') }}
         </base-btn>
       </template>
       <template #cell(investorAddress)="el">
@@ -206,6 +206,7 @@ export default {
         key: modals.undelegate,
         stake: el.item.stake,
         name: el.item.fullName,
+        tokensAmount: el.item.voting,
         callback: el.item.callback,
       });
     },
@@ -274,10 +275,6 @@ export default {
   @include _991 {
     .table {
       width: 99%;
-      .btn__delegate {
-        width: 60px !important;
-        font-size: 10px;
-      }
     }
     &__copy {
       font-size: 10px;

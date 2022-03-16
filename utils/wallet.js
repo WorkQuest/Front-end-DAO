@@ -286,7 +286,6 @@ export const getContractFeeData = async (_method, _abi, _contractAddress, data, 
       amount = new BigNumber(amount).shiftedBy(18).toString();
       tx.value = amount;
     }
-    console.log(_method, _abi, _contractAddress, data);
     const [gasPrice, gasEstimate] = await Promise.all([
       web3.eth.getGasPrice(),
       inst.methods[_method].apply(null, data).estimateGas(tx),
@@ -325,7 +324,6 @@ export const delegate = async (toAddress, amount) => {
       address: process.env.WQT_TOKEN,
       data: [toAddress, amount],
     });
-    console.log('delegate res', res);
     return success(res);
   } catch (e) {
     console.error('delegate:', e);
@@ -338,7 +336,6 @@ export const undelegate = async () => {
       abi: abi.WQToken,
       address: process.env.WQT_TOKEN,
     });
-    console.log('undelegate res');
     return success(res);
   } catch (e) {
     console.error('undelegate: ', e);

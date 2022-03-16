@@ -122,11 +122,7 @@ export default {
         fields: {
           from: { name: this.$t('modals.fromAddress'), value: userWalletAddress },
           to: { name: this.$t('modals.toAddress'), value: process.env.WQT_TOKEN },
-          amount: {
-            name: this.$t('modals.amount'),
-            value: this.tokensAmount,
-            symbol: TokenSymbols.WQT,
-          },
+          amount: { name: this.$t('modals.amount'), value: tokensAmount, symbol: TokenSymbols.WQT },
           fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
         },
         submitMethod: async () => {
@@ -138,10 +134,10 @@ export default {
           this.SetLoader(false);
           if (res.ok) {
             this.ShowToast(`Delegated ${tokensAmount} WQT`, this.$t('modals.delegate'));
-            if (callback) await callback();
           } else if (res.msg.includes('Not enough balance to delegate')) {
-            this.ShowToast('Not enough balance', this.$t('modals.delegate'));
+            this.ShowToast(this.$t('errors.delegate.notEnoughBalance'), this.$t('errors.delegate.title'));
           }
+          return res;
         },
         callback,
       });
