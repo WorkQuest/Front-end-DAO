@@ -14,12 +14,11 @@
           {{ options.title }}
         </div>
         <div class="ctm-modal__desc">
-          <span v-if="!options.subtitle">{{ $t('modals.smallTemp') }}</span>
-          <span v-if="options.subtitle">{{ options.subtitle }}</span>
+          {{ options.subtitle ? options.subtitle : $t('modals.smallTemp') }}
         </div>
         <base-btn
           class="email__action"
-          @click="hide()"
+          @click="CloseModal"
         >
           {{ $t('meta.ok') }}
         </base-btn>
@@ -33,18 +32,10 @@ import { mapGetters } from 'vuex';
 
 export default {
   name: 'Status',
-  data() {
-    return {};
-  },
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
     }),
-  },
-  methods: {
-    hide() {
-      this.CloseModal();
-    },
   },
 };
 </script>
@@ -56,12 +47,14 @@ export default {
 
 .messageSend {
   max-width: 337px !important;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 10px;
   }

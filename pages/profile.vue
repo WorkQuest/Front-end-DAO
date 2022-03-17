@@ -1,5 +1,8 @@
 <template>
   <div class="wq-profile">
+    <base-btn @click="show">
+      Test
+    </base-btn>
     <div class="wq-profile__body">
       <div
         v-if="userData.statusKYC === $options.SumSubStatuses.NOT_VERIFIED"
@@ -364,6 +367,11 @@ export default {
     this.SetLoader(false);
   },
   methods: {
+    show() {
+      this.ShowModal({
+        key: modals.withdraw,
+      });
+    },
     totpToggle() {
       const mode = this.userData.totpIsActive ? 'disableTwoFAAuth' : 'twoFAAuth';
       this.ShowModal({

@@ -11,7 +11,7 @@
         <div class="header__close">
           <span
             class="icon-close_big header__close"
-            @click="hide"
+            @click="CloseModal"
           />
         </div>
       </div>
@@ -73,7 +73,7 @@
           <base-btn
             class="footer__buttons"
             mode="lightBlue"
-            @click="hide"
+            @click="CloseModal"
           >
             {{ $t('modals.cancel') }}
           </base-btn>
@@ -167,11 +167,8 @@ export default {
         const { id } = response.result;
         await this.$router.push(`/discussions/${id}`);
       } else console.error('Something wrong, tell to developers');
-      this.hide();
-      this.SetLoader(false);
-    },
-    hide() {
       this.CloseModal();
+      this.SetLoader(false);
     },
   },
 };
@@ -181,20 +178,24 @@ export default {
 .icon-btn_left {
   margin: 0;
 }
+
 .uploader {
   &__container {
     margin: 30px 0 30px 0;
   }
+
   &__btn {
     height: 46px !important;
     width: 162px !important;
     margin-left: auto;
     margin-top: 15px;
+
     &_hidden {
       display: none;
     }
   }
 }
+
 .add-discussion {
   &__content {
     padding: 30px 28px;

@@ -15,7 +15,7 @@
               v-model="amountWDX"
               :name="$t('modals.amount')"
               type="number"
-              :placeholder="'0 WDX'"
+              placeholder="0 WDX"
               rules="required"
             >
               <template
@@ -33,7 +33,7 @@
             <base-field
               v-model="amountUSD"
               mode="white"
-              :placeholder="'$ 0'"
+              placeholder="$ 0"
               :disabled="true"
             >
               <template
@@ -79,10 +79,10 @@
                 v-model="cardNumberInput"
                 :name="$t('modals.numberOfCard')"
                 type="tel"
-                rules="max:19|required"
+                rules="max:19|required|min:12"
                 pattern="[0-9\s]{13,19}"
                 inputmode="numeric"
-                :placeholder="'1234 1234 1234 1234'"
+                placeholder="1234 1234 1234 1234"
               />
             </div>
           </div>
@@ -96,7 +96,7 @@
                   id="dateInput"
                   v-model="dateInput"
                   :name="$t('modals.date')"
-                  :placeholder="'02/24'"
+                  placeholder="02/24"
                   rules="max:5|required|date"
                 />
               </div>
@@ -110,8 +110,8 @@
                   id="cvvInput"
                   v-model="cvvInput"
                   :name="$t('modals.cvv')"
-                  :placeholder="'242'"
-                  rules="max:4|required"
+                  placeholder="242"
+                  rules="max:4|required|min:3"
                 />
               </div>
             </div>
@@ -127,7 +127,7 @@
             <base-btn
               mode="outline"
               class="actions__cancel"
-              @click="hide()"
+              @click="CloseModal"
             >
               {{ $t('meta.cancel') }}
             </base-btn>
@@ -167,12 +167,12 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     showTransactionSendModal() {
       this.ShowModal({
-        key: modals.transactionSend,
+        key: modals.status,
+        img: require('assets/img/ui/transactionSend.svg'),
+        title: this.$t('modals.transactionSend'),
+        subtitle: this.$t('modals.smallTemp'),
       });
     },
     showAddCardModal() {

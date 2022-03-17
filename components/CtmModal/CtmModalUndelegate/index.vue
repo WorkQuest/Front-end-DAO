@@ -11,7 +11,7 @@
         <div class="header__close">
           <span
             class="icon-close_big header__close"
-            @click="hide"
+            @click="CloseModal"
           />
         </div>
       </div>
@@ -33,7 +33,7 @@
         <base-btn
           class="bottom__cancel"
           mode="lightBlue"
-          @click="hide()"
+          @click="CloseModal"
         >
           {{ $t('modals.cancel') }}
         </base-btn>
@@ -72,9 +72,6 @@ export default {
     this.accountAddress = await this.$store.dispatch('web3/getAccount');
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     async undelegate() {
       await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
       if (!this.isConnected) return;
@@ -83,7 +80,7 @@ export default {
       const res = await this.$store.dispatch('web3/undelegate');
       this.SetLoader(false);
       if (res.ok) {
-        await this.hide();
+        this.CloseModal();
         await this.$store.dispatch('main/showToast', {
           title: 'Undelegate',
           text: `Undelegate ${this.tokensAmount} WQT`,
@@ -104,68 +101,82 @@ export default {
 <style lang="scss" scoped>
 .ctm-modal {
   @include modalKit;
-  padding: 30px 36px 30px 28px!important;
+  padding: 30px 36px 30px 28px !important;
 }
 
 .undelegate {
   max-width: 500px !important;
+
   &__content {
-    padding: 30px 28px 30px 28px!important;
+    padding: 30px 28px 30px 28px !important;
   }
-  &__body{
+
+  &__body {
     @include text-usual;
     color: #1D2127;
     margin: 20px 0 25px 0;
   }
-  &__bottom{
+
+  &__bottom {
     margin-top: 25px;
   }
 }
-.header{
+
+.header {
   display: flex;
   justify-content: space-between;
-  &__title{
+
+  &__title {
     font-weight: 500;
     font-size: 23px;
     line-height: 130%;
   }
-  &__close{
+
+  &__close {
     color: black;
     font-size: 25px;
     cursor: pointer;
   }
 }
-.bottom{
+
+.bottom {
   display: flex;
   justify-content: space-between;
-  &__cancel{
-    width: 112px!important;
+
+  &__cancel {
+    width: 112px !important;
   }
-  &__done{
-    width: 257px!important;
+
+  &__done {
+    width: 257px !important;
   }
 }
-.tokens{
-  &__title{
+
+.tokens {
+  &__title {
     @include text-usual;
     color: #1D2127;
     margin-bottom: 5px;
-    &_grey{
+
+    &_grey {
       color: #7C838D;
-      margin-bottom: 10px!important;
+      margin-bottom: 10px !important;
     }
   }
 }
+
 .footer {
   display: flex;
   justify-content: space-between;
-  &__body{
+
+  &__body {
     width: 100%;
-    height: 46px!important;
+    height: 46px !important;
   }
-  &__maximum{
-    width: 100px!important;
-    height: 46px!important;
+
+  &__maximum {
+    width: 100px !important;
+    height: 46px !important;
   }
 }
 </style>

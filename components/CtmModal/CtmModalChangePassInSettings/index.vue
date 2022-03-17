@@ -17,7 +17,7 @@
             id="currentPassword_input"
             v-model="currentPassword_input"
             :is-hide-error="true"
-            :placeholder="'******'"
+            placeholder="******"
             mode="icon"
             type="password"
           >
@@ -37,7 +37,7 @@
             id="newPassword_input"
             v-model="newPassword_input"
             :is-hide-error="true"
-            :placeholder="'******'"
+            placeholder="******"
             mode="icon"
             type="password"
           >
@@ -57,7 +57,7 @@
             id="confirmNewPassword_input"
             v-model="confirmNewPassword_input"
             :is-hide-error="true"
-            :placeholder="'******'"
+            placeholder="******"
             mode="icon"
             type="password"
           >
@@ -139,20 +139,24 @@ export default {
     font-size: 25px;
   }
 }
+
 .error-msg {
-  color:red;
+  color: red;
 }
+
 .ctm-modal {
   @include modalKit;
+
   &__content-field {
     margin: 15px 0 0 0;
   }
+
   &__input {
     height: 46px;
   }
 
   &__content-btns {
-    .btn-group{
+    .btn-group {
       display: grid;
       grid-gap: 20px;
       gap: 20px;
@@ -171,12 +175,14 @@ export default {
 
 .messageSend {
   max-width: 382px !important;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 10px;
   }

@@ -38,7 +38,7 @@
           <base-btn
             class="buttons__button"
             mode="outline"
-            @click="hide"
+            @click="CloseModal"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
@@ -90,13 +90,10 @@ export default {
     }
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     async handleSubmit() {
       if (!this.canSend) return;
       const { callback, submitMethod, isShowSuccess } = this.options;
-      this.hide();
+      this.CloseModal();
       this.SetLoader(true);
       if (submitMethod) {
         const res = await submitMethod();

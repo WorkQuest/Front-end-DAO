@@ -19,7 +19,6 @@ import CtmModalChangePassword from './CtmModalChangePassword';
 import CtmModalRestore from './CtmModalRestore';
 import CtmModalPrivacy from './CtmModalPrivacy';
 import CtmModalThanksSend from './CtmModalThanksSend';
-import CtmModalReviewEmployer from './CtmModalReviewEmployer';
 import CtmModalDeposit from './CtmModalDeposit';
 import CtmModalAddCard from './CtmModalAddCard';
 import CtmModalStatus from './CtmModalStatus';
@@ -55,7 +54,6 @@ export default {
     [modals.openADispute]: CtmModalOpenADispute,
     [modals.privacy]: CtmModalPrivacy,
     [modals.restore]: CtmModalRestore,
-    [modals.review]: CtmModalReviewEmployer,
     [modals.showFile]: CtmModalShowFile,
     [modals.signWorkQuest]: CtmModalSignWorkQuest,
     [modals.status]: CtmModalStatus,

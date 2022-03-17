@@ -40,7 +40,7 @@
                 :name="$t('modals.amount')"
                 type="number"
                 rules="required"
-                :placeholder="'0 WUSD'"
+                placeholder="0 WUSD"
               />
             </div>
           </div>
@@ -59,7 +59,7 @@
                   :name="$t('modals.amount')"
                   type="number"
                   rules="required"
-                  :placeholder="'0 WUSD'"
+                  placeholder="0 WUSD"
                 />
               </div>
             </div>
@@ -74,7 +74,7 @@
                   mode="white"
                   type="number"
                   rules="required"
-                  :placeholder="'$ 0'"
+                  placeholder="$ 0"
                 />
               </div>
             </div>
@@ -87,7 +87,7 @@
                 v-model="cardNumber_input"
                 :name="$t('modals.numberOfCard')"
                 type="tel"
-                :placeholder="'1234 1234 1234 1234'"
+                placeholder="1234 1234 1234 1234"
                 rules="max:19|required"
               />
             </div>
@@ -104,7 +104,7 @@
                   id="date_input"
                   v-model="date_input"
                   :name="$t('modals.date')"
-                  :placeholder="'02/24'"
+                  placeholder="02/24"
                   rules="max:5|required|date"
                 />
               </div>
@@ -117,7 +117,7 @@
                   v-model="cvv_input"
                   :name="$t('modals.cvv')"
                   type="number"
-                  :placeholder="'242'"
+                  placeholder="242"
                   rules="max:4|required"
                 />
               </div>
@@ -184,7 +184,7 @@
             >
               <base-btn
                 class="message__action"
-                @click="handleSubmit(hide)"
+                @click="handleSubmit(CloseModal)"
               >
                 {{ $t('meta.submit') }}
               </base-btn>
@@ -194,7 +194,7 @@
             <base-btn
               :mode="'outline'"
               class="message__action"
-              @click="hide()"
+              @click="CloseModal"
             >
               {{ $t('meta.cancel') }}
             </base-btn>
@@ -228,12 +228,8 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     nextStep() {
-      // eslint-disable-next-line no-plusplus
-      this.step++;
+      this.step += 1;
     },
     showTransactionSendModal() {
       this.ShowModal({

@@ -300,7 +300,7 @@ export default {
         totp: this.models.totp,
       });
       if (response.ok) {
-        this.hide();
+        this.CloseModal();
         this.showModalSuccess();
       } else this.validationErrorFields(response.data);
     },
@@ -321,9 +321,6 @@ export default {
         };
         await this.$refs.twoFA.setErrors(err);
       });
-    },
-    hide() {
-      this.CloseModal();
     },
     previousStep() {
       this.step -= 1;

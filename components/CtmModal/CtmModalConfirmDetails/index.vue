@@ -21,7 +21,7 @@
         <div class="btn-group">
           <base-btn
             class="btn"
-            @click="hide()"
+            @click="CloseModal"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
@@ -79,9 +79,6 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     openStatusModal() {
       this.ShowModal({
         key: modals.status,
@@ -114,7 +111,7 @@ export default {
   }
 
   &__content-btns {
-    .btn-group{
+    .btn-group {
       display: grid;
       grid-template-columns: repeat(2, calc(50% - 10px));
       grid-gap: 20px;

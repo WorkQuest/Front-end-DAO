@@ -30,7 +30,7 @@
               <base-btn
                 :mode="'outline'"
                 class="message__action"
-                @click="hide()"
+                @click="CloseModal"
               >
                 {{ $t('meta.cancel') }}
               </base-btn>
@@ -60,9 +60,6 @@ export default {
     },
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     showRequestSendModal() {
       this.ShowModal({
         key: modals.status,

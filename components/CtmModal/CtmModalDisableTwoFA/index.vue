@@ -26,7 +26,7 @@
         <base-btn
           mode="outline"
           class="message__action"
-          @click="hide"
+          @click="CloseModal"
         >
           {{ $t('meta.cancel') }}
         </base-btn>
@@ -61,15 +61,12 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     async disable2FA() {
       const response = await this.$store.dispatch('user/disable2FA', {
         totp: this.twoFACode,
       });
       if (response.ok) {
-        this.hide();
+        this.CloseModal();
         this.showModalSuccess();
       } else this.validationErrorFields(response.data);
     },
@@ -104,18 +101,21 @@ export default {
   top: 50%;
   transform: translate(-50%, -50%)
 }
+
 .disable-2fa {
-    padding: 20px;
-    gap: 20px;
-    max-width: 430px;
-    &__hader {
-      font-size: 23px;
-      line-height: 30px;
-      font-weight: 500;
-    }
-    &__buttons {
-        display: flex;
-        gap: 10px;
-    }
+  padding: 20px;
+  gap: 20px;
+  max-width: 430px;
+
+  &__hader {
+    font-size: 23px;
+    line-height: 30px;
+    font-weight: 500;
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 10px;
+  }
 }
 </style>
