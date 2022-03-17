@@ -406,6 +406,7 @@ export default {
     font-weight: 400;
     color: $black700;
     font-size: 18px;
+
     &_grey {
       @extend .content__text;
       font-size: 16px;
