@@ -93,7 +93,6 @@ export default {
         users.push({
           ...user,
           callback: this.getInvestors,
-          investorAddress: user.id === this.userData.id ? this.investorAddress : user.investorAddress,
         });
       });
       return users;

@@ -49,8 +49,9 @@ export default {
       const addresses = result.users.map((user) => user.wallet?.address).filter((n) => n);
       const votes = await dispatch('wallet/getVotesByAddresses', addresses, { root: true });
       result.users.forEach((user) => {
+        console.log(user, !!user.wallet?.address);
         user.fullName = `${user.firstName || ''} ${user.lastName || ''}`;
-        user.investorAddress = user.wallet?.address || '';
+        user.investorAddress = user.wallet?.address ? user.wallet.address : '';
         user.voting = user.wallet?.address ? `${getStyledAmount(votes.result[addresses.indexOf(user.wallet.address)])} WQT` : '';
       });
       commit('setUsersData', result);
