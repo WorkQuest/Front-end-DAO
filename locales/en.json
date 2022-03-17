@@ -499,7 +499,8 @@
     }
   },
   "kyc": {
-    "KYC": "KYC"
+    "KYC": "KYC",
+    "alreadyVerified": "Your profile already verified!"
   },
   "chat": {
     "openDispute": "Open dispute",

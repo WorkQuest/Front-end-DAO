@@ -57,11 +57,12 @@
                 class="profile__main-inp-cont"
               >
                 <base-field
+                  v-if="input.isVisible"
                   class="contacts__name"
                   :is-hide-error="true"
                   mode="iconWhite"
                   :disabled="true"
-                  :value="investor.additionalInfo ? (input.key === 'location' ? investor.additionalInfo.address : investor[input.key]) : ''"
+                  :value="fillInputs(input)"
                   :placeholder="$t('investor.notFilled')"
                 >
                   <template v-slot:left>
@@ -80,7 +81,7 @@
               <textarea
                 id="textarea"
                 class="about__textarea"
-                :title="'test'"
+                title="test"
                 :disabled="true"
                 :placeholder="investor.additionalInfo ? (investor.additionalInfo.description || $t('investor.notFilled')) : ''"
               />
@@ -160,7 +161,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
-import { Chains } from '~/utils/enums';
+import { UserRole } from '~/utils/enums';
 
 export default {
   data() {
@@ -237,11 +238,12 @@ export default {
     }),
     mainDataArr() {
       return [
-        { key: 'firstName', icon: 'icon-user' },
-        { key: 'lastName', icon: 'icon-user' },
-        { key: 'location', icon: 'icon-location' },
-        { key: 'email', icon: 'icon-mail' },
-        { key: 'secondMobileNumber', icon: 'icon-phone' },
+        { key: 'firstName', icon: 'icon-user', isVisible: true },
+        { key: 'lastName', icon: 'icon-user', isVisible: true },
+        { key: 'location', icon: 'icon-location', isVisible: true },
+        { key: 'email', icon: 'icon-mail', isVisible: true },
+        { key: 'phone', icon: 'icon-phone', isVisible: true },
+        { key: 'secondPhone', icon: 'icon-phone', isVisible: this.investor.role === UserRole.EMPLOYER },
       ];
     },
     socialInputsArr() {
@@ -280,12 +282,18 @@ export default {
       // const response = await this.$store.dispatch('web3/getVotes', address);
       // if (response.ok) this.votingPower = +response.result;
     },
-    async getInvestorData() {
-      if (this.isMyProfile) {
-        this.investor = this.userData;
-      } else {
-        this.investor = await this.$store.dispatch('user/getSpecialUserData', this.userId);
+    fillInputs(input) {
+      if (this.investor.additionalInfo) {
+        if (input.key === 'location') return this.investor.locationPlaceName;
+        if (input.key === 'phone') return this.investor.phone?.fullPhone || this.investor.tempPhone?.fullPhone;
+        if (input.key === 'secondPhone') return this.investor.additionalInfo.secondMobileNumber?.fullPhone;
+        return this.investor[input.key];
       }
+      return '';
+    },
+    async getInvestorData() {
+      if (this.isMyProfile) this.investor = this.userData;
+      else this.investor = await this.$store.dispatch('user/getSpecialUserData', this.userId);
     },
     async openModalDelegate() {
       this.ShowModal({
@@ -329,9 +337,11 @@ export default {
     width: 100%;
     max-width: 1180px;
   }
+
   &__pagination {
     margin-top: 10px;
   }
+
   &__header {
     display: flex;
     justify-content: left;
@@ -343,7 +353,8 @@ export default {
 .title {
   display: flex;
   justify-content: space-between;
-  &__name{
+
+  &__name {
     font-weight: 600;
     font-size: 28px;
     line-height: 36px;
@@ -357,7 +368,8 @@ export default {
   &__copy {
     background: $black0;
   }
-  &__copy:hover{
+
+  &__copy:hover {
     background: $black0;
   }
 
@@ -373,10 +385,12 @@ export default {
 .profile {
   @include main;
   @include text-simple;
+
   &__body {
     max-width: 1180px;
     height: 100%;
   }
+
   &__grid-container {
     display: grid;
     gap: 20px;
@@ -385,14 +399,17 @@ export default {
     border-radius: 6px;
     margin-top: 15px;
   }
+
   &__main-data {
     display: grid;
     gap: 20px;
     grid-template-columns: 151px repeat(2, 1fr);
   }
+
   &__main-inp-cont {
     height: 46px;
   }
+
   &__avatar {
     height: 151px;
     border-radius: 6px;
@@ -400,7 +417,8 @@ export default {
     grid-column: 1;
     grid-row: 1/5;
   }
-  &__status{
+
+  &__status {
     grid-column: 2/4;
     display: grid;
     grid-template-columns: repeat(2, max-content);
@@ -420,16 +438,18 @@ export default {
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
   }
+
   &__table {
     margin: 15px 0;
   }
+
   &__history {
     display: none;
   }
 }
 
 .contacts {
-  &__name{
+  &__name {
     color: $black800 !important;
   }
 }
@@ -502,6 +522,7 @@ export default {
   background: transparent;
   justify-content: flex-start;
   width: 100px;
+
   &:hover {
     background: transparent;
   }
@@ -533,12 +554,15 @@ export default {
     &__main-data {
       grid-template-columns: 151px 1fr;
     }
+
     &__avatar {
       grid-row: 1/7;
     }
+
     &__status {
       grid-column: 2;
     }
+
     &__social {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -562,23 +586,28 @@ export default {
     }
   }
 }
+
 @include _767 {
   .investor {
     width: 100vw;
     display: block;
     margin: 0;
+
     &__header {
       margin: 15px 10px;
     }
   }
   .info {
     grid-template-rows: 3fr 1fr auto;
+
     &__base {
       grid-template-columns: 1fr;
     }
+
     &__additional {
       grid-template-columns: 1fr;
     }
+
     &__avatar {
       height: 100%;
       width: 340px;
@@ -591,12 +620,14 @@ export default {
     &__table {
       display: none;
     }
+
     &__history {
       display: block;
       background: $white;
       padding: 16px;
       margin: 15px 0;
     }
+
     &__subtitle {
       font-size: 20px;
     }
@@ -605,6 +636,7 @@ export default {
     margin: 0 15px;
   }
 }
+
 @include _575 {
   .title {
     flex-direction: column;
