@@ -1,9 +1,6 @@
 <template>
   <div class="wq-profile">
     <div class="wq-profile__body">
-      <base-btn @click="show">
-        Test
-      </base-btn>
       <div
         v-if="userData.statusKYC === $options.SumSubStatuses.NOT_VERIFIED"
         class="wq-profile__banner banner"
