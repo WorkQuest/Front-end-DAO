@@ -499,6 +499,7 @@
     "proposals": "Proposals",
     "investors": "Investors",
     "discussions": "Discussions",
+    "validators": "Validators",
     "KYC": "KYC",
     "wallet": "Wallet",
     "myQuests": "My quests",
@@ -783,5 +784,23 @@
   },
   "investor": {
     "notFilled": "Not filled"
+  },
+  "validators": {
+    "title": "Validators",
+    "candidates": "Candidates",
+    "searchValidator": "Search validator or candidate",
+    "searchCandidates": "Search proposal",
+    "table": {
+      "name": "Name",
+      "address": "Address",
+      "missedBlocks": "Missed blocks",
+      "fee": "Fee",
+      "stake": "Stake",
+      "minStake": "Min stake",
+      "slots": "Slots"
+    }
+  },
+  "validator": {
+    "title": "Validator Profile"
   }
 }
