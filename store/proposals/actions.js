@@ -14,8 +14,8 @@ export default {
   },
   async getProposals({ commit }, params) {
     try {
-      const result = await this.$axios.$get('v1/proposal', { params });
-      commit('setCards', result.proposal);
+      const result = await this.$axios.$get('v1/proposals', { params });
+      commit('setCards', result.proposals);
       commit('setCardsCount', result.count);
     } catch (e) {
       console.error(e.message);

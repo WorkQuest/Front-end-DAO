@@ -33,10 +33,7 @@
         </div>
         <div class="content__field field">
           <div class="content-field__description description">
-            <label
-              for="description"
-              class="description__header"
-            >
+            <label class="description__header">
               {{ $t('modals.description') }}
             </label>
             <validation-provider
@@ -94,7 +91,7 @@
           <base-btn
             mode="outline"
             class="action__cancel"
-            @click="close()"
+            @click="CloseModal"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
@@ -133,8 +130,8 @@ export default {
   },
   computed: {
     ...mapGetters({
+      userWalletAddress: 'user/getUserWalletAddress',
       options: 'modals/getOptions',
-      isConnected: 'web3/getWalletIsConnected',
       prevFilters: 'proposals/filters',
     }),
     isDocumentsLimitReached() {
@@ -148,27 +145,21 @@ export default {
     this.votingEndInput = this.$moment(start).add(1, 'M').format('DD/MM/YYYY');
   },
   methods: {
-    close() {
-      this.CloseModal();
-    },
     async addProposal() {
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!this.isConnected) return;
       const { callback } = this.options;
       this.SetLoader(true);
       this.descriptionInput = this.descriptionInput.trim();
       this.votingTopicInput = this.votingTopicInput.trim();
       const medias = await this.uploadFiles(this.documents);
-      const { address } = await this.$store.dispatch('web3/getAccount');
       const res = await this.$store.dispatch('proposals/createProposal', {
-        proposer: address,
+        proposer: this.userWalletAddress,
         title: this.votingTopicInput,
         description: this.descriptionInput,
         medias,
       });
       if (res.ok) {
         const { nonce } = res.result;
-        await this.$store.dispatch('web3/addProposal', { description: this.descriptionInput, nonce });
+        await this.$store.dispatch('wallet/addProposal', { description: this.descriptionInput, nonce });
         await this.$store.dispatch('proposals/getProposals', {});
       }
       if (callback) {
@@ -178,7 +169,7 @@ export default {
           lastPage: 1,
         });
       }
-      this.close();
+      this.CloseModal();
       this.SetLoader(false);
     },
     removeDocument(doc) {

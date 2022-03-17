@@ -134,6 +134,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      isWalletConnected: 'wallet/getIsWalletConnected',
       cards: 'proposals/cards',
       cardsCount: 'proposals/cardsCount',
       prevFilters: 'proposals/filters',
@@ -194,17 +195,8 @@ export default {
       },
     },
   },
-  async beforeMount() {
-    this.isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
-    if (this.isMobile) {
-      this.ShowModal({
-        key: modals.status,
-        title: 'Please install Metamask!',
-        subtitle: 'Please open site from Metamask app',
-      });
-    }
-  },
   async mounted() {
+    if (!this.isWalletConnected) return;
     this.SetLoader(true);
     this.currentPage = this.prevFilters.lastPage || 1;
     this.search = this.prevFilters.search || '';
@@ -241,14 +233,17 @@ export default {
       }, 500);
     },
     async loadPage(page) {
+      if (!this.isWalletConnected) return;
       this.currentPage = page;
       const params = {
         limit: this.cardsLimit,
         offset: (page - 1) * this.cardsLimit,
         q: this.search || null,
-        status: this.ddValue - 1 >= 0 ? this.ddValue - 1 : null,
-        createdAt: this.isDescending ? 'desc' : 'asc',
+        // createdAt: this.isDescending ? 'desc' : 'asc',
       };
+      if (this.ddValue - 1 >= 0) {
+        params.statuses = this.ddValue - 1;
+      }
       await this.$store.dispatch('proposals/getProposals', params);
     },
   },
@@ -256,7 +251,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .message {
   &__action {
     margin-top: 10px;

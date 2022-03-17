@@ -1,11 +1,24 @@
 import {
-  connectWallet, connectWithMnemonic,
-  disconnect, getBalance, getContractFeeData,
-  getIsWalletConnected, getStyledAmount,
-  getTransferFeeData, getWalletAddress, GetWalletProvider,
+  connectWallet,
+  connectWithMnemonic,
+  disconnect,
+  getBalance,
+  getContractFeeData,
+  getIsWalletConnected,
+  getStyledAmount,
+  getTransferFeeData,
+  getWalletAddress,
+  GetWalletProvider,
   transfer,
   transferToken,
-  fetchWalletContractData, delegate, getDelegates, undelegate,
+  fetchWalletContractData,
+  delegate,
+  getDelegates,
+  undelegate,
+  addProposal,
+  getProposalInfoById,
+  doVote,
+  getVoteThreshold, getVotes, getReceipt, executeVoting, voteResults, getChairpersonHash, hasRole, getProposalThreshold,
 } from '~/utils/wallet';
 import abi from '~/abi/index';
 import { errorCodes, TokenSymbols } from '~/utils/enums';
@@ -164,5 +177,39 @@ export default {
   },
   async undelegate({ commit }) {
     return await undelegate();
+  },
+
+  /* Proposals */
+  async addProposal({ commit }, { description, nonce }) {
+    return await addProposal(description, nonce);
+  },
+  async getProposalInfoById({ commit }, id) {
+    return await getProposalInfoById(id);
+  },
+  async doVote({ commit }, { id, value }) {
+    return await doVote(id, value);
+  },
+  async getVoteThreshold() {
+    return await getVoteThreshold();
+  },
+  async getProposalThreshold() {
+    return await getProposalThreshold();
+  },
+  async getReceipt({ commit }, { id, accountAddress }) {
+    return await getReceipt(id, accountAddress);
+  },
+  async executeVoting({ commit }, id) {
+    return await executeVoting(id);
+  },
+  async voteResults({ commit }, id) {
+    return await voteResults(id);
+  },
+  async isChairpersonRole({ commit, getters }) {
+    if (!getters.isChairpersonRole) {
+      const chairpersonHash = await getChairpersonHash();
+      commit('setChairpersonRoleHash', chairpersonHash.result);
+    }
+    const res = await hasRole(getters.chairpersonRoleHash);
+    commit('setIsChairpersonRole', res.result);
   },
 };
