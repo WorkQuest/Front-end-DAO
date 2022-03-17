@@ -233,10 +233,10 @@ export default {
     letter-spacing: -0.025em;
     margin-bottom: 13px;
     height: 24px;
-    color: #1D2127;
+    color: $black800;
   }
   &__err {
-    color: #F82727;
+    color: $red;
     font-size: 12px;
     min-height: 23px;
     &_small {
@@ -248,7 +248,7 @@ export default {
     left: 13px;
     &:before {
       font-size: 24px;
-      background: #0083C7;
+      background: $blue;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -288,6 +288,7 @@ export default {
   }
   &_default {
     .ctm-field__input {
+      padding: 12.5px 12.5px 12.5px 12.5px;
       color: $black700;
       background: #F7F8FA;
       border-radius: 6px;
@@ -296,8 +297,8 @@ export default {
         color: $black300;
       }
       &:focus {
-        background: #FFFFFF;
-        border: 1px solid #0083C7;
+        background: $white;
+        border: 1px solid $blue;
       }
     }
   }
@@ -311,8 +312,8 @@ export default {
         color: $black300;
       }
       &:focus {
-        background: #FFFFFF;
-        border: 1px solid #0083C7;
+        background: $white;
+        border: 1px solid $blue;
       }
     }
   }

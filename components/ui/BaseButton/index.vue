@@ -5,6 +5,7 @@
     :class="btnClass"
     :href="link"
     target="_blank"
+    :data-selector="`BASE-BTN-LINK-${link}`"
   >
     <slot />
   </a>
@@ -12,6 +13,7 @@
     v-else-if="nuxtLink !==''"
     class="base-btn"
     :class="btnClass"
+    :data-selector="`BASE-BTN-LINK-${nuxtLink}`"
     :to="nuxtLink"
   >
     <slot />
@@ -20,6 +22,7 @@
     v-else
     class="base-btn"
     :class="btnClass"
+    :data-selector="`BASE-BTN-LINK-${selector}`"
     @click="$emit('click')"
   >
     <div class="icon-btn_left">
@@ -39,6 +42,10 @@ export default {
       default: '',
     },
     nuxtLink: {
+      type: String,
+      default: '',
+    },
+    selector: {
       type: String,
       default: '',
     },

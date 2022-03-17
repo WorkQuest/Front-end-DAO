@@ -3,9 +3,7 @@
     ref="templateScroll"
     class="primary"
   >
-    <div
-      class="primary__template template"
-    >
+    <div class="primary__template template">
       <div class="template__content">
         <div
           v-click-outside="closeAll"
@@ -13,18 +11,14 @@
         >
           <div class="header__body">
             <div class="header__left">
-              <div
-                class="header__logo"
-              >
+              <div class="header__logo">
                 <img
                   src="~assets/img/app/logo.svg"
                   alt="WorkQuest"
                 >
                 <span class="header__text">WorkQuest</span>
               </div>
-              <div
-                class="header__links"
-              >
+              <div class="header__links">
                 <nuxt-link
                   v-for="(link, index) in mobileMenuLinks"
                   :key="index"
@@ -78,9 +72,7 @@
                 class="ctm-menu__toggle"
                 @click="toggleMobileMenu()"
               >
-                <button
-                  class="header__button header__button_menu"
-                >
+                <button class="header__button header__button_menu">
                   <span
                     v-if="!isMobileMenu"
                     class="icon-hamburger"
@@ -210,9 +202,7 @@
                   </div>
                   <div class="user-container__dropdown">
                     <div class="user__container">
-                      <div
-                        class="user__dropdown"
-                      >
+                      <div class="user__dropdown">
                         <span
                           v-if="!isUserDDOpened"
                           class="icon-caret_down"
@@ -269,9 +259,7 @@
         <!-- footer -->
         <div class="template__footer">
           <div class="footer">
-            <div
-              class="footer__logo"
-            >
+            <div class="footer__logo">
               <img
                 src="/img/app/logo_gray.svg"
                 alt="Logo"
@@ -398,18 +386,10 @@ export default {
       notification: 1,
       mobileMenuLinks: [
         { path: '/proposals', title: this.$t('ui.proposals') },
-        //  TODO Временно убрали кнопку wallet
-        // {
-        //   path: '/wallet',
-        //   title: this.$t('ui.wallet'),
-        // },
+        { path: '/wallet', title: this.$t('ui.wallet') },
         { path: '/investors', title: this.$t('ui.investors') },
         { path: '/discussions', title: this.$t('ui.discussions') },
-        //  TODO Временно убрали кнопку KYC
-        // {
-        //   path: '/KYC',
-        //   title: this.$t('ui.KYC'),
-        // },
+        { path: '/KYC', title: this.$t('ui.KYC') },
       ],
       userDDLinks: [
         { link: '/profile', title: 'My profile' },

@@ -121,7 +121,7 @@ export const fetchContractData = async (_method, abiName, _abi, _address, _param
 };
 
 const token = {
-  address: process.env.WQ_TOKEN,
+  address: process.env.WQT_TOKEN,
   _decimals: null,
   async getDecimals() {
     if (this._decimals) return this._decimals;
@@ -216,7 +216,7 @@ export const getVotes = async (address) => {
 /* Proposals */
 export const addProposal = async (description, nonce) => {
   try {
-    const res = await sendTransaction('addProposal', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [nonce, description.toString()]);
+    const res = await sendTransaction('addProposal', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WORKNET_VOTING, [nonce, description.toString()]);
     return success(res);
   } catch (e) {
     return error(errorCodes.AddProposal, e.message, e);
@@ -224,7 +224,7 @@ export const addProposal = async (description, nonce) => {
 };
 export const getProposalInfoById = async (id) => {
   try {
-    const res = await fetchContractData('proposals', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [id]);
+    const res = await fetchContractData('proposals', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WORKNET_VOTING, [id]);
     return success(res);
   } catch (e) {
     return error(errorCodes.GetProposal, e.message, e);
@@ -232,7 +232,7 @@ export const getProposalInfoById = async (id) => {
 };
 export const doVote = async (id, value) => {
   try {
-    const res = await sendTransaction('doVote', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [id, value]);
+    const res = await sendTransaction('doVote', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WORKNET_VOTING, [id, value]);
     return success(res);
   } catch (e) {
     return error(errorCodes.VoteProposal, e.message, e);
@@ -241,7 +241,7 @@ export const doVote = async (id, value) => {
 export const getProposalThreshold = async () => {
   try {
     const decimals = await token.getDecimals();
-    const { result } = await fetchContractData('proposalThreshold', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING);
+    const { result } = await fetchContractData('proposalThreshold', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WORKNET_VOTING);
     return success(new BigNumber(result).shiftedBy(-decimals).toString());
   } catch (e) {
     return error(errorCodes.GetProposalThreshold, e.message, e);
@@ -250,7 +250,7 @@ export const getProposalThreshold = async () => {
 export const getVoteThreshold = async () => {
   try {
     const decimals = await token.getDecimals();
-    const { result } = await fetchContractData('voteThreshold', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING);
+    const { result } = await fetchContractData('voteThreshold', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WORKNET_VOTING);
     return success(new BigNumber(result).shiftedBy(-decimals).toString());
   } catch (e) {
     return error(errorCodes.GetVoteThreshold, e.message, e);
@@ -258,7 +258,7 @@ export const getVoteThreshold = async () => {
 };
 export const getReceipt = async (id, accountAddress) => {
   try {
-    const { result } = await fetchContractData('getReceipt', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [+id, accountAddress]);
+    const { result } = await fetchContractData('getReceipt', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WORKNET_VOTING, [+id, accountAddress]);
     return success(result);
   } catch (e) {
     return error(errorCodes.GetReceipt, e.message, e);
@@ -266,7 +266,7 @@ export const getReceipt = async (id, accountAddress) => {
 };
 export const executeVoting = async (id) => {
   try {
-    const res = await sendTransaction('executeVoting', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [id]);
+    const res = await sendTransaction('executeVoting', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WORKNET_VOTING, [id]);
     return success(res);
   } catch (e) {
     return error(errorCodes.ExecuteVoting, e.message, e);
@@ -274,7 +274,7 @@ export const executeVoting = async (id) => {
 };
 export const voteResults = async (id) => {
   try {
-    const { result } = await fetchContractData('voteResults', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [id]);
+    const { result } = await fetchContractData('voteResults', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WORKNET_VOTING, [id]);
     return success(result);
   } catch (e) {
     return error(errorCodes.VoteResults, e.message, e);
@@ -283,7 +283,7 @@ export const voteResults = async (id) => {
 
 export const getChairpersonHash = async () => {
   try {
-    const { result } = await fetchContractData('CHAIRPERSON_ROLE', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING);
+    const { result } = await fetchContractData('CHAIRPERSON_ROLE', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WORKNET_VOTING);
     return success(result);
   } catch (e) {
     return error(errorCodes.GetChairpersonHash, e.message, e);
@@ -291,7 +291,7 @@ export const getChairpersonHash = async () => {
 };
 export const hasRole = async (roleHash) => {
   try {
-    const { result } = await fetchContractData('hasRole', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WQ_DAO_VOTING, [roleHash, account.address]);
+    const { result } = await fetchContractData('hasRole', abiNames.WQDAOVoting, abi.WQDAOVoting, process.env.WORKNET_VOTING, [roleHash, account.address]);
     return success(result);
   } catch (e) {
     return error(errorCodes.HasRole, e.message, e);

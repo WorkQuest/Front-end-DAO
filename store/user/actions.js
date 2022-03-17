@@ -1,17 +1,33 @@
+import { error } from '~/utils/success-error';
+
 export default {
   async signIn({ commit, dispatch }, payload) {
-    const response = await this.$axios.$post('/v1/auth/login', payload);
-    commit('setNewTokens', response.result);
-    await dispatch('getUserData');
-    return response;
+    try {
+      const response = await this.$axios.$post('/v1/auth/login', payload);
+      commit('setTokens', response.result);
+      return response;
+    } catch (e) {
+      return error(e.response.data.code, e.response.data.msg);
+    }
+  },
+  async registerWallet({ commit }, payload) {
+    try {
+      return await this.$axios.$post('/v1/auth/register/wallet', payload);
+    } catch (e) {
+      return error(e.response.data.code, e.response.data.msg);
+    }
   },
   async signUp({ commit }, payload) {
-    const response = await this.$axios.$post('/v1/auth/dao/register', payload);
-    commit('setNewTokens', response.result);
-    return response;
+    try {
+      const response = await this.$axios.$post('/v1/auth/dao/register', payload);
+      commit('setTokens', response.result);
+      return response;
+    } catch (e) {
+      return error();
+    }
   },
   async confirm({ commit }, payload) {
-    commit('setOldTokens', { access: this.$cookies.get('access'), refresh: this.$cookies.get('refresh') });
+    commit('setTokens', { access: this.$cookies.get('access'), refresh: this.$cookies.get('refresh') });
     this.$cookies.set('role', payload.role);
     const response = await this.$axios.$post('/v1/auth/confirm-email', payload);
     return response;
@@ -52,7 +68,7 @@ export default {
   },
   async refreshTokens({ commit }) {
     const response = await this.$axios.$post('/v1/auth/refresh-tokens');
-    commit('setNewTokens', response.result);
+    commit('setTokens', response.result);
     return response;
   },
   async setCurrentPosition({ commit }, payload) {
@@ -105,5 +121,61 @@ export default {
         'x-amz-acl': 'public-read',
       },
     });
+  },
+  async confirmEnable2FA({ commit }, payload) {
+    try {
+      const response = await this.$axios.$post('/v1/totp/confirm', payload);
+      commit('setEnable2FA', response.result);
+      commit('setTwoFAStatus', true);
+      return response;
+    } catch (e) {
+      const response = {
+        ok: e.response.data.ok,
+        code: e.response.data.code,
+        msg: e.response.data.msg,
+        data: e.response.data.data,
+      };
+      return response;
+    }
+  },
+  async disable2FA({ commit }, payload) {
+    try {
+      const response = await this.$axios.$post('/v1/totp/disable', payload);
+      commit('setDisable2FA', response.result);
+      commit('setTwoFAStatus', false);
+      return response;
+    } catch (e) {
+      const response = {
+        ok: e.response.data.ok,
+        code: e.response.data.code,
+        msg: e.response.data.msg,
+        data: e.response.data.data,
+      };
+      return response;
+    }
+  },
+  async enable2FA({ commit }, payload) {
+    try {
+      const response = await this.$axios.$post('/v1/totp/enable', payload);
+      commit('setTwoFACode', response.result);
+      return response;
+    } catch (e) {
+      const response = {
+        ok: e.response.data.ok,
+        code: e.response.data.code,
+        msg: e.response.data.msg,
+        data: e.response.data.data,
+      };
+      return response;
+    }
+  },
+  async validateTOTP({ commit }, payload) {
+    try {
+      const response = await this.$axios.$post('/v1/auth/validate-totp', payload);
+      return response.result.isValid;
+    } catch (e) {
+      console.log('user/validateTOTP');
+      return false;
+    }
   },
 };

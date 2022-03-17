@@ -25,6 +25,7 @@ export default {
     { src: '@plugins/vee-validate.js' },
     { src: '@plugins/clipboard.js' },
     { src: '@plugins/injectComponents.js' },
+    { src: '@plugins/vue-qrcode.js' },
   ],
   components: true,
   buildModules: [
@@ -47,11 +48,6 @@ export default {
       key: process.env.GMAPKEY,
     }],
   ],
-  router: {
-    scrollBehavior() {
-      return { x: 0, y: 0 };
-    },
-  },
   build: {
     loaders: {
       scss: { sourceMap: false },
@@ -92,7 +88,9 @@ export default {
     GMAPKEY: process.env.GMAPKEY,
 
     SECRET_SUMSUB: process.env.SECRET_SUMSUB,
-    WQ_TOKEN: process.env.WQ_TOKEN,
-    WQ_DAO_VOTING: process.env.WQ_DAO_VOTING,
+    WQT_TOKEN: process.env.WQT_TOKEN,
+    WORKNET_VOTING: process.env.WORKNET_VOTING,
+    WQ_PROVIDER: process.env.WQ_PROVIDER,
+    WQ_EXPLORER: process.env.WQ_EXPLORER,
   },
 };

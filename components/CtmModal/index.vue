@@ -9,9 +9,11 @@
     </div>
   </transition>
 </template>
+
 <script>
 import { mapGetters } from 'vuex';
 import modals from '@/store/modals/modals';
+import CtmModalGiveTransfer from './CtmModalGiveTransfer';
 import CtmModalShowFile from './CtmModalShowFile';
 import CtmModalConfirmEmail from './CtmModalConfirmEmail';
 import CtmModalChangePassword from './CtmModalChangePassword';
@@ -33,6 +35,7 @@ import CtmModalOpenADispute from './CtmModalOpenADispute';
 import CtmModalTransfer from './CtmModalTransfer';
 import CtmModalChangePassInSettings from './CtmModalChangePassInSettings';
 import CtmModalTwoFAAuth from './CtmModalTwoFAAuth';
+import CtmModalDisableTwoFA from './CtmModalDisableTwoFA';
 import CtmModalAddProposal from './CtmModalAddProposal';
 import CtmModalAddDiscussion from './CtmModalAddDiscussion';
 import CtmModalUndelegate from './CtmModalUndelegate';
@@ -40,6 +43,8 @@ import CtmModalDelegate from './CtmModalDelegate';
 import CtmModalWarning from './CtmModalWarning';
 import CtmModalSignWorkQuest from './CtmModalSignWorkQuest';
 import CtmModalDefault from '~/components/CtmModal/CtmModalDefault';
+import CtmModalTransactionReceipt from './CtmModalTransactionReceipt';
+import CtmModalSecurityCheck from './CtmModalSecurityCheck';
 
 export default {
   name: 'ModalBox',

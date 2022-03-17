@@ -1,8 +1,10 @@
 export default {
   isAuth: (state) => !!(state.tokens.access && state.tokens.refresh),
+  getStatusKYC: (state) => state.userData.statusKYC,
   accessToken: (state) => state.tokens.access,
   refreshToken: (state) => state.tokens.refresh,
   getUserData: (state) => state.userData,
+  getUserWalletAddress: (state) => state.userData?.wallet?.address,
   editUserData: (state) => state.userData || '',
   getAdditionalInfo: (state) => state.userData?.additionalInfo?.socialNetwork || '',
   getAdditionalInfoInstagram: (state) => state.userData?.additionalInfo?.socialNetwork?.instagram || '',
@@ -28,4 +30,5 @@ export default {
   getUserWorkQuest: (state) => state.userData?.additionalInfo?.socialNetwork?.workQuest || '',
   getAllUsers: (state) => state.usersData,
   getSpecialUserData: (state) => state.specialUserData,
+  getTwoFACode: (state) => state.twoFACode,
 };

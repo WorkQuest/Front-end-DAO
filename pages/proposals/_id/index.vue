@@ -45,7 +45,7 @@
                 class="hash__value"
                 target="_blank"
               >
-                {{ hash.length ? cutString(hash) : '...' }}
+                {{ hash.length ? CutTxn(hash) : '...' }}
               </a>
             </div>
             <div class="transactions__files files">

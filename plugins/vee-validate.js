@@ -9,6 +9,9 @@ import {
 } from 'vee-validate';
 
 import * as rules from 'vee-validate/dist/rules';
+import { validateMnemonic } from 'bip39';
+import BigNumber from 'bignumber.js';
+import { utils } from 'ethers';
 
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
@@ -136,6 +139,49 @@ extend('linkedIn', {
     };
   },
   message: 'Please enter correct {_field_}',
+});
+
+extend('decimalPlaces', {
+  validate(value, { places }) {
+    const regex = new RegExp(`^\\d+\\.\\d{0,${places}}$`);
+    return {
+      required: true,
+      valid: !value.toString().includes('.') || regex.test(value),
+    };
+  },
+  params: ['places'],
+  message: 'Max decimal places: {places}',
+});
+
+extend('mnemonic', {
+  validate(value) {
+    return {
+      required: true,
+      valid: validateMnemonic(value),
+    };
+  },
+  message: 'Incorrect secret phrase',
+});
+
+extend('address', {
+  validate(value) {
+    return {
+      required: true,
+      valid: utils.isAddress(value),
+    };
+  },
+  message: 'Type correct address',
+});
+
+extend('max_bn', {
+  validate(value, { max }) {
+    return {
+      required: true,
+      valid: new BigNumber(value).isLessThanOrEqualTo(new BigNumber(max)),
+    };
+  },
+  params: ['max'],
+  message: 'Value must be less than or equal {max}',
 });
 
 export default ({ app }) => {

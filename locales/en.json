@@ -56,7 +56,14 @@
     "required_if": "The {_field_} field is required",
     "required": "The {_field_} field is required",
     "size": "The {_field_} field size must be less than {size}KB",
-    "decimal": "The {_field_} field must contain only decimal values"
+    "decimal": "The {_field_} field must contain only decimal values",
+    "is": "The values do not match",
+    "is_not": "Incorrect value",
+    "mnemonic": "Incorrect secret phrase",
+    "attemptsExceeded": "Number of attempts exceeded",
+    "loginWithSecret": "Please login with secret phrase",
+    "invalidPassword": "Invalid password",
+    "loginToContinue": "Please login to continue"
   },
   "labels": {
     "firstName": "First name",
@@ -99,6 +106,7 @@
     "2FA": "2FA Authentication",
     "changePass": "Change password",
     "switchOn": "Switch On",
+    "switchOff": "Switch Off",
     "change": "Change",
     "save": "Save",
     "raiseViews": "Raise views",
@@ -140,6 +148,7 @@
     "details": "View details",
     "cancel": "Cancel",
     "submit": "Submit",
+    "disable": "Disable",
     "showAllReviews": "Show all reviews",
     "later": "Later",
     "iAgree": "I agree",
@@ -173,6 +182,15 @@
     "signUp": "Sign Up",
     "forgotYourPass": "Forgot your password?"
   },
+  "securityCheck": {
+    "title": "Security check",
+    "confCode": "Google confirmation code",
+    "placeholder": "123456",
+    "confCodeDesc": "Enter the 6-digit code from the Google Authentication app",
+    "confCodeField": "google verification",
+    "confirmAccess": "Confirm access",
+    "confirmPassToContinue": "You need to confirm your password to continue"
+  },
   "signUp": {
     "title": "Sign Up",
     "haveAccount": "Already have an account?",
@@ -181,9 +199,23 @@
     "lastName": "Last name",
     "email": "Email",
     "password": "Password",
+    "totp": "TOTP",
     "confirmPassword": "Repeat password",
     "create": "Create account",
     "back": "back"
+  },
+  "createWallet": {
+    "showSecretPhrase": "Show secret phrase",
+    "savePhrase": "Save your secret phrase",
+    "keptPhrase": "I have kept a secret phrase",
+    "confirmSecretPhrase": "Confirm secret phrase",
+    "typeSecret": "Type secret word #{a}",
+    "secret": "Secret word #{a}",
+    "create": "Create wallet",
+    "importWallet": "Import wallet",
+    "createOrImport": "Create or import wallet",
+    "typeSecretPhrase": "Type secret phrase",
+    "secretPhrase": "Secret phrase"
   },
   "forgot": {
     "title": "Forgot password?",
@@ -286,11 +318,25 @@
     "startQuest": "Start quest"
   },
   "modals": {
+    "textCopy": "Text has been copied",
+    "success": "Success",
+    "fromAddress": "From",
+    "toAddress": "To",
+    "error": "Error",
+    "selectToken": "Select token",
+    "from": "From",
+    "to": "To",
+    "transfer": "Transfer",
     "toYourEmail": "To your email address",
     "codeHasBeenSent": "code has been sent",
     "switchOnGoogleAuth": "Switch on Google Authenticator",
     "conformationCodeFromMail": "Confirmation code from email",
     "twoFAConfirmationCode": "2FA confirmation code",
+    "disable2Fa": "Disable 2FA",
+    "2FAEnabled": "2FA enabled successfully!",
+    "2FADisabled": "2FA disabled successfully!",
+    "2FAStatus": "2FA Status",
+    "enterCode": "Enter the 6-digit code from the Google Authentication app",
     "appleStore": "Apple store",
     "googlePlay": "Google play",
     "useYourGoogleAuth": "Use your Google Authenticator app to scan the barcode",
@@ -415,7 +461,7 @@
     "investorAddress": "Investor address",
     "tokensNumber": "Tokens Number",
     "tokensDelegated": "Enter number of tokens that will be delegated",
-    "max": "Maximum",
+    "max": "MAX",
     "placeholder": "Placeholder",
     "votingEnd": "Voting end",
     "votingEndField": "voting End",
@@ -444,7 +490,9 @@
     "signWorkQuest": {
       "title": "Connection to Work Quest",
       "desc": "If you already have an account created on one of the Work Quest products, you can log in using its login details"
-    }
+    },
+    "emailVerificationCodeField": "email verification",
+    "googleVerificationCodeField": "google verification"
   },
   "ui": {
     "workers": "Workers",
@@ -485,30 +533,33 @@
     }
   },
   "wallet": {
+    "WUSD": "WUSD wallet",
     "cryptoWallet": "Crypto wallet",
     "bankCard": "Bank card",
     "send": "Send",
     "toThisAddress": "to this address",
     "wallet": "Wallet",
     "balance": "Balance",
-    "deposit": "Deposit",
+    "deposit": "Receive",
     "withdraw": "Withdraw",
-    "transfer": "Transfer",
-    "addCardProposal": "Add your own card for easy withdrawal",
+    "transfer": "Buy / Send",
+    "addCardProposal": "Add bank card for easy withdrawal",
     "addCard": "Add card",
     "table": {
-      "trx": "Transaction History",
-      "txHash": "Tx hash",
+      "trx": "Transactions",
+      "txHash": "Txn Hash",
       "status": "Status",
       "block": "Block",
       "timestamp": "Timestamp",
-      "transferred": "Transferred",
-      "value": "Value",
-      "trxFee": "Transaction fee"
+      "transferred": "Tokens Transferred",
+      "value": "Quantity",
+      "trxFee": "Transaction fee",
+      "empty": "Transactions list is empty"
     }
   },
   "kyc": {
-    "KYC": "KYC"
+    "KYC": "KYC",
+    "alreadyVerified": "Your profile already verified!"
   },
   "chat": {
     "openDispute": "Open dispute",
@@ -640,7 +691,9 @@
     "savingProduct": "Savings product",
     "crediting": "Crediting",
     "liquidityMining": "Liquidity mining",
-    "aboutMe": "About Me"
+    "aboutMe": "About Me",
+    "mainNumberMissing": "The main number is missing",
+    "secondNumberMissing": "The second number is missing"
   },
   "disputes": {
     "disputes": "Disputes",
