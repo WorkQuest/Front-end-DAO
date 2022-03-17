@@ -65,7 +65,10 @@ export default {
     },
     showRequestSendModal() {
       this.ShowModal({
-        key: modals.requestSend,
+        key: modals.status,
+        img: require('assets/img/ui/message.svg'),
+        title: this.$t('modals.requestSend'),
+        subtitle: this.$t('modals.smallTemp'),
       });
     },
   },
@@ -81,6 +84,7 @@ export default {
     justify-content: space-between;
     margin: 15px 0 0 0;
   }
+
   &__wrapper {
     width: 45%;
   }

@@ -237,7 +237,10 @@ export default {
     },
     showTransactionSendModal() {
       this.ShowModal({
-        key: modals.transactionSend,
+        key: modals.status,
+        img: require('assets/img/ui/transactionSend.svg'),
+        title: this.$t('modals.transactionSend'),
+        subtitle: this.$t('modals.smallTemp'),
       });
     },
   },
@@ -263,6 +266,7 @@ export default {
     padding: 12px;
     margin: 33px 0 0 0;
   }
+
   &__text {
     font-weight: 400;
     font-size: 16px;
@@ -282,6 +286,7 @@ export default {
     align-items: flex-end;
     grid-gap: 10px;
   }
+
   &__3col {
     display: grid;
     grid-template-columns: 6fr 1fr 6fr;
@@ -297,12 +302,14 @@ export default {
       font-weight: 400;
       font-size: 16px;
       color: $black500;
+
       &_blue {
         @extend .step-three__text;
         color: $blue;
       }
     }
   }
+
   &__container {
     &_grid {
       display: grid;
@@ -315,12 +322,14 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+
   &__step {
     @include text-simple;
     font-weight: 400;
     font-size: 16px;
     color: $black500;
     margin: 0 10px 0 0;
+
     &_active {
       color: $black800;
       border-bottom: 1px solid $blue;
@@ -333,9 +342,11 @@ export default {
   &__content-field {
     margin: 15px 0 0 0;
   }
+
   &__equal {
     margin: 0 0 35px 10px;
   }
+
   &__input {
     height: 46px;
   }
@@ -354,11 +365,13 @@ export default {
     width: 100%;
     background-color: $white;
     resize: none;
+
     &::placeholder {
       color: $black800;
     }
   }
 }
+
 .btn {
   &__container {
     display: flex;
@@ -366,6 +379,7 @@ export default {
     justify-content: space-between;
     margin: 15px 0 0 0;
   }
+
   &__wrapper {
     width: 45%;
   }
@@ -373,12 +387,14 @@ export default {
 
 .messageSend {
   max-width: 495px !important;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 10px;
   }

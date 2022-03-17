@@ -13,20 +13,15 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '@/store/modals/modals';
-import CtmModalGiveTransfer from './CtmModalGiveTransfer';
 import CtmModalShowFile from './CtmModalShowFile';
 import CtmModalConfirmEmail from './CtmModalConfirmEmail';
 import CtmModalChangePassword from './CtmModalChangePassword';
 import CtmModalRestore from './CtmModalRestore';
 import CtmModalPrivacy from './CtmModalPrivacy';
-import CtmModalRequestSend from './CtmModalRequestSend';
 import CtmModalThanksSend from './CtmModalThanksSend';
 import CtmModalReviewEmployer from './CtmModalReviewEmployer';
-import CtmModalTransactionSend from './CtmModalTransactionSend';
-import CtmModalCardHasBeenAdded from './CtmModalCardHasBeenAdded';
 import CtmModalDeposit from './CtmModalDeposit';
 import CtmModalAddCard from './CtmModalAddCard';
-import CtmModalInviteSend from './CtmModalInviteSend';
 import CtmModalStatus from './CtmModalStatus';
 import CtmModalConfirmDetails from './CtmModalConfirmDetails';
 import CtmModalWithdrawAbout from './CtmModalWithdrawAbout';
@@ -35,7 +30,6 @@ import CtmModalOpenADispute from './CtmModalOpenADispute';
 import CtmModalTransfer from './CtmModalTransfer';
 import CtmModalChangePassInSettings from './CtmModalChangePassInSettings';
 import CtmModalTwoFAAuth from './CtmModalTwoFAAuth';
-import CtmModalDisableTwoFA from './CtmModalDisableTwoFA';
 import CtmModalAddProposal from './CtmModalAddProposal';
 import CtmModalAddDiscussion from './CtmModalAddDiscussion';
 import CtmModalUndelegate from './CtmModalUndelegate';
@@ -43,8 +37,6 @@ import CtmModalDelegate from './CtmModalDelegate';
 import CtmModalWarning from './CtmModalWarning';
 import CtmModalSignWorkQuest from './CtmModalSignWorkQuest';
 import CtmModalDefault from '~/components/CtmModal/CtmModalDefault';
-import CtmModalTransactionReceipt from './CtmModalTransactionReceipt';
-import CtmModalSecurityCheck from './CtmModalSecurityCheck';
 
 export default {
   name: 'ModalBox',
@@ -53,7 +45,6 @@ export default {
     [modals.addCase]: CtmModalAddCase,
     [modals.addDiscussion]: CtmModalAddDiscussion,
     [modals.addProposal]: CtmModalAddProposal,
-    [modals.cardHasBeenAdded]: CtmModalCardHasBeenAdded,
     [modals.changePassInSettings]: CtmModalChangePassInSettings,
     [modals.changePassword]: CtmModalChangePassword,
     [modals.confirmDetails]: CtmModalConfirmDetails,
@@ -61,17 +52,14 @@ export default {
     [modals.default]: CtmModalDefault,
     [modals.delegate]: CtmModalDelegate,
     [modals.deposit]: CtmModalDeposit,
-    [modals.inviteSend]: CtmModalInviteSend,
     [modals.openADispute]: CtmModalOpenADispute,
     [modals.privacy]: CtmModalPrivacy,
-    [modals.requestSend]: CtmModalRequestSend,
     [modals.restore]: CtmModalRestore,
     [modals.review]: CtmModalReviewEmployer,
     [modals.showFile]: CtmModalShowFile,
     [modals.signWorkQuest]: CtmModalSignWorkQuest,
     [modals.status]: CtmModalStatus,
     [modals.thanks]: CtmModalThanksSend,
-    [modals.transactionSend]: CtmModalTransactionSend,
     [modals.transfer]: CtmModalTransfer,
     [modals.twoFAAuth]: CtmModalTwoFAAuth,
     [modals.undelegate]: CtmModalUndelegate,

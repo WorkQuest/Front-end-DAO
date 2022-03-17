@@ -92,7 +92,10 @@ export default {
     },
     showTransactionSendModal() {
       this.ShowModal({
-        key: modals.transactionSend,
+        key: modals.status,
+        img: require('assets/img/ui/transactionSend.svg'),
+        title: this.$t('modals.transactionSend'),
+        subtitle: this.$t('modals.smallTemp'),
       });
     },
   },
@@ -112,6 +115,7 @@ export default {
     height: 46px;
     margin-bottom: 50px;
   }
+
   &__equal {
     margin: 0 0 35px 10px;
   }
@@ -130,6 +134,7 @@ export default {
     width: 100%;
     background-color: $white;
     resize: none;
+
     &::placeholder {
       color: $black800;
     }
@@ -143,6 +148,7 @@ export default {
     justify-content: space-between;
     margin: 15px 0 0 0;
   }
+
   &__wrapper {
     width: 45%;
   }
@@ -150,12 +156,14 @@ export default {
 
 .messageSend {
   max-width: 495px !important;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 10px;
   }

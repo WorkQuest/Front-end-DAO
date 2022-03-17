@@ -85,7 +85,10 @@ export default {
     },
     showRequestSendModal() {
       this.ShowModal({
-        key: modals.requestSend,
+        key: modals.status,
+        img: require('assets/img/ui/message.svg'),
+        title: this.$t('modals.requestSend'),
+        subtitle: this.$t('modals.smallTemp'),
       });
     },
   },
@@ -103,6 +106,7 @@ export default {
     border: 0;
     background-color: $black0;
     resize: none;
+
     &::placeholder {
       color: $black200;
     }
@@ -111,10 +115,12 @@ export default {
 
 .ctm-modal {
   @include modalKit;
+
   &__box {
     max-width: 800px;
   }
 }
+
 .modal {
   &__title {
     @include text-simple;
@@ -122,28 +128,33 @@ export default {
     font-weight: 500;
     font-size: 23px;
   }
+
   &__desc {
     @include text-simple;
     width: 100%;
     display: grid;
     grid-gap: 10px;
   }
+
   &__labelMessage {
     @include text-simple;
     font-size: 16px;
     color: $black800;
   }
 }
+
 .message {
   &__wrapper {
     margin: 0 0 25px 0;
   }
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 10px;
   }
@@ -162,6 +173,7 @@ export default {
     }
   }
 }
+
 .btn {
   &__container {
     display: flex;
@@ -169,14 +181,17 @@ export default {
     justify-content: space-between;
     margin: 15px 0 0 0;
   }
+
   &__wrapper {
     width: 45%;
   }
 }
-.ctm-modal{
+
+.ctm-modal {
   &__box {
     max-width: 800px !important;
   }
+
   &__title {
     margin: 0 0 0 9% !important;
   }

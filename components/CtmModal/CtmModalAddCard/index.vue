@@ -107,7 +107,10 @@ export default {
     },
     showCardHasBeenAddedModal() {
       this.ShowModal({
-        key: modals.cardHasBeenAdded,
+        key: modals.status,
+        img: require('assets/img/ui/cardHasBeenAdded.svg'),
+        title: this.$t('modals.cardHasBeenAdded'),
+        subtitle: this.$t('modals.smallTemp'),
       });
     },
   },
@@ -118,6 +121,7 @@ export default {
 
 .ctm-modal {
   @include modalKit;
+
   &__content-field {
     height: 46px;
     margin-bottom: 50px;
@@ -132,6 +136,7 @@ export default {
     align-items: flex-end;
   }
 }
+
 .btn {
   &__container {
     display: flex;
@@ -139,6 +144,7 @@ export default {
     justify-content: space-between;
     margin: 15px 0 0 0;
   }
+
   &__wrapper {
     width: 45%;
   }
@@ -146,12 +152,14 @@ export default {
 
 .messageSend {
   max-width: 495px !important;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 10px;
   }
