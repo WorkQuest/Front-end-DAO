@@ -109,6 +109,7 @@ export default {
   async beforeMount() {
     const isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
     if (isMobile) {
+      // TODO: Добавить локализацию
       this.ShowModal({
         key: modals.status,
         title: 'Please install Metamask!',
@@ -144,30 +145,35 @@ export default {
 .investors {
   @include main;
   @include text-simple;
+
   &__body {
     margin-top: 30px;
     max-width: 1180px;
     height: 100%;
   }
-  &__table{
+
+  &__table {
     margin-bottom: 15px;
   }
+
   &__investors {
-      display: none;
-    }
-  &__pagination{
+    display: none;
+  }
+
+  &__pagination {
     margin: 10px 15px 0 0;
   }
 }
 
-.body{
-  &__title{
+.body {
+  &__title {
     font-weight: 600;
     font-size: 28px;
     line-height: 36px;
     color: #000000;
   }
-  &__search{
+
+  &__search {
     margin: 20px 0 20px 0;
     background-color: #FFFFFF;
     width: 1180px;
@@ -175,14 +181,17 @@ export default {
     border-radius: 6px;
   }
 }
+
 @include _1199 {
   .body {
     max-width: 100vw;
+
     &__title {
       margin-left: 10px;
     }
   }
 }
+
 @include _767 {
   .body {
     max-width: 100vw;
@@ -191,11 +200,13 @@ export default {
     &__table {
       display: none;
     }
+
     &__investors {
       display: block;
       background: $white;
       padding: 16px;
     }
+
     &__pagination {
       margin-right: 10px;
     }

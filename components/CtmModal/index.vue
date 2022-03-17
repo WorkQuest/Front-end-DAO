@@ -36,10 +36,18 @@ import CtmModalWarning from './CtmModalWarning';
 import CtmModalSignWorkQuest from './CtmModalSignWorkQuest';
 import CtmModalDefault from '~/components/CtmModal/CtmModalDefault';
 import CtmModalTransactionReceipt from '~/components/CtmModal/CtmModalTransactionReceipt';
+import CtmModalGiveTransfer from '~/components/CtmModal/CtmModalGiveTransfer';
+import CtmModalGiveDeposit from '~/components/CtmModal/CtmModalGiveDeposit';
+import CtmModalAddingCard from '~/components/CtmModal/CtmModalAddingCard';
+import CtmModalTakeWithdraw from '~/components/CtmModal/CtmModalTakeWithdraw';
 
 export default {
   name: 'ModalBox',
   components: {
+    [modals.takeWithdraw]: CtmModalTakeWithdraw,
+    [modals.addingCard]: CtmModalAddingCard,
+    [modals.giveDeposit]: CtmModalGiveDeposit,
+    [modals.giveTransfer]: CtmModalGiveTransfer,
     [modals.transactionReceipt]: CtmModalTransactionReceipt,
     [modals.addCard]: CtmModalAddCard,
     [modals.addCase]: CtmModalAddCase,

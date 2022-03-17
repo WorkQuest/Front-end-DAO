@@ -227,9 +227,7 @@ export default {
       });
       this.SetLoader(false);
       if (!res.ok) {
-        if (res.msg.includes('Wallet already exists')) {
-          return;
-        }
+        if (res.msg.includes('Wallet already exists')) return;
         this.isClearOnDestroy = true;
         await this.$store.dispatch('user/logout');
         await this.$router.push(Path.SIGN_IN);
@@ -266,20 +264,24 @@ export default {
     justify-content: flex-start;
     align-items: flex-end;
   }
+
   &__back {
     padding: 10px 0 0 33px;
     width: 100%;
     max-width: 60px;
   }
 }
+
 .icon-chevron_big_left:before {
   content: "\ea4d";
   color: $black500;
   font-size: 25px;
 }
+
 .confirm {
   width: 100%;
 }
+
 .wallet-step {
   max-width: 800px;
   background: $white;
@@ -293,6 +295,7 @@ export default {
     cursor: pointer;
     display: table-cell;
     color: $black700;
+
     & > span:before {
       color: $black700;
       vertical-align: middle;
@@ -301,17 +304,21 @@ export default {
     }
   }
 }
+
 .role {
   width: 100%;
+
   &_hidden {
     display: none;
   }
+
   &__back {
     padding-bottom: 10px;
     cursor: pointer;
     display: table-cell;
     font-size: 18px;
     color: $black0;
+
     & > span:before {
       color: $black0;
       vertical-align: middle;
@@ -319,6 +326,7 @@ export default {
       margin-right: 5px;
     }
   }
+
   &__title {
     padding-bottom: 30px;
     font-family: 'Inter', sans-serif;
@@ -328,11 +336,13 @@ export default {
     line-height: 130%;
     color: #FFFFFF;
   }
+
   &__cards {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 30px;
   }
+
   &__image {
     transition: .2s;
     will-change: transform;
@@ -343,35 +353,32 @@ export default {
     height: 100%;
     z-index: -1;
   }
+
   &__card {
     transition: .2s;
     will-change: transform;
     min-height: 400px;
     cursor: pointer;
-    filter: drop-shadow(0px 47.1676px 61.4131px rgba(10, 27, 61, 0.078707))
-    drop-shadow(0px 26.7219px 32.8344px rgba(10, 27, 61, 0.0629546))
-    drop-shadow(0px 14.4955px 18.4067px rgba(10, 27, 61, 0.0598272))
-    drop-shadow(0px 6.96225px 9.77565px rgba(10, 27, 61, 0.0584222))
-    drop-shadow(0px 2.43911px 4.06787px rgba(10, 27, 61, 0.0492837));
-    -webkit-filter: drop-shadow(0px 47.1676px 61.4131px rgba(10, 27, 61, 0.078707))
-    drop-shadow(0px 26.7219px 32.8344px rgba(10, 27, 61, 0.0629546))
-    drop-shadow(0px 14.4955px 18.4067px rgba(10, 27, 61, 0.0598272))
-    drop-shadow(0px 6.96225px 9.77565px rgba(10, 27, 61, 0.0584222))
-    drop-shadow(0px 2.43911px 4.06787px rgba(10, 27, 61, 0.0492837));
+    filter: drop-shadow(0px 47.1676px 61.4131px rgba(10, 27, 61, 0.078707)) drop-shadow(0px 26.7219px 32.8344px rgba(10, 27, 61, 0.0629546)) drop-shadow(0px 14.4955px 18.4067px rgba(10, 27, 61, 0.0598272)) drop-shadow(0px 6.96225px 9.77565px rgba(10, 27, 61, 0.0584222)) drop-shadow(0px 2.43911px 4.06787px rgba(10, 27, 61, 0.0492837));
+    -webkit-filter: drop-shadow(0px 47.1676px 61.4131px rgba(10, 27, 61, 0.078707)) drop-shadow(0px 26.7219px 32.8344px rgba(10, 27, 61, 0.0629546)) drop-shadow(0px 14.4955px 18.4067px rgba(10, 27, 61, 0.0598272)) drop-shadow(0px 6.96225px 9.77565px rgba(10, 27, 61, 0.0584222)) drop-shadow(0px 2.43911px 4.06787px rgba(10, 27, 61, 0.0492837));
     border-radius: 6px;
     background-size: cover;
     overflow: hidden;
     position: relative;
+
     &_minimized {
       width: 75% !important;
     }
+
     &_right {
       width: 100%;
       background-image: url("~assets/img/app/role_dots.svg");
       background-color: $green;
       justify-self: flex-end;
+
       &:hover {
         width: 125% !important;
+
         .role {
           &__image {
             right: 0;
@@ -379,13 +386,16 @@ export default {
         }
       }
     }
+
     &_left {
       width: 100%;
       background-image: url("~assets/img/app/role_dots_light.svg");
       background-color: $black100;
       justify-self: flex-start;
+
       &:hover {
         width: 125% !important;
+
         .role {
           &__image {
             right: -1px;
@@ -394,6 +404,7 @@ export default {
       }
     }
   }
+
   &__content {
     display: flex;
     flex-direction: column;
@@ -401,36 +412,45 @@ export default {
     height: 100%;
     padding: 30px 10px 40px 30px;
   }
+
   &__bottom {
     display: flex;
+
     &_show {
       opacity: 1 !important;
     }
+
     &_left {
       display: flex;
       opacity: 0;
     }
+
     &_right {
       display: flex;
       opacity: 0;
     }
   }
+
   &__arrow {
     padding-left: 10px;
+
     &_left {
       span:before {
         color: $black800;
       }
     }
+
     &_right {
       span:before {
         color: #FFFFFF;
       }
     }
   }
+
   &__text {
     font-family: 'Inter', sans-serif;
     font-style: normal;
+
     &_title {
       font-weight: 600;
       font-size: 45px;
@@ -438,6 +458,7 @@ export default {
       color: $black800;
       padding-bottom: 8px;
     }
+
     &_desc {
       font-weight: normal;
       font-size: 16px;
@@ -445,6 +466,7 @@ export default {
       color: $black800;
       max-width: 210px;
     }
+
     &_light {
       color: #FFFFFF;
     }
@@ -456,31 +478,39 @@ export default {
     &__text_title {
       font-size: 28px;
     }
+
     &__text_desc {
       font-size: 16px;
       max-width: 220px;
     }
+
     &__cards {
       grid-template-columns: 1fr;
       grid-gap: 20px;
     }
+
     &__image {
       right: -122px;
     }
+
     &__card {
       &_minimized {
         width: 100% !important;
       }
+
       &_right:hover {
         width: 100% !important;
+
         .role {
           &__image {
             right: -140px;
           }
         }
       }
+
       &_left:hover {
         width: 100% !important;
+
         .role {
           &__image {
             right: -84px;

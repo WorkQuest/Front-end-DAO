@@ -1,0 +1,296 @@
+<template>
+  <ctm-modal-box
+    class="withdrawal"
+    :title="$t('modals.withdrawal')"
+  >
+    <div class="withdrawal__content content">
+      <validation-observer v-slot="{handleSubmit, validated, passed, invalid}">
+        <div class="content__step">
+          <div
+            class="content__panel"
+            :class="{'content__panel_active': step === 1}"
+            data-selector="PREVIOUS-STEP"
+            @click="previousStep"
+          >
+            {{ $t('modals.walletAddress') }}
+          </div>
+          <!--          Вывод на банковскую карту. Вернуть по надобности -->
+          <!--          <div-->
+          <!--            class="content__panel"-->
+          <!--            :class="{'content__panel_active': step === 2}"-->
+          <!--            @click="nextStep"-->
+          <!--          >-->
+          <!--            {{ $t('meta.bankCard') }}-->
+          <!--          </div>-->
+        </div>
+        <div
+          v-if="step === 1"
+          class="content__container"
+        >
+          <div class="content__input input">
+            <span class="input__title">
+              {{ $t('modals.walletAddress') }}
+            </span>
+            <base-field
+              v-model="walletAddress"
+              class="input__field"
+              placeholder="Enter address"
+              :name="$t('modals.walletAddressField')"
+              rules="required|min:42|max:42"
+            />
+          </div>
+          <div class="content__input input">
+            <span class="input__title">
+              {{ $t('modals.amount') }}
+            </span>
+            <base-field
+              v-model="amount"
+              class="input__field"
+              placeholder="Enter amount"
+              :rules="`required|decimal|is_not:0${maxValue ? '|max_value:' + maxValue : ''}|decimalPlaces:18`"
+              :name="$t('modals.amountField')"
+              @input="replaceDot"
+            >
+              >
+              <template
+                v-slot:right-absolute
+                class="content__max max"
+              >
+                <base-btn
+                  mode="max"
+                  selector="HANDLE-MAX-VALUE"
+                  class="max__button"
+                  @click="handleMaxValue"
+                >
+                  <span class="max__text">{{ $t('modals.maximum') }}</span>
+                </base-btn>
+              </template>
+            </base-field>
+          </div>
+        </div>
+        <div
+          v-else-if="step === 2"
+          class="content__container"
+        >
+          <div>
+            <img
+              alt="card"
+              src="~assets/img/ui/creditCard.svg"
+              class="content__card"
+            >
+          </div>
+          <div class="content__text">
+            {{ $t('modals.addYourCard') }}
+          </div>
+        </div>
+        <div class="content__buttons buttons">
+          <base-btn
+            mode="outline"
+            class="buttons__action"
+            selector="CANCEL"
+            @click="CloseModal"
+          >
+            {{ $t('meta.cancel') }}
+          </base-btn>
+          <base-btn
+            v-if="step === 1"
+            class="buttons__action"
+            :disabled="invalid"
+            selector="SHOW-WITHDRAW-INFO"
+            @click="handleSubmit(showWithdrawInfo)"
+          >
+            {{ $t('meta.confirm') }}
+          </base-btn>
+          <base-btn
+            v-else-if="step === 2"
+            class="buttons__action"
+            selector="SHOW-ADDING-CARD"
+            @click="showAddingCard"
+          >
+            {{ $t('meta.addCard') }}
+          </base-btn>
+        </div>
+      </validation-observer>
+    </div>
+  </ctm-modal-box>
+</template>
+
+<script>
+import { mapGetters } from 'vuex';
+import BigNumber from 'bignumber.js';
+import modals from '~/store/modals/modals';
+import { TokenSymbols } from '~/utils/enums';
+// import { WQPensionFund } from '~/abi/abi';
+// import { error, success } from '~/utils/web3';
+
+export default {
+  name: 'ModalTakeWithdrawal',
+  data() {
+    return {
+      walletAddress: '',
+      amount: '',
+      maxValue: null,
+      step: 1,
+      withdrawType: '',
+    };
+  },
+  computed: {
+    ...mapGetters({
+      options: 'modals/getOptions',
+      balanceData: 'wallet/getBalanceData',
+    }),
+  },
+  mounted() {
+    this.walletAddress = this.options.walletAddress;
+    this.maxValue = this.options.maxValue;
+    this.withdrawType = this.options.withdrawType;
+  },
+  methods: {
+    replaceDot() {
+      this.amount = this.amount.replace(/,/g, '.');
+    },
+    handleMaxValue() {
+      this.amount = this.maxValue;
+    },
+    async showWithdrawInfo() {
+      if (this.withdrawType === 'pension') {
+        const { callback } = this.options;
+        this.CloseModal();
+        this.SetLoader(true);
+        const [txFee] = await Promise.all([
+          this.$store.dispatch('wallet/getContractFeeData', {
+            _abi: WQPensionFund,
+            contractAddress: process.env.PENSION_FUND,
+            method: 'withdraw',
+            data: [new BigNumber(this.amount).shiftedBy(18).toString()],
+          }),
+          this.$store.dispatch('wallet/getBalance'),
+        ]);
+        this.SetLoader(false);
+        if (!txFee?.ok || +this.balanceData.WUSD.fullBalance === 0) {
+          await this.$store.dispatch('main/showToast', {
+            text: this.$t('errors.transaction.notEnoughFunds'),
+          });
+          return;
+        }
+        this.ShowModal({
+          key: modals.transactionReceipt,
+          title: this.$t('modals.info.withdrawInfo'),
+          fields: {
+            to: { name: this.$t('meta.toBig'), value: this.walletAddress },
+            amount: { name: this.$t('modals.amount'), value: this.amount, symbol: TokenSymbols.WUSD },
+            fee: { name: this.$t('wallet.table.trxFee'), value: txFee.result.fee, symbol: TokenSymbols.WUSD },
+          },
+          submitMethod: async () => {
+            const res = await this.$store.dispatch('wallet/pensionWithdraw', this.amount);
+            if (res.ok) return success();
+            await this.$store.dispatch('main/showToast', {
+              text: this.$t('modals.transactionFail'),
+            });
+            return error();
+          },
+          callback: () => {
+            Promise.all([
+              callback(),
+              this.$store.dispatch('wallet/getBalance'),
+            ]);
+          },
+        });
+      }
+    },
+    showAddingCard() {
+      this.ShowModal({
+        key: modals.addingCard,
+        branch: 'withdraw',
+      });
+    },
+    nextStep() {
+      this.step = 2;
+    },
+    previousStep() {
+      this.step = 1;
+      this.amount = '';
+      this.walletAddress = '';
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+
+.withdrawal {
+  max-width: 616px !important;
+  padding: 0 !important;
+
+  &__content {
+    padding: 22px 28px 30px 28px !important;
+  }
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+
+  &__action {
+    width: 271px !important;
+  }
+}
+
+.input {
+  &__field {
+    margin-top: 5px;
+  }
+}
+
+.content {
+  &__step {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  &__panel {
+    @include text-simple;
+    font-weight: 400;
+    font-size: 16px;
+    color: $black500;
+    margin: 0 20px 15px 0;
+    cursor: pointer;
+
+    &_active {
+      color: $black800;
+      border-bottom: 2px solid $blue;
+      padding: 0 0 12px 0;
+    }
+  }
+
+  &__buttons {
+    margin-top: 2px;
+  }
+
+  &__card {
+    margin: 25px auto 40px;
+  }
+
+  &__text {
+    font-size: 16px;
+    line-height: 130%;
+    color: #D8DFE3;
+    text-align: center;
+    margin-bottom: 25px;
+  }
+}
+
+.grid {
+  &__title {
+    margin: 15px 5px 0 0;
+  }
+}
+
+.max {
+  &__button {
+    margin-right: 10px !important;
+    background-color: transparent !important;
+  }
+}
+</style>

@@ -272,6 +272,7 @@ export default {
   async beforeMount() {
     const isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
     if (isMobile) {
+      // TODO: Добавить локализацию
       this.ShowModal({
         key: modals.status,
         title: 'Please install Metamask!',
@@ -322,12 +323,14 @@ export default {
       });
     },
     ClipboardSuccessHandler(value) {
+      // TODO: Добавить локализацию
       this.$store.dispatch('main/showToast', {
         title: 'Copied successfully',
         text: value,
       });
     },
     ClipboardErrorHandler(value) {
+      // TODO: Добавить локализацию
       this.$store.dispatch('main/showToast', {
         title: 'Copy error',
         text: value,

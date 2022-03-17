@@ -90,12 +90,8 @@
               />
             </div>
           </div>
-          <div
-            class="grid__2col"
-          >
-            <div
-              class="ctm-modal__content-field"
-            >
+          <div class="grid__2col">
+            <div class="ctm-modal__content-field">
               <label for="date_input">{{ $t('modals.date') }}</label>
               <div class="ctm-modal__input">
                 <base-field
@@ -338,7 +334,7 @@ export default {
   }
 
   &__equal {
-    margin: 0 0 35px 10px;
+    margin: 0 0 13px 10px;
   }
 
   &__input {
@@ -371,7 +367,7 @@ export default {
     display: flex;
     flex-direction: row-reverse;
     justify-content: space-between;
-    margin: 15px 0 0 0;
+    margin: 25px 0 0 0;
   }
 
   &__wrapper {

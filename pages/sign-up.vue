@@ -5,13 +5,11 @@
     tag="div"
   >
     <div class="auth__container">
-      <div
-        class="auth__text auth__text_title"
-      >
-        <span>{{ $t('signUp.title') }}</span>
+      <div class="auth__text auth__text_title">
+        {{ $t('signUp.title') }}
       </div>
       <div class="auth__text auth__text_simple">
-        <span>{{ $t('signUp.haveAccount') }}</span>
+        {{ $t('signUp.haveAccount') }}
         <n-link
           class="auth__text auth__text_link"
           to="/sign-in"
@@ -24,6 +22,7 @@
         action=""
         @submit.prevent="handleSubmit(signUp)"
       >
+        <!--        TODO: Вынести в массив-->
         <base-field
           v-model="model.firstName"
           class="auth__input"
@@ -163,25 +162,30 @@ export default {
     display: grid;
     grid-template-rows: auto;
   }
+
   &__input {
     height: 46px;
     margin-bottom: 20px;
   }
+
   &__text {
     font-family: 'Inter', sans-serif;
     font-style: normal;
     line-height: 130%;
+
     &_title {
       font-weight: 600;
       font-size: 34px;
       color: $black800;
     }
+
     &_simple {
       color: #000000;
       font-weight: 300;
       font-size: 16px;
       padding-top: 15px;
     }
+
     &_link {
       padding-left: 5px;
       font-weight: 300;
@@ -190,15 +194,18 @@ export default {
       text-decoration: underline;
     }
   }
+
   &__fields {
     padding-top: 40px;
     display: grid;
     grid-template-columns: 1fr;
   }
+
   &__action {
     padding-top: 30px;
   }
 }
+
 @include _1199 {
   .auth {
     &__text {

@@ -47,18 +47,18 @@
             <div class="balance__bottom">
               <base-btn
                 selector="SHOW-DEPOSIT-MODAL"
-                :disabled="true"
                 mode="outline"
                 class="balance__btn"
+                :disabled="true"
                 @click="showDepositModal()"
               >
                 {{ $t('wallet.deposit') }}
               </base-btn>
               <base-btn
-                :disabled="true"
                 selector="SHOW-WITHDRAW-MODAL"
                 mode="outline"
                 class="balance__btn"
+                :disabled="true"
                 @click="showWithdrawModal()"
               >
                 {{ $t('wallet.withdraw') }}
@@ -82,8 +82,8 @@
               @click="closeCard()"
             />
             <base-btn
-              selector="SHOW-ADD-CARD-MODAL"
               :disabled="true"
+              selector="SHOW-ADD-CARD-MODAL"
               class="card__btn"
               mode="outline"
               @click="showAddCardModal()"
@@ -230,17 +230,11 @@ export default {
     async loadData() {
       this.SetLoader(true);
       await Promise.all([
-        this.updateBalanceWQT(),
-        this.updateBalanceWUSD(),
+        await this.$store.dispatch('wallet/getBalanceWQT', this.userWalletAddress),
+        await this.$store.dispatch('wallet/getBalance'),
         this.getTransactions(),
       ]);
       this.SetLoader(false);
-    },
-    async updateBalanceWQT() {
-      await this.$store.dispatch('wallet/getBalanceWQT', this.userWalletAddress);
-    },
-    async updateBalanceWUSD() {
-      await this.$store.dispatch('wallet/getBalance');
     },
     closeCard() {
       this.cardClosed = true;

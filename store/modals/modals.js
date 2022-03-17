@@ -23,4 +23,8 @@ export default {
   addProposal: 'addProposal',
   warning: 'warning',
   transactionReceipt: 'transactionReceipt',
+  giveTransfer: 'giveTransfer',
+  giveDeposit: 'giveDeposit',
+  addingCard: 'addingCard',
+  takeWithdraw: 'takeWithdraw',
 };

@@ -369,7 +369,7 @@ export default {
   methods: {
     show() {
       this.ShowModal({
-        key: modals.withdraw,
+        key: modals.takeWithdraw,
       });
     },
     totpToggle() {

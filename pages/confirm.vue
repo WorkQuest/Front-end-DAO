@@ -43,7 +43,7 @@
         <div class="role__content">
           <div class="role__top">
             <div class="role__text role__text_title role__text_light">
-              {{ $t('role.worker' ) }}
+              {{ $t('role.worker') }}
             </div>
             <div class="role__text role__text_desc role__text_light">
               {{ $t('role.workerWant') }}
@@ -86,9 +86,8 @@ export default {
   },
   mounted() {
     const { token } = this.$route.query;
-    if (!token) {
-      this.$router.push(Path.SIGN_IN);
-    } else {
+    if (!token) this.$router.push(Path.SIGN_IN);
+    else {
       if (!this.$cookies.get('access') && !this.$cookies.get('refresh')) {
         this.ShowToast(' ', this.$t('messages.loginToContinue'));
         sessionStorage.setItem('confirmToken', JSON.stringify(token));
@@ -119,19 +118,23 @@ export default {
     justify-content: flex-start;
     align-items: flex-end;
   }
+
   &__back {
     padding: 10px 0 0 33px;
     width: 100%;
     max-width: 60px;
   }
 }
+
 .icon-chevron_big_left:before {
   content: "\ea4d";
   color: $black500;
   font-size: 25px;
 }
+
 .role {
   width: 100%;
+
   &__title {
     @include text-simple;
     padding-bottom: 30px;
@@ -141,11 +144,13 @@ export default {
     line-height: 130%;
     color: #FFFFFF;
   }
+
   &__cards {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 30px;
   }
+
   &__image {
     transition: .2s;
     position: absolute;
@@ -154,33 +159,29 @@ export default {
     bottom: 0;
     height: 100%;
   }
+
   &__card {
     transition: .2s;
     min-height: 400px;
     cursor: pointer;
-    filter: drop-shadow(0px 47.1676px 61.4131px rgba(10, 27, 61, 0.078707))
-    drop-shadow(0px 26.7219px 32.8344px rgba(10, 27, 61, 0.0629546))
-    drop-shadow(0px 14.4955px 18.4067px rgba(10, 27, 61, 0.0598272))
-    drop-shadow(0px 6.96225px 9.77565px rgba(10, 27, 61, 0.0584222))
-    drop-shadow(0px 2.43911px 4.06787px rgba(10, 27, 61, 0.0492837));
-    -webkit-filter: drop-shadow(0px 47.1676px 61.4131px rgba(10, 27, 61, 0.078707))
-    drop-shadow(0px 26.7219px 32.8344px rgba(10, 27, 61, 0.0629546))
-    drop-shadow(0px 14.4955px 18.4067px rgba(10, 27, 61, 0.0598272))
-    drop-shadow(0px 6.96225px 9.77565px rgba(10, 27, 61, 0.0584222))
-    drop-shadow(0px 2.43911px 4.06787px rgba(10, 27, 61, 0.0492837));
+    filter: drop-shadow(0px 47.1676px 61.4131px rgba(10, 27, 61, 0.078707)) drop-shadow(0px 26.7219px 32.8344px rgba(10, 27, 61, 0.0629546)) drop-shadow(0px 14.4955px 18.4067px rgba(10, 27, 61, 0.0598272)) drop-shadow(0px 6.96225px 9.77565px rgba(10, 27, 61, 0.0584222)) drop-shadow(0px 2.43911px 4.06787px rgba(10, 27, 61, 0.0492837));
+    -webkit-filter: drop-shadow(0px 47.1676px 61.4131px rgba(10, 27, 61, 0.078707)) drop-shadow(0px 26.7219px 32.8344px rgba(10, 27, 61, 0.0629546)) drop-shadow(0px 14.4955px 18.4067px rgba(10, 27, 61, 0.0598272)) drop-shadow(0px 6.96225px 9.77565px rgba(10, 27, 61, 0.0584222)) drop-shadow(0px 2.43911px 4.06787px rgba(10, 27, 61, 0.0492837));
     border-radius: 6px;
     background-size: cover;
     overflow: hidden;
     position: relative;
+
     &_minimized {
       width: 75% !important;
     }
+
     &_right {
       width: 100%;
       background-image: url("~assets/img/app/role_dots.svg");
       background-color: $green;
       justify-self: flex-end;
     }
+
     &_left {
       width: 100%;
       background-image: url("~assets/img/app/role_dots_light.svg");
@@ -188,6 +189,7 @@ export default {
       justify-self: flex-start;
     }
   }
+
   &__content {
     display: flex;
     flex-direction: column;
@@ -195,36 +197,45 @@ export default {
     height: 100%;
     padding: 30px 10px 40px 30px;
   }
+
   &__bottom {
     display: flex;
+
     &_show {
       opacity: 1 !important;
     }
+
     &_left {
       display: flex;
       opacity: 0;
     }
+
     &_right {
       display: flex;
       opacity: 0;
     }
   }
+
   &__arrow {
     padding-left: 10px;
+
     &_left {
       span:before {
         color: $black800;
       }
     }
+
     &_right {
       span:before {
         color: #FFFFFF;
       }
     }
   }
+
   &__text {
     @include text-simple;
     font-style: normal;
+
     &_title {
       font-weight: 600;
       font-size: 45px;
@@ -232,6 +243,7 @@ export default {
       color: $black800;
       padding-bottom: 8px;
     }
+
     &_desc {
       font-weight: normal;
       font-size: 16px;
@@ -239,63 +251,78 @@ export default {
       color: $black800;
       max-width: 210px;
     }
+
     &_light {
       color: #FFFFFF;
     }
   }
 }
+
 @include _1199 {
   .role {
     &__cards {
       margin: 0 20px;
     }
+
     &__image {
       right: -170px !important;
     }
   }
 }
+
 @include _767 {
   .role {
     &__title {
       font-size: 28px;
       padding: 0 20px 20px;
     }
+
     &__card {
       min-height: 270px;
     }
+
     &__image {
       right: -100px !important;
     }
+
     &__text {
       &_title {
         font-size: 18px;
       }
     }
+
     &__text_desc {
       font-size: 16px;
       max-width: 140px;
     }
+
     &__cards {
       grid-template-columns: 1fr;
       grid-gap: 20px;
     }
+
     &__image {
       right: -122px;
     }
+
     &__card {
       &_minimized {
         width: 100% !important;
       }
+
       &_right:hover {
         width: 100% !important;
+
         .role {
           &__image {
             right: -140px;
           }
         }
       }
+
       &_left:hover {
         width: 100% !important;
+
         .role {
           &__image {
             right: -84px;
