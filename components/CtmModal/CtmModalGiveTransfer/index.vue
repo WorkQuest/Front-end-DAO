@@ -169,21 +169,11 @@ export default {
       this.amount = this.maxAmount;
     },
     async transfer() {
-      let res;
-      if (this.selectedToken === TokenSymbols.WUSD) {
-        res = await this.$store.dispatch('wallet/transfer', {
-          recipient: this.recipient,
-          value: this.amount,
-        });
-      } else if (this.selectedToken === TokenSymbols.WQT) {
-        res = await this.$store.dispatch('wallet/transferWQT', {
-          recipient: this.recipient,
-          value: this.amount,
-        });
-      }
-      if (res?.ok) {
-        return success();
-      }
+      const res = await this.$store.dispatch(`wallet/${this.selectedToken === TokenSymbols.WUSD ? 'transfer' : 'transferWQT'}`, {
+        recipient: this.recipient,
+        value: this.amount,
+      });
+      if (res?.ok) return success();
       return error();
     },
     async showWithdrawInfo() {

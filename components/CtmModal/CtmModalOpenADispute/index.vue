@@ -10,7 +10,9 @@
             <label
               for="reason-dd"
               class="ctm-modal__label"
-            >{{ $t('modals.reason') }}</label>
+            >
+              {{ $t('modals.reason') }}
+            </label>
             <base-dd
               id="reason-dd"
               type="gray"

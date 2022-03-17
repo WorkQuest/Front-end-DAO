@@ -29,9 +29,7 @@
           v-if="step === 1"
           class="step__container"
         >
-          <div
-            class="ctm-modal__content-field"
-          >
+          <div class="ctm-modal__content-field">
             <label for="amount_input">{{ $t('modals.amount') }}</label>
             <div class="ctm-modal__input">
               <base-field
@@ -39,7 +37,7 @@
                 v-model="amount_input"
                 :name="$t('modals.amount')"
                 type="number"
-                rules="required"
+                rules="required|numeric"
                 placeholder="0 WUSD"
               />
             </div>
@@ -58,7 +56,7 @@
                   v-model="amount_input"
                   :name="$t('modals.amount')"
                   type="number"
-                  rules="required"
+                  rules="required|numeric|min:1"
                   placeholder="0 WUSD"
                 />
               </div>
@@ -73,7 +71,7 @@
                   :name="$t('modals.amount')"
                   mode="white"
                   type="number"
-                  rules="required"
+                  rules="required|numeric|min:1"
                   placeholder="$ 0"
                 />
               </div>
@@ -88,7 +86,7 @@
                 :name="$t('modals.numberOfCard')"
                 type="tel"
                 placeholder="1234 1234 1234 1234"
-                rules="max:19|required"
+                rules="max:19|required|min:12|numeric"
               />
             </div>
           </div>
@@ -118,7 +116,7 @@
                   :name="$t('modals.cvv')"
                   type="number"
                   placeholder="242"
-                  rules="max:4|required"
+                  rules="max:4|required|min:3|numeric"
                 />
               </div>
             </div>
@@ -192,7 +190,7 @@
           </div>
           <div class="btn__wrapper">
             <base-btn
-              :mode="'outline'"
+              mode="outline"
               class="message__action"
               @click="CloseModal"
             >

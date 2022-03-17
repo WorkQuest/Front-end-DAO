@@ -3,67 +3,66 @@
     class="messageSend"
     :title="$t('modals.send')"
   >
-    <div class="ctm-modal__content">
-      <validation-observer
-        v-slot="{handleSubmit}"
-        tag="div"
-      >
-        <div class="ctm-modal__content-field">
-          <label for="address_input">
-            {{ $t('modals.address') }}
-          </label>
-          <base-field
-            id="address_input"
-            v-model="address"
-            :name="$t('modals.recepientAddressField')"
-            :placeholder="$t('modals.recepientAddress')"
-            type="text"
-            rules="required|alpha_num"
-          />
-        </div>
-        <label for="value_dd">
-          {{ $t('modals.cardNumber') }}
+    <validation-observer
+      v-slot="{handleSubmit}"
+      tag="div"
+      class="ctm-modal__content"
+    >
+      <div class="ctm-modal__content-field">
+        <label for="address_input">
+          {{ $t('modals.address') }}
         </label>
-        <base-dd
-          id="value_dd"
-          v-model="card"
-          type="gray"
-          :items="items"
+        <base-field
+          id="address_input"
+          v-model="address"
+          :name="$t('modals.recepientAddressField')"
+          :placeholder="$t('modals.recepientAddress')"
+          type="text"
+          rules="required|alpha_num"
         />
-        <div class="ctm-modal__content-field">
-          <label for="amount_input">
-            {{ $t('modals.amount') }}
-          </label>
-          <base-field
-            id="amount_input"
-            v-model="amount"
-            :placeholder="'0 WUSD'"
-            type="number"
-            rules="required|decimal"
-            :name="$t('modals.amountField')"
-          />
+      </div>
+      <label for="value_dd">
+        {{ $t('modals.cardNumber') }}
+      </label>
+      <base-dd
+        id="value_dd"
+        v-model="card"
+        type="gray"
+        :items="items"
+      />
+      <div class="ctm-modal__content-field">
+        <label for="amount_input">
+          {{ $t('modals.amount') }}
+        </label>
+        <base-field
+          id="amount_input"
+          v-model="amount"
+          placeholder="0 WUSD"
+          type="number"
+          rules="required|decimal|min:1"
+          :name="$t('modals.amountField')"
+        />
+      </div>
+      <div class="btn__container">
+        <div class="btn__wrapper">
+          <base-btn
+            class="message__action"
+            @click="handleSubmit(showTransactionSendModal)"
+          >
+            {{ $t('meta.submit') }}
+          </base-btn>
         </div>
-        <div class="btn__container">
-          <div class="btn__wrapper">
-            <base-btn
-              class="message__action"
-              @click="handleSubmit(showTransactionSendModal)"
-            >
-              {{ $t('meta.submit') }}
-            </base-btn>
-          </div>
-          <div class="btn__wrapper">
-            <base-btn
-              mode="outline"
-              class="message__action"
-              @click="CloseModal"
-            >
-              {{ $t('meta.cancel') }}
-            </base-btn>
-          </div>
+        <div class="btn__wrapper">
+          <base-btn
+            mode="outline"
+            class="message__action"
+            @click="CloseModal"
+          >
+            {{ $t('meta.cancel') }}
+          </base-btn>
         </div>
-      </validation-observer>
-    </div>
+      </div>
+    </validation-observer>
   </ctm-modal-box>
 </template>
 

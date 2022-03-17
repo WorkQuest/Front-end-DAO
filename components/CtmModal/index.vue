@@ -18,7 +18,6 @@ import CtmModalConfirmEmail from './CtmModalConfirmEmail';
 import CtmModalChangePassword from './CtmModalChangePassword';
 import CtmModalRestore from './CtmModalRestore';
 import CtmModalPrivacy from './CtmModalPrivacy';
-import CtmModalThanksSend from './CtmModalThanksSend';
 import CtmModalDeposit from './CtmModalDeposit';
 import CtmModalAddCard from './CtmModalAddCard';
 import CtmModalStatus from './CtmModalStatus';
@@ -36,10 +35,12 @@ import CtmModalDelegate from './CtmModalDelegate';
 import CtmModalWarning from './CtmModalWarning';
 import CtmModalSignWorkQuest from './CtmModalSignWorkQuest';
 import CtmModalDefault from '~/components/CtmModal/CtmModalDefault';
+import CtmModalTransactionReceipt from '~/components/CtmModal/CtmModalTransactionReceipt';
 
 export default {
   name: 'ModalBox',
   components: {
+    [modals.transactionReceipt]: CtmModalTransactionReceipt,
     [modals.addCard]: CtmModalAddCard,
     [modals.addCase]: CtmModalAddCase,
     [modals.addDiscussion]: CtmModalAddDiscussion,
@@ -57,7 +58,6 @@ export default {
     [modals.showFile]: CtmModalShowFile,
     [modals.signWorkQuest]: CtmModalSignWorkQuest,
     [modals.status]: CtmModalStatus,
-    [modals.thanks]: CtmModalThanksSend,
     [modals.transfer]: CtmModalTransfer,
     [modals.twoFAAuth]: CtmModalTwoFAAuth,
     [modals.undelegate]: CtmModalUndelegate,

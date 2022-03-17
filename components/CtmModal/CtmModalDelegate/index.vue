@@ -6,10 +6,9 @@
     <div class="delegate__content content">
       <validation-observer v-slot="{handleSubmit, valid}">
         <div class="content__address address">
-          <label
-            for="investorAddress"
-            class="address__label"
-          >{{ $t('modals.investorAddress') }}</label>
+          <label class="address__label">
+            {{ $t('modals.investorAddress') }}
+          </label>
           <div class="delegate__input">
             <base-field
               id="invsetorAddress"
@@ -84,7 +83,7 @@ export default {
   },
   watch: {
     isConnected() {
-      this.close();
+      this.CloseModal();
     },
   },
   async mounted() {
@@ -95,9 +94,6 @@ export default {
     }
   },
   methods: {
-    close() {
-      this.CloseModal();
-    },
     maxDelegate() {
       this.tokensAmount = this.balance;
     },
@@ -107,14 +103,17 @@ export default {
 
       const { callback } = this.options;
       this.SetLoader(true);
-      const res = await this.$store.dispatch('web3/delegate', { address: this.accountAddress.address, amount: this.tokensAmount });
+      const res = await this.$store.dispatch('web3/delegate', {
+        address: this.accountAddress.address,
+        amount: this.tokensAmount,
+      });
       this.SetLoader(false);
       if (res.ok) {
         await this.$store.dispatch('main/showToast', {
           title: 'Delegate',
           text: `Delegated ${this.tokensAmount} WQT`,
         });
-        this.close();
+        this.CloseModal();
         if (callback) await callback();
       } else if (res.msg.includes('Not enough balance to delegate')) {
         await this.$store.dispatch('modals/show', {
@@ -131,53 +130,64 @@ export default {
 <style lang="scss" scoped>
 .delegate {
   max-width: 500px !important;
+
   &__content {
-    padding: 20px 28px 30px 28px!important;
+    padding: 20px 28px 30px 28px !important;
   }
-  &__body{
+
+  &__body {
     @include text-usual;
     color: #1D2127;
     margin: 25px 0;
-    background-color: #FFFFFF!important;
+    background-color: #FFFFFF !important;
   }
-  &__done{
+
+  &__done {
     margin-top: 25px;
   }
+
   &__input {
     height: 46px;
     margin-bottom: 15px;
   }
 }
+
 .footer {
   display: flex;
   justify-content: space-between;
-  &__body{
-    width: 284px!important;
-    height: 46px!important;
+
+  &__body {
+    width: 284px !important;
+    height: 46px !important;
   }
-  &__maximum{
-    width: 100px!important;
-    height: 46px!important;
+
+  &__maximum {
+    width: 100px !important;
+    height: 46px !important;
   }
 }
-.address{
-  &__label{
+
+.address {
+  &__label {
     @include text-usual;
     color: #1D2127;
-    margin: 0!important;
+    margin: 0 !important;
   }
-  &__body{
+
+  &__body {
     margin-top: 5px;
   }
 }
-.tokens{
-  &__title{
+
+.tokens {
+  &__title {
     @include text-usual;
     color: #1D2127;
     margin-bottom: 5px;
-    &_grey{
+
+    &_grey {
       color: #7C838D;
-      margin-bottom: 10px!important;
+      margin-bottom: 10px !important;
     }
   }
 }

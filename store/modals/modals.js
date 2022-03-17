@@ -10,7 +10,6 @@ export default {
   privacy: 'privacy',
   withdraw: 'withdraw',
   review: 'review',
-  thanks: 'thanks',
   confirmDetails: 'confirmDetails',
   delegate: 'delegate',
   undelegate: 'undelegate',
@@ -23,4 +22,5 @@ export default {
   twoFAAuth: 'twoFAAuth',
   addProposal: 'addProposal',
   warning: 'warning',
+  transactionReceipt: 'transactionReceipt',
 };
