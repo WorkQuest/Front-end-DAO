@@ -19,7 +19,10 @@
         <div class="title__name">
           {{ $t('investors.profile') }}
         </div>
-        <div class="title__panel panel">
+        <div
+          v-if="investorAddress"
+          class="title__panel panel"
+        >
           <div class="panel__address">
             {{ CutTxn(investorAddress, 8, 8) }}
           </div>
@@ -105,11 +108,14 @@
                 </template>
               </base-field>
             </div>
-            <div class="info__action action">
+            <div
+              v-if="investorAddress"
+              class="info__action action"
+            >
               <base-btn
+                v-if="delegatedToUser && investorAddress === delegatedToUser.address"
                 mode="lightRed"
                 class="action__undelegate"
-                :disabled="!isMyProfile || votingPower === 0"
                 @click="openModalUndelegate"
               >
                 {{ $t('modals.undelegate') }}
@@ -117,7 +123,6 @@
               <base-btn
                 mode="lightBlue"
                 class="action__delegate"
-                :disabled="!isMyProfile"
                 @click="openModalDelegate"
               >
                 {{ $t('modals.delegate') }}
@@ -162,6 +167,7 @@
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
 import { UserRole } from '~/utils/enums';
+import { getStyledAmount } from '~/utils/wallet';
 
 export default {
   data() {
@@ -169,7 +175,7 @@ export default {
       investor: {},
       userId: this.$route.params.id,
       votingPower: 0,
-      investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
+      investorAddress: '',
       stake: '126,613,276',
       name: 'user@gmail.com',
       pages: 1,
@@ -234,7 +240,9 @@ export default {
   },
   computed: {
     ...mapGetters({
+      delegatedToUser: 'investors/getDelegatedToUser',
       userData: 'user/getUserData',
+      isWalletConnected: 'wallet/getIsWalletConnected',
     }),
     mainDataArr() {
       return [
@@ -271,17 +279,12 @@ export default {
   },
   async beforeMount() {
     await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
-    await this.getInvestorData();
   },
   async mounted() {
-    await this.getVotingPower();
+    if (!this.isWalletConnected) return;
+    await this.getInvestorData();
   },
   methods: {
-    async getVotingPower() {
-      // const { address } = await this.$store.dispatch('web3/getAccount');
-      // const response = await this.$store.dispatch('web3/getVotes', address);
-      // if (response.ok) this.votingPower = +response.result;
-    },
     fillInputs(input) {
       if (this.investor.additionalInfo) {
         if (input.key === 'location') return this.investor.locationPlaceName;
@@ -294,13 +297,26 @@ export default {
     async getInvestorData() {
       if (this.isMyProfile) this.investor = this.userData;
       else this.investor = await this.$store.dispatch('user/getSpecialUserData', this.userId);
+      if (this.investor?.wallet?.address) {
+        this.investorAddress = this.investor.wallet.address;
+        const powerResponse = await this.$store.dispatch('wallet/getVotesByAddresses', [this.investorAddress]);
+        if (powerResponse.ok) this.votingPower = getStyledAmount(powerResponse.result[0]);
+      }
+    },
+    async updateDelegatedUser() {
+      this.SetLoader(true);
+      await Promise.all([
+        this.getInvestorData(),
+        this.$store.dispatch('wallet/getDelegates'),
+      ]);
+      this.SetLoader(false);
     },
     async openModalDelegate() {
       this.ShowModal({
         key: modals.delegate,
         stake: this.stake,
         investorAddress: this.investorAddress,
-        callback: this.getVotingPower,
+        callback: async () => this.updateDelegatedUser(),
       });
     },
     async openModalUndelegate() {
@@ -308,7 +324,8 @@ export default {
         key: modals.undelegate,
         stake: this.stake,
         name: `${this.investor.firstName} ${this.investor.lastName}`,
-        callback: this.getVotingPower,
+        tokensAmount: this.votingPower,
+        callback: async () => this.updateDelegatedUser(),
       });
     },
     ClipboardSuccessHandler(value) {
@@ -613,9 +630,6 @@ export default {
       width: 340px;
     }
   }
-  .action {
-    justify-content: space-around;
-  }
   .profile {
     &__table {
       display: none;
@@ -643,11 +657,11 @@ export default {
     align-items: flex-start;
   }
   .info__action {
-    flex-direction: column;
-    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
   }
   .action__delegate {
-    margin-top: 10px;
     max-width: 100%
   }
   .action__undelegate {
