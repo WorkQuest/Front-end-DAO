@@ -293,4 +293,10 @@ export default {
   }
 }
 
+@include _480 {
+  .discussion__bottom {
+    flex-direction: column-reverse;
+  }
+}
+
 </style>
