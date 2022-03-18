@@ -38,7 +38,7 @@
               {{ modifyAddress(walletAddress) }}
             </span>
             <button
-              type="code__copy"
+              class="code__copy"
               @click="showSuccessCopied"
             >
               <span
@@ -51,7 +51,6 @@
           </div>
           <base-btn
             class="code__share"
-            mode="share"
             data-selector="SHOW-SHARE-MODAL"
             @click="showShareModal"
           >
@@ -197,15 +196,12 @@ export default {
     height: 46px !important;
     border-radius: 6px;
     margin-left: 10px;
+    background: transparent !important;
   }
 
-  &__chain:before {
+  &__chain {
     color: $blue;
-    font-size: 25px !important;
-
-    &:hover {
-      color: $blue;
-    }
+    font-size: 25px;
   }
 
   &__icon:before {
@@ -296,10 +292,6 @@ export default {
   &__content {
     padding: 20px 30px 28px 30px;
   }
-}
-
-.code__share:hover .code__chain:before {
-  color: $white !important;
 }
 
 </style>

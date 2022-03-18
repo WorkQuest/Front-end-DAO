@@ -323,6 +323,7 @@
     "startQuest": "Start quest"
   },
   "modals": {
+    "txInfo": "Transaction info",
     "walletAddressField": "wallet address",
     "dateName": "date",
     "cardHolder": "Cardholder name",

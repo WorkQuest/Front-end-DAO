@@ -49,7 +49,6 @@
                 selector="SHOW-DEPOSIT-MODAL"
                 mode="outline"
                 class="balance__btn"
-                :disabled="true"
                 @click="showDepositModal()"
               >
                 {{ $t('wallet.deposit') }}
@@ -58,7 +57,6 @@
                 selector="SHOW-WITHDRAW-MODAL"
                 mode="outline"
                 class="balance__btn"
-                :disabled="true"
                 @click="showWithdrawModal()"
               >
                 {{ $t('wallet.withdraw') }}
@@ -82,7 +80,6 @@
               @click="closeCard()"
             />
             <base-btn
-              :disabled="true"
               selector="SHOW-ADD-CARD-MODAL"
               class="card__btn"
               mode="outline"
