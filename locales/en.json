@@ -801,6 +801,18 @@
     }
   },
   "validator": {
-    "title": "Validator Profile"
+    "title": "Validator Profile",
+    "address": "Address",
+    "fee": "Fee",
+    "commonStake": "Common stake",
+    "missedBlocks": "Missed blocks",
+    "slots": "Slots",
+    "occupied": "Occupied",
+    "delegators": "Delegators",
+    "minimalStake": "Minimal stake",
+    "wusdCount": "{n} WUSD",
+    "undelegate": "Undelegate",
+    "delegate": "Delegate",
+    "outOf": "out of"
   }
 }
