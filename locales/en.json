@@ -322,7 +322,12 @@
     "approve": "Approve",
     "startQuest": "Start quest"
   },
+  "sharing": {
+    "socialText": "Share in socials",
+    "share": "Share link"
+  },
   "modals": {
+    "sharing": "Sharing",
     "txInfo": "Transaction info",
     "walletAddressField": "wallet address",
     "dateName": "date",

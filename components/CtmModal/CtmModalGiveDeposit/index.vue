@@ -145,7 +145,6 @@ export default {
     previousStep() {
       this.step = 1;
     },
-    // TODO: Зарефакторить
     showSuccessCopied() {
       this.ShowModal({
         key: modals.status,
@@ -154,11 +153,12 @@ export default {
       });
     },
     // TODO: Добавить модалку
-    // showShareModal() {
-    //   this.ShowModal({
-    //     key: modals.sharingQuest,
-    //   });
-    // },
+    showShareModal() {
+      this.ShowModal({
+        key: modals.sharing,
+        mode: '',
+      });
+    },
     showAddingCard() {
       this.ShowModal({
         key: modals.addingCard,
