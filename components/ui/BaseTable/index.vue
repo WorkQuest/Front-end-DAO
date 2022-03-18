@@ -95,9 +95,13 @@
         </base-btn>
       </template>
       <template #cell(investorAddress)="el">
-        <span v-if="el.item.investorAddress">
+        <a
+          v-if="el.item.investorAddress"
+          :href="getAddressUrl(el.item.investorAddress)"
+          target="_blank"
+        >
           {{ CutTxn(el.item.investorAddress, 5, 6) }}
-        </span>
+        </a>
         <span
           v-else
           class="table__grey"

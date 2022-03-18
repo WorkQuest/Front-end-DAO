@@ -111,7 +111,10 @@
 <script>
 
 import { mapGetters } from 'vuex';
-import { Chains } from '~/utils/enums';
+import BigNumber from 'bignumber.js';
+import abi from '~/abi/index';
+import modals from '~/store/modals/modals';
+import { TokenSymbols } from '~/utils/enums';
 
 export default {
   name: 'ModalAddProposal',
@@ -133,6 +136,7 @@ export default {
       userWalletAddress: 'user/getUserWalletAddress',
       options: 'modals/getOptions',
       prevFilters: 'proposals/filters',
+      balanceData: 'wallet/getBalanceData',
     }),
     isDocumentsLimitReached() {
       return this.documents.length >= this.docsLimit;
@@ -146,31 +150,74 @@ export default {
   },
   methods: {
     async addProposal() {
+      await this.$store.dispatch('wallet/getBalance');
+      const feeCheck = await this.$store.dispatch('wallet/getContractFeeData', {
+        method: 'addProposal',
+        _abi: abi.WORKNET_VOTING,
+        contractAddress: process.env.WORKNET_VOTING,
+        data: [1, this.descriptionInput.toString()],
+      });
+      if (!feeCheck.ok || new BigNumber(this.balanceData.WUSD.toString()).isLessThan(feeCheck.result.fee)) {
+        this.ShowToast(this.$t('errors.transaction.notEnoughFunds'), this.$t('errors.addProposal'));
+      }
       const { callback } = this.options;
       this.SetLoader(true);
       this.descriptionInput = this.descriptionInput.trim();
       this.votingTopicInput = this.votingTopicInput.trim();
-      const medias = await this.uploadFiles(this.documents);
+      const medias = await this.UploadFiles(this.documents);
       const res = await this.$store.dispatch('proposals/createProposal', {
-        proposer: this.userWalletAddress,
         title: this.votingTopicInput,
         description: this.descriptionInput,
         medias,
       });
       if (res.ok) {
         const { nonce } = res.result;
-        await this.$store.dispatch('wallet/addProposal', { description: this.descriptionInput, nonce });
-        await this.$store.dispatch('proposals/getProposals', {});
-      }
-      if (callback) {
-        await callback;
-        await this.$store.dispatch('proposals/updateFilters', {
-          ...this.prevFilters,
-          lastPage: 1,
+        const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
+          method: 'addProposal',
+          _abi: abi.WORKNET_VOTING,
+          contractAddress: process.env.WORKNET_VOTING,
+          data: [nonce, this.descriptionInput.toString()],
         });
+        this.SetLoader(false);
+        if (feeRes.ok) {
+          this.ShowModal({
+            key: modals.transactionReceipt,
+            title: this.$t('modals.addProposal'),
+            fields: {
+              from: {
+                name: this.$t('modals.fromAddress'),
+                value: this.userWalletAddress,
+              },
+              to: {
+                name: this.$t('modals.toAddress'),
+                value: process.env.WORKNET_VOTING,
+              },
+              fee: {
+                name: this.$t('modals.trxFee'),
+                value: feeRes.result.fee,
+                symbol: TokenSymbols.WUSD,
+              },
+            },
+            submitMethod: async () => {
+              this.SetLoader(true);
+              await this.$store.dispatch('wallet/addProposal', {
+                description: this.descriptionInput,
+                nonce,
+              });
+              await this.$store.dispatch('proposals/getProposals', {});
+              if (callback) {
+                await callback;
+                await this.$store.dispatch('proposals/updateFilters', {
+                  ...this.prevFilters,
+                  lastPage: 1,
+                });
+              }
+              this.SetLoader(false);
+              this.CloseModal();
+            },
+          });
+        }
       }
-      this.CloseModal();
-      this.SetLoader(false);
     },
     removeDocument(doc) {
       this.documents = this.documents.filter((item) => item.id !== doc.id);

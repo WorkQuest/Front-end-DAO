@@ -7,9 +7,3 @@ export default {
   WQToken,
   WORKNET_VOTING,
 };
-
-export const abiNames = {
-  ERC20: 'ERC20',
-  WQToken: 'WQToken',
-  WORKNET_VOTING: 'WORKNET_VOTING',
-};

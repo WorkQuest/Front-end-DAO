@@ -90,10 +90,7 @@ export default {
     users() {
       const users = [];
       this.usersData.users.forEach((user) => {
-        users.push({
-          ...user,
-          callback: this.getInvestors,
-        });
+        users.push({ ...user, callback: this.getInvestors });
       });
       return users;
     },

@@ -154,7 +154,7 @@ export default {
     async createDiscussion() {
       this.SetLoader(true);
       this.$refs.observer.validate();
-      const medias = await this.uploadFiles(this.documents);
+      const medias = await this.UploadFiles(this.documents);
       this.title = this.title.trim();
       this.discussion = this.discussion.trim();
       const response = await this.$store.dispatch('discussions/createDiscussion', {

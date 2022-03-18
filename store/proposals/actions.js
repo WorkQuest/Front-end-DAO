@@ -21,11 +21,10 @@ export default {
       console.error(e.message);
     }
   },
-  async getProposal({ commit }, {
-    proposalId, params,
-  }) {
+  async getProposal({ commit }, { proposalId }) {
     try {
-      const { result } = await this.$axios.$get(`v1/proposal/${proposalId}`, { params });
+      const { result } = await this.$axios.$get(`v1/proposal/${proposalId}`);
+      console.log(result); // TODO: delete
       return success(result);
     } catch (e) {
       console.error(e.message);
@@ -34,10 +33,9 @@ export default {
   },
   async getProposalVotes({ commit }, { proposalId, params }) {
     try {
-      const res = await this.$axios.$get(`v1/votings/${proposalId}`, { params });
+      const res = await this.$axios.$get(`v1/proposal/${proposalId}/votes`, { params });
       return success(res);
     } catch (e) {
-      console.error(e.message);
       return error(errorCodes.GetProposal, e.message, e);
     }
   },

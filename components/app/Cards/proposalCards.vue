@@ -55,8 +55,8 @@
           <div class="card__header">
             <div class="card__header_top">
               <div class="card__header_left">
-                <!-- TODO: потом удалить -->
-                Voting<span v-if="card.status !== 0">#{{ +card.proposalId - 1 }}</span>
+                {{ $t('proposals.voting') }}
+                <span v-if="card.status !== 0">#{{ +card.createdEvent.contractProposalId }}</span>
               </div>
               <div class="card__header_right">
                 <div class="card__status">
@@ -88,7 +88,7 @@
               <nuxt-link
                 v-if="card.status !== 0"
                 class="btn__link"
-                :to="`/proposals/${card.proposalId}`"
+                :to="`/proposals/${card.id}`"
               >
                 <base-btn
                   mode="outline"
@@ -239,10 +239,10 @@ export default {
         limit: this.cardsLimit,
         offset: (page - 1) * this.cardsLimit,
         q: this.search || null,
-        // createdAt: this.isDescending ? 'desc' : 'asc',
+        // sort: this.isDescending ? 'desc' : 'asc',
       };
       if (this.ddValue - 1 >= 0) {
-        params.statuses = this.ddValue - 1;
+        params.statuses = [this.ddValue - 1];
       }
       await this.$store.dispatch('proposals/getProposals', params);
     },

@@ -9,7 +9,7 @@ Vue.component('tippy', TippyComponent);
 
 Vue.mixin({
   methods: {
-    async uploadFiles(files) {
+    async UploadFiles(files) {
       if (!files.length) return [];
       const fetchData = [];
       const fetchUrlsData = [];

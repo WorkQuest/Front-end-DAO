@@ -3,7 +3,7 @@ import { AES, enc } from 'crypto-js';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 import { error, success } from '~/utils/success-error';
-import abi, { abiNames } from '~/abi/index';
+import abi from '~/abi/index';
 import { errorCodes } from '~/utils/enums';
 
 const bip39 = require('bip39');
@@ -386,40 +386,32 @@ export const getProposalThreshold = async () => {
 };
 export const getVoteThreshold = async () => {
   try {
-    const { result } = await fetchWalletContractData('voteThreshold', abi.WORKNET_VOTING, process.env.WORKNET_VOTING);
-    return success(new BigNumber(result).shiftedBy(-18).toString());
+    const result = await fetchWalletContractData('voteThreshold', abi.WORKNET_VOTING, process.env.WORKNET_VOTING);
+    return success(new BigNumber(result.toString()).shiftedBy(-18).toString());
   } catch (e) {
     return error(errorCodes.GetVoteThreshold, e.message, e);
   }
 };
 export const getReceipt = async (id, accountAddress) => {
   try {
-    const { result } = await fetchWalletContractData('getReceipt', abi.WORKNET_VOTING, process.env.WORKNET_VOTING, [+id, accountAddress]);
+    const result = await fetchWalletContractData('getReceipt', abi.WORKNET_VOTING, process.env.WORKNET_VOTING, [+id, accountAddress]);
     return success(result);
   } catch (e) {
     return error(errorCodes.GetReceipt, e.message, e);
   }
 };
-export const executeVoting = async (id) => {
-  try {
-    const res = await fetchWalletContractData('executeVoting', abi.WORKNET_VOTING, process.env.WORKNET_VOTING, [id]);
-    return success(res);
-  } catch (e) {
-    return error(errorCodes.ExecuteVoting, e.message, e);
-  }
-};
 export const voteResults = async (id) => {
   try {
-    const { result } = await fetchWalletContractData('voteResults', abi.WORKNET_VOTING, process.env.WORKNET_VOTING, [id]);
-    return success(result);
+    return await fetchWalletContractData('voteResults', abi.WORKNET_VOTING, process.env.WORKNET_VOTING, [id]);
   } catch (e) {
     return error(errorCodes.VoteResults, e.message, e);
   }
 };
 
+// Chairperson TODO: remove and move to admin panel
 export const getChairpersonHash = async () => {
   try {
-    const { result } = await fetchWalletContractData('CHAIRPERSON_ROLE', abi.WORKNET_VOTING, process.env.WORKNET_VOTING);
+    const result = await fetchWalletContractData('CHAIRPERSON_ROLE', abi.WORKNET_VOTING, process.env.WORKNET_VOTING);
     return success(result);
   } catch (e) {
     return error(errorCodes.GetChairpersonHash, e.message, e);
@@ -427,9 +419,22 @@ export const getChairpersonHash = async () => {
 };
 export const hasRole = async (roleHash) => {
   try {
-    const { result } = await fetchWalletContractData('hasRole', abi.WORKNET_VOTING, process.env.WORKNET_VOTING, [roleHash, wallet.address]);
+    const result = await fetchWalletContractData('hasRole', abi.WORKNET_VOTING, process.env.WORKNET_VOTING, [roleHash, wallet.address]);
     return success(result);
   } catch (e) {
     return error(errorCodes.HasRole, e.message, e);
+  }
+};
+export const executeVoting = async (id) => {
+  try {
+    const res = await sendWalletTransaction('executeVoting', {
+      abi: abi.WORKNET_VOTING,
+      address: process.env.WORKNET_VOTING,
+      data: [id],
+    });
+    console.log('execute voting', res);
+    return success(res);
+  } catch (e) {
+    return error(errorCodes.ExecuteVoting, e.message, e);
   }
 };

@@ -101,7 +101,7 @@ export default {
           if (res.ok) {
             this.ShowToast(this.$tc('modals.undelegateAmount', tokensAmount), this.$t('modals.undelegate'));
           } else if (res.msg.includes('Not enough balance to undelegate')) {
-            this.ShowToast(this.$t('errors.notEnoughBalance'), this.$t('errors.undelegateTitle'));
+            this.ShowToast(this.$t('errors.transaction.notEnoughFunds'), this.$t('errors.undelegateTitle'));
           }
           return res;
         },

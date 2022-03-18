@@ -1,6 +1,5 @@
 import {
   connectWallet,
-  connectWithMnemonic,
   disconnect,
   getBalance,
   getContractFeeData,
@@ -8,7 +7,6 @@ import {
   getStyledAmount,
   getTransferFeeData,
   getWalletAddress,
-  GetWalletProvider,
   transfer,
   transferToken,
   fetchWalletContractData,
@@ -18,7 +16,7 @@ import {
   addProposal,
   getProposalInfoById,
   doVote,
-  getVoteThreshold, getVotes, getReceipt, executeVoting, voteResults, getChairpersonHash, hasRole, getProposalThreshold,
+  getVoteThreshold, getReceipt, executeVoting, voteResults, getChairpersonHash, hasRole, getProposalThreshold,
 } from '~/utils/wallet';
 import abi from '~/abi/index';
 import { errorCodes, TokenSymbols } from '~/utils/enums';
@@ -207,6 +205,7 @@ export default {
   async isChairpersonRole({ commit, getters }) {
     if (!getters.isChairpersonRole) {
       const chairpersonHash = await getChairpersonHash();
+      console.log('chairperson hash', chairpersonHash);
       commit('setChairpersonRoleHash', chairpersonHash.result);
     }
     const res = await hasRole(getters.chairpersonRoleHash);
