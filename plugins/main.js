@@ -46,16 +46,10 @@ Vue.mixin({
       this.$store.dispatch('modals/hide');
     },
     ClipboardSuccessHandler(value) {
-      this.$store.dispatch('main/showToast', {
-        title: 'Copied successfully',
-        text: value,
-      });
+      this.ShowToast(value, 'Copied successfully');
     },
     ClipboardErrorHandler(value) {
-      this.$store.dispatch('main/showToast', {
-        title: 'Copy error',
-        text: value,
-      });
+      this.ShowToast(value, 'Copy error');
     },
     ShowError(label) {
       this.$bvToast.toast(label, {
@@ -112,6 +106,8 @@ Vue.mixin({
         solid: true,
         toaster: 'b-toaster-bottom-right',
         appendToast: true,
+        toastClass: 'custom-toast-width',
+        bodyClass: 'custom-toast-width',
       });
     },
   },

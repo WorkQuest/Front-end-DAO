@@ -147,3 +147,11 @@ body {
 .b-toaster {
   z-index: 3000;
 }
+
+.custom-toast-width {
+  flex-basis: fit-content;
+  width: fit-content;
+  min-width: 350px;
+  max-width: none;
+}
+
