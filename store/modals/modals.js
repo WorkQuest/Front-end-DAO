@@ -7,7 +7,6 @@ export default {
   restore: 'restore',
   changePassword: 'changePassword',
   addCard: 'addCard',
-  deposit: 'deposit',
   privacy: 'privacy',
   withdraw: 'withdraw',
   review: 'review',

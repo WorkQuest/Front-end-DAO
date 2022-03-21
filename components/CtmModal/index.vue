@@ -18,7 +18,6 @@ import CtmModalConfirmEmail from './CtmModalConfirmEmail';
 import CtmModalChangePassword from './CtmModalChangePassword';
 import CtmModalRestore from './CtmModalRestore';
 import CtmModalPrivacy from './CtmModalPrivacy';
-import CtmModalDeposit from './CtmModalDeposit';
 import CtmModalAddCard from './CtmModalAddCard';
 import CtmModalStatus from './CtmModalStatus';
 import CtmModalConfirmDetails from './CtmModalConfirmDetails';
@@ -61,7 +60,6 @@ export default {
     [modals.emailConfirm]: CtmModalConfirmEmail,
     [modals.default]: CtmModalDefault,
     [modals.delegate]: CtmModalDelegate,
-    [modals.deposit]: CtmModalDeposit,
     [modals.openADispute]: CtmModalOpenADispute,
     [modals.privacy]: CtmModalPrivacy,
     [modals.restore]: CtmModalRestore,
