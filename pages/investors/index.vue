@@ -63,8 +63,8 @@ export default {
     }),
     tableFields() {
       return [
-        { key: 'avatar', label: this.$t('investors.table.name') },
-        { key: 'fullName', label: '', sortable: true },
+        { key: 'avatar', label: '' },
+        { key: 'fullName', label: this.$t('investors.table.name'), sortable: true },
         { key: 'investorAddress', label: this.$t('investors.table.address') },
         { key: 'copy', label: '', sortable: true },
         { key: 'voting', label: this.$t('investors.table.voting'), sortable: true },
@@ -150,7 +150,9 @@ export default {
     height: 100%;
   }
   &__table{
+    overflow: auto;
     margin-bottom: 15px;
+    position: relative;
   }
   &__investors {
       display: none;
@@ -169,17 +171,27 @@ export default {
   }
   &__search{
     margin: 20px 0 20px 0;
+    width: 100%;
     background-color: #FFFFFF;
-    width: 1180px;
     height: 43px;
     border-radius: 6px;
   }
 }
-@include _1199 {
-  .body {
-    max-width: 100vw;
-    &__title {
-      margin-left: 10px;
+//@include _1199 {
+//  .body {
+//    max-width: 100vw;
+//    &__title {
+//      margin-left: 10px;
+//    }
+//  }
+//}
+@include _991 {
+  .investors {
+    &__body {
+      padding: 0 20px;
+    }
+    &__table {
+      width: calc(100vw - 40px);
     }
   }
 }

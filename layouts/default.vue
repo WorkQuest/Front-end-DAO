@@ -673,6 +673,8 @@ export default {
 }
 .primary {
   height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .template {
   background: #F7F8FA;
