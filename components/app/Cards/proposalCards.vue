@@ -239,7 +239,7 @@ export default {
         limit: this.cardsLimit,
         offset: (page - 1) * this.cardsLimit,
         q: this.search || null,
-        // sort: this.isDescending ? 'desc' : 'asc',
+        'sort[createdAt]': this.isDescending ? 'desc' : 'asc',
       };
       if (this.ddValue - 1 >= 0) {
         params.statuses = [this.ddValue - 1];

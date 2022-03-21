@@ -422,8 +422,8 @@ export default {
         params: {
           limit: this.limit,
           offset: (page - 1) * this.limit,
-          // createdAt: this.isDescending ? 'desc' : 'asc', // TODO: fix
           support: this.ddValue > 0 ? this.ddValue === 1 : null,
+          'sort[createdAt]': this.isDescending ? 'desc' : 'asc',
         },
       });
       if (!votingRes.ok) {
