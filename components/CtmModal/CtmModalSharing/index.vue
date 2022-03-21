@@ -16,7 +16,7 @@
             v-if="link.icon === 'telegram'"
             class="socials__btn-telegram"
             alt=""
-            src="~assets/img/icons/telegram.png"
+            src="~assets/img/icons/telegram.svg"
           >
           <span
             v-else
