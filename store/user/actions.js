@@ -1,5 +1,4 @@
 import { error } from '~/utils/success-error';
-import { getStyledAmount } from '~/utils/wallet';
 
 export default {
   async signIn({ commit, dispatch }, payload) {
@@ -38,24 +37,20 @@ export default {
     return response;
   },
   async getSpecialUserData({ commit }, id) {
-    const response = await this.$axios.$get(`/v1/profile/${id}`);
-    commit('setSpecialUserData', response.result);
-    return response.result;
-  },
-  async getAllUserData({ commit, dispatch }, config) {
     try {
-      if (!config.q.length) delete config.q;
-      const { result } = await this.$axios.$get('/v1/profile/users', { params: { ...config, walletRequired: true } });
-      const addresses = result.users.map((user) => user.wallet?.address).filter((n) => n);
-      const votes = await dispatch('wallet/getVotesByAddresses', addresses, { root: true });
-      result.users.forEach((user) => {
-        user.fullName = `${user.firstName || ''} ${user.lastName || ''}`;
-        user.investorAddress = user.wallet?.address ? user.wallet.address : '';
-        user.voting = user.wallet?.address ? `${getStyledAmount(votes.result[addresses.indexOf(user.wallet.address)])} WQT` : '';
-      });
-      commit('setUsersData', result);
+      const response = await this.$axios.$get(`/v1/profile/${id}`);
+      commit('setSpecialUserData', response.result);
+      return response.result;
     } catch (e) {
-      commit('setUsersData', []);
+      return false;
+    }
+  },
+  async getUserByWalletAddress({ commit }, address) {
+    try {
+      const { result } = await this.$axios.$get(`/v1/profile/wallet/${address}`);
+      return result;
+    } catch (e) {
+      return null;
     }
   },
   async setUserRole({ commit }) {

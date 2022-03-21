@@ -248,7 +248,7 @@ export const fetchWalletContractData = async (_method, _abi, _address, _params) 
 export const transferToken = async (recipient, value) => {
   try {
     value = new BigNumber(value).shiftedBy(18).toString();
-    const inst = new web3.eth.Contract(abi.ERC20, process.env.WQT_TOKEN);
+    const inst = new web3.eth.Contract(abi.ERC20, process.env.WORKNET_WQT_TOKEN);
     const [gasPrice, gasEstimate] = await Promise.all([
       web3.eth.getGasPrice(),
       inst.methods.transfer.apply(null, [recipient, value]).estimateGas({ from: wallet.address }),
@@ -310,7 +310,7 @@ export const getDelegates = async () => {
     const res = await fetchWalletContractData(
       'delegates',
       abi.WQToken,
-      process.env.WQT_TOKEN,
+      process.env.WORKNET_WQT_TOKEN,
       [wallet.address],
     );
     return success(res);
@@ -324,7 +324,7 @@ export const delegate = async (toAddress, amount) => {
     amount = new BigNumber(amount).shiftedBy(+18).toString();
     const res = await sendWalletTransaction('delegate', {
       abi: abi.WQToken,
-      address: process.env.WQT_TOKEN,
+      address: process.env.WORKNET_WQT_TOKEN,
       data: [toAddress, amount],
     });
     return success(res);
@@ -337,7 +337,7 @@ export const undelegate = async () => {
   try {
     const res = await sendWalletTransaction('undelegate', {
       abi: abi.WQToken,
-      address: process.env.WQT_TOKEN,
+      address: process.env.WORKNET_WQT_TOKEN,
     });
     return success(res);
   } catch (e) {

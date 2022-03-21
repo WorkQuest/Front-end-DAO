@@ -1,5 +1,9 @@
 import {
   connectWallet,
+  disconnect, getBalance, getContractFeeData,
+  getIsWalletConnected, getStyledAmount,
+  getTransferFeeData, getWalletAddress,
+  connectWallet,
   disconnect,
   getBalance,
   getContractFeeData,
@@ -92,7 +96,7 @@ export default {
     const res = await fetchWalletContractData(
       'balanceOf',
       abi.ERC20,
-      process.env.WQT_TOKEN,
+      process.env.WORKNET_WQT_TOKEN,
       [userAddress],
     );
     commit('setBalance', {
@@ -146,25 +150,32 @@ export default {
    */
   async getVotesByAddresses({ commit }, addresses) {
     try {
-      const res = await fetchWalletContractData('getVotes', abi.WQToken, process.env.WQT_TOKEN, [addresses]);
+      const res = await fetchWalletContractData('getVotes', abi.WQToken, process.env.WORKNET_WQT_TOKEN, [addresses]);
       return success(res);
     } catch (e) {
       console.error('getVotes');
       return error(errorCodes.GetVotes, e.message, e);
     }
   },
-  async getDelegates({ commit, dispatch }) {
+  async getDelegates({ commit, dispatch, rootGetters }) {
     const res = await getDelegates();
     if (res.ok) {
       const address = !+res.result ? null : res.result.toLowerCase();
       let votingPowerArray = null;
-      if (address) votingPowerArray = await dispatch('getVotesByAddresses', [address]);
+      let user = null;
+      if (address) {
+        votingPowerArray = await dispatch('getVotesByAddresses', [address]);
+        if (address === rootGetters['user/getUserWalletAddress']) user = rootGetters['user/getUserData'];
+        else user = await dispatch('user/getUserByWalletAddress', address, { root: true });
+      }
+      const delegatedData = user ? {
+        ...user,
+        investorAddress: address,
+        voting: votingPowerArray ? getStyledAmount(votingPowerArray.result[0]) : null,
+        fullName: `${user.firstName || ''} ${user.lastName || ''}`,
+      } : null;
       commit(
-        'investors/setDelegatedToUser',
-        {
-          address,
-          tokensAmount: votingPowerArray ? getStyledAmount(votingPowerArray.result[0]) : null,
-        }, { root: true },
+        'investors/setDelegatedToUser', delegatedData, { root: true },
       );
     } else {
       commit('investors/setDelegatedToUser', null, { root: true });

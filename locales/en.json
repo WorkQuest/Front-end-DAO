@@ -158,7 +158,9 @@
     "addProposal": "Add proposal",
     "delete": "delete",
     "addFile": "Add File",
-    "change": "Change"
+    "change": "Change",
+    "wqtCount": "{n} WQT",
+    "wusdCount": "{n} WUSD"
   },
   "priority": {
     "title": "Priority",
@@ -718,7 +720,6 @@
   "investors": {
     "title": "Investors",
     "search": "Search investor",
-    "youDelegated": "You delegated {n} WQT",
     "table": {
       "name": "Name",
       "address": "Address",
@@ -729,6 +730,7 @@
     "profile": "Investor Profile"
   },
   "investor": {
-    "notFilled": "Not filled"
+    "notFilled": "Not filled",
+    "notFound": "Investor not found"
   }
 }

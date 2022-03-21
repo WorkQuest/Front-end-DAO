@@ -160,6 +160,10 @@
       <!--        :total-pages="totalPages"-->
       <!--      />-->
     </div>
+    <empty-data
+      v-else
+      :description="$t('investor.notFound')"
+    />
   </div>
 </template>
 
@@ -170,14 +174,13 @@ import { UserRole } from '~/utils/enums';
 import { getStyledAmount } from '~/utils/wallet';
 
 export default {
+  name: 'InvestorProfile',
   data() {
     return {
       investor: {},
       userId: this.$route.params.id,
       votingPower: 0,
       investorAddress: '',
-      stake: '126,613,276',
-      name: 'user@gmail.com',
       pages: 1,
       totalPages: 5,
       transactionsData: [
@@ -297,6 +300,7 @@ export default {
     async getInvestorData() {
       if (this.isMyProfile) this.investor = this.userData;
       else this.investor = await this.$store.dispatch('user/getSpecialUserData', this.userId);
+
       if (this.investor?.wallet?.address) {
         this.investorAddress = this.investor.wallet.address;
         const powerResponse = await this.$store.dispatch('wallet/getVotesByAddresses', [this.investorAddress]);

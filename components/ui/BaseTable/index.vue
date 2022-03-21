@@ -75,7 +75,7 @@
       </template>
       <template #cell(undelegate)="el">
         <base-btn
-          v-if="delegatedToUser && el.item.investorAddress === delegatedToUser.address"
+          v-if="delegatedToUser && el.item.investorAddress === delegatedToUser.wallet.address"
           mode="lightRed"
           class="btn__delegate"
           :class="delegateClass(el)"
@@ -227,6 +227,7 @@ export default {
       });
     },
     cropTxt(str, maxLength = 80) {
+      if (!str) return '';
       if (str.toString().length > maxLength) str = `${str.slice(0, maxLength)}...`;
       return str;
     },
