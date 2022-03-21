@@ -205,7 +205,6 @@ export default {
   async isChairpersonRole({ commit, getters }) {
     if (!getters.isChairpersonRole) {
       const chairpersonHash = await getChairpersonHash();
-      console.log('chairperson hash', chairpersonHash);
       commit('setChairpersonRoleHash', chairpersonHash.result);
     }
     const res = await hasRole(getters.chairpersonRoleHash);

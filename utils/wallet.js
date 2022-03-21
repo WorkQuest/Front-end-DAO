@@ -432,7 +432,6 @@ export const executeVoting = async (id) => {
       address: process.env.WORKNET_VOTING,
       data: [id],
     });
-    console.log('execute voting', res);
     return success(res);
   } catch (e) {
     return error(errorCodes.ExecuteVoting, e.message, e);
