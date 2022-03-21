@@ -44,7 +44,7 @@ export default {
   },
   async getUserByWalletAddress({ commit }, address) {
     try {
-      const res = await this.$axios.$get('/v1/profile/users', { params: { q: { address } } });
+      const res = await this.$axios.$get('/v1/profile/users', { params: { q: address } });
       console.log('by address', res);
       return res;
     } catch (e) {

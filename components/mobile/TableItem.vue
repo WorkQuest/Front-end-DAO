@@ -52,7 +52,7 @@
       </nuxt-link>
     </div>
     <div
-      v-if="item.status"
+      v-if="typeof item.status === 'string'"
       class="item__subtitle"
     >
       {{ $t('wallet.table.status') }}

@@ -32,7 +32,7 @@
               class="footer__body"
               placeholder="10000 WQT"
               :name="$t('modals.tokensNumber')"
-              :rules="`required${min}|max_bn:${balance}|decimalPlaces:18`"
+              :rules="`required${min}|max_bn:${balance}|min_value:1|decimalPlaces:18`"
               @input="replaceDot"
             />
             <base-btn

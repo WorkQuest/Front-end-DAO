@@ -11,20 +11,6 @@
         :placeholder="$t('investors.search')"
         mode="icon"
       />
-      <div
-        v-if="delegatedToUser.address"
-        class="body__delegated"
-      >
-        <div>{{ $tc('investors.youDelegated', delegatedToUser.tokensAmount) }}</div>
-        <div>{{ $t('modals.to') }} {{ delegatedToUser.address }}</div>
-        <base-btn
-          mode="lightRed"
-          class="btn__delegate"
-          @click="openModalUndelegate"
-        >
-          {{ $t('modals.undelegate') }}
-        </base-btn>
-      </div>
       <base-table
         v-if="investorsCount !== 0"
         class="investors__table"
@@ -90,6 +76,14 @@ export default {
     },
     users() {
       const users = [];
+      if (this.delegatedToUser) {
+        users.push({
+          fullName: 'Delegated to',
+          investorAddress: this.delegatedToUser.address,
+          voting: this.delegatedToUser.tokensAmount,
+          callback: this.getInvestors,
+        });
+      }
       if (!this.investors.length) return users;
       this.investors.forEach((user) => {
         users.push({
@@ -124,9 +118,6 @@ export default {
   async mounted() {
     if (!this.isWalletConnected) return;
     await this.getInvestors();
-
-    // del
-    await this.$store.dispatch('user/getUserByWalletAddress', '0xf96126159b147c6fb2c1f23aa73d3412a5e0f865');
   },
   beforeDestroy() {
     clearTimeout(this.timeout);
@@ -185,11 +176,6 @@ export default {
     height: 43px;
     border-radius: 6px;
   }
-  &__delegated {
-    margin-bottom: 20px;
-    color: $black800;
-    font-size: 16px;
-  }
 }
 @include _1199 {
   .body {
@@ -202,9 +188,6 @@ export default {
 @include _767 {
   .body {
     max-width: 100vw;
-    &__delegated {
-      white-space: nowrap;
-    }
   }
   .investors {
     &__table {

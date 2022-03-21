@@ -147,8 +147,10 @@ export default {
     if (res.ok) {
       const address = !+res.result ? null : res.result.toLowerCase();
       let votingPowerArray = null;
-      if (address) votingPowerArray = await dispatch('getVotesByAddresses', [address]);
-      // TODO: делаем запрос на получение юзера по адресу
+      if (address) {
+        votingPowerArray = await dispatch('getVotesByAddresses', [address]);
+        const user = await dispatch('user/getUserByWalletAddress', '0xf96126159b147c6fb2c1f23aa73d3412a5e0f865', { root: true });
+      }
       commit(
         'investors/setDelegatedToUser',
         {
