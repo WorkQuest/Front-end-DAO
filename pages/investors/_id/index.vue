@@ -297,6 +297,7 @@ export default {
     async getInvestorData() {
       if (this.isMyProfile) this.investor = this.userData;
       else this.investor = await this.$store.dispatch('user/getSpecialUserData', this.userId);
+
       if (this.investor?.wallet?.address) {
         this.investorAddress = this.investor.wallet.address;
         const powerResponse = await this.$store.dispatch('wallet/getVotesByAddresses', [this.investorAddress]);
