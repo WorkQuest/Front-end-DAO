@@ -3,18 +3,6 @@ export default () => ({
     list: [],
     count: 0,
   },
-  investor: null,
-
-  tokens: {
-    access: '',
-    refresh: '',
-  },
-  isProfileEdit: false,
-  userData: {},
-  currentUserPosition: null,
-  userRole: {},
-  userDataPassword: {},
-  imageLink: {},
   lastPage: 1,
   delegatedToUser: {
     address: null,

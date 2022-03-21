@@ -112,7 +112,7 @@ export default {
       const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
         method: 'delegate',
         _abi: abi.WQToken,
-        contractAddress: process.env.WQT_TOKEN,
+        contractAddress: process.env.WORKNET_WQT_TOKEN,
         data: [investorAddress, new BigNumber(tokensAmount).shiftedBy(18).toString()],
       });
       this.SetLoader(false);
@@ -121,7 +121,7 @@ export default {
         title: this.$t('modals.delegate'),
         fields: {
           from: { name: this.$t('modals.fromAddress'), value: userWalletAddress },
-          to: { name: this.$t('modals.toAddress'), value: process.env.WQT_TOKEN },
+          to: { name: this.$t('modals.toAddress'), value: process.env.WORKNET_WQT_TOKEN },
           amount: { name: this.$t('modals.amount'), value: tokensAmount, symbol: TokenSymbols.WQT },
           fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
         },

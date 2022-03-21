@@ -176,8 +176,6 @@ export default {
       userId: this.$route.params.id,
       votingPower: 0,
       investorAddress: '',
-      stake: '126,613,276',
-      name: 'user@gmail.com',
       pages: 1,
       totalPages: 5,
       transactionsData: [

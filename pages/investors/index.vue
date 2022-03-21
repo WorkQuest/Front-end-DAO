@@ -26,7 +26,7 @@
         </base-btn>
       </div>
       <base-table
-        v-if="usersData.count !== 0"
+        v-if="investorsCount !== 0"
         class="investors__table"
         :fields="tableFields"
         :items="users"
@@ -40,7 +40,7 @@
         />
       </div>
       <base-pager
-        v-if="usersData.count > limit"
+        v-if="investorsCount > limit"
         v-model="currPage"
         class="investors__pagination"
         :total-pages="totalPages"
@@ -71,7 +71,8 @@ export default {
   computed: {
     ...mapGetters({
       userData: 'user/getUserData',
-      usersData: 'user/getAllUsers',
+      investors: 'investors/getInvestorsList',
+      investorsCount: 'investors/getInvestorsCount',
       isWalletConnected: 'wallet/getIsWalletConnected',
       lastPage: 'investors/getLastPage',
       delegatedToUser: 'investors/getDelegatedToUser',
@@ -89,7 +90,8 @@ export default {
     },
     users() {
       const users = [];
-      this.usersData.users.forEach((user) => {
+      if (!this.investors.length) return users;
+      this.investors.forEach((user) => {
         users.push({
           ...user,
           callback: this.getInvestors,
@@ -98,7 +100,7 @@ export default {
       return users;
     },
     totalPages() {
-      return Math.ceil(this.usersData.count / this.limit);
+      return Math.ceil(this.investorsCount / this.limit);
     },
   },
   watch: {
@@ -122,6 +124,9 @@ export default {
   async mounted() {
     if (!this.isWalletConnected) return;
     await this.getInvestors();
+
+    // del
+    await this.$store.dispatch('user/getUserByWalletAddress', '0xf96126159b147c6fb2c1f23aa73d3412a5e0f865');
   },
   beforeDestroy() {
     clearTimeout(this.timeout);
@@ -137,7 +142,7 @@ export default {
     async getInvestors() {
       this.SetLoader(true);
       await Promise.all([
-        this.$store.dispatch('user/getAllUserData', { limit: this.limit, offset: this.offset, q: this.q }),
+        this.$store.dispatch('investors/getInvestors', { limit: this.limit, offset: this.offset, q: this.q }),
         this.$store.dispatch('wallet/getDelegates'),
       ]);
       this.SetLoader(false);
