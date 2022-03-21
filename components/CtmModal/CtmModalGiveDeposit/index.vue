@@ -152,7 +152,6 @@ export default {
         title: this.$t('modals.textCopy'),
       });
     },
-    // TODO: Добавить модалку
     showShareModal() {
       this.ShowModal({
         key: modals.sharing,
