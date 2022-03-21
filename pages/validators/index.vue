@@ -47,7 +47,7 @@
 import { mapGetters } from 'vuex';
 
 export default {
-  name: 'Index',
+  name: 'Validators',
   data() {
     return {
       limit: 20,

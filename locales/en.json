@@ -156,7 +156,8 @@
     "addProposal": "Add proposal",
     "delete": "delete",
     "addFile": "Add File",
-    "change": "Change"
+    "change": "Change",
+    "wusdCount": "{n} WUSD"
   },
   "priority": {
     "title": "Priority",
@@ -810,9 +811,6 @@
     "occupied": "Occupied",
     "delegators": "Delegators",
     "minimalStake": "Minimal stake",
-    "wusdCount": "{n} WUSD",
-    "undelegate": "Undelegate",
-    "delegate": "Delegate",
     "outOf": "out of"
   }
 }

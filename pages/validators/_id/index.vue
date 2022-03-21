@@ -21,7 +21,7 @@
             <img
               class="profile__avatar"
               :src="require('~/assets/img/app/avatar_empty.png')"
-              :alt="'empty avatar'"
+              alt="empty avatar"
             >
             <div class="left__info">
               <div class="left__user">
@@ -82,16 +82,16 @@
                   {{ $t('validator.minimalStake') }}
                 </div>
                 <div class="right__data-desc">
-                  {{ $tc('validator.wusdCount', 0) }}
+                  {{ $tc('meta.wusdCount', 0) }}
                 </div>
               </div>
             </div>
             <div class="right__block">
               <button class="right__button right__button_red">
-                {{ $t('validator.undelegate') }}
+                {{ $t('modals.undelegate') }}
               </button>
               <button class="right__button right__button_blue">
-                {{ $t('validator.delegate') }}
+                {{ $t('modals.delegate') }}
               </button>
             </div>
           </div>
@@ -103,12 +103,12 @@
 
 <script>
 export default {
-  name: 'Index',
+  name: 'Validator',
   computed: {
     leftColumn() {
       return [
-        { name: this.$t('validator.address'), desc: '0xnf…thb3' },
-        { name: this.$t('validator.commonStake'), desc: this.$tc('validator.wusdCount', 1000000) },
+        { name: this.$t('modals.address'), desc: '0xnf…thb3' },
+        { name: this.$t('validator.commonStake'), desc: this.$tc('meta.wusdCount', 1000000) },
         { name: this.$t('validator.fee'), desc: '5%' },
         { name: this.$t('validator.missedBlocks'), desc: 1000 },
       ];
