@@ -45,14 +45,14 @@ Vue.mixin({
       this.$store.dispatch('modals/hide');
     },
     ClipboardSuccessHandler(value) {
-      this.ShowToast(value, 'Copied successfully');
+      this.ShowToast(value, this.$t('modals.textCopy'));
     },
     ClipboardErrorHandler(value) {
-      this.ShowToast(value, 'Copy error');
+      this.ShowToast(value, this.$t('modals.textCopyError'));
     },
     ShowError(label) {
       this.$bvToast.toast(label, {
-        title: 'Ошибка',
+        title: this.$t('modals.error'),
         variant: 'warning',
         solid: true,
         toaster: 'b-toaster-bottom-right',

@@ -259,6 +259,7 @@
   "modals": {
     "trxFee": "Transactions fee",
     "textCopy": "Text has been copied",
+    "textCopyError": "Copy error",
     "success": "Success",
     "fromAddress": "From",
     "toAddress": "To",
