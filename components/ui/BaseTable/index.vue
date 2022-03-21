@@ -1,129 +1,128 @@
 <template>
-  <div class="table">
-    <b-table
-      :items="items"
-      :fields="fields"
-      borderless
-      thead-class="table__header"
-      caption-top
-      :responsive="true"
-      tbody-tr-class="table__row"
+  <b-table
+    :items="items"
+    :fields="fields"
+    show-empty
+    borderless
+    caption-top
+    thead-class="table__header"
+    :responsive="true"
+    tbody-tr-class="table__row"
+  >
+    <template
+      v-if="$props.title.length"
+      #table-caption
     >
-      <template
-        v-if="$props.title.length"
-        #table-caption
+      <span class="table__title">{{ $props.title }}</span>
+    </template>
+    <template #cell(tx_hash)="el">
+      <a
+        :href="getTransactionUrl(el.item.tx_hash)"
+        target="_blank"
+        class="table__url"
       >
-        <span class="table__title">{{ $props.title }}</span>
-      </template>
-      <template #cell(tx_hash)="el">
-        <a
-          :href="getTransactionUrl(el.item.tx_hash)"
-          target="_blank"
-          class="table__url"
+        {{ CutTxn(el.item.tx_hash, 8, 4) }}
+      </a>
+    </template>
+    <template #cell(status)="el">
+      <span
+        :class="{table__success: el.item.status, table__failed: !el.item.status}"
+      >
+        {{ el.item.status ? $t('modals.success') : $t('modals.failed') }}
+      </span>
+    </template>
+    <template #cell(block)="el">
+      <span class="table__grey">{{ el.item.block }}</span>
+    </template>
+    <template #cell(timestamp)="el">
+      <span class="table__grey">{{ el.item.timestamp }}</span>
+    </template>
+    <template #cell(date)="el">
+      <span>{{ $moment(el.item.date).format('ll') }}</span>
+    </template>
+    <template #cell(transaction_fee)="el">
+      <span class="table__grey">{{ el.item.transaction_fee }}</span>
+    </template>
+    <template #cell(avatar)="el">
+      <nuxt-link
+        :to="`/investors/${el.item.id}`"
+        class=" table__link"
+      >
+        <img
+          :src="(el.item.avatar && el.item.avatar.url) ? el.item.avatar.url : require('~/assets/img/app/avatar_empty.png')"
+          alt="userAvatar"
+          class="table__avatar"
         >
-          {{ CutTxn(el.item.tx_hash, 8, 4) }}
-        </a>
-      </template>
-      <template #cell(status)="el">
-        <span
-          :class="{table__success: el.item.status, table__failed: !el.item.status}"
-        >
-          {{ el.item.status ? $t('modals.success') : $t('modals.failed') }}
-        </span>
-      </template>
-      <template #cell(block)="el">
-        <span class="table__grey">{{ el.item.block }}</span>
-      </template>
-      <template #cell(timestamp)="el">
-        <span class="table__grey">{{ el.item.timestamp }}</span>
-      </template>
-      <template #cell(date)="el">
-        <span>{{ $moment(el.item.date).format('ll') }}</span>
-      </template>
-      <template #cell(transaction_fee)="el">
-        <span class="table__grey">{{ el.item.transaction_fee }}</span>
-      </template>
-      <template #cell(avatar)="el">
-        <nuxt-link
-          :to="`/investors/${el.item.id}`"
-          class=" table__link"
-        >
-          <img
-            :src="(el.item.avatar && el.item.avatar.url) ? el.item.avatar.url : require('~/assets/img/app/avatar_empty.png')"
-            alt="userAvatar"
-            class="table__avatar"
-          >
-        </nuxt-link>
-      </template>
-      <template #cell(copy)="el">
-        <base-btn
-          v-clipboard:copy="el.item.investorAddress"
-          v-clipboard:success="ClipboardSuccessHandler"
-          v-clipboard:error="ClipboardErrorHandler"
-          mode="copy"
-          class="table__copy"
-        />
-      </template>
-      <template #cell(vote)="el">
-        <base-btn
-          class="btn__vote"
-          :class="voteClass(el)"
-        >
-          {{ el.item.vote ? $t('proposal.yes') : $t('proposal.no') }}
-        </base-btn>
-      </template>
-      <template #cell(undelegate)="el">
-        <base-btn
-          mode="lightRed"
-          class="btn__delegate"
-          :disabled="!myProfile(el.item.id) || el.item.voting === 0"
-          :class="delegateClass(el)"
-          @click="openModalUndelegate(el)"
-        >
-          {{ el.item.undelegate }}
-        </base-btn>
-      </template>
-      <template #cell(delegate)="el">
-        <base-btn
-          mode="lightBlue"
-          :disabled="!myProfile(el.item.id)"
-          class="btn__delegate"
-          @click="openModalDelegate(el)"
-        >
-          {{ el.item.delegate }}
-        </base-btn>
-      </template>
-      <template #cell(investorAddress)="el">
-        {{ CutTxn(el.item.investorAddress, 5, 6) }}
-      </template>
-      <template #cell(from_address)="el">
-        <a
-          :href="getAddressUrl(el.item.from_address)"
-          target="_blank"
-          class="table__url"
-        >
-          {{ CutTxn(el.item.from_address, 4, 4) }}
-        </a>
-      </template>
-      <template #cell(to_address)="el">
-        <a
-          :href="getAddressUrl(el.item.to_address)"
-          target="_blank"
-          class="table__url"
-        >
-          {{ CutTxn(el.item.to_address, 4, 4) }}
-        </a>
-      </template>
-      <template #cell(fullName)="el">
-        <nuxt-link
-          :to="`/investors/${el.item.id}`"
-          class="table__link"
-        >
-          <span>{{ cropTxt(el.item.fullName, 15) }}</span>
-        </nuxt-link>
-      </template>
-    </b-table>
-  </div>
+      </nuxt-link>
+    </template>
+    <template #cell(copy)="el">
+      <base-btn
+        v-clipboard:copy="el.item.investorAddress"
+        v-clipboard:success="ClipboardSuccessHandler"
+        v-clipboard:error="ClipboardErrorHandler"
+        mode="copy"
+        class="table__copy"
+      />
+    </template>
+    <template #cell(vote)="el">
+      <base-btn
+        class="btn__vote"
+        :class="voteClass(el)"
+      >
+        {{ el.item.vote ? $t('proposal.yes') : $t('proposal.no') }}
+      </base-btn>
+    </template>
+    <template #cell(undelegate)="el">
+      <base-btn
+        mode="lightRed"
+        class="btn__delegate"
+        :disabled="!myProfile(el.item.id) || el.item.voting === 0"
+        :class="delegateClass(el)"
+        @click="openModalUndelegate(el)"
+      >
+        {{ el.item.undelegate }}
+      </base-btn>
+    </template>
+    <template #cell(delegate)="el">
+      <base-btn
+        mode="lightBlue"
+        :disabled="!myProfile(el.item.id)"
+        class="btn__delegate"
+        @click="openModalDelegate(el)"
+      >
+        {{ el.item.delegate }}
+      </base-btn>
+    </template>
+    <template #cell(investorAddress)="el">
+      {{ CutTxn(el.item.investorAddress, 5, 6) }}
+    </template>
+    <template #cell(from_address)="el">
+      <a
+        :href="getAddressUrl(el.item.from_address)"
+        target="_blank"
+        class="table__url"
+      >
+        {{ CutTxn(el.item.from_address, 4, 4) }}
+      </a>
+    </template>
+    <template #cell(to_address)="el">
+      <a
+        :href="getAddressUrl(el.item.to_address)"
+        target="_blank"
+        class="table__url"
+      >
+        {{ CutTxn(el.item.to_address, 4, 4) }}
+      </a>
+    </template>
+    <template #cell(fullName)="el">
+      <nuxt-link
+        :to="`/investors/${el.item.id}`"
+        class="table__link"
+      >
+        <span>{{ cropTxt(el.item.fullName, 15) }}</span>
+      </nuxt-link>
+    </template>
+  </b-table>
 </template>
 
 <script>
@@ -264,7 +263,8 @@ export default {
   }
   @include _991 {
     .table {
-      width: 99%;
+      width: 1180px;
+      overflow-x: hidden;
       .btn__delegate {
         width: 60px !important;
         font-size: 10px;
@@ -312,4 +312,9 @@ export default {
   }
 }
 
+@include _991 {
+  .table {
+    width: 1180px;
+  }
+}
 </style>

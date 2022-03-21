@@ -106,10 +106,9 @@ export default {
     height: 100%;
   }
   &__table{
+    overflow: auto;
     margin-bottom: 15px;
-  }
-  &__investors {
-    display: none;
+    position: relative;
   }
   &__pagination{
     margin: 10px 15px 0 0;
@@ -121,7 +120,6 @@ export default {
   &__search{
     margin: 20px 0 20px 0;
     background-color: #FFFFFF;
-    width: 1180px;
     height: 43px;
     border-radius: 6px;
   }
@@ -149,6 +147,28 @@ export default {
     &_active {
       color: $black800;
       border-bottom: solid $blue 2px;
+    }
+  }
+}
+@include _991 {
+  .validators {
+    &__body {
+      padding: 0 20px;
+    }
+    &__table {
+      width: calc(100vw - 40px);
+    }
+  }
+}
+@include _575 {
+  .validators {
+    &__head {
+      flex-direction: column;
+    }
+  }
+  .head {
+    &__title {
+      margin-bottom: 10px;
     }
   }
 }

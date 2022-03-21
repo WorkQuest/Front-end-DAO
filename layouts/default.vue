@@ -673,8 +673,6 @@ export default {
 }
 .primary {
   height: 100vh;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 .template {
   background: #F7F8FA;
@@ -1254,10 +1252,6 @@ export default {
     display: none;
   }
 }
-@include _1700 {}
-@include _1600 {}
-@include _1500 {}
-@include _1300 {}
 @include _1199 {
   .header {
     max-width: 100vw;
