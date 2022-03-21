@@ -83,7 +83,6 @@ export default {
           this.$store.dispatch('wallet/getVotesByAddresses', [this.userWalletAddress]),
           this.$store.dispatch('wallet/getProposalThreshold'),
         ]);
-        console.log(delegatedRes, 'THRESHOLD:', proposalThresholdRes);
         delegated = getStyledAmount(delegatedRes.result[0], true);
         proposalThreshold = proposalThresholdRes.result;
         await this.$store.dispatch('proposals/setProposalThreshold', proposalThreshold);

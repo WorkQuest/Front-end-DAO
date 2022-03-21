@@ -157,7 +157,7 @@ export default {
         contractAddress: process.env.WORKNET_VOTING,
         data: [1, this.descriptionInput.toString()],
       });
-      if (!feeCheck.ok || new BigNumber(this.balanceData.WUSD.toString()).isLessThan(feeCheck.result.fee)) {
+      if (!feeCheck.ok || new BigNumber(this.balanceData.WUSD.fullBalance.toString()).isLessThan(feeCheck.result.fee)) {
         this.ShowToast(this.$t('errors.transaction.notEnoughFunds'), this.$t('errors.addProposal'));
       }
       const { callback } = this.options;
