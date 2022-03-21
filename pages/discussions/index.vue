@@ -111,12 +111,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .discussions {
+  padding: 15px;
   justify-content: center;
   max-width: 1180px;
   margin: 0 auto;
   width: 100%;
   height: 100%;
-  @include _1024;
 
   &__header {
     display: flex;
@@ -166,6 +166,7 @@ export default {
 
 @include _1199 {
   .discussions {
+
     &__title {
       margin-left: 20px;
       margin-right: 20px;
