@@ -35,7 +35,10 @@
       <div class="wq-profile__header">
         {{ $t('profile.title') }}
       </div>
-      <div class="profile-cont">
+      <validation-observer
+        v-slot="{ invalid, handleSubmit}"
+        class="profile-cont"
+      >
         <div class="profile-cont__grid-container">
           <div class="profile-cont__main-data">
             <div class="profile-cont__avatar avatar">
@@ -53,7 +56,7 @@
                 <ValidationProvider
                   v-slot="{ validate }"
                   class="edit__validator"
-                  rules="required|ext:png,jpeg,jpg"
+                  rules="ext:png,jpeg,jpg"
                   tag="div"
                 >
                   <input
@@ -98,6 +101,7 @@
               mode="icon"
               :name="$t('modals.addressField')"
               mode-error="small"
+              :rules="isProfileEdit ? 'required' : ''"
               class="profile-cont__field"
               @focus="changeFocusValue"
               @input="getPositionData"
@@ -216,13 +220,14 @@
             <base-btn
               mode="lightBlue"
               class="action__btn"
-              @click="handleClickEditBtn"
+              :disabled="invalid"
+              @click="handleSubmit(handleClickEditBtn)"
             >
               {{ $t(`profile.${isProfileEdit ? 'save' : 'change'}`) }}
             </base-btn>
           </div>
         </div>
-      </div>
+      </validation-observer>
       <div
         v-if="isProfileEdit"
         class="wq-profile__header"
@@ -1052,10 +1057,6 @@ export default {
     }
   }
   .profile-cont {
-    &__main-data {
-      grid-template-columns: 151px 1fr;
-    }
-
     &__avatar {
       grid-row: 1/7;
     }
