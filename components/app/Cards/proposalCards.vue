@@ -128,7 +128,7 @@ export default {
       timeoutIdSearch: null,
       isDescending: true,
       cardsLimit: 12,
-      ddValue: 0,
+      ddValue: 2,
       isMobile: false,
     };
   },

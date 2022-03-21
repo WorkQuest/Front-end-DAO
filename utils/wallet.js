@@ -8,6 +8,9 @@ import { errorCodes } from '~/utils/enums';
 
 const bip39 = require('bip39');
 
+BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN });
+BigNumber.config({ EXPONENTIAL_AT: 60 });
+
 // eslint-disable-next-line import/prefer-default-export
 export const generateMnemonic = () => bip39.generateMnemonic();
 export const createWallet = (mnemonic) => {

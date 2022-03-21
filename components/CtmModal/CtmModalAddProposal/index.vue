@@ -150,7 +150,9 @@ export default {
   },
   methods: {
     async addProposal() {
+      this.SetLoader(true);
       await this.$store.dispatch('wallet/getBalance');
+      // Check balance before send proposal data to backend
       const feeCheck = await this.$store.dispatch('wallet/getContractFeeData', {
         method: 'addProposal',
         _abi: abi.WORKNET_VOTING,
@@ -159,9 +161,10 @@ export default {
       });
       if (!feeCheck.ok || new BigNumber(this.balanceData.WUSD.fullBalance.toString()).isLessThan(feeCheck.result.fee)) {
         this.ShowToast(this.$t('errors.transaction.notEnoughFunds'), this.$t('errors.addProposal'));
+        this.SetLoader(false);
+        return;
       }
       const { callback } = this.options;
-      this.SetLoader(true);
       this.descriptionInput = this.descriptionInput.trim();
       this.votingTopicInput = this.votingTopicInput.trim();
       const medias = await this.UploadFiles(this.documents);
