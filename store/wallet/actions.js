@@ -1,8 +1,8 @@
 import {
-  connectWallet, connectWithMnemonic,
+  connectWallet,
   disconnect, getBalance, getContractFeeData,
   getIsWalletConnected, getStyledAmount,
-  getTransferFeeData, getWalletAddress, GetWalletProvider,
+  getTransferFeeData, getWalletAddress,
   transfer,
   transferToken,
   fetchWalletContractData, delegate, getDelegates, undelegate,
@@ -142,21 +142,25 @@ export default {
       return error(errorCodes.GetVotes, e.message, e);
     }
   },
-  async getDelegates({ commit, dispatch }) {
+  async getDelegates({ commit, dispatch, rootGetters }) {
     const res = await getDelegates();
     if (res.ok) {
       const address = !+res.result ? null : res.result.toLowerCase();
       let votingPowerArray = null;
+      let user = null;
       if (address) {
         votingPowerArray = await dispatch('getVotesByAddresses', [address]);
-        const user = await dispatch('user/getUserByWalletAddress', '0xf96126159b147c6fb2c1f23aa73d3412a5e0f865', { root: true });
+        if (address === rootGetters['user/getUserWalletAddress']) user = rootGetters['user/getUserData'];
+        else user = await dispatch('user/getUserByWalletAddress', address, { root: true });
       }
+      const delegatedData = user ? {
+        ...user,
+        investorAddress: address,
+        voting: votingPowerArray ? getStyledAmount(votingPowerArray.result[0]) : null,
+        fullName: `${user.firstName || ''} ${user.lastName || ''}`,
+      } : null;
       commit(
-        'investors/setDelegatedToUser',
-        {
-          address,
-          tokensAmount: votingPowerArray ? getStyledAmount(votingPowerArray.result[0]) : null,
-        }, { root: true },
+        'investors/setDelegatedToUser', delegatedData, { root: true },
       );
     } else {
       commit('investors/setDelegatedToUser', null, { root: true });

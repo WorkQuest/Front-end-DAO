@@ -28,6 +28,5 @@ export default {
   getUserLinkedin: (state) => state.userData?.additionalInfo?.socialNetwork?.linkedin || '',
   getUserFacebook: (state) => state.userData?.additionalInfo?.socialNetwork?.facebook || '',
   getUserWorkQuest: (state) => state.userData?.additionalInfo?.socialNetwork?.workQuest || '',
-  getSpecialUserData: (state) => state.specialUserData,
   getTwoFACode: (state) => state.twoFACode,
 };

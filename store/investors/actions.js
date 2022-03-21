@@ -10,7 +10,7 @@ export default {
       result.users.forEach((user) => {
         user.fullName = `${user.firstName || ''} ${user.lastName || ''}`;
         user.investorAddress = user.wallet?.address ? user.wallet.address : '';
-        user.voting = user.wallet?.address ? `${getStyledAmount(votes.result[addresses.indexOf(user.wallet.address)])} WQT` : '';
+        user.voting = user.wallet?.address ? getStyledAmount(votes.result[addresses.indexOf(user.wallet.address)]) : '';
       });
       commit('setInvestors', result);
     } catch (e) {

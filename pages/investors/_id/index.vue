@@ -160,6 +160,10 @@
       <!--        :total-pages="totalPages"-->
       <!--      />-->
     </div>
+    <empty-data
+      v-else
+      :description="$t('investor.notFound')"
+    />
   </div>
 </template>
 
@@ -170,6 +174,7 @@ import { UserRole } from '~/utils/enums';
 import { getStyledAmount } from '~/utils/wallet';
 
 export default {
+  name: 'InvestorProfile',
   data() {
     return {
       investor: {},

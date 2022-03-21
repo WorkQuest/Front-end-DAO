@@ -78,18 +78,20 @@ export default {
       const users = [];
       if (this.delegatedToUser) {
         users.push({
-          fullName: 'Delegated to',
-          investorAddress: this.delegatedToUser.address,
-          voting: this.delegatedToUser.tokensAmount,
+          ...this.delegatedToUser,
+          voting: this.$tc('meta.wqtCount', this.delegatedToUser.voting),
           callback: this.getInvestors,
         });
       }
-      if (!this.investors.length) return users;
       this.investors.forEach((user) => {
-        users.push({
-          ...user,
-          callback: this.getInvestors,
-        });
+        if (!this.delegatedToUser
+            || (this.delegatedToUser && user.investorAddress !== this.delegatedToUser?.wallet?.address)) {
+          users.push({
+            ...user,
+            voting: this.$tc('meta.wqtCount', user.voting),
+            callback: this.getInvestors,
+          });
+        }
       });
       return users;
     },

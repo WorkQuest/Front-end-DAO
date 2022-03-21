@@ -1,5 +1,4 @@
 import { error } from '~/utils/success-error';
-import { getStyledAmount } from '~/utils/wallet';
 
 export default {
   async signIn({ commit, dispatch }, payload) {
@@ -38,15 +37,18 @@ export default {
     return response;
   },
   async getSpecialUserData({ commit }, id) {
-    const response = await this.$axios.$get(`/v1/profile/${id}`);
-    commit('setSpecialUserData', response.result);
-    return response.result;
+    try {
+      const response = await this.$axios.$get(`/v1/profile/${id}`);
+      commit('setSpecialUserData', response.result);
+      return response.result;
+    } catch (e) {
+      return false;
+    }
   },
   async getUserByWalletAddress({ commit }, address) {
     try {
-      const res = await this.$axios.$get('/v1/profile/users', { params: { q: address } });
-      console.log('by address', res);
-      return res;
+      const { result } = await this.$axios.$get(`/v1/profile/wallet/${address}`);
+      return result;
     } catch (e) {
       return null;
     }
