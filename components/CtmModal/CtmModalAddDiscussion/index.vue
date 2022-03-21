@@ -3,7 +3,12 @@
     class="add-discussion"
     :is-header="false"
   >
-    <div class="add-discussion__content">
+    <validation-observer
+      ref="observer"
+      v-slot="{ invalid }"
+      tag="div"
+      class="add-discussion__content"
+    >
       <div class="add-discussion__header header">
         <div class="header__title">
           {{ $t('modals.addDiscussion') }}
@@ -15,78 +20,72 @@
           />
         </div>
       </div>
-      <validation-observer
-        ref="observer"
-        v-slot="{ invalid }"
-        tag="div"
+      <div class="add-discussion__subtitle">
+        {{ $t('modals.discussionTopic') }}
+      </div>
+      <base-field
+        v-model="title"
+        :placeholder="$t('modals.discussionTopic')"
+        class="add-discussion__field"
+        rules="required|max:78"
+        :name="$t('modals.discussionTopic')"
+      />
+      <div class="add-discussion__subtitle">
+        {{ $t('modals.description') }}
+      </div>
+      <base-textarea
+        v-model="discussion"
+        class="add-discussion__body"
+        :placeholder="$t('modals.description')"
+        rules="required|max:2000"
+        mode="add-discussion"
+        :name="$t('modals.description')"
+      />
+      <base-uploader
+        class="add-discussion uploader__container"
+        type="all"
+        :items="documents"
+        :limit="docsLimit"
+        :is-show-download="false"
+        @remove="remove"
       >
-        <div class="add-discussion__subtitle">
-          {{ $t('modals.discussionTopic') }}
-        </div>
-        <base-field
-          v-model="title"
-          :placeholder="$t('modals.discussionTopic')"
-          class="add-discussion__field"
-          rules="required|max:78"
-          :name="$t('modals.discussionTopic')"
-        />
-        <div class="add-discussion__subtitle">
-          {{ $t('modals.description') }}
-        </div>
-        <base-textarea
-          v-model="discussion"
-          class="add-discussion__body"
-          :placeholder="$t('modals.description')"
-          rules="required|max:2000"
-          mode="add-discussion"
-          :name="$t('modals.description')"
-        />
-        <base-uploader
-          class="add-discussion uploader__container"
-          type="all"
-          :items="documents"
-          :limit="docsLimit"
-          :is-show-download="false"
-          @remove="remove"
+        <template v-slot:actionButton>
+          <input
+            ref="fileUpload"
+            class="uploader__btn_hidden"
+            type="file"
+            :accept="accept"
+            @change="handleFileSelected($event)"
+          >
+          <base-btn
+            mode="outline"
+            class="uploader__btn"
+            @click="$refs.fileUpload.click()"
+          >
+            {{ $t('meta.addFile') }}
+            <template v-slot:right>
+              <span class="icon-plus_circle_outline add-discussion__plus" />
+            </template>
+          </base-btn>
+        </template>
+      </base-uploader>
+      <div class="add-discussion__footer footer">
+        <base-btn
+          class="footer__buttons"
+          mode="lightBlue"
+          @click="CloseModal"
         >
-          <template v-slot:actionButton>
-            <input
-              ref="fileUpload"
-              class="uploader__btn_hidden"
-              type="file"
-              :accept="accept"
-              @change="handleFileSelected($event)"
-            >
-            <base-btn
-              mode="outline"
-              class="uploader__btn"
-              @click="$refs.fileUpload.click()"
-            >
-              {{ $t('meta.addFile') }}
-              <template v-slot:right>
-                <span class="icon-plus_circle_outline add-discussion__plus" />
-              </template>
-            </base-btn>
-          </template>
-        </base-uploader>
-        <div class="add-discussion__footer footer">
-          <base-btn
-            class="footer__buttons"
-            mode="lightBlue"
-            @click="CloseModal"
-          >
-            {{ $t('modals.cancel') }}
-          </base-btn>
-          <base-btn
-            :disabled="!isComplete() || invalid"
-            class="footer__buttons"
-            @click="createDiscussion"
-          >
-            {{ $t('modals.addDiscussion') }}
-          </base-btn>
-        </div>
-      </validation-observer>
-    </div>
+          {{ $t('modals.cancel') }}
+        </base-btn>
+        <base-btn
+          :disabled="!isComplete() || invalid"
+          class="footer__buttons"
+          @click="createDiscussion"
+        >
+          {{ $t('modals.addDiscussion') }}
+        </base-btn>
+      </div>
+    </validation-observer>
   </ctm-modal-box>
 </template>
 
@@ -128,9 +127,7 @@ export default {
       const file = e.target.files[0];
       const type = file.type.split('/').shift() === 'image' ? 'img' : 'doc';
 
-      if (!this.checkContentType(file)) {
-        return;
-      }
+      if (!this.checkContentType(file)) return;
 
       const { size, name } = file;
       const sizeKb = size / 1000;
