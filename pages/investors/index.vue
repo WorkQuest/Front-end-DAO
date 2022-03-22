@@ -176,7 +176,6 @@ export default {
   &__search{
     margin: 20px 0 20px 0;
     background-color: $white;
-    width: 1180px;
     height: 43px;
     border-radius: 6px;
   }

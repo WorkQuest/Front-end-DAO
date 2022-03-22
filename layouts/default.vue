@@ -1297,15 +1297,13 @@ export default {
     padding: 32px 15px 0 15px;
     width: 100vw;
   }
-}
-@include _767 {
   .ctm-menu {
     &__toggle {
       display: flex;
     }
   }
   .header {
-     &__links {
+    &__links {
       display: none;
     }
     &__button_profile {
@@ -1317,6 +1315,8 @@ export default {
       display: flex;
     }
   }
+}
+@include _767 {
   .footer {
     &__content {
       display: flex;
