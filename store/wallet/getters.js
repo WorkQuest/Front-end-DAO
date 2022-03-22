@@ -6,4 +6,7 @@ export default {
   getIsOnlyConfirm: (state) => state.isOnlyConfirm,
   getBalanceData: (state) => state.balance,
   getSelectedToken: (state) => state.selectedToken,
+
+  isChairpersonRole: (state) => state.isChairpersonRole,
+  chairpersonRoleHash: (state) => state.chairpersonRoleHash,
 };

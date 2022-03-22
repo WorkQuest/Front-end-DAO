@@ -33,10 +33,7 @@
         </div>
         <div class="content__field field">
           <div class="content-field__description description">
-            <label
-              for="description"
-              class="description__header"
-            >
+            <label class="description__header">
               {{ $t('modals.description') }}
             </label>
             <validation-provider
@@ -94,7 +91,7 @@
           <base-btn
             mode="outline"
             class="action__cancel"
-            @click="close()"
+            @click="CloseModal"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
@@ -114,7 +111,10 @@
 <script>
 
 import { mapGetters } from 'vuex';
-import { Chains } from '~/utils/enums';
+import BigNumber from 'bignumber.js';
+import abi from '~/abi/index';
+import modals from '~/store/modals/modals';
+import { TokenSymbols } from '~/utils/enums';
 
 export default {
   name: 'ModalAddProposal',
@@ -133,9 +133,10 @@ export default {
   },
   computed: {
     ...mapGetters({
+      userWalletAddress: 'user/getUserWalletAddress',
       options: 'modals/getOptions',
-      isConnected: 'web3/getWalletIsConnected',
       prevFilters: 'proposals/filters',
+      balanceData: 'wallet/getBalanceData',
     }),
     isDocumentsLimitReached() {
       return this.documents.length >= this.docsLimit;
@@ -148,38 +149,74 @@ export default {
     this.votingEndInput = this.$moment(start).add(1, 'M').format('DD/MM/YYYY');
   },
   methods: {
-    close() {
-      this.CloseModal();
-    },
     async addProposal() {
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!this.isConnected) return;
-      const { callback } = this.options;
       this.SetLoader(true);
+      await this.$store.dispatch('wallet/getBalance');
+      // Check balance before send proposal data to backend
+      const feeCheck = await this.$store.dispatch('wallet/getContractFeeData', {
+        method: 'addProposal',
+        _abi: abi.WORKNET_VOTING,
+        contractAddress: process.env.WORKNET_VOTING,
+        data: [1, this.descriptionInput.toString()],
+      });
+      if (!feeCheck.ok || new BigNumber(this.balanceData.WUSD.fullBalance.toString()).isLessThan(feeCheck.result.fee)) {
+        this.ShowToast(this.$t('errors.transaction.notEnoughFunds'), this.$t('errors.addProposal'));
+        this.SetLoader(false);
+        return;
+      }
       this.descriptionInput = this.descriptionInput.trim();
       this.votingTopicInput = this.votingTopicInput.trim();
-      const medias = await this.uploadFiles(this.documents);
-      const { address } = await this.$store.dispatch('web3/getAccount');
+      const medias = await this.UploadFiles(this.documents);
       const res = await this.$store.dispatch('proposals/createProposal', {
-        proposer: address,
         title: this.votingTopicInput,
         description: this.descriptionInput,
         medias,
       });
       if (res.ok) {
         const { nonce } = res.result;
-        await this.$store.dispatch('web3/addProposal', { description: this.descriptionInput, nonce });
-        await this.$store.dispatch('proposals/getProposals', {});
-      }
-      if (callback) {
-        await callback;
-        await this.$store.dispatch('proposals/updateFilters', {
-          ...this.prevFilters,
-          lastPage: 1,
+        const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
+          method: 'addProposal',
+          _abi: abi.WORKNET_VOTING,
+          contractAddress: process.env.WORKNET_VOTING,
+          data: [nonce, this.descriptionInput.toString()],
         });
+        this.SetLoader(false);
+        if (feeRes.ok) {
+          this.ShowModal({
+            key: modals.transactionReceipt,
+            title: this.$t('modals.addProposal'),
+            fields: {
+              from: {
+                name: this.$t('modals.fromAddress'),
+                value: this.userWalletAddress,
+              },
+              to: {
+                name: this.$t('modals.toAddress'),
+                value: process.env.WORKNET_VOTING,
+              },
+              fee: {
+                name: this.$t('modals.trxFee'),
+                value: feeRes.result.fee,
+                symbol: TokenSymbols.WUSD,
+              },
+            },
+            submitMethod: async () => {
+              this.SetLoader(true);
+              await this.$store.dispatch('wallet/addProposal', {
+                description: this.descriptionInput,
+                nonce,
+              });
+              await this.$store.dispatch('proposals/updateFilters', {
+                ...this.prevFilters,
+                lastPage: 1,
+              });
+              await this.$store.dispatch('proposals/getProposals', { limit: 12, offset: 0 });
+              this.SetLoader(false);
+              this.CloseModal();
+            },
+          });
+        }
       }
-      this.close();
-      this.SetLoader(false);
     },
     removeDocument(doc) {
       this.documents = this.documents.filter((item) => item.id !== doc.id);
