@@ -142,6 +142,7 @@ export default {
       isWalletConnected: 'wallet/getIsWalletConnected',
       balance: 'wallet/getBalanceData',
       selectedToken: 'wallet/getSelectedToken',
+      userWalletAddress: 'user/getUserWalletAddress',
     }),
     walletTables() {
       return WalletTables;

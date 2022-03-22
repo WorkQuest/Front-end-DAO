@@ -545,6 +545,7 @@ export default {
     },
     async doVote(value) {
       const [delegatedRes, voteThreshold] = await Promise.all([
+        this.$store.dispatch('wallet/getBalance'),
         this.$store.dispatch('wallet/getVotesByAddresses', [this.userWalletAddress]),
         this.$store.dispatch('wallet/getVoteThreshold'),
       ]);
