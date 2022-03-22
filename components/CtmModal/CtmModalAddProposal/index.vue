@@ -209,11 +209,13 @@ export default {
               });
               await this.$store.dispatch('proposals/getProposals', {});
               if (callback) {
-                await callback;
-                await this.$store.dispatch('proposals/updateFilters', {
-                  ...this.prevFilters,
-                  lastPage: 1,
-                });
+                await Promise.all([
+                  callback(),
+                  this.$store.dispatch('proposals/updateFilters', {
+                    ...this.prevFilters,
+                    lastPage: 1,
+                  }),
+                ]);
               }
               this.SetLoader(false);
               this.CloseModal();
