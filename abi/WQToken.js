@@ -549,17 +549,17 @@ export default [
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
+        internalType: 'address[]',
+        name: 'accounts',
+        type: 'address[]',
       },
     ],
     name: 'getVotes',
     outputs: [
       {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
+        internalType: 'uint256[]',
+        name: '_delegatee',
+        type: 'uint256[]',
       },
     ],
     stateMutability: 'view',

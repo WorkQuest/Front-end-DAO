@@ -4,6 +4,7 @@ import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
 import { error, success } from '~/utils/success-error';
 import abi from '~/abi/index';
+import { errorCodes } from '~/utils/enums';
 
 const bip39 = require('bip39');
 
@@ -51,6 +52,25 @@ export const getWalletAddress = () => wallet.address;
 // Метод нужен для вызова метода wallet не затрагивая другие данные
 export const initWallet = (address, key) => {
   wallet.init(address, key);
+};
+
+const contractInstances = {};
+export const getContractInstance = (abiName, _abi, _address) => {
+  if (contractInstances[abiName + _address]) {
+    return contractInstances[abiName + _address];
+  }
+  try {
+    if (!web3) {
+      console.error('web3Wallet is null!');
+      return error(errorCodes.ProviderIsNull, 'web3 is null');
+    }
+    const inst = new web3.eth.Contract(_abi, _address);
+    contractInstances[abiName + _address] = inst;
+    return inst;
+  } catch (e) {
+    console.error('getContractInstance:', e.message);
+    return null;
+  }
 };
 
 /**
@@ -188,6 +208,26 @@ export const getTransferFeeData = async (recipient, value) => {
 };
 
 /** CONTRACTS */
+export const sendWalletTransaction = async (_method, payload) => {
+  if (!web3) {
+    console.error('web3 is undefined');
+    return false;
+  }
+  const inst = new web3.eth.Contract(payload.abi, payload.address);
+  const gasPrice = await web3.eth.getGasPrice();
+  const accountAddress = getWalletAddress();
+  const data = inst.methods[_method].apply(null, payload.data).encodeABI();
+  const gasEstimate = await inst.methods[_method].apply(null, payload.data).estimateGas({ from: accountAddress });
+  const transactionData = {
+    to: payload.address,
+    from: accountAddress,
+    data,
+    gasPrice,
+    gas: gasEstimate,
+  };
+  // noinspection ES6RedundantAwait
+  return await web3.eth.sendTransaction(transactionData);
+};
 export const fetchWalletContractData = async (_method, _abi, _address, _params) => {
   try {
     if (!web3) {
@@ -205,7 +245,7 @@ export const fetchWalletContractData = async (_method, _abi, _address, _params) 
 export const transferToken = async (recipient, value) => {
   try {
     value = new BigNumber(value).shiftedBy(18).toString();
-    const inst = new web3.eth.Contract(abi.ERC20, process.env.WQT_TOKEN);
+    const inst = new web3.eth.Contract(abi.ERC20, process.env.WORKNET_WQT_TOKEN);
     const [gasPrice, gasEstimate] = await Promise.all([
       web3.eth.getGasPrice(),
       inst.methods.transfer.apply(null, [recipient, value]).estimateGas({ from: wallet.address }),
@@ -233,6 +273,10 @@ export const transferToken = async (recipient, value) => {
  */
 export const getContractFeeData = async (_method, _abi, _contractAddress, data, recipient = null, amount = 0) => {
   try {
+    if (!web3) {
+      console.error('fetchWalletData: web3 is undefined!');
+      return error(errorCodes.ProviderIsNull, 'provider is null');
+    }
     const inst = new web3.eth.Contract(_abi, _contractAddress);
     const tx = {
       from: wallet.address,
@@ -254,5 +298,47 @@ export const getContractFeeData = async (_method, _abi, _contractAddress, data, 
   } catch (e) {
     console.error(`Get contract fee data error: ${_method}.`, e.message);
     return error(1000, e.message);
+  }
+};
+
+/* Investors */
+export const getDelegates = async () => {
+  try {
+    const res = await fetchWalletContractData(
+      'delegates',
+      abi.WQToken,
+      process.env.WORKNET_WQT_TOKEN,
+      [wallet.address],
+    );
+    return success(res);
+  } catch (e) {
+    console.error('getDelegates; ', e);
+    return error(errorCodes.Undelegate, e.message, e);
+  }
+};
+export const delegate = async (toAddress, amount) => {
+  try {
+    amount = new BigNumber(amount).shiftedBy(+18).toString();
+    const res = await sendWalletTransaction('delegate', {
+      abi: abi.WQToken,
+      address: process.env.WORKNET_WQT_TOKEN,
+      data: [toAddress, amount],
+    });
+    return success(res);
+  } catch (e) {
+    console.error('delegate:', e);
+    return error(errorCodes.Delegate, e.message, e);
+  }
+};
+export const undelegate = async () => {
+  try {
+    const res = await sendWalletTransaction('undelegate', {
+      abi: abi.WQToken,
+      address: process.env.WORKNET_WQT_TOKEN,
+    });
+    return success(res);
+  } catch (e) {
+    console.error('undelegate: ', e);
+    return error(errorCodes.Undelegate, e.message, e);
   }
 };

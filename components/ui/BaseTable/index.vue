@@ -57,6 +57,7 @@
       </template>
       <template #cell(copy)="el">
         <base-btn
+          v-if="el.item.investorAddress"
           v-clipboard:copy="el.item.investorAddress"
           v-clipboard:success="ClipboardSuccessHandler"
           v-clipboard:error="ClipboardErrorHandler"
@@ -74,27 +75,35 @@
       </template>
       <template #cell(undelegate)="el">
         <base-btn
+          v-if="delegatedToUser && el.item.investorAddress === delegatedToUser.wallet.address"
           mode="lightRed"
           class="btn__delegate"
-          :disabled="!myProfile(el.item.id) || el.item.voting === 0"
           :class="delegateClass(el)"
           @click="openModalUndelegate(el)"
         >
-          {{ el.item.undelegate }}
+          {{ $t('modals.undelegate') }}
         </base-btn>
       </template>
       <template #cell(delegate)="el">
         <base-btn
+          v-if="el.item.investorAddress"
           mode="lightBlue"
-          :disabled="!myProfile(el.item.id)"
           class="btn__delegate"
           @click="openModalDelegate(el)"
         >
-          {{ el.item.delegate }}
+          {{ $t('modals.delegate') }}
         </base-btn>
       </template>
       <template #cell(investorAddress)="el">
-        {{ CutTxn(el.item.investorAddress, 5, 6) }}
+        <span v-if="el.item.investorAddress">
+          {{ CutTxn(el.item.investorAddress, 5, 6) }}
+        </span>
+        <span
+          v-else
+          class="table__grey"
+        >
+          {{ $t('messages.walletNotLinked') }}
+        </span>
       </template>
       <template #cell(from_address)="el">
         <a
@@ -153,6 +162,7 @@ export default {
   computed: {
     ...mapGetters({
       userData: 'user/getUserData',
+      delegatedToUser: 'investors/getDelegatedToUser',
     }),
   },
   methods: {
@@ -196,6 +206,7 @@ export default {
         key: modals.undelegate,
         stake: el.item.stake,
         name: el.item.fullName,
+        tokensAmount: el.item.voting,
         callback: el.item.callback,
       });
     },
@@ -212,6 +223,7 @@ export default {
       });
     },
     cropTxt(str, maxLength = 80) {
+      if (!str) return '';
       if (str.toString().length > maxLength) str = `${str.slice(0, maxLength)}...`;
       return str;
     },
@@ -223,9 +235,8 @@ export default {
 .table {
   @include text-usual;
   overflow-x: hidden;
-  background: #FFFFFF;
+  background: $white;
   border-radius: 6px;
-  text-align: center;
   &__title {
     margin: 10px;
     color: $black800;
@@ -253,7 +264,7 @@ export default {
     line-height: 40px;
   }
   &__link{
-    color: #1D2127!important;
+    color: $black800 !important;
     text-decoration: none!important;
   }
   @include _1199 {
@@ -265,17 +276,13 @@ export default {
   @include _991 {
     .table {
       width: 99%;
-      .btn__delegate {
-        width: 60px !important;
-        font-size: 10px;
-      }
     }
     &__copy {
       font-size: 10px;
     }
   }
   &__copy{
-    color:#0083C7;
+    color: $blue;
     font-size: 25px;
   }
   &__avatar{
@@ -296,11 +303,11 @@ export default {
     justify-content: center!important;
     &_green {
       margin: auto auto;
-      background: #22CC14 !important;
+      background: $green !important;
     }
     &_red {
       margin: auto auto;
-      background: #DF3333 !important;
+      background: $red !important;
     }
   }
   &__delegate{
