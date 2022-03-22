@@ -20,7 +20,9 @@
       <div class="proposal__content content">
         <div class="proposal__info info content__column">
           <div class="info__top info__top_blue">
-            <span class="info__voting-number">{{ `${$t('proposals.voting')} #${card.createdEvent.contractProposalId}` }}</span>
+            <span class="info__voting-number">
+              {{ `${$t('proposals.voting')} #${card.createdEvent.contractProposalId}` }}
+            </span>
             <span
               class="info__status"
               :class="cardsStatusColor(card.status)"
@@ -273,6 +275,7 @@ export default {
   name: 'ProposalInfo',
   data() {
     return {
+      isProd: process.env.PROD === 'true',
       idCard: null,
       card: {
         createdEvent: {
@@ -450,8 +453,7 @@ export default {
       this.historyTableData = result;
     },
     getHashLink() {
-      if (!this.hash) return '';
-      return process.env.PROD === 'true' ? ExplorerUrls.PROD : ExplorerUrls.DEV;
+      return `${ExplorerUrls[this.isProd ? 'PROD' : 'DEV']}/transactions/${this.card.createdEvent.transactionHash}`;
     },
     async executeVoting() {
       this.SetLoader(true);

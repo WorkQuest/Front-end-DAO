@@ -101,6 +101,6 @@ export const UserStatuses = Object.freeze({
 });
 
 export const ExplorerUrls = Object.freeze({
-  PROD: 'https://dev-explorer.workquest.co/',
-  DEV: 'https://dev-explorer.workquest.co/',
+  PROD: 'https://dev-explorer.workquest.co',
+  DEV: 'https://dev-explorer.workquest.co',
 });
