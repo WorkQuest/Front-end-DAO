@@ -6,7 +6,6 @@ export default () => ({
     access: '',
     refresh: '',
   },
-  specialUserData: {},
   userData: {
     statusKYC: false,
     id: '',

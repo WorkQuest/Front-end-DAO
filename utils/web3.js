@@ -121,7 +121,7 @@ export const fetchContractData = async (_method, abiName, _abi, _address, _param
 };
 
 const token = {
-  address: process.env.WQT_TOKEN,
+  address: process.env.WORKNET_WQT_TOKEN,
   _decimals: null,
   async getDecimals() {
     if (this._decimals) return this._decimals;

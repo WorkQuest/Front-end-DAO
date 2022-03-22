@@ -11,36 +11,33 @@
         <div class="header__close">
           <span
             class="icon-close_big header__close"
-            @click="hide"
+            @click="CloseModal"
           />
         </div>
       </div>
-      <div class="undelegate__body">
-        {{ $tc('modals.shure', options.name) }}
+      <div
+        v-if="options.name"
+        class="undelegate__body"
+      >
+        {{ $tc('modals.shureToUndelegate', options.name) }}
       </div>
       <div class="undelegate__tokens tokens">
         <div class="tokens__footer footer">
-          <base-field
-            id="tokensNumber"
-            v-model="accountAddress.address"
-            :disabled="true"
-            class="footer__body"
-            :placeholder="$t('modals.placeholder')"
-          />
+          {{ $tc('modals.willBeUndelegate', tokensAmount) }}
         </div>
       </div>
       <div class="undelegate__bottom bottom">
         <base-btn
           class="bottom__cancel"
           mode="lightBlue"
-          @click="hide()"
+          @click="CloseModal"
         >
           {{ $t('modals.cancel') }}
         </base-btn>
         <base-btn
           mode="delete"
           class="bottom__done"
-          @click="undelegate()"
+          @click="undelegate"
         >
           {{ $t('modals.undelegate') }}
         </base-btn>
@@ -51,8 +48,10 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { Chains } from '~/utils/enums';
+import BigNumber from 'bignumber.js';
+import { Chains, TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
+import abi from '~/abi';
 
 export default {
   name: 'Undelegate',
@@ -65,37 +64,49 @@ export default {
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
-      isConnected: 'web3/getWalletIsConnected',
+      userWalletAddress: 'user/getUserWalletAddress',
     }),
   },
+  beforeMount() {
+    this.tokensAmount = this.options.tokensAmount;
+  },
   async mounted() {
-    this.accountAddress = await this.$store.dispatch('web3/getAccount');
+    await this.$store.dispatch('wallet/getBalance');
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     async undelegate() {
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!this.isConnected) return;
+      const { tokensAmount, userWalletAddress } = this;
       const { callback } = this.options;
+      this.CloseModal();
       this.SetLoader(true);
-      const res = await this.$store.dispatch('web3/undelegate');
+      const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
+        method: 'undelegate',
+        _abi: abi.WQToken,
+        contractAddress: process.env.WORKNET_WQT_TOKEN,
+        data: [],
+      });
       this.SetLoader(false);
-      if (res.ok) {
-        await this.hide();
-        await this.$store.dispatch('main/showToast', {
-          title: 'Undelegate',
-          text: `Undelegate ${this.tokensAmount} WQT`,
-        });
-        if (callback) await callback();
-      } else if (res.msg.includes('Not enough balance to undelegate')) {
-        await this.$store.dispatch('modals/show', {
-          key: modals.status,
-          title: 'Undelegate error', // TODO: to localization
-          subtitle: 'Not enough balance to undelegate',
-        });
-      }
+      this.ShowModal({
+        key: modals.transactionReceipt,
+        title: this.$t('modals.undelegate'),
+        fields: {
+          from: { name: this.$t('modals.fromAddress'), value: userWalletAddress },
+          to: { name: this.$t('modals.toAddress'), value: process.env.WORKNET_WQT_TOKEN },
+          fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
+        },
+        submitMethod: async () => {
+          this.SetLoader(true);
+          const res = await this.$store.dispatch('wallet/undelegate');
+          this.SetLoader(false);
+          if (res.ok) {
+            this.ShowToast(this.$tc('modals.undelegateAmount', tokensAmount), this.$t('modals.undelegate'));
+          } else if (res.msg.includes('Not enough balance to undelegate')) {
+            this.ShowToast(this.$t('errors.notEnoughBalance'), this.$t('errors.undelegateTitle'));
+          }
+          return res;
+        },
+        callback,
+      });
     },
   },
 };
@@ -114,7 +125,7 @@ export default {
   }
   &__body{
     @include text-usual;
-    color: #1D2127;
+    color: $black800;
     margin: 20px 0 25px 0;
   }
   &__bottom{
@@ -130,7 +141,7 @@ export default {
     line-height: 130%;
   }
   &__close{
-    color: black;
+    color: $black800;
     font-size: 25px;
     cursor: pointer;
   }
@@ -148,10 +159,10 @@ export default {
 .tokens{
   &__title{
     @include text-usual;
-    color: #1D2127;
+    color: $black800;
     margin-bottom: 5px;
     &_grey{
-      color: #7C838D;
+      color: $black400;
       margin-bottom: 10px!important;
     }
   }
@@ -159,10 +170,6 @@ export default {
 .footer {
   display: flex;
   justify-content: space-between;
-  &__body{
-    width: 100%;
-    height: 46px!important;
-  }
   &__maximum{
     width: 100px!important;
     height: 46px!important;
