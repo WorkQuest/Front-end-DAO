@@ -19,9 +19,12 @@
         <div class="title__name">
           {{ $t('investors.profile') }}
         </div>
-        <div class="title__panel panel">
+        <div
+          v-if="investorAddress"
+          class="title__panel panel"
+        >
           <div class="panel__address">
-            {{ investorAddress }}
+            {{ CutTxn(investorAddress, 8, 8) }}
           </div>
           <div class="panel__picture">
             <base-btn
@@ -105,11 +108,14 @@
                 </template>
               </base-field>
             </div>
-            <div class="info__action action">
+            <div
+              v-if="investorAddress"
+              class="info__action action"
+            >
               <base-btn
+                v-if="delegatedToUser && investorAddress === delegatedToUser.address"
                 mode="lightRed"
                 class="action__undelegate"
-                :disabled="!isMyProfile || votingPower === 0"
                 @click="openModalUndelegate"
               >
                 {{ $t('modals.undelegate') }}
@@ -117,7 +123,6 @@
               <base-btn
                 mode="lightBlue"
                 class="action__delegate"
-                :disabled="!isMyProfile"
                 @click="openModalDelegate"
               >
                 {{ $t('modals.delegate') }}
@@ -155,23 +160,27 @@
       <!--        :total-pages="totalPages"-->
       <!--      />-->
     </div>
+    <empty-data
+      v-else
+      :description="$t('investor.notFound')"
+    />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
-import { Chains, UserRole } from '~/utils/enums';
+import { UserRole } from '~/utils/enums';
+import { getStyledAmount } from '~/utils/wallet';
 
 export default {
+  name: 'InvestorProfile',
   data() {
     return {
       investor: {},
       userId: this.$route.params.id,
       votingPower: 0,
-      investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-      stake: '126,613,276',
-      name: 'user@gmail.com',
+      investorAddress: '',
       pages: 1,
       totalPages: 5,
       transactionsData: [
@@ -234,7 +243,9 @@ export default {
   },
   computed: {
     ...mapGetters({
+      delegatedToUser: 'investors/getDelegatedToUser',
       userData: 'user/getUserData',
+      isWalletConnected: 'wallet/getIsWalletConnected',
     }),
     mainDataArr() {
       return [
@@ -270,28 +281,13 @@ export default {
     },
   },
   async beforeMount() {
-    const isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
-    if (isMobile) {
-      this.ShowModal({
-        key: modals.status,
-        title: 'Please install Metamask!',
-        subtitle: 'Please open site from Metamask app',
-      });
-      await this.$router.push('/proposals');
-      return;
-    }
-    await this.getInvestorData();
+    await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
   },
   async mounted() {
-    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-    await this.getVotingPower();
+    if (!this.isWalletConnected) return;
+    await this.getInvestorData();
   },
   methods: {
-    async getVotingPower() {
-      const { address } = await this.$store.dispatch('web3/getAccount');
-      const response = await this.$store.dispatch('web3/getVotes', address);
-      if (response.ok) this.votingPower = +response.result;
-    },
     fillInputs(input) {
       if (this.investor.additionalInfo) {
         if (input.key === 'location') return this.investor.locationPlaceName;
@@ -304,13 +300,27 @@ export default {
     async getInvestorData() {
       if (this.isMyProfile) this.investor = this.userData;
       else this.investor = await this.$store.dispatch('user/getSpecialUserData', this.userId);
+
+      if (this.investor?.wallet?.address) {
+        this.investorAddress = this.investor.wallet.address;
+        const powerResponse = await this.$store.dispatch('wallet/getVotesByAddresses', [this.investorAddress]);
+        if (powerResponse.ok) this.votingPower = getStyledAmount(powerResponse.result[0]);
+      }
+    },
+    async updateDelegatedUser() {
+      this.SetLoader(true);
+      await Promise.all([
+        this.getInvestorData(),
+        this.$store.dispatch('wallet/getDelegates'),
+      ]);
+      this.SetLoader(false);
     },
     async openModalDelegate() {
       this.ShowModal({
         key: modals.delegate,
         stake: this.stake,
         investorAddress: this.investorAddress,
-        callback: this.getVotingPower,
+        callback: async () => this.updateDelegatedUser(),
       });
     },
     async openModalUndelegate() {
@@ -318,7 +328,8 @@ export default {
         key: modals.undelegate,
         stake: this.stake,
         name: `${this.investor.firstName} ${this.investor.lastName}`,
-        callback: this.getVotingPower,
+        tokensAmount: this.votingPower,
+        callback: async () => this.updateDelegatedUser(),
       });
     },
     ClipboardSuccessHandler(value) {
@@ -342,8 +353,7 @@ export default {
 .investor {
   @include main;
   @include text-simple;
-  color: #1D2127;
-
+  color: $black800;
   &__profile {
     width: 100%;
     max-width: 1180px;
@@ -377,11 +387,11 @@ export default {
   display: table;
 
   &__copy {
-    background: #F7F8FA;
+    background: $black0;
   }
 
   &__copy:hover {
-    background: #F7F8FA;
+    background: $black0;
   }
 
   &__address {
@@ -406,7 +416,7 @@ export default {
     display: grid;
     gap: 20px;
     padding: 20px;
-    background: #FFFFFF;
+    background: $white;
     border-radius: 6px;
     margin-top: 15px;
   }
@@ -439,7 +449,7 @@ export default {
     height: 34px;
     padding: 0 13px;
     background: rgba(0, 131, 199, 0.1);
-    color: #0083C7;
+    color: $blue;
     border-radius: 36px;
     font-size: 14px;
   }
@@ -460,14 +470,12 @@ export default {
 }
 
 .contacts {
-
   &__name {
-    color: #1D2127 !important;
+    color: $black800 !important;
   }
 }
 
 .avatar {
-
   &__img {
     width: 100%;
     height: 100%;
@@ -480,7 +488,7 @@ export default {
   flex-direction: column;
 
   &__title {
-    color: #1D2127;
+    color: $black800;
     font-size: 16px;
     line-height: 21px;
     margin-bottom: 5px;
@@ -493,11 +501,11 @@ export default {
     resize: none;
     font-size: 14px;
     line-height: 18.2px;
-    background-color: #FFFFFF;
-    border: 1px solid #F7F8FA;
+    background-color: $white;
+    border: 1px solid $black0;
 
     &::placeholder {
-      color: #1D2127;
+      color: $black800;
     }
   }
 }
@@ -510,7 +518,7 @@ export default {
 
 .input-icon {
   font-size: 23px;
-  color: #0083C7;
+  color: $blue;
   line-height: 36px;
 }
 
@@ -545,12 +553,12 @@ export default {
     line-height: 130%;
     font-weight: 500;
     align-items: center;
-    color: #4C5767;
+    color: $black600;
   }
 
   &__arrow {
     margin: 6px 10px 6px 0;
-    color: #4C5767;
+    color: $black600;
     font-size: 25px;
     cursor: pointer;
   }
@@ -626,9 +634,6 @@ export default {
       width: 340px;
     }
   }
-  .action {
-    justify-content: space-around;
-  }
   .profile {
     &__table {
       display: none;
@@ -654,6 +659,18 @@ export default {
   .title {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .info__action {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+  }
+  .action__delegate {
+    max-width: 100%
+  }
+  .action__undelegate {
+    margin: 0;
+    max-width: 100%
   }
 }
 </style>
