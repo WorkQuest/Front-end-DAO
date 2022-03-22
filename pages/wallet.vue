@@ -198,14 +198,19 @@ export default {
       this.ddValue = i >= 0 && i < this.tokenSymbolsDd.length ? i : 1;
     },
     isConnected(newVal) {
-      if (!newVal) this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
+      if (!newVal) {
+        this.$store.dispatch('wallet/checkWalletConnected', {
+          nuxt: this.$nuxt,
+          userAddress: this.userWalletAddress,
+        });
+      }
     },
     currentPage() {
       this.getTransactions();
     },
   },
   beforeMount() {
-    this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
+    this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt, userAddress: this.userWalletAddress });
   },
   async mounted() {
     if (!this.isWalletConnected) return;
