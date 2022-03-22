@@ -180,14 +180,7 @@ export default {
     border-radius: 6px;
   }
 }
-//@include _1199 {
-//  .body {
-//    max-width: 100vw;
-//    &__title {
-//      margin-left: 10px;
-//    }
-//  }
-//}
+
 @include _991 {
   .investors {
     &__body {
@@ -198,6 +191,7 @@ export default {
     }
   }
 }
+
 @include _767 {
   .body {
     max-width: 100vw;
