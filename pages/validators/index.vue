@@ -34,7 +34,6 @@
         :fields="tableFields"
       />
       <base-pager
-        v-if="usersData.count > limit"
         v-model="currPage"
         class="validators__pagination"
         :total-pages="totalPages"
@@ -61,7 +60,6 @@ export default {
   computed: {
     ...mapGetters({
       userData: 'user/getUserData',
-      usersData: 'user/getAllUsers',
       isConnected: 'web3/getWalletIsConnected',
     }),
     tableFields() {
@@ -90,7 +88,7 @@ export default {
       return mainFields;
     },
     totalPages() {
-      return Math.ceil(this.usersData.count / this.limit);
+      return 2;
     },
   },
 };
