@@ -153,10 +153,6 @@ export default {
     &__body {
       padding: 0 20px;
     }
-  }
-}
-@include _991 {
-  .validators {
     &__table {
       width: calc(100vw - 40px);
     }
