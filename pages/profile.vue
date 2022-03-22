@@ -81,6 +81,7 @@
               :placeholder="cell.placeholder || $t('settings.nameInput')"
               :disabled="!isProfileEdit"
               rules="required"
+              :data-selector="cell.selector"
               :name="$t('modals.nameField')"
               mode="icon"
               mode-error="small"
@@ -96,6 +97,7 @@
               :disabled="!isProfileEdit"
               :is-with-loader="true"
               mode="icon"
+              data-selector="BASE-INPUT-FIELD-ADDRESS"
               :name="$t('modals.addressField')"
               mode-error="small"
               class="profile-cont__field"
@@ -140,6 +142,7 @@
               disabled
               mode="icon"
               :name="$t('modals.emailField')"
+              data-selector="BASE-INPUT-FIELD-ADDRESS"
               mode-error="small"
               class="profile-cont__field"
             >
@@ -157,6 +160,7 @@
                 v-model="phone[cell.type].fullPhone"
                 class="input-phone"
                 error-color="#EB5757"
+                data-selector="FIELD-MAIN-PHONE"
                 clearable
                 show-code-on-list
                 required
@@ -166,6 +170,7 @@
               />
               <base-field
                 v-else
+                :data-selector="cell.selector"
                 :value="cell.fullNumber"
                 :placeholder="cell.placeholder"
                 :disabled="true"
@@ -185,6 +190,7 @@
             <textarea
               v-model="localUserData.additionalInfo.description"
               class="about__textarea"
+              data-selector="TEXTAREA-ABOUT-ME"
               :class="{ 'about__textarea_disabled': !isProfileEdit }"
               :placeholder="$t('profile.aboutMe')"
               :disabled="!isProfileEdit"
@@ -197,6 +203,7 @@
               v-model="localUserData.additionalInfo.socialNetwork[cell.key]"
               :placeholder="cell.placeholder || $t('settings.socialInput')"
               :disabled="!isProfileEdit"
+              :data-selector="cell.selector"
               is-hide-error
               mode="icon"
               type="text"
@@ -326,6 +333,7 @@ export default {
       const mainPhone = {
         type: 'main',
         fullNumber: null,
+        selector: 'MAIN-PHONE',
         placeholder: this.$t('settings.mainNumberMissing'),
         isVerify: false,
       };
@@ -344,6 +352,7 @@ export default {
         const secondPhone = {
           type: 'second',
           fullNumber: null,
+          selector: 'SECOND-PHONE',
           placeholder: this.$t('settings.secondNumberMissing'),
           isVerify: false,
         };
@@ -388,31 +397,37 @@ export default {
         key: 'instagram',
         placeholder: userInstagram,
         imgClass: 'icon-instagram',
+        selector: 'INSTAGRAM',
       },
       {
         key: 'facebook',
         placeholder: userFacebook,
         imgClass: 'icon-facebook',
+        selector: 'FACEBOOK',
       },
       {
         key: 'linkedin',
         placeholder: userLinkedin,
         imgClass: 'icon-LinkedIn',
+        selector: 'LINKEDIN',
       },
       {
         key: 'twitter',
         placeholder: userTwitter,
         imgClass: 'icon-twitter',
+        selector: 'TWITTER',
       }];
 
       this.nameInputsArr = [{
         key: 'firstName',
         model: localUserData.firstName,
+        selector: 'FIRST-NAME',
         placeholder: firstName,
       },
       {
         key: 'lastName',
         model: localUserData.lastName,
+        selector: 'LAST-NAME',
         placeholder: lastName,
       }];
     },

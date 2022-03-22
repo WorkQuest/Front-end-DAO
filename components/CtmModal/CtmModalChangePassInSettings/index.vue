@@ -11,8 +11,9 @@
         <base-field
           v-model="currentPasswordInput"
           :is-hide-error="true"
-          :placeholder="'******'"
+          placeholder="******"
           :label="$t('modals.currentPassword')"
+          data-selector="CURRENT-PASSWORD"
           mode="icon"
           :type="isVisibleCurrent ? 'text': 'password'"
           class="field__input"
@@ -45,7 +46,8 @@
       <base-field
         v-model="newPasswordInput"
         :is-hide-error="true"
-        :placeholder="'******'"
+        placeholder="******"
+        data-selector="NEW-PASSWORD"
         :label="$t('modals.newPassword')"
         mode="icon"
         :type="isVisible ? 'text': 'password'"
@@ -78,7 +80,8 @@
       <base-field
         v-model="confirmNewPasswordInput"
         :is-hide-error="true"
-        :placeholder="'******'"
+        placeholder="******"
+        data-selector="CONFIRM-NEW-PASSWORD"
         :label="$t('modals.confirmNewPassword')"
         mode="icon"
         :type="isVisibleConfirm ? 'text': 'password'"
