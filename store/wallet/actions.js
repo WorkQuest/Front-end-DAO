@@ -1,4 +1,11 @@
 import {
+  connectWallet, connectWithMnemonic,
+  disconnect, getBalance, getContractFeeData,
+  getIsWalletConnected, getStyledAmount,
+  getTransferFeeData, getWalletAddress,
+  transfer,
+  transferToken,
+  fetchWalletContractData, delegate, getDelegates, undelegate,
   connectWallet,
   disconnect,
   getStyledAmount,
@@ -19,7 +26,11 @@ import { error, success } from '~/utils/success-error';
 export default {
   async getTransactions({ commit }, params) {
     try {
-      const res = await this.$axios({ url: `/account/${getWalletAddress()}/transactions`, baseURL: process.env.WQ_EXPLORER, params });
+      const res = await this.$axios({
+        url: `/account/${getWalletAddress()}/transactions`,
+        baseURL: process.env.WQ_EXPLORER,
+        params,
+      });
       commit('setTransactions', res.data.result.transactions);
       commit('setTransactionsCount', res.data.result.count);
     } catch (e) {
@@ -41,27 +52,25 @@ export default {
     nuxt.setLayout('confirmPassword');
   },
   /**
-   * Check wallet is connected
-   * @returns boolean
-   */
+     * Check wallet is connected
+     * @returns boolean
+     */
   checkWalletConnected({ commit, getters }, { nuxt, callbackLayout }) {
     const connected = getIsWalletConnected();
     commit('setIsOnlyConfirm', false);
     if (!connected) {
       if (callbackLayout) commit('setCallbackLayout', callbackLayout);
-      nuxt.setLayout('confirmPassword');
-    } else {
-      commit('setIsWalletConnected', true);
-    }
+      else nuxt.setLayout('confirmPassword');
+    } else commit('setIsWalletConnected', true);
   },
   /**
-   * Connect wallet with password
-   * Use when checkWalletConnected from confirmPassword modal
-   * @param commit
-   * @param getters
-   * @param userAddress
-   * @param userPassword
-   */
+     * Connect wallet with password
+     * Use when checkWalletConnected from confirmPassword modal
+     * @param commit
+     * @param getters
+     * @param userAddress
+     * @param userPassword
+     */
   connectWallet({ commit }, { userWalletAddress, userPassword }) {
     const res = connectWallet(userWalletAddress, userPassword);
     if (res?.ok) commit('setIsWalletConnected', true);
@@ -96,10 +105,10 @@ export default {
     });
   },
   /**
-   * Send transfer
-   * @param recipient
-   * @param value
-   */
+     * Send transfer
+     * @param recipient
+     * @param value
+     */
   async transfer({ commit }, { recipient, value }) {
     return await transfer(recipient, value);
   },
@@ -107,25 +116,25 @@ export default {
     return await getTransferFeeData(recipient, value);
   },
   /**
-   * Send transfer for WQT token
-   * @param commit
-   * @param recipient
-   * @param value
-   */
+     * Send transfer for WQT token
+     * @param commit
+     * @param recipient
+     * @param value
+     */
   async transferWQT({ commit }, { recipient, value }) {
     return await transferToken(recipient, value);
   },
   /**
-   * Get Fee Data from contract method
-   * @param commit
-   * @param method
-   * @param _abi
-   * @param contractAddress
-   * @param data - Array []
-   * @param recipient
-   * @param amount - decimal value
-   * @returns {Promise<{result: *, ok: boolean}|{msg: string, code: number, data: null, ok: boolean}|undefined>}
-   */
+     * Get Fee Data from contract method
+     * @param commit
+     * @param method
+     * @param _abi
+     * @param contractAddress
+     * @param data - Array []
+     * @param recipient
+     * @param amount - decimal value
+     * @returns {Promise<{result: *, ok: boolean}|{msg: string, code: number, data: null, ok: boolean}|undefined>}
+     */
   async getContractFeeData({ commit }, {
     method, _abi, contractAddress, data, recipient, amount,
   }) {
@@ -134,10 +143,10 @@ export default {
 
   /** Investors */
   /**
-   * Get votes
-   * @param commit
-   * @param addresses - Array [address, ...]
-   */
+     * Get votes
+     * @param commit
+     * @param addresses - Array [address, ...]
+     */
   async getVotesByAddresses({ commit }, addresses) {
     try {
       const res = await fetchWalletContractData('getVotes', abi.WQToken, process.env.WORKNET_WQT_TOKEN, [addresses]);
