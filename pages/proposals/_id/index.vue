@@ -549,7 +549,6 @@ export default {
         this.$store.dispatch('wallet/getVoteThreshold'),
         this.$store.dispatch('wallet/getBalance'),
       ]);
-      console.log(delegatedRes, voteThreshold);
       const delegated = getStyledAmount(delegatedRes.result[0]);
       if (new BigNumber(delegated).isLessThan(voteThreshold.result)) {
         this.ShowToast(
