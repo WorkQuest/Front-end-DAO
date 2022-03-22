@@ -11,12 +11,11 @@
           </label>
           <div class="delegate__input">
             <base-field
-              id="invsetorAddress"
               disabled
-              :value="accountAddress.address"
+              :value="investorAddress"
               class="address__body"
             >
-              {{ accountAddress.address }}
+              {{ investorAddress }}
             </base-field>
           </div>
         </div>
@@ -24,18 +23,17 @@
           <div class="tokens__title">
             {{ $t('modals.tokensNumber') }}
           </div>
-          <label
-            for="tokensNumber"
-            class="tokens__title_grey"
-          >{{ $t('modals.tokensDelegated') }}</label>
+          <label class="tokens__title_grey">
+            {{ $t('modals.tokensDelegated') }}
+          </label>
           <div class="tokens__footer footer">
             <base-field
-              id="tokensNumber"
               v-model="tokensAmount"
               class="footer__body"
-              placeholder="10000"
+              placeholder="10000 WQT"
               :name="$t('modals.tokensNumber')"
-              :rules="`required${min}`"
+              :rules="`required${min}|max_bn:${balance}|min_value:1|decimalPlaces:18`"
+              @input="replaceDot"
             />
             <base-btn
               class="footer__maximum"
@@ -60,8 +58,10 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { Chains } from '~/utils/enums';
+import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
+import { TokenSymbols } from '~/utils/enums';
+import abi from '~/abi/index';
 
 export default {
   name: 'Delegate',
@@ -69,59 +69,78 @@ export default {
     return {
       tokensAmount: '',
       balance: 0,
-      accountAddress: '',
+      investorAddress: '',
     };
   },
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
-      isConnected: 'web3/getWalletIsConnected',
+      isWalletConnected: 'wallet/getIsWalletConnected',
+      balanceData: 'wallet/getBalanceData',
+      userWalletAddress: 'user/getUserWalletAddress',
     }),
     min() {
       return this.options?.min ? `|min_value:${this.options.min}` : '';
     },
   },
-  watch: {
-    isConnected() {
+  async beforeMount() {
+    if (!this.isWalletConnected) {
+      await this.$store.dispatch('wallet/checkWalletConnected');
       this.CloseModal();
-    },
+    }
+    this.investorAddress = this.options.investorAddress;
   },
   async mounted() {
-    const res = await this.$store.dispatch('web3/getBalance');
-    this.accountAddress = await this.$store.dispatch('web3/getAccount');
-    if (res.ok) {
-      this.balance = res.result;
-    }
+    await Promise.all([
+      this.$store.dispatch('wallet/getBalance'),
+      this.$store.dispatch('wallet/getBalanceWQT', this.userWalletAddress),
+    ]);
+    this.balance = this.balanceData.WQT.fullBalance;
   },
   methods: {
+    replaceDot() {
+      this.tokensAmount.replace(/,/g, '.');
+    },
     maxDelegate() {
       this.tokensAmount = this.balance;
     },
     async delegate() {
-      const connectionRes = await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!connectionRes.ok) return;
-
       const { callback } = this.options;
+      const { investorAddress, tokensAmount, userWalletAddress } = this;
+      this.CloseModal();
       this.SetLoader(true);
-      const res = await this.$store.dispatch('web3/delegate', {
-        address: this.accountAddress.address,
-        amount: this.tokensAmount,
+      const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
+        method: 'delegate',
+        _abi: abi.WQToken,
+        contractAddress: process.env.WORKNET_WQT_TOKEN,
+        data: [investorAddress, new BigNumber(tokensAmount).shiftedBy(18).toString()],
       });
       this.SetLoader(false);
-      if (res.ok) {
-        await this.$store.dispatch('main/showToast', {
-          title: 'Delegate',
-          text: `Delegated ${this.tokensAmount} WQT`,
-        });
-        this.CloseModal();
-        if (callback) await callback();
-      } else if (res.msg.includes('Not enough balance to delegate')) {
-        await this.$store.dispatch('modals/show', {
-          key: modals.status,
-          title: this.$t('errors.delegate.title'),
-          subtitle: this.$t('errors.delegate.notEnoughBalance'),
-        });
-      }
+      this.ShowModal({
+        key: modals.transactionReceipt,
+        title: this.$t('modals.delegate'),
+        fields: {
+          from: { name: this.$t('modals.fromAddress'), value: userWalletAddress },
+          to: { name: this.$t('modals.toAddress'), value: process.env.WORKNET_WQT_TOKEN },
+          amount: { name: this.$t('modals.amount'), value: tokensAmount, symbol: TokenSymbols.WQT },
+          fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
+        },
+        submitMethod: async () => {
+          this.SetLoader(true);
+          const res = await this.$store.dispatch('wallet/delegate', {
+            toAddress: investorAddress,
+            amount: tokensAmount,
+          });
+          this.SetLoader(false);
+          if (res.ok) {
+            this.ShowToast(`Delegated ${tokensAmount} WQT`, this.$t('modals.delegate'));
+          } else if (res.msg.includes('Not enough balance to delegate')) {
+            this.ShowToast(this.$t('errors.delegate.notEnoughBalance'), this.$t('errors.delegate.title'));
+          }
+          return res;
+        },
+        callback,
+      });
     },
   },
 };
@@ -137,9 +156,9 @@ export default {
 
   &__body {
     @include text-usual;
-    color: #1D2127;
+    color: $black800;
     margin: 25px 0;
-    background-color: #FFFFFF !important;
+    background-color: $white !important;
   }
 
   &__done {
@@ -155,6 +174,7 @@ export default {
 .footer {
   display: flex;
   justify-content: space-between;
+  grid-gap: 10px;
 
   &__body {
     width: 284px !important;
@@ -170,7 +190,7 @@ export default {
 .address {
   &__label {
     @include text-usual;
-    color: #1D2127;
+    color: $black800;
     margin: 0 !important;
   }
 
@@ -182,11 +202,10 @@ export default {
 .tokens {
   &__title {
     @include text-usual;
-    color: #1D2127;
+    color: $black800;
     margin-bottom: 5px;
-
     &_grey {
-      color: #7C838D;
+      color: $black400;
       margin-bottom: 10px !important;
     }
   }

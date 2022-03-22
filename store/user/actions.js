@@ -29,8 +29,7 @@ export default {
   async confirm({ commit }, payload) {
     commit('setTokens', { access: this.$cookies.get('access'), refresh: this.$cookies.get('refresh') });
     this.$cookies.set('role', payload.role);
-    const response = await this.$axios.$post('/v1/auth/confirm-email', payload);
-    return response;
+    return await this.$axios.$post('/v1/auth/confirm-email', payload);
   },
   async getUserData({ commit }) {
     const response = await this.$axios.$get('/v1/profile/me');
@@ -38,24 +37,20 @@ export default {
     return response;
   },
   async getSpecialUserData({ commit }, id) {
-    const response = await this.$axios.$get(`/v1/profile/${id}`);
-    commit('setSpecialUserData', response.result);
-    return response.result;
-  },
-  async getAllUserData({ commit }, config) {
     try {
-      if (!config.q.length) delete config.q;
-      const { result } = await this.$axios.$get('/v1/profile/users', { params: { ...config } });
-      result.users.forEach((user) => {
-        user.fullName = `${user.firstName || ''} ${user.lastName || ''}`;
-        user.investorAddress = '****************';
-        user.voting = '';
-        user.undelegate = 'Undelegate';
-        user.delegate = 'Delegate';
-      });
-      commit('setUsersData', result);
+      const response = await this.$axios.$get(`/v1/profile/${id}`);
+      commit('setSpecialUserData', response.result);
+      return response.result;
     } catch (e) {
-      console.log(e);
+      return false;
+    }
+  },
+  async getUserByWalletAddress({ commit }, address) {
+    try {
+      const { result } = await this.$axios.$get(`/v1/profile/wallet/${address}`);
+      return result;
+    } catch (e) {
+      return null;
     }
   },
   async setUserRole({ commit }) {

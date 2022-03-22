@@ -31,8 +31,11 @@ jobs:
           GMAPKEY: ${{ secrets.GMAPKEY }}
           SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
 
-          WQ_TOKEN: ${{ secrets.WQ_TOKEN }}
+          WORKNET_WQT_TOKEN: ${{ secrets.WORKNET_WQT_TOKEN }}
           WQ_DAO_VOTING: ${{ secrets.WQ_DAO_VOTING }}
+
+          WQ_PROVIDER: ${{ secrets.WQ_PROVIDER }}
+          WQ_EXPLORER: ${{ secrets.WQ_EXPLORER }}
 
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@v2.1.4
@@ -70,8 +73,11 @@ jobs:
           GMAPKEY: ${{ secrets.GMAPKEY }}
           SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
 
-          WQ_TOKEN: ${{ secrets.WQ_TOKEN }}
+          WORKNET_WQT_TOKEN: ${{ secrets.WORKNET_WQT_TOKEN }}
           WQ_DAO_VOTING: ${{ secrets.WQ_DAO_VOTING }}
+
+          WQ_PROVIDER: ${{ secrets.WQ_PROVIDER }}
+          WQ_EXPLORER: ${{ secrets.WQ_EXPLORER }}
 
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@v2.1.4
@@ -109,8 +115,11 @@ jobs:
           GMAPKEY: ${{ secrets.GMAPKEY }}
           SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
 
-          WQ_TOKEN: ${{ secrets.WQ_TOKEN }}
+          WORKNET_WQT_TOKEN: ${{ secrets.WORKNET_WQT_TOKEN }}
           WQ_DAO_VOTING: ${{ secrets.WQ_DAO_VOTING }}
+
+          WQ_PROVIDER: ${{ secrets.WQ_PROVIDER }}
+          WQ_EXPLORER: ${{ secrets.WQ_EXPLORER }}
 
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@v2.1.4
