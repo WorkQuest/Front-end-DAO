@@ -545,16 +545,17 @@ export default {
     },
     async doVote(value) {
       const [delegatedRes, voteThreshold] = await Promise.all([
-        this.$store.dispatch('wallet/getBalance'),
         this.$store.dispatch('wallet/getVotesByAddresses', [this.userWalletAddress]),
         this.$store.dispatch('wallet/getVoteThreshold'),
+        this.$store.dispatch('wallet/getBalance'),
       ]);
+      console.log(delegatedRes, voteThreshold);
       const delegated = getStyledAmount(delegatedRes.result[0]);
       if (new BigNumber(delegated).isLessThan(voteThreshold.result)) {
         this.ShowToast(
           this.$tc('proposal.errors.notEnoughFunds', {
             a: +voteThreshold.result,
-            b: +delegated.result,
+            b: +delegated,
           },
           this.$t('proposal.errors.voteError')),
         );

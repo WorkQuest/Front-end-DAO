@@ -164,7 +164,6 @@ export default {
         this.SetLoader(false);
         return;
       }
-      const { callback } = this.options;
       this.descriptionInput = this.descriptionInput.trim();
       this.votingTopicInput = this.votingTopicInput.trim();
       const medias = await this.UploadFiles(this.documents);
@@ -207,16 +206,11 @@ export default {
                 description: this.descriptionInput,
                 nonce,
               });
-              await this.$store.dispatch('proposals/getProposals', {});
-              if (callback) {
-                await Promise.all([
-                  callback(),
-                  this.$store.dispatch('proposals/updateFilters', {
-                    ...this.prevFilters,
-                    lastPage: 1,
-                  }),
-                ]);
-              }
+              await this.$store.dispatch('proposals/updateFilters', {
+                ...this.prevFilters,
+                lastPage: 1,
+              });
+              await this.$store.dispatch('proposals/getProposals', { limit: 12, offset: 0 });
               this.SetLoader(false);
               this.CloseModal();
             },

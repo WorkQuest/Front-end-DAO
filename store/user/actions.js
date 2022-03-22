@@ -46,9 +46,8 @@ export default {
   },
   async getSpecialUserData({ commit }, id) {
     try {
-      const response = await this.$axios.$get(`/v1/profile/${id}`);
-      commit('setSpecialUserData', response.result);
-      return response.result;
+      const { result } = await this.$axios.$get(`/v1/profile/${id}`);
+      return result;
     } catch (e) {
       return false;
     }
