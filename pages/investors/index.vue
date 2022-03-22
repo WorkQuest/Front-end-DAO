@@ -12,7 +12,7 @@
         mode="icon"
       />
       <base-table
-        v-if="usersData.count !== 0"
+        v-if="investorsCount !== 0"
         class="investors__table"
         :fields="tableFields"
         :items="users"
@@ -26,7 +26,7 @@
         />
       </div>
       <base-pager
-        v-if="usersData.count > limit"
+        v-if="investorsCount > limit"
         v-model="currPage"
         class="investors__pagination"
         :total-pages="totalPages"
@@ -38,11 +38,10 @@
 <script>
 
 import { mapGetters } from 'vuex';
-import { Chains } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 
 export default {
-
+  name: 'Investors',
   data() {
     return {
       limit: 20,
@@ -58,8 +57,11 @@ export default {
   computed: {
     ...mapGetters({
       userData: 'user/getUserData',
-      usersData: 'user/getAllUsers',
-      isConnected: 'web3/getWalletIsConnected',
+      investors: 'investors/getInvestorsList',
+      investorsCount: 'investors/getInvestorsCount',
+      isWalletConnected: 'wallet/getIsWalletConnected',
+      lastPage: 'investors/getLastPage',
+      delegatedToUser: 'investors/getDelegatedToUser',
     }),
     tableFields() {
       return [
@@ -74,67 +76,69 @@ export default {
     },
     users() {
       const users = [];
-      this.usersData.users.forEach((user) => {
+      if (this.delegatedToUser) {
         users.push({
-          ...user,
+          ...this.delegatedToUser,
+          voting: this.$tc('meta.wqtCount', this.delegatedToUser.voting),
           callback: this.getInvestors,
-          voting: user.id === this.userData.id ? this.votingPower : '',
-          investorAddress: user.id === this.userData.id ? this.investorAddress : user.investorAddress,
         });
+      }
+      this.investors.forEach((user) => {
+        if (!this.delegatedToUser
+            || (this.delegatedToUser && user.investorAddress !== this.delegatedToUser?.wallet?.address)) {
+          users.push({
+            ...user,
+            voting: this.$tc('meta.wqtCount', user.voting),
+            callback: this.getInvestors,
+          });
+        }
       });
       return users;
     },
     totalPages() {
-      return Math.ceil(this.usersData.count / this.limit);
+      return Math.ceil(this.investorsCount / this.limit);
     },
   },
   watch: {
     async currPage() {
       this.offset = (this.currPage - 1) * this.limit;
-
-      this.SetLoader(true);
+      await this.$store.dispatch('investors/setLastPage', this.currPage);
       await this.getInvestors();
-      this.SetLoader(false);
     },
     search() {
       this.q = this.search.trim();
       this.offset = 0;
       this.currPage = 1;
       clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this.getInvestors();
-      }, 1000);
+      this.timeout = setTimeout(() => { this.getInvestors(); }, 1000);
     },
   },
   async beforeMount() {
-    const isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
-    if (isMobile) {
-      this.ShowModal({
-        key: modals.status,
-        title: 'Please install Metamask!',
-        subtitle: 'Please open site from Metamask app',
-      });
-      await this.$router.push('/proposals');
-    }
+    if (this.lastPage) this.currPage = this.lastPage;
+    await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
   },
   async mounted() {
-    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
+    if (!this.isWalletConnected) return;
     await this.getInvestors();
   },
   beforeDestroy() {
     clearTimeout(this.timeout);
   },
   methods: {
-    // TODO Когда появятся кошельки убрать это, брать информацию из сущности юзера полученной с бэка
-    async getVotingPower() {
-      const { address } = await this.$store.dispatch('web3/getAccount');
-      this.investorAddress = address;
-      const response = await this.$store.dispatch('web3/getVotes', address);
-      if (response.ok) this.votingPower = +response.result;
+    openModalUndelegate() {
+      this.ShowModal({
+        key: modals.undelegate,
+        tokensAmount: this.delegatedToUser.tokensAmount,
+        callback: async () => await this.getInvestors(),
+      });
     },
     async getInvestors() {
-      await this.$store.dispatch('user/getAllUserData', { limit: this.limit, offset: this.offset, q: this.q });
-      await this.getVotingPower();
+      this.SetLoader(true);
+      await Promise.all([
+        this.$store.dispatch('investors/getInvestors', { limit: this.limit, offset: this.offset, q: this.q }),
+        this.$store.dispatch('wallet/getDelegates'),
+      ]);
+      this.SetLoader(false);
     },
   },
 };
@@ -165,11 +169,11 @@ export default {
     font-weight: 600;
     font-size: 28px;
     line-height: 36px;
-    color: #000000;
+    color: $black800;
   }
   &__search{
     margin: 20px 0 20px 0;
-    background-color: #FFFFFF;
+    background-color: $white;
     width: 1180px;
     height: 43px;
     border-radius: 6px;
