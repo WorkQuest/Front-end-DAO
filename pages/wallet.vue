@@ -49,7 +49,7 @@
                 selector="SHOW-DEPOSIT-MODAL"
                 mode="outline"
                 class="balance__btn"
-                @click="showDepositModal()"
+                @click="showModal({key: 'deposit'})"
               >
                 {{ $t('wallet.deposit') }}
               </base-btn>
@@ -57,7 +57,7 @@
                 selector="SHOW-WITHDRAW-MODAL"
                 mode="outline"
                 class="balance__btn"
-                @click="showWithdrawModal()"
+                @click="showModal({key: 'withdraw', branchText: 'withdraw' })"
               >
                 {{ $t('wallet.withdraw') }}
               </base-btn>
@@ -83,7 +83,7 @@
               selector="SHOW-ADD-CARD-MODAL"
               class="card__btn"
               mode="outline"
-              @click="showAddCardModal()"
+              @click="showModal({key: 'addCard', branchText: 'adding' })"
             >
               {{ $t('wallet.addCard') }}
             </base-btn>
@@ -140,7 +140,6 @@ export default {
       transactions: 'wallet/getTransactions',
       transactionsCount: 'wallet/getTransactionsCount',
       isWalletConnected: 'wallet/getIsWalletConnected',
-      userWalletAddress: 'user/getUserWalletAddress',
       balance: 'wallet/getBalanceData',
       selectedToken: 'wallet/getSelectedToken',
     }),
@@ -198,7 +197,11 @@ export default {
       this.ddValue = i >= 0 && i < this.tokenSymbolsDd.length ? i : 1;
     },
     isConnected(newVal) {
-      if (!newVal) this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
+      if (!newVal) {
+        this.$store.dispatch('wallet/checkWalletConnected', {
+          nuxt: this.$nuxt,
+        });
+      }
     },
     currentPage() {
       this.getTransactions();
@@ -236,27 +239,16 @@ export default {
     closeCard() {
       this.cardClosed = true;
     },
+    showModal({ key, branchText }) {
+      this.ShowModal({
+        key: modals[key],
+        branch: branchText,
+      });
+    },
     showTransferModal() {
       this.ShowModal({
         key: modals.giveTransfer,
         callback: async () => await this.loadData(),
-      });
-    },
-    showDepositModal() {
-      this.ShowModal({
-        key: modals.giveDeposit,
-      });
-    },
-    showWithdrawModal() {
-      this.ShowModal({
-        key: modals.takeWithdraw,
-        branch: 'withdraw',
-      });
-    },
-    showAddCardModal() {
-      this.ShowModal({
-        key: modals.addingCard,
-        branch: 'adding',
       });
     },
   },
