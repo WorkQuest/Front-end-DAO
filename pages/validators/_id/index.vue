@@ -67,6 +67,10 @@
                   </div>
                 </div>
               </div>
+              <progress-bar
+                :value="75"
+                mode="blue"
+              />
             </div>
             <div class="right__block">
               <div class="right__info">
@@ -222,6 +226,10 @@ export default {
   }
   &__button {
     min-height: 40px;
+  }
+  &__bar {
+    display: grid;
+    grid-gap: 10px;
   }
   &__info {
     display:flex;
