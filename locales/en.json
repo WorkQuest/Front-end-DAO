@@ -63,7 +63,8 @@
     "attemptsExceeded": "Number of attempts exceeded",
     "loginWithSecret": "Please login with secret phrase",
     "invalidPassword": "Invalid password",
-    "loginToContinue": "Please login to continue"
+    "loginToContinue": "Please login to continue",
+    "walletNotLinked": "Wallet not linked"
   },
   "labels": {
     "firstName": "First name",
@@ -138,6 +139,7 @@
     }
   },
   "meta": {
+    "confirm": "Confirm",
     "back": "Back",
     "open": "Open",
     "ok": "Ok",
@@ -157,6 +159,7 @@
     "delete": "delete",
     "addFile": "Add File",
     "change": "Change",
+    "wqtCount": "{n} WQT",
     "wusdCount": "{n} WUSD"
   },
   "priority": {
@@ -255,70 +258,8 @@
   "skills": {
     "title": "Skills"
   },
-  "quests": {
-    "invited": "Invited",
-    "active": "Active",
-    "performed": "Performed",
-    "requested": "Requested",
-    "youInvited": "You Invited",
-    "inProgressBy": "In progress by:",
-    "showAllCases": "Show all cases",
-    "portfolio": "Portfolio",
-    "searchQuests": "Search quests",
-    "readCompletely": "Read completely",
-    "questBig": "Quest",
-    "fromBig": "From",
-    "fromYou": "from you",
-    "reviews": "reviews",
-    "reviewsBig": "Reviews",
-    "MyQuests": "My quests",
-    "activeQuest": "Active quest",
-    "createANewQuest": "Create a new quest",
-    "proposal": "Proposal",
-    "category": "Category",
-    "address": "Address",
-    "runtime": "Runtime",
-    "uploadQuestMaterials": "Upload quest materials",
-    "price": "Price",
-    "typeOfAd": "Type of advertisement",
-    "free": "Free",
-    "paid": "Paid",
-    "priceOfAClick": "Price of a click",
-    "city": "City",
-    "period": "Period",
-    "EstimatedPayment": "Estimated payment:",
-    "createAQuest": "Create a quest",
-    "activeQuests": "Active quests",
-    "completedQuests": "Completed quests",
-    "oneTime": "One time",
-    "fullTime": "Full time",
-    "uploadAImagesOrVideos": "Upload a images or videos",
-    "averageRating": "Average rating",
-    "showAllActiveQuests": "Show all active quests",
-    "performanceTimer": "Performance timer",
-    "questAmount": "quests",
-    "otherQuestsSpec": "Other quests for the specialization",
-    "questMaterials": "Quest materials",
-    "searchResults": "Search results",
-    "type": "Type of job",
-    "time": "Added time",
-    "priority": {
-      "all": "All priority",
-      "low": "Low",
-      "normal": "Normal",
-      "urgent": "Urgent"
-    },
-    "ui": {
-      "showMap": "Show map",
-      "search": "City / Street / Place"
-    },
-    "worker": "Worker",
-    "raiseViews": "Raise views",
-    "deleteQuest": "Delete quest",
-    "approve": "Approve",
-    "startQuest": "Start quest"
-  },
   "modals": {
+    "trxFee": "Transactions fee",
     "textCopy": "Text has been copied",
     "success": "Success",
     "fromAddress": "From",
@@ -457,7 +398,9 @@
     "votingStart": "Voting start",
     "votingStartField": "voting start",
     "undelegate": "Undelegate",
-    "shure": "Are you shure to undelegate {n}?",
+    "shureToUndelegate": "Are you shure to undelegate {n}?",
+    "willBeUndelegate": "{n} tokens will be undelegate",
+    "undelegateAmount": "Undelegate {n} WQT",
     "delegate": "Delegate",
     "investorAddress": "Investor address",
     "tokensNumber": "Tokens Number",
@@ -555,7 +498,6 @@
       "timestamp": "Timestamp",
       "transferred": "Tokens Transferred",
       "value": "Quantity",
-      "trxFee": "Transaction fee",
       "empty": "Transactions list is empty"
     }
   },
@@ -739,10 +681,9 @@
   },
   "errors": {
     "incorrectPass": "Oops, something went wrong. Check the data and try again.",
-    "delegate": {
-      "title": "Delegate error",
-      "notEnoughBalance": "Not enough balance to delegate"
-    }
+    "delegateTitle": "Delegate error",
+    "undelegateTitle": "Undelegate error",
+    "notEnoughBalance": "Not enough balance"
   },
   "discussions": {
     "showComments": "Show comments",
@@ -784,7 +725,8 @@
     "profile": "Investor Profile"
   },
   "investor": {
-    "notFilled": "Not filled"
+    "notFilled": "Not filled",
+    "notFound": "Investor not found"
   },
   "validators": {
     "title": "Validators",
