@@ -61,6 +61,7 @@ export default {
       investors: 'investors/getInvestorsList',
       investorsCount: 'investors/getInvestorsCount',
       isWalletConnected: 'wallet/getIsWalletConnected',
+      userWalletAddress: 'user/getUserWalletAddress',
       lastPage: 'investors/getLastPage',
       delegatedToUser: 'investors/getDelegatedToUser',
     }),
@@ -111,7 +112,9 @@ export default {
       this.offset = 0;
       this.currPage = 1;
       clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => { this.getInvestors(); }, 1000);
+      this.timeout = setTimeout(() => {
+        this.getInvestors();
+      }, 1000);
     },
   },
   async beforeMount() {
