@@ -38,6 +38,7 @@
       <validation-observer
         v-slot="{ invalid, handleSubmit}"
         class="profile-cont"
+        tag="div"
       >
         <div class="profile-cont__grid-container">
           <div class="profile-cont__main-data">
