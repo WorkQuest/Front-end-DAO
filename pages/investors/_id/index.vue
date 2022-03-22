@@ -354,6 +354,7 @@ export default {
   @include main;
   @include text-simple;
   color: $black800;
+
   &__profile {
     width: 100%;
     max-width: 1180px;
