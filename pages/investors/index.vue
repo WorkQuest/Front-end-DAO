@@ -60,6 +60,7 @@ export default {
       investors: 'investors/getInvestorsList',
       investorsCount: 'investors/getInvestorsCount',
       isWalletConnected: 'wallet/getIsWalletConnected',
+      userWalletAddress: 'user/getUserWalletAddress',
       lastPage: 'investors/getLastPage',
       delegatedToUser: 'investors/getDelegatedToUser',
     }),
@@ -110,7 +111,9 @@ export default {
       this.offset = 0;
       this.currPage = 1;
       clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => { this.getInvestors(); }, 1000);
+      this.timeout = setTimeout(() => {
+        this.getInvestors();
+      }, 1000);
     },
   },
   async beforeMount() {
@@ -148,36 +151,50 @@ export default {
 .investors {
   @include main;
   @include text-simple;
+
   &__body {
     margin-top: 30px;
     max-width: 1180px;
     height: 100%;
   }
-  &__table{
+  &__table {
     overflow: auto;
     margin-bottom: 15px;
     position: relative;
   }
+
   &__investors {
-      display: none;
-    }
-  &__pagination{
+    display: none;
+  }
+
+  &__pagination {
     margin: 10px 15px 0 0;
   }
 }
 
-.body{
-  &__title{
+.body {
+  &__title {
     font-weight: 600;
     font-size: 28px;
     line-height: 36px;
     color: $black800;
   }
-  &__search{
+
+  &__search {
     margin: 20px 0 20px 0;
     background-color: $white;
     height: 43px;
     border-radius: 6px;
+  }
+}
+
+@include _1199 {
+  .body {
+    max-width: 100vw;
+
+    &__title {
+      margin-left: 10px;
+    }
   }
 }
 
@@ -200,11 +217,13 @@ export default {
     &__table {
       display: none;
     }
+
     &__investors {
       display: block;
       background: $white;
       padding: 16px;
     }
+
     &__pagination {
       margin-right: 10px;
     }

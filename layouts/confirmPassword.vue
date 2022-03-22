@@ -199,6 +199,7 @@ export default {
   width: 100vw !important;
   padding: 40px
 }
+
 .confirm {
   border: 1px solid $blue;
   box-shadow: 0 4px 9px rgba(0, 0, 0, 0.15);
@@ -207,17 +208,21 @@ export default {
   padding: 20px;
   margin: 0 auto;
   border-radius: 16px;
+
   &__title {
     font-size: 28px;
     text-align: center;
   }
+
   &__text {
     margin-top: 20px;
     font-size: 18px;
   }
+
   &__password {
     margin-top: 20px;
   }
+
   &__submit {
     margin-top: 20px;
   }
@@ -225,11 +230,13 @@ export default {
   &__visibility {
     display: flex;
     align-items: center;
+
     &_label {
       color: $black700;
       margin: 0 0 0 10px !important;
       user-select: none;
     }
+
     &_box {
       width: 20px !important;
       height: 20px !important;
@@ -237,6 +244,7 @@ export default {
     }
   }
 }
+
 @include _767 {
   .page {
     padding: 30px !important;

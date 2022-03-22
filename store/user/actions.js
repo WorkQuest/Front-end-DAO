@@ -1,4 +1,5 @@
 import { error } from '~/utils/success-error';
+import { connectWithMnemonic } from '~/utils/wallet';
 
 export default {
   async signIn({ commit, dispatch }, payload) {
@@ -32,9 +33,16 @@ export default {
     return await this.$axios.$post('/v1/auth/confirm-email', payload);
   },
   async getUserData({ commit }) {
-    const response = await this.$axios.$get('/v1/profile/me');
-    commit('setUserData', response.result);
-    return response;
+    try {
+      const response = await this.$axios.$get('/v1/profile/me');
+      const { result } = response;
+      commit('setUserData', result);
+      if (result.wallet?.address) connectWithMnemonic(result.wallet.address);
+      return response;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
   },
   async getSpecialUserData({ commit }, id) {
     try {
