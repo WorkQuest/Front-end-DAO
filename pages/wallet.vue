@@ -140,7 +140,6 @@ export default {
       transactions: 'wallet/getTransactions',
       transactionsCount: 'wallet/getTransactionsCount',
       isWalletConnected: 'wallet/getIsWalletConnected',
-      userWalletAddress: 'user/getUserWalletAddress',
       balance: 'wallet/getBalanceData',
       selectedToken: 'wallet/getSelectedToken',
     }),
@@ -201,7 +200,6 @@ export default {
       if (!newVal) {
         this.$store.dispatch('wallet/checkWalletConnected', {
           nuxt: this.$nuxt,
-          userAddress: this.userWalletAddress,
         });
       }
     },
@@ -210,7 +208,7 @@ export default {
     },
   },
   beforeMount() {
-    this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt, userAddress: this.userWalletAddress });
+    this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
   },
   async mounted() {
     if (!this.isWalletConnected) return;

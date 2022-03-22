@@ -43,14 +43,12 @@ export default {
      * Check wallet is connected
      * @returns boolean
      */
-  checkWalletConnected({ commit, getters }, { nuxt, callbackLayout, userAddress }) {
+  checkWalletConnected({ commit, getters }, { nuxt, callbackLayout }) {
     const connected = getIsWalletConnected();
     commit('setIsOnlyConfirm', false);
     if (!connected) {
       if (callbackLayout) commit('setCallbackLayout', callbackLayout);
-      if (userAddress && connectWithMnemonic(userAddress)) {
-        commit('setIsWalletConnected', true);
-      } else nuxt.setLayout('confirmPassword');
+      else nuxt.setLayout('confirmPassword');
     } else commit('setIsWalletConnected', true);
   },
   /**
