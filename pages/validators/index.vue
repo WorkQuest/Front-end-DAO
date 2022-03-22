@@ -150,11 +150,15 @@ export default {
     }
   }
 }
-@include _991 {
+@include _1199 {
   .validators {
     &__body {
       padding: 0 20px;
     }
+  }
+}
+@include _991 {
+  .validators {
     &__table {
       width: calc(100vw - 40px);
     }
