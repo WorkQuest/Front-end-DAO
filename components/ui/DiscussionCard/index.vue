@@ -152,7 +152,7 @@ export default {
     font-size: 14px;
     line-height: 130%;
     margin-bottom: 20px;
-    color: #AAB0B9;
+    color: $black400;
   }
 
   &__line {
@@ -197,7 +197,7 @@ export default {
   &__item {
     font-size: 16px;
     line-height: 130%;
-    color: #7C838D;
+    color: $black500;
     align-self: stretch;
     margin-bottom: 20px;
     overflow: hidden;
@@ -231,16 +231,16 @@ export default {
   &__like {
     margin-left: auto;
     margin-top: 5px;
-    color: #E9EDF2;
+    color: $black200;
     font-size: 22px;
     transition: 0.5s;
 
     &:hover {
-      color: #0083C7;
+      color: $blue;
     }
 
     &_chosen {
-      color: #0083C7;
+      color: $blue;
     }
   }
 
@@ -250,7 +250,7 @@ export default {
     margin-right: 7px;
     text-align: center;
     font-size: 25px;
-    color: #0083C7;
+    color: $blue;
   }
 
   &__comment {
@@ -263,7 +263,7 @@ export default {
   &__counter {
     font-size: 14px;
     line-height: 18px;
-    color: #1D2127;
+    color: $black800;
     margin: 0 22px 0 8px;
     cursor: pointer;
 
