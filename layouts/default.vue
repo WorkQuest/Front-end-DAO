@@ -1117,6 +1117,7 @@ export default {
     &_locale {
       width: 86px;
       height: 46px;
+      cursor: pointer;
 
       span {
         padding-left: 10px;
@@ -1257,7 +1258,7 @@ export default {
   &__item {
     display: grid;
     grid-template-columns: 15px 1fr;
-    grid-gap: 10px;
+    grid-gap: 5px;
     align-items: center;
     min-height: 20px;
   }
