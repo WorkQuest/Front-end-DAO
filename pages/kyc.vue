@@ -40,7 +40,13 @@ export default {
       accessToken: 'sumsub/getSumSubBackendToken',
       userData: 'user/getUserData',
       statusKYC: 'user/getStatusKYC',
+      currentLocale: 'user/getCurrentLang',
     }),
+  },
+  watch: {
+    async currentLocale() {
+      await this.initSumSub();
+    },
   },
   async mounted() {
     this.SetLoader(true);
@@ -58,7 +64,7 @@ export default {
           .withAccessToken(accessToken, () => {
           })
           .withConf({
-            lang: 'en',
+            lang: this.currentLocale,
             email,
             onError: (error) => {
               console.log('WebSDK onError', error);

@@ -31,42 +31,40 @@
               </div>
             </div>
             <div class="header__right">
-              <button
+              <div
                 class="header__button header__button_locale"
+                data-selector="ACTION-BTN-SHOW-LOCALE"
                 @click="showLocale()"
               >
-                {{ $t('ui.locals.en') }}
-                <span class="icon-caret_down" />
+                <span class="header__button_locale-name">
+                  {{ currentLocale.toUpperCase() }}
+                </span>
+                <span class="icon icon-caret_down" />
                 <transition name="fade">
-                  <div
+                  <ul
                     v-if="isShowLocale"
                     class="locale"
                   >
-                    <div class="locale__items">
-                      <div class="locale__item">
-                        <img
-                          src="/img/app/en.svg"
-                          alt="EN"
-                          class="locale__icon"
-                        >
-                        <div class="locale__text">
-                          {{ $t('ui.locals.en') }}
-                        </div>
-                      </div>
-                      <div class="locale__item">
-                        <img
-                          src="/img/app/ru.svg"
-                          alt="RU"
-                          class="locale__icon"
-                        >
-                        <div class="locale__text">
-                          {{ $t('ui.locals.ru') }}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                    <li
+                      v-for="(item, i) in locales"
+                      :key="item.localeCode"
+                      class="locale__item"
+                      :class="[{'locale__item_active' : currentLocale === item.localeCode}]"
+                      :data-selector="`ACTION-BTN-SET-LOCALE-${i}`"
+                      @click="setLocale(item)"
+                    >
+                      <img
+                        :src="require(`assets/img/lang/${item.localeSrc}`)"
+                        :alt="item.localeText"
+                        class="locale__icon"
+                      >
+                      <span class="locale__text">
+                        {{ item.localeText.toUpperCase() }}
+                      </span>
+                    </li>
+                  </ul>
                 </transition>
-              </button>
+              </div>
               <!-- Кнопка мобильного меню -->
               <div
                 class="ctm-menu__toggle"
@@ -363,6 +361,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import ClickOutside from 'vue-click-outside';
+import moment from 'moment';
 
 export default {
   scrollToTop: true,
@@ -412,7 +411,15 @@ export default {
       userData: 'user/getUserData',
       imageData: 'user/getImageData',
       userRole: 'user/getUserRole',
+      currentLocale: 'user/getCurrentLang',
     }),
+    locales() {
+      return this.$i18n.locales.map((item) => ({
+        localeSrc: `${item}.svg`,
+        localeText: this.$t(`ui.locals.${item}`),
+        localeCode: item,
+      }));
+    },
     profileLinks() {
       return [
         { title: this.$t('ui.profile.myProfile'), path: '/profile' },
@@ -427,8 +434,14 @@ export default {
   async mounted() {
     this.GetLocation();
     this.localUserData = JSON.parse(JSON.stringify(this.userData));
+    this.$store.commit('user/setLang', this.$i18n.localeProperties.code);
   },
   methods: {
+    setLocale(item) {
+      this.$store.commit('user/setLang', item.localeCode);
+      this.$i18n.setLocale(item.localeCode);
+      moment.locale(item.localeCode);
+    },
     toRoute(path) {
       this.$router.push(path);
       this.toggleMobileMenu();
@@ -502,7 +515,7 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('user/logout');
-      this.$router.push('/');
+      await this.$router.push('/');
     },
     closeAll() {
       this.isShowProfile = false;
@@ -518,25 +531,31 @@ export default {
 .hidden {
   display: none;
 }
+
 .mobile {
   &-dropdown {
     border-bottom: 1px solid $black0;
+
     &__btn {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
     }
+
     &__title {
       padding: 16px 0 20px 20px;
     }
+
     &__arrow {
       justify-self: flex-end;
       padding: 16px 20px 0 0;
     }
   }
+
   &__links {
     display: none;
     flex-direction: column;
   }
+
   &__link {
     padding: 16px 20px 16px 20px;
     font-weight: 400;
@@ -545,6 +564,7 @@ export default {
     border-bottom: 1px solid $black0;
     transition: 1s;
     text-decoration: none;
+
     &:hover {
       @extend .mobile__link;
       background: $blue;
@@ -553,6 +573,7 @@ export default {
     }
   }
 }
+
 .instrument-dropdown {
   &__link {
     @extend .mobile__link;
@@ -562,10 +583,12 @@ export default {
     padding: 16px 0 20px 35px;
   }
 }
+
 .user {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
   &-dropdown {
     &__link {
       @extend .mobile__link;
@@ -575,18 +598,22 @@ export default {
       padding: 16px 0 20px 20px;
     }
   }
+
   &-container {
     &__avatar {
       padding: 15px;
     }
+
     &__user {
       padding: 15px 0 0 0;
       display: grid;
     }
   }
+
   &__dropdown {
     align-self: center;
   }
+
   &__container {
     display: flex;
     flex-direction: row;
@@ -597,6 +624,7 @@ export default {
     width: 100%;
     padding: 0 20px 0 0;
   }
+
   &__avatar {
     max-height: 40px;
     max-width: 40px;
@@ -604,11 +632,13 @@ export default {
     width: 100%;
     border-radius: 137px;
   }
+
   &__name {
     font-weight: 500;
     font-size: 16px;
     color: $black800;
   }
+
   &__role {
     font-weight: 400;
     font-size: 12px;
@@ -616,35 +646,89 @@ export default {
     padding: 0 0 11px 0;
   }
 }
+
 .icon {
   font-size: 20px;
+
   &-caret_down:before {
     @extend .icon;
     content: "\ea48";
     color: #2e3a59;
   }
+
   &-caret_up:before {
     @extend .icon;
     content: "\ea4b";
     color: #2e3a59;
   }
+
   &-close_big:before {
     @extend .icon;
     content: "\e948";
     color: #2e3a59;
   }
 }
+
+.locale {
+  position: absolute;
+  top: 73px;
+  background: $white;
+  box-shadow: 0 17px 17px rgba(0, 0, 0, 0.05), 0 5.125px 5.125px rgba(0, 0, 0, 0.03), 0 2.12866px 2.12866px rgba(0, 0, 0, 0.025), 0 0.769896px 0.769896px rgba(0, 0, 0, 0.0174206);
+  border-radius: 6px;
+  z-index: 10000000;
+  padding: 15px 20px;
+
+  &__item {
+    width: 46px;
+    display: flex;
+    align-items: center;
+    opacity: 0.7;
+    grid-gap: 5px;
+
+    &_active {
+      opacity: 1;
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &__item:not(:last-child) {
+    margin-bottom: 15px;
+  }
+
+  &__icon {
+    display: block;
+    margin-right: 10px;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+  }
+
+  &__text {
+    @include text-simple;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 130%;
+    color: $black500;
+  }
+}
+
 .ctm {
   &-open {
     display: flex;
     width: 100%;
   }
+
   &__actions {
     padding: 20px;
   }
+
   &-menu {
     display: none;
     transition: .2s;
+
     &_opened {
       overflow-y: auto;
       background: $white;
@@ -657,6 +741,7 @@ export default {
       left: 0;
       z-index: 100;
     }
+
     &__content {
       height: 100%;
       width: 100%;
@@ -664,25 +749,30 @@ export default {
       flex-direction: column;
       background: $white;
       border-radius: 0 0 5px 5px;
+
       &_hide {
         width: 0;
       }
     }
   }
 }
+
 .primary {
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
+
 .template {
   background: #F7F8FA;
   min-height: 100vh;
+
   &__content {
     display: grid;
     grid-template-rows: 72px 1fr 352px;
     min-height: 100vh;
   }
+
   &__main {
     display: grid;
     padding-bottom: 20px;
@@ -690,12 +780,14 @@ export default {
     width: 100%;
     max-width: 100vw;
   }
+
   &__footer {
     background: $white;
     width: 100%;
     min-height: 353px;
   }
 }
+
 .notify {
   position: absolute;
   top: calc(72px + 5px);
@@ -705,6 +797,7 @@ export default {
   border-radius: 6px;
   min-width: 441px;
   z-index: 10000000;
+
   &__header {
     display: flex;
     align-items: center;
@@ -712,11 +805,13 @@ export default {
     padding: 0 20px;
     height: 64px;
     border-bottom: 1px solid #F7F8FA;
+
     span:before {
       color: $shade700 !important;
       font-size: 24px;
     }
   }
+
   &__title {
     font-family: 'Inter', sans-serif;
     font-style: normal;
@@ -725,6 +820,7 @@ export default {
     line-height: 130%;
     color: $black800;
   }
+
   &__btn {
     background: #F7F8FA;
     border-radius: 3px;
@@ -734,74 +830,90 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 0 10px;
+
     span:before {
       color: #0083C7;
       font-size: 24px;
     }
   }
+
   &__action {
     padding-top: 12px;
   }
+
   &__content {
     width: 100%;
     height: 100%;
     padding: 20px;
   }
+
   &__reason {
     padding-top: 12px;
   }
+
   &__text {
     font-family: 'Inter', sans-serif;
     font-style: normal;
     font-weight: normal;
     line-height: 130%;
+
     &_date {
       font-size: 12px;
       text-align: right;
       color: $black300;
     }
+
     &_name {
       font-size: 16px;
       color: $black800;
     }
+
     &_grey {
       font-size: 12px;
       color: $black500;
     }
+
     &_blue {
       font-size: 16px;
       color: $blue;
       text-align: left;
     }
+
     &_btn {
       font-size: 16px;
       color: $black800;
     }
   }
+
   &__items {
     display: grid;
     grid-template-columns: 1fr;
   }
+
   &__user {
     display: grid;
     grid-template-columns: 40px 1fr;
     grid-gap: 10px;
   }
+
   &__info {
     grid-gap: 5px;
     display: grid;
     text-align: left;
     align-items: center;
   }
+
   &__avatar {
     max-height: 40px;
     max-width: 40px;
     border-radius: 100%;
   }
+
   &__top {
     display: flex;
     justify-content: space-between;
   }
+
   &__item {
     min-height: 167px;
     border-bottom: 1px solid #F7F8FA;
@@ -811,6 +923,7 @@ export default {
     align-items: center;
   }
 }
+
 .profile {
   position: absolute;
   top: 57px;
@@ -833,22 +946,26 @@ export default {
     padding: 15px;
     grid-gap: 10px;
   }
+
   &__avatar {
     max-width: 40px;
     max-height: 40px;
     border-radius: 100%;
   }
+
   &__img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
   }
+
   &__items {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: flex-start;
   }
+
   &__item {
     height: 41px;
     background: #FFFFFF;
@@ -863,13 +980,16 @@ export default {
     color: $black800;
     width: 100%;
     transition: .3s;
+
     &_red {
       color: $red;
     }
+
     &:hover {
       background: #F7F8FA;
     }
   }
+
   &__text {
     font-family: 'Inter', sans-serif;
     font-style: normal;
@@ -877,17 +997,20 @@ export default {
     font-size: 16px;
     line-height: 130%;
     color: $black800;
+
     &_blue {
       font-weight: normal;
       font-size: 12px;
       color: $blue;
     }
+
     &_green {
       font-weight: normal;
       font-size: 12px;
       color: $green;
     }
   }
+
   &__info {
     display: grid;
     grid-template-columns: 1fr;
@@ -895,6 +1018,7 @@ export default {
     text-align: left;
   }
 }
+
 .header {
   position: sticky;
   top: 0;
@@ -906,6 +1030,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+
   &__body {
     max-width: 1180px;
     width: 100%;
@@ -913,12 +1038,14 @@ export default {
     align-items: center;
     justify-content: space-between;
   }
+
   &__left {
     display: grid;
     align-items: center;
     grid-template-columns: auto 1fr;
     grid-gap: 35px;
   }
+
   &__link {
     font-family: 'Inter', sans-serif;
     font-style: normal;
@@ -927,13 +1054,16 @@ export default {
     line-height: 130%;
     color: $black400;
     text-decoration: none;
+
     &_active {
       color: $black800;
     }
+
     &_menu {
       display: flex;
       align-items: center;
       position: relative;
+
       span::before {
         color: $black400;
         font-size: 24px;
@@ -941,6 +1071,7 @@ export default {
       }
     }
   }
+
   &__button {
     font-family: 'Inter', sans-serif;
     font-style: normal;
@@ -955,49 +1086,61 @@ export default {
     width: 43px;
     height: 43px;
     border: 1px solid transparent;
+
     &:hover {
       border: 1px solid $black100;
     }
+
     span:before {
       color: $black400;
       font-size: 24px;
     }
+
     &_profile {
       position: relative;
     }
+
     &_menu {
       position: relative;
       display: none;
     }
+
     &_notify {
       position: relative;
     }
+
     &_locale {
       width: 86px;
       height: 46px;
+      cursor: pointer;
+
       span {
         padding-left: 10px;
       }
     }
   }
+
   &__links {
     display: grid;
     align-items: center;
     grid-template-columns: repeat(5, auto);
     grid-gap: 25px;
   }
+
   &__right {
     display: grid;
     grid-template-columns: repeat(2, auto);
     grid-gap: 10px;
     align-items: center;
   }
+
   &__logo {
     display: grid;
     align-items: center;
     grid-template-columns: 40px 1fr;
     grid-gap: 5px;
     cursor: pointer;
+
     span {
       font-family: 'Inter', sans-serif;
       font-style: normal;
@@ -1006,12 +1149,14 @@ export default {
       line-height: 130%;
       color: $black700;
     }
+
     img {
       height: 30px;
       width: 40px;
     }
   }
 }
+
 .menu {
   position: absolute;
   top: 72px;
@@ -1022,11 +1167,13 @@ export default {
   width: 100%;
   min-height: 230px;
   z-index: 10000000;
+
   &__top {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
+
     span::before {
       transition: .1s;
       visibility: hidden;
@@ -1034,27 +1181,32 @@ export default {
       color: #2E3A59;
     }
   }
+
   &__text {
     font-family: 'Inter', sans-serif;
     font-style: normal;
     font-weight: normal;
+
     &_header {
       font-size: 16px;
       line-height: 130%;
       color: $black800;
     }
+
     &_grey {
       font-size: 14px;
       line-height: 130%;
       color: $black500;
     }
   }
+
   &__items {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     padding: 20px;
     grid-gap: 10px;
   }
+
   &__item {
     transition: .3s;
     background: #FFFFFF;
@@ -1067,8 +1219,10 @@ export default {
     flex-direction: column;
     justify-content: space-between;
     padding: 10px;
+
     &:hover {
       border: 1px solid $black100;
+
       .menu {
         &__top {
           span::before {
@@ -1079,6 +1233,7 @@ export default {
     }
   }
 }
+
 .locale {
   position: absolute;
   top: calc(72px + 5px);
@@ -1087,22 +1242,26 @@ export default {
   border-radius: 6px;
   min-width: 86px;
   z-index: 10000000;
+
   &__items {
     padding: 10px 15px;
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 15px;
   }
+
   &__item {
     display: grid;
     grid-template-columns: 15px 1fr;
-    grid-gap: 10px;
+    grid-gap: 5px;
     align-items: center;
     min-height: 20px;
   }
+
   &__icon {
     border-radius: 100%;
   }
+
   &__text {
     font-family: 'Inter', sans-serif;
     font-style: normal;
@@ -1112,17 +1271,21 @@ export default {
     color: $black500;
   }
 }
+
 .footer {
   margin: 0 auto;
   padding-top: 32px;
   width: 1180px;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr 1fr;
     margin-bottom: 15px;
   }
+
   &__logo {
     display: flex;
+
     span {
       color: $black400;
       font-size: 23px;
@@ -1130,21 +1293,26 @@ export default {
       margin-left: 5px;
     }
   }
+
   &__subtitle {
     margin-bottom: 15px;
   }
+
   &__menu-inside {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
+
   &__link {
     color: $black500;
     margin-bottom: 10px;
+
     &:hover {
       text-decoration: none;
     }
   }
 }
+
 .links {
   &__header {
     @include text-simple;
@@ -1153,76 +1321,96 @@ export default {
     color: $black700;
     margin: 15px 0;
   }
+
   &__links {
     display: flex;
     grid-gap: 15px;
   }
+
   &__social {
-      width: 40px;
-      height: 40px;
-      transition: all 0.5s;
-      border-radius: 11px;
-      &_twitter {
-        background: center / contain no-repeat url('~assets/img/social/footer_twitter.svg') $white;
-      }
-      &_twitter:hover {
-        background: center / contain no-repeat url('~assets/img/social/footer_twitter_active.svg') $white;
-      }
-      &_youtube {
-        background: center / contain no-repeat url('~assets/img/social/footer_youtube.svg') $white;
-      }
-      &_youtube:hover {
-        background: center / contain no-repeat url('~assets/img/social/footer_youtube_active.svg') $white;
-      }
-      &_reddit {
-        background: center / contain no-repeat url('~assets/img/social/footer_reddit.svg') $white;
-      }
-      &_reddit:hover {
-        background: center / contain no-repeat url('~assets/img/social/footer_reddit_active.svg') $white;
-      }
-      &_facebook {
-        background: center / contain no-repeat url('~assets/img/social/footer_facebook.svg') $white;
-      }
-      &_facebook:hover {
-        background: center / contain no-repeat url('~assets/img/social/footer_facebook_active.svg') $white;
-      }
-      &_linkedin {
-        background: center / contain no-repeat url('~assets/img/social/footer_linkedin.svg') $white;
-      }
-      &_linkedin:hover {
-        background: center / contain no-repeat url('~assets/img/social/footer_linkedin_active.svg') $white;
-      }
-      &_instagram {
-        background: center / contain no-repeat url('~assets/img/social/footer_instagram.svg') $white;
-      }
-      &_instagram:hover {
-        background: center / contain no-repeat url('~assets/img/social/footer_instagram_active.svg') $white;
-      }
-      &_telegram {
-        background: center / contain no-repeat url('~assets/img/social/footer_telegram.svg') $white;
-      }
-      &_telegram:hover {
-        background: center / contain no-repeat url('~assets/img/social/footer_telegram_active.svg') $white;
-      }
+    width: 40px;
+    height: 40px;
+    transition: all 0.5s;
+    border-radius: 11px;
+
+    &_twitter {
+      background: center / contain no-repeat url('~assets/img/social/footer_twitter.svg') $white;
     }
+
+    &_twitter:hover {
+      background: center / contain no-repeat url('~assets/img/social/footer_twitter_active.svg') $white;
+    }
+
+    &_youtube {
+      background: center / contain no-repeat url('~assets/img/social/footer_youtube.svg') $white;
+    }
+
+    &_youtube:hover {
+      background: center / contain no-repeat url('~assets/img/social/footer_youtube_active.svg') $white;
+    }
+
+    &_reddit {
+      background: center / contain no-repeat url('~assets/img/social/footer_reddit.svg') $white;
+    }
+
+    &_reddit:hover {
+      background: center / contain no-repeat url('~assets/img/social/footer_reddit_active.svg') $white;
+    }
+
+    &_facebook {
+      background: center / contain no-repeat url('~assets/img/social/footer_facebook.svg') $white;
+    }
+
+    &_facebook:hover {
+      background: center / contain no-repeat url('~assets/img/social/footer_facebook_active.svg') $white;
+    }
+
+    &_linkedin {
+      background: center / contain no-repeat url('~assets/img/social/footer_linkedin.svg') $white;
+    }
+
+    &_linkedin:hover {
+      background: center / contain no-repeat url('~assets/img/social/footer_linkedin_active.svg') $white;
+    }
+
+    &_instagram {
+      background: center / contain no-repeat url('~assets/img/social/footer_instagram.svg') $white;
+    }
+
+    &_instagram:hover {
+      background: center / contain no-repeat url('~assets/img/social/footer_instagram_active.svg') $white;
+    }
+
+    &_telegram {
+      background: center / contain no-repeat url('~assets/img/social/footer_telegram.svg') $white;
+    }
+
+    &_telegram:hover {
+      background: center / contain no-repeat url('~assets/img/social/footer_telegram_active.svg') $white;
+    }
+  }
+
   &__store {
     &:hover {
       text-decoration: none;
     }
   }
 }
+
 .bottom {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    border-top: 1px solid $black100;
-    height: 72px;
-    align-items: center;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid $black100;
+  height: 72px;
+  align-items: center;
+
   &__links {
     display: grid;
     grid-template-columns: repeat(2, auto);
     grid-gap: 20px;
   }
+
   &__link {
     font-family: 'Inter', sans-serif;
     font-style: normal;
@@ -1232,37 +1420,40 @@ export default {
     color: $blue;
     cursor: pointer;
   }
+
   &__text {
     font-family: 'Inter', sans-serif;
     font-style: normal;
     font-weight: normal;
+
     &_rights {
       font-size: 14px;
       line-height: 130%;
       color: $black500;
     }
   }
+
   &__rights {
     display: grid;
     grid-template-columns: repeat(2, auto);
     grid-gap: 20px;
   }
 }
+
 .ctm-menu {
   &__toggle {
     display: none;
   }
 }
-@include _1700 {}
-@include _1600 {}
-@include _1500 {}
-@include _1300 {}
+
 @include _1199 {
   .header {
     max-width: 100vw;
+
     &__button_menu {
       display: flex;
     }
+
     &__body {
       max-width: calc(100vw - 30px);
       margin: 0 15px;
@@ -1275,9 +1466,11 @@ export default {
     padding-left: 15px;
   }
 }
+
 @include _991 {
   .template {
     min-height: 100vh;
+
     &__content {
       min-height: 100vh;
     }
@@ -1286,6 +1479,7 @@ export default {
     &__btn {
       display: none !important;
     }
+
     &__right {
       margin-left: 10px;
       grid-gap: 5px;
@@ -1301,6 +1495,7 @@ export default {
     width: 100vw;
   }
 }
+
 @include _767 {
   .ctm-menu {
     &__toggle {
@@ -1308,9 +1503,10 @@ export default {
     }
   }
   .header {
-     &__links {
+    &__links {
       display: none;
     }
+
     &__button_profile {
       display: none;
     }
@@ -1325,15 +1521,18 @@ export default {
       display: flex;
       flex-direction: column-reverse;
     }
+
     &__menu-inside {
       display: grid;
       grid-template-columns: 1fr 1fr;
       grid-gap: 20px;
       margin: 30px 0;
     }
+
     &__subtitle {
       display: none;
     }
+
     &__link {
       margin: 0;
     }
@@ -1349,6 +1548,7 @@ export default {
     }
   }
 }
+
 @include _575 {
   .header {
     &__logo {
@@ -1356,12 +1556,15 @@ export default {
         display: none;
       }
     }
+
     &__btn {
       display: none !important;
     }
+
     &__left {
       grid-gap: 15px;
     }
+
     &__right {
       grid-gap: 2px;
     }
@@ -1373,24 +1576,28 @@ export default {
     &__bottom {
       justify-content: space-between;
     }
+
     &__links {
       display: flex;
     }
+
     &__top {
       display: grid;
       grid-template-columns: 1fr;
       grid-gap: 30px;
     }
+
     &__items {
       grid-template-columns: repeat(2, 1fr);
       grid-gap: 20px;
+
       &_links {
         grid-template-columns: 1fr;
       }
     }
   }
   .bottom {
-     &__links, &__rights {
+    &__links, &__rights {
       display: flex;
       flex-direction: column;
       gap: 15px;
