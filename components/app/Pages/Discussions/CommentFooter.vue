@@ -133,7 +133,7 @@ export default {
       this.SetLoader(true);
       this.$refs.observer.validate();
       if (comment.level <= 4) {
-        const medias = await this.uploadFiles(this.documents);
+        const medias = await this.UploadFiles(this.documents);
         const payload = {
           rootCommentId: comment.id,
           text: this.subCommentInput,

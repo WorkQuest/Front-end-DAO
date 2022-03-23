@@ -32,7 +32,7 @@ jobs:
           SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
 
           WORKNET_WQT_TOKEN: ${{ secrets.WORKNET_WQT_TOKEN }}
-          WQ_DAO_VOTING: ${{ secrets.WQ_DAO_VOTING }}
+          WORKNET_VOTING: ${{ secrets.WORKNET_VOTING }}
 
           WQ_PROVIDER: ${{ secrets.WQ_PROVIDER }}
           WQ_EXPLORER: ${{ secrets.WQ_EXPLORER }}
@@ -74,7 +74,7 @@ jobs:
           SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
 
           WORKNET_WQT_TOKEN: ${{ secrets.WORKNET_WQT_TOKEN }}
-          WQ_DAO_VOTING: ${{ secrets.WQ_DAO_VOTING }}
+          WORKNET_VOTING: ${{ secrets.WORKNET_VOTING }}
 
           WQ_PROVIDER: ${{ secrets.WQ_PROVIDER }}
           WQ_EXPLORER: ${{ secrets.WQ_EXPLORER }}
@@ -116,7 +116,7 @@ jobs:
           SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
 
           WORKNET_WQT_TOKEN: ${{ secrets.WORKNET_WQT_TOKEN }}
-          WQ_DAO_VOTING: ${{ secrets.WQ_DAO_VOTING }}
+          WORKNET_VOTING: ${{ secrets.WORKNET_VOTING }}
 
           WQ_PROVIDER: ${{ secrets.WQ_PROVIDER }}
           WQ_EXPLORER: ${{ secrets.WQ_EXPLORER }}

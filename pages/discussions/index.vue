@@ -112,12 +112,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .discussions {
+  padding: 15px;
   justify-content: center;
   max-width: 1180px;
   margin: 0 auto;
   width: 100%;
   height: 100%;
-  @include _1024;
 
   &__header {
     display: flex;
@@ -144,10 +144,14 @@ export default {
     line-height: 130%;
   }
 
+  &__card {
+    min-width: 0;
+  }
+
   &__cards {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-gap: 20px 20px;
+    grid-gap: 20px;
     margin-bottom: 15px;
   }
 
@@ -163,7 +167,21 @@ export default {
 
 @include _1199 {
   .discussions {
-    padding: 20px 15px;
+
+    &__title {
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+
+    &__header {
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+
+    &__cards {
+      grid-template-columns: 1fr;
+      margin: 20px;
+    }
   }
 }
 
@@ -182,6 +200,12 @@ export default {
     &__cards {
       grid-template-columns: 1fr;
     }
+  }
+}
+
+@include _480 {
+  .discussions__btn {
+    font-size: 12px;
   }
 }
 </style>
