@@ -64,7 +64,7 @@ export default {
           .withAccessToken(accessToken, () => {
           })
           .withConf({
-            lang: this.currentLocale.slice(10, 12),
+            lang: this.currentLocale,
             email,
             onError: (error) => {
               console.log('WebSDK onError', error);

@@ -47,9 +47,9 @@
                   >
                     <li
                       v-for="(item, i) in locales"
-                      :key="item.localeText"
+                      :key="item.localeCode"
                       class="locale__item"
-                      :class="[{'locale__item_active' : currentLocale === item.localeText}]"
+                      :class="[{'locale__item_active' : currentLocale === item.localeCode}]"
                       :data-selector="`ACTION-BTN-SET-LOCALE-${i}`"
                       @click="setLocale(item)"
                     >
@@ -417,6 +417,7 @@ export default {
       return this.$i18n.locales.map((item) => ({
         localeSrc: `${item}.svg`,
         localeText: this.$t(`ui.locals.${item}`),
+        localeCode: item,
       }));
     },
     profileLinks() {
@@ -437,9 +438,9 @@ export default {
   },
   methods: {
     setLocale(item) {
-      this.$store.commit('user/setLang', item.localeText);
-      this.$i18n.setLocale(item.localeText);
-      moment.locale(item.localeText);
+      this.$store.commit('user/setLang', item.localeCode);
+      this.$i18n.setLocale(item.localeCode);
+      moment.locale(item.localeCode);
     },
     toRoute(path) {
       this.$router.push(path);
