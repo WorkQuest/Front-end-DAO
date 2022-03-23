@@ -190,10 +190,8 @@ export default {
   }
 }
 
-.content {
-  &__error {
-    color: red;
-  }
+.content__error {
+  color: red;
 }
 
 .icon-show, .icon-hide {
@@ -202,7 +200,6 @@ export default {
 }
 
 .icon-Lock:before {
-  content: "\ea24";
   color: $blue;
   font-size: 25px;
 }
@@ -223,6 +220,7 @@ export default {
 .field {
   &__button {
     background-color: transparent !important;
+    border: none !important;
   }
 }
 
