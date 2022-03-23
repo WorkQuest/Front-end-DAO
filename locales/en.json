@@ -457,8 +457,16 @@
       "logout": "Logout"
     },
     "locals": {
-      "en": "EN",
-      "ru": "RU"
+      "en": "en",
+      "ru": "ru",
+      "bn": "bn",
+      "zh": "zh",
+      "fr": "fr",
+      "hi": "hi",
+      "id": "id",
+      "pt": "pt",
+      "es": "es",
+      "ar": "ar"
     },
     "notifications": {
       "title": "Notifications",
