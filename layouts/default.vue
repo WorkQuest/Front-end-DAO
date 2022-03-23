@@ -420,7 +420,6 @@ export default {
       userRole: 'user/getUserRole',
     }),
     locales() {
-      console.log(this.$i18n.locales);
       return this.$i18n.locales.map((item) => ({
         localeSrc: `${item}.svg`,
         localeText: this.$t(`ui.locals.${item}`),
