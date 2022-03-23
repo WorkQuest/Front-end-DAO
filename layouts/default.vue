@@ -31,42 +31,40 @@
               </div>
             </div>
             <div class="header__right">
-              <button
+              <div
                 class="header__button header__button_locale"
+                data-selector="ACTION-BTN-SHOW-LOCALE"
                 @click="showLocale()"
               >
-                {{ $t('ui.locals.en') }}
-                <span class="icon-caret_down" />
+                <span class="header__button_locale-name">
+                  {{ currentLocale.toUpperCase() }}
+                </span>
+                <span class="icon icon-caret_down" />
                 <transition name="fade">
-                  <div
+                  <ul
                     v-if="isShowLocale"
                     class="locale"
                   >
-                    <div class="locale__items">
-                      <div class="locale__item">
-                        <img
-                          src="/img/app/en.svg"
-                          alt="EN"
-                          class="locale__icon"
-                        >
-                        <div class="locale__text">
-                          {{ $t('ui.locals.en') }}
-                        </div>
-                      </div>
-                      <div class="locale__item">
-                        <img
-                          src="/img/app/ru.svg"
-                          alt="RU"
-                          class="locale__icon"
-                        >
-                        <div class="locale__text">
-                          {{ $t('ui.locals.ru') }}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                    <li
+                      v-for="(item, i) in locales"
+                      :key="item.localeCode"
+                      class="locale__item"
+                      :class="[{'locale__item_active' : currentLocale === item.localeCode}]"
+                      :data-selector="`ACTION-BTN-SET-LOCALE-${i}`"
+                      @click="setLocale(item)"
+                    >
+                      <img
+                        :src="require(`assets/img/lang/${item.localeSrc}`)"
+                        :alt="item.localeText"
+                        class="locale__icon"
+                      >
+                      <span class="locale__text">
+                        {{ item.localeText.toUpperCase() }}
+                      </span>
+                    </li>
+                  </ul>
                 </transition>
-              </button>
+              </div>
               <!-- Кнопка мобильного меню -->
               <div
                 class="ctm-menu__toggle"
@@ -363,6 +361,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import ClickOutside from 'vue-click-outside';
+import moment from 'moment';
 
 export default {
   scrollToTop: true,
@@ -412,7 +411,15 @@ export default {
       userData: 'user/getUserData',
       imageData: 'user/getImageData',
       userRole: 'user/getUserRole',
+      currentLocale: 'user/getCurrentLang',
     }),
+    locales() {
+      return this.$i18n.locales.map((item) => ({
+        localeSrc: `${item}.svg`,
+        localeText: this.$t(`ui.locals.${item}`),
+        localeCode: item,
+      }));
+    },
     profileLinks() {
       return [
         { title: this.$t('ui.profile.myProfile'), path: '/profile' },
@@ -427,8 +434,14 @@ export default {
   async mounted() {
     this.GetLocation();
     this.localUserData = JSON.parse(JSON.stringify(this.userData));
+    this.$store.commit('user/setLang', this.$i18n.localeProperties.code);
   },
   methods: {
+    setLocale(item) {
+      this.$store.commit('user/setLang', item.localeCode);
+      this.$i18n.setLocale(item.localeCode);
+      moment.locale(item.localeCode);
+    },
     toRoute(path) {
       this.$router.push(path);
       this.toggleMobileMenu();
@@ -502,7 +515,7 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('user/logout');
-      this.$router.push('/');
+      await this.$router.push('/');
     },
     closeAll() {
       this.isShowProfile = false;
@@ -660,6 +673,52 @@ export default {
     @extend .icon;
     content: "\e948";
     color: #2e3a59;
+  }
+}
+
+.locale {
+  position: absolute;
+  top: 73px;
+  background: $white;
+  box-shadow: 0 17px 17px rgba(0, 0, 0, 0.05), 0 5.125px 5.125px rgba(0, 0, 0, 0.03), 0 2.12866px 2.12866px rgba(0, 0, 0, 0.025), 0 0.769896px 0.769896px rgba(0, 0, 0, 0.0174206);
+  border-radius: 6px;
+  z-index: 10000000;
+  padding: 15px 20px;
+
+  &__item {
+    width: 46px;
+    display: flex;
+    align-items: center;
+    opacity: 0.7;
+    grid-gap: 5px;
+
+    &_active {
+      opacity: 1;
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &__item:not(:last-child) {
+    margin-bottom: 15px;
+  }
+
+  &__icon {
+    display: block;
+    margin-right: 10px;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+  }
+
+  &__text {
+    @include text-simple;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 130%;
+    color: $black500;
   }
 }
 
@@ -1070,6 +1129,7 @@ export default {
     &_locale {
       width: 86px;
       height: 46px;
+      cursor: pointer;
 
       span {
         padding-left: 10px;
@@ -1210,7 +1270,7 @@ export default {
   &__item {
     display: grid;
     grid-template-columns: 15px 1fr;
-    grid-gap: 10px;
+    grid-gap: 5px;
     align-items: center;
     min-height: 20px;
   }
@@ -1401,18 +1461,6 @@ export default {
   &__toggle {
     display: none;
   }
-}
-
-@include _1700 {
-}
-
-@include _1600 {
-}
-
-@include _1500 {
-}
-
-@include _1300 {
 }
 
 @include _1199 {
