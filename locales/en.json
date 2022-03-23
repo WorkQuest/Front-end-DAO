@@ -261,6 +261,7 @@
   "modals": {
     "trxFee": "Transactions fee",
     "textCopy": "Text has been copied",
+    "textCopyError": "Copy error",
     "success": "Success",
     "fromAddress": "From",
     "toAddress": "To",
@@ -505,7 +506,8 @@
       "timestamp": "Timestamp",
       "transferred": "Tokens Transferred",
       "value": "Quantity",
-      "empty": "Transactions list is empty"
+      "empty": "Transactions list is empty",
+      "trxFee": "Transaction Fee"
     }
   },
   "kyc": {
@@ -528,6 +530,7 @@
   "proposals": {
     "addProposals": "Add proposal",
     "title": "Proposals",
+    "voting": "Voting",
     "textBanner": "Official DAO proposals are the only way to create enforceable change on the WorkQuest protocol.\nTo create a new DAO proposal, you need at least 10,000 (locked for one year).",
     "ui": {
       "search": "Search proposal",
@@ -585,7 +588,10 @@
       "notEnoughFunds": "You must have delegated at least {a} WQT. Delegated: {b} WQT.",
       "vote": "Vote",
       "isEmpty": "List is empty",
-      "delegatedAfter": "Your votes delegated after creating voting"
+      "delegatedAfter": "Your votes delegated after creating voting",
+      "transaction": {
+        "notEnoughFunds": "Not enough funds"
+      }
     }
   },
   "settings": {

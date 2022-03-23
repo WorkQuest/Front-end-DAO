@@ -1,12 +1,15 @@
 import { ethers } from 'ethers';
 import { AES, enc } from 'crypto-js';
-import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
+import Web3 from 'web3';
 import { error, success } from '~/utils/success-error';
 import abi from '~/abi/index';
 import { errorCodes } from '~/utils/enums';
 
 const bip39 = require('bip39');
+
+BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN });
+BigNumber.config({ EXPONENTIAL_AT: 60 });
 
 // eslint-disable-next-line import/prefer-default-export
 export const generateMnemonic = () => bip39.generateMnemonic();
@@ -340,5 +343,100 @@ export const undelegate = async () => {
   } catch (e) {
     console.error('undelegate: ', e);
     return error(errorCodes.Undelegate, e.message, e);
+  }
+};
+
+/* Proposals */
+export const addProposal = async (description, nonce) => {
+  try {
+    const res = await sendWalletTransaction('addProposal', {
+      abi: abi.WORKNET_VOTING,
+      address: process.env.WORKNET_VOTING,
+      data: [nonce, description.toString()],
+    });
+    return success(res);
+  } catch (e) {
+    return error(errorCodes.AddProposal, e.message, e);
+  }
+};
+export const getProposalInfoById = async (id) => {
+  try {
+    const res = await fetchWalletContractData('proposals', abi.WORKNET_VOTING, process.env.WORKNET_VOTING, [id]);
+    return success(res);
+  } catch (e) {
+    return error(errorCodes.GetProposal, e.message, e);
+  }
+};
+export const doVote = async (id, value) => {
+  try {
+    const res = await sendWalletTransaction('doVote', {
+      abi: abi.WORKNET_VOTING,
+      address: process.env.WORKNET_VOTING,
+      data: [id, value],
+    });
+    return success(res);
+  } catch (e) {
+    return error(errorCodes.VoteProposal, e.message, e);
+  }
+};
+export const getProposalThreshold = async () => {
+  try {
+    const result = await fetchWalletContractData('proposalThreshold', abi.WORKNET_VOTING, process.env.WORKNET_VOTING);
+    return success(new BigNumber(result.toString()).shiftedBy(-18).toString());
+  } catch (e) {
+    return error(errorCodes.GetProposalThreshold, e.message, e);
+  }
+};
+export const getVoteThreshold = async () => {
+  try {
+    const result = await fetchWalletContractData('voteThreshold', abi.WORKNET_VOTING, process.env.WORKNET_VOTING);
+    return success(new BigNumber(result.toString()).shiftedBy(-18).toString());
+  } catch (e) {
+    return error(errorCodes.GetVoteThreshold, e.message, e);
+  }
+};
+export const getReceipt = async (id, accountAddress) => {
+  try {
+    const result = await fetchWalletContractData('getReceipt', abi.WORKNET_VOTING, process.env.WORKNET_VOTING, [+id, accountAddress]);
+    return success(result);
+  } catch (e) {
+    return error(errorCodes.GetReceipt, e.message, e);
+  }
+};
+export const voteResults = async (id) => {
+  try {
+    return await fetchWalletContractData('voteResults', abi.WORKNET_VOTING, process.env.WORKNET_VOTING, [id]);
+  } catch (e) {
+    return error(errorCodes.VoteResults, e.message, e);
+  }
+};
+
+// Chairperson TODO: remove and move to admin panel
+export const getChairpersonHash = async () => {
+  try {
+    const result = await fetchWalletContractData('CHAIRPERSON_ROLE', abi.WORKNET_VOTING, process.env.WORKNET_VOTING);
+    return success(result);
+  } catch (e) {
+    return error(errorCodes.GetChairpersonHash, e.message, e);
+  }
+};
+export const hasRole = async (roleHash) => {
+  try {
+    const result = await fetchWalletContractData('hasRole', abi.WORKNET_VOTING, process.env.WORKNET_VOTING, [roleHash, wallet.address]);
+    return success(result);
+  } catch (e) {
+    return error(errorCodes.HasRole, e.message, e);
+  }
+};
+export const executeVoting = async (id) => {
+  try {
+    const res = await sendWalletTransaction('executeVoting', {
+      abi: abi.WORKNET_VOTING,
+      address: process.env.WORKNET_VOTING,
+      data: [id],
+    });
+    return success(res);
+  } catch (e) {
+    return error(errorCodes.ExecuteVoting, e.message, e);
   }
 };
