@@ -1,4 +1,5 @@
 export default () => ({
+  currentLang: '',
   twoFACode: '',
   userEnable2FA: {},
   userDisable2FA: {},

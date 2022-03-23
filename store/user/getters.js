@@ -1,4 +1,5 @@
 export default {
+  getCurrentLang: (state) => state.currentLang,
   isAuth: (state) => !!(state.tokens.access && state.tokens.refresh),
   getStatusKYC: (state) => state.userData.statusKYC,
   accessToken: (state) => state.tokens.access,

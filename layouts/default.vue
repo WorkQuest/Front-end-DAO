@@ -388,7 +388,6 @@ export default {
       isShowLocale: false,
       isMobileMenu: false,
       isNotFlexContainer: true,
-      currentLocale: '',
       notification: 1,
       mobileMenuLinks: [
         { path: '/proposals', title: this.$t('ui.proposals') },
@@ -418,6 +417,7 @@ export default {
       userData: 'user/getUserData',
       imageData: 'user/getImageData',
       userRole: 'user/getUserRole',
+      currentLocale: 'user/getCurrentLang',
     }),
     locales() {
       return this.$i18n.locales.map((item) => ({
@@ -439,11 +439,11 @@ export default {
   async mounted() {
     this.GetLocation();
     this.localUserData = JSON.parse(JSON.stringify(this.userData));
-    this.currentLocale = this.$i18n.localeProperties.code;
+    this.$store.commit('user/setLang', this.$i18n.localeProperties.code);
   },
   methods: {
     setLocale(item) {
-      this.currentLocale = item.localeText;
+      this.$store.commit('user/setLang', item.localeText);
       this.$i18n.setLocale(item.localeText);
       moment.locale(item.localeText);
     },
@@ -520,7 +520,7 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('user/logout');
-      this.$router.push('/');
+      await this.$router.push('/');
     },
     closeAll() {
       this.isShowProfile = false;
