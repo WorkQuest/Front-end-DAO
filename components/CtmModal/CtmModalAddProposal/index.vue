@@ -3,120 +3,118 @@
     class="addProposal"
     :title="$t('modals.addProposal')"
   >
-    <validation-observer
-      v-slot="{ handleSubmit, valid }"
-      class="addProposal__content content"
-      tag="div"
-    >
-      <div class="content__voting">
-        <div class="content__field content__input">
-          <base-field
-            id="votingTopicInput"
-            v-model="votingTopicInput"
-            :placeholder="$t('modals.votingTopic')"
-            :label="$t('modals.votingTopic')"
-            rules="required|max:78|min:3"
-            :name="$t('modals.votingTopicField')"
-          />
-        </div>
-      </div>
-      <div class="content__dates">
-        <div class="content__field">
-          {{ $t('modals.votingStart') }}
-          <div class="date-field">
-            {{ votingStartInput }}
-          </div>
-        </div>
-        <div class="content__field">
-          {{ $t('modals.votingEnd') }}
-          <div class="date-field">
-            {{ votingEndInput }}
-          </div>
-        </div>
-      </div>
-      <div class="content__field field">
-        <div class="content-field__description description">
-          <label
-            for="description"
-            class="description__header"
-          >
-            {{ $t('modals.description') }}
-          </label>
-          <validation-provider
-            v-slot="{ errors }"
-            rules="required|max:2000|min:20"
-          >
-            <textarea
-              id="description"
-              v-model="descriptionInput"
-              class="description__textarea"
-              name="description"
+    <div class="addProposal__content content">
+      <validation-observer v-slot="{ handleSubmit, valid }">
+        <div class="content__voting">
+          <div class="content__field content__input">
+            <base-field
+              id="votingTopicInput"
+              v-model="votingTopicInput"
+              :placeholder="$t('modals.votingTopic')"
+              :label="$t('modals.votingTopic')"
+              rules="required|max:78|min:3"
+              :name="$t('modals.votingTopicField')"
             />
-            <div class="description__error">
-              {{ errors[0] }}
+          </div>
+        </div>
+        <div class="content__dates">
+          <div class="content__field">
+            {{ $t('modals.votingStart') }}
+            <div class="date-field">
+              {{ votingStartInput }}
             </div>
-          </validation-provider>
+          </div>
+          <div class="content__field">
+            {{ $t('modals.votingEnd') }}
+            <div class="date-field">
+              {{ votingEndInput }}
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="content__field field">
-        <div class="field__documents">
-          <base-uploader
-            class="uploader"
-            type="all"
-            :items="documents"
-            :limit="docsLimit"
-            :is-show-download="false"
-            rules="required|alpha_num"
-            :name="$t('modals.recepientAddressField')"
-            @remove="removeDocument"
+        <div class="content__field field">
+          <div class="content-field__description description">
+            <label class="description__header">
+              {{ $t('modals.description') }}
+            </label>
+            <validation-provider
+              v-slot="{ errors }"
+              rules="required|max:2000|min:20"
+            >
+              <textarea
+                id="description"
+                v-model="descriptionInput"
+                class="description__textarea"
+                name="description"
+              />
+              <div class="description__error">
+                {{ errors[0] }}
+              </div>
+            </validation-provider>
+          </div>
+        </div>
+        <div class="content__field field">
+          <div class="field__documents">
+            <base-uploader
+              class="uploader"
+              type="all"
+              :items="documents"
+              :limit="docsLimit"
+              :is-show-download="false"
+              rules="required|alpha_num"
+              :name="$t('modals.recepientAddressField')"
+              @remove="removeDocument"
+            >
+              <template v-slot:actionButton>
+                <input
+                  ref="fileUpload"
+                  class="uploader__btn_hidden"
+                  type="file"
+                  :accept="accept"
+                  @change="handleFileSelected($event)"
+                >
+                <base-btn
+                  mode="outline"
+                  class="uploader__btn"
+                  :disabled="isDocumentsLimitReached"
+                  @click="$refs.fileUpload.click()"
+                >
+                  {{ $t('meta.addFile') }}
+                  <template v-slot:right>
+                    <span class="icon icon__plus icon-plus_circle_outline" />
+                  </template>
+                </base-btn>
+              </template>
+            </base-uploader>
+          </div>
+        </div>
+        <div class="field__action action">
+          <base-btn
+            mode="outline"
+            class="action__cancel"
+            @click="CloseModal"
           >
-            <template v-slot:actionButton>
-              <input
-                ref="fileUpload"
-                class="uploader__btn_hidden"
-                type="file"
-                :accept="accept"
-                @change="handleFileSelected($event)"
-              >
-              <base-btn
-                mode="outline"
-                class="uploader__btn"
-                :disabled="isDocumentsLimitReached"
-                @click="$refs.fileUpload.click()"
-              >
-                {{ $t('meta.addFile') }}
-                <template v-slot:right>
-                  <span class="icon icon__plus icon-plus_circle_outline" />
-                </template>
-              </base-btn>
-            </template>
-          </base-uploader>
+            {{ $t('meta.cancel') }}
+          </base-btn>
+          <base-btn
+            class="action__add"
+            :disabled="!valid"
+            @click="handleSubmit(addProposal)"
+          >
+            {{ $t('meta.addProposal') }}
+          </base-btn>
         </div>
-      </div>
-      <div class="field__action action">
-        <base-btn
-          mode="outline"
-          class="action__cancel"
-          @click="CloseModal"
-        >
-          {{ $t('meta.cancel') }}
-        </base-btn>
-        <base-btn
-          class="action__add"
-          :disabled="!valid"
-          @click="handleSubmit(addProposal)"
-        >
-          {{ $t('meta.addProposal') }}
-        </base-btn>
-      </div>
-    </validation-observer>
+      </validation-observer>
+    </div>
   </ctm-modal-box>
 </template>
 
 <script>
 
 import { mapGetters } from 'vuex';
-import { Chains } from '~/utils/enums';
+import BigNumber from 'bignumber.js';
+import abi from '~/abi/index';
+import modals from '~/store/modals/modals';
+import { TokenSymbols } from '~/utils/enums';
 
 export default {
   name: 'ModalAddProposal',
@@ -135,9 +133,10 @@ export default {
   },
   computed: {
     ...mapGetters({
+      userWalletAddress: 'user/getUserWalletAddress',
       options: 'modals/getOptions',
-      isConnected: 'web3/getWalletIsConnected',
       prevFilters: 'proposals/filters',
+      balanceData: 'wallet/getBalanceData',
     }),
     isDocumentsLimitReached() {
       return this.documents.length >= this.docsLimit;
@@ -151,34 +150,73 @@ export default {
   },
   methods: {
     async addProposal() {
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!this.isConnected) return;
-      const { callback } = this.options;
       this.SetLoader(true);
+      await this.$store.dispatch('wallet/getBalance');
+      // Check balance before send proposal data to backend
+      const feeCheck = await this.$store.dispatch('wallet/getContractFeeData', {
+        method: 'addProposal',
+        _abi: abi.WORKNET_VOTING,
+        contractAddress: process.env.WORKNET_VOTING,
+        data: [1, this.descriptionInput.toString()],
+      });
+      if (!feeCheck.ok || new BigNumber(this.balanceData.WUSD.fullBalance.toString()).isLessThan(feeCheck.result.fee)) {
+        this.ShowToast(this.$t('errors.transaction.notEnoughFunds'), this.$t('errors.addProposal'));
+        this.SetLoader(false);
+        return;
+      }
       this.descriptionInput = this.descriptionInput.trim();
       this.votingTopicInput = this.votingTopicInput.trim();
-      const medias = await this.uploadFiles(this.documents);
-      const { address } = await this.$store.dispatch('web3/getAccount');
+      const medias = await this.UploadFiles(this.documents);
       const res = await this.$store.dispatch('proposals/createProposal', {
-        proposer: address,
         title: this.votingTopicInput,
         description: this.descriptionInput,
         medias,
       });
       if (res.ok) {
         const { nonce } = res.result;
-        await this.$store.dispatch('web3/addProposal', { description: this.descriptionInput, nonce });
-        await this.$store.dispatch('proposals/getProposals', {});
-      }
-      if (callback) {
-        await callback;
-        await this.$store.dispatch('proposals/updateFilters', {
-          ...this.prevFilters,
-          lastPage: 1,
+        const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
+          method: 'addProposal',
+          _abi: abi.WORKNET_VOTING,
+          contractAddress: process.env.WORKNET_VOTING,
+          data: [nonce, this.descriptionInput.toString()],
         });
+        this.SetLoader(false);
+        if (feeRes.ok) {
+          this.ShowModal({
+            key: modals.transactionReceipt,
+            title: this.$t('modals.addProposal'),
+            fields: {
+              from: {
+                name: this.$t('modals.fromAddress'),
+                value: this.userWalletAddress,
+              },
+              to: {
+                name: this.$t('modals.toAddress'),
+                value: process.env.WORKNET_VOTING,
+              },
+              fee: {
+                name: this.$t('modals.trxFee'),
+                value: feeRes.result.fee,
+                symbol: TokenSymbols.WUSD,
+              },
+            },
+            submitMethod: async () => {
+              this.SetLoader(true);
+              await this.$store.dispatch('wallet/addProposal', {
+                description: this.descriptionInput,
+                nonce,
+              });
+              await this.$store.dispatch('proposals/updateFilters', {
+                ...this.prevFilters,
+                lastPage: 1,
+              });
+              await this.$store.dispatch('proposals/getProposals', { limit: 12, offset: 0 });
+              this.SetLoader(false);
+              this.CloseModal();
+            },
+          });
+        }
       }
-      this.CloseModal();
-      this.SetLoader(false);
     },
     removeDocument(doc) {
       this.documents = this.documents.filter((item) => item.id !== doc.id);

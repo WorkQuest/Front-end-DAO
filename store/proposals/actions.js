@@ -14,18 +14,16 @@ export default {
   },
   async getProposals({ commit }, params) {
     try {
-      const result = await this.$axios.$get('v1/proposal', { params });
-      commit('setCards', result.proposal);
+      const result = await this.$axios.$get('v1/proposals', { params });
+      commit('setCards', result.proposals);
       commit('setCardsCount', result.count);
     } catch (e) {
       console.error(e.message);
     }
   },
-  async getProposal({ commit }, {
-    proposalId, params,
-  }) {
+  async getProposal({ commit }, { proposalId }) {
     try {
-      const { result } = await this.$axios.$get(`v1/proposal/${proposalId}`, { params });
+      const { result } = await this.$axios.$get(`v1/proposal/${proposalId}`);
       return success(result);
     } catch (e) {
       console.error(e.message);
@@ -34,10 +32,9 @@ export default {
   },
   async getProposalVotes({ commit }, { proposalId, params }) {
     try {
-      const res = await this.$axios.$get(`v1/votings/${proposalId}`, { params });
+      const res = await this.$axios.$get(`v1/proposal/${proposalId}/votes`, { params });
       return success(res);
     } catch (e) {
-      console.error(e.message);
       return error(errorCodes.GetProposal, e.message, e);
     }
   },

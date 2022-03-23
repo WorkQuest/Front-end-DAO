@@ -96,11 +96,13 @@ export default {
     &_left {
       margin: 0 5px 0 0;
     }
+
     &_right {
       margin: 0 0 0 5px;
     }
   }
 }
+
 .base-btn {
   display: flex;
   align-items: center;
@@ -117,182 +119,228 @@ export default {
   transition: .3s;
   background: $blue;
   border-radius: 6px;
+
   &:hover {
     background: #103D7C;
   }
+
   &_like {
     background: transparent;
+
     &:hover {
       background: transparent;
     }
   }
+
   &_black {
     background: $black800;
     color: $white;
+
     &:hover {
       background: $black700;
     }
   }
+
   &_verification {
     background: $white;
     color: $blue;
+
     &:hover {
       background: $black100;
     }
   }
+
   &_grey {
     background-color: $black100;
+
     &:hover {
       background: $black200;
     }
   }
+
   &_back {
     transition: .3s;
     background-color: transparent;
     color: $black500;
+
     &:hover {
       background-color: transparent;
       color: $black500;
     }
   }
+
   &_approve {
     background-color: $green;
     color: $white;
     border-radius: 6px;
     border: 1px solid $green;
+
     &:hover {
       background-color: $white;
       color: $green;
       border-radius: 6px;
     }
   }
+
   &_agree {
     background-color: $green;
     color: $white;
+
     &:hover {
       background-color: $green;
       color: $white;
-      box-shadow: 0 0 5px rgba(0,0,0,0.5);
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     }
   }
+
   &_delete {
     background-color: $red;
     color: $white;
+
     &:hover {
       background-color: #cc0000;
       color: $white;
     }
   }
+
   &_show-messages {
     background-color: transparent;
     color: $blue;
   }
+
   &_blue {
     background-color: transparent;
     color: $blue;
+
     &:hover {
       color: #ffffff;
       background-color: $blue;
       transition: .3s;
     }
   }
+
   &_lightBlue {
     background-color: $white;
-    color: $blue ;
-    border: 0.5px solid  #e6f7ff;
-    &:hover{
+    color: $blue;
+    border: 0.5px solid #e6f7ff;
+
+    &:hover {
       background-color: #e6f7ff;
     }
   }
+
   &_lightRed {
     background-color: $white;
-    color: #DF3333 ;
+    color: #DF3333;
     border: 0.5px solid rgba(223, 51, 51, 0.1);;
-    &:hover{
+
+    &:hover {
       background-color: rgba(223, 51, 51, 0.1);;
     }
   }
+
   &_messages {
     background-color: $white;
     color: $green;
     transition: .3s;
     font-size: 12px;
+
     &:hover {
       color: #77e377;
       background-color: $white;
     }
   }
+
   &_goToChat {
     background-color: $white;
     color: $green;
     border: 1px solid $black400;
+
     &:hover {
       background-color: $white;
       color: $green;
       border: 1px solid $black600;
-      box-shadow: 0 0 2px rgba(0,0,0,0.5);
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     }
   }
+
   &_dispute {
     background-color: $red;
+
     &:hover {
-      box-shadow: 0 0 5px rgba(0,0,0,0.5);
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
       background-color: $red;
     }
   }
+
   &_disabled {
     pointer-events: none;
-    background: #D1D1CF !important;
+    border: 1px solid rgba(0, 131, 199, 0.1);
+    color: $black400;
+    background: $black0;
   }
+
   &_outline {
     border: 1px solid rgba(0, 131, 199, 0.1);
     background: #FFFFFF;
     color: $blue;
+
     &:hover {
       background: #F7F8FA;
       color: $blue;
     }
   }
+
   &_copy {
     background: #FFFFFF;
     color: $blue;
     font-size: 25px;
+
     &:hover {
       background: #FFFFFF;
       color: $blue;
     }
   }
+
   &_borderless {
     background: #FFFFFF;
     color: $blue;
+
     &-left {
       @extend .base-btn_borderless;
       justify-content: flex-start;
     }
+
     &-right {
       @extend .base-btn_borderless;
       justify-content: flex-end;
     }
+
     &:hover {
       color: #3992ff;
       background: $white;
     }
   }
+
   &_tag {
     background: rgba(0, 131, 199, 0.1);
     border-radius: 3px;
     color: $blue;
+
     &:hover {
       background: rgba(0, 131, 199, 0.2);
     }
   }
+
   &_light {
     background: #FFFFFF;
     color: $black800;
+
     &:hover {
       background: $black100;
     }
   }
+
   &_transparent {
     background: transparent;
   }

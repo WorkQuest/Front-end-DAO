@@ -46,6 +46,7 @@ import { mapGetters } from 'vuex';
 import proposalCards from '~/components/app/Cards/proposalCards';
 import modals from '~/store/modals/modals';
 import { Chains } from '~/utils/enums';
+import { getStyledAmount } from '~/utils/wallet';
 
 export default {
   name: 'Proposals',
@@ -61,48 +62,45 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isConnected: 'web3/getWalletIsConnected',
+      isWalletConnected: 'wallet/getIsWalletConnected',
+      userWalletAddress: 'user/getUserWalletAddress',
       proposalThreshold: 'proposals/proposalThreshold',
     }),
   },
-  async beforeMount() {
-    this.isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
+  async beforeCreate() {
+    await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
   },
   methods: {
     isCloseInfo() {
       this.isShowInfo = !this.isShowInfo;
     },
     async addProposalModal() {
-      const connectionRes = await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!connectionRes.ok) return;
       this.SetLoader(true);
-      const account = await this.$store.dispatch('web3/getAccount');
       let delegated;
       let { proposalThreshold } = this;
       if (!proposalThreshold) {
         const [delegatedRes, proposalThresholdRes] = await Promise.all([
-          this.$store.dispatch('web3/getVotes', account.address),
-          this.$store.dispatch('web3/getProposalThreshold'),
+          this.$store.dispatch('wallet/getVotesByAddresses', [this.userWalletAddress]),
+          this.$store.dispatch('wallet/getProposalThreshold'),
         ]);
-        delegated = delegatedRes.result;
+        delegated = getStyledAmount(delegatedRes.result[0], true);
         proposalThreshold = proposalThresholdRes.result;
         await this.$store.dispatch('proposals/setProposalThreshold', proposalThreshold);
       } else {
-        const delegatedRes = await this.$store.dispatch('web3/getVotes', account.address);
-        delegated = delegatedRes.result;
+        const delegatedRes = await this.$store.dispatch('wallet/getVotesByAddresses', [this.userWalletAddress]);
+        delegated = getStyledAmount(delegatedRes.result[0], true);
       }
       this.SetLoader(false);
       if (+delegated < +proposalThreshold) {
-        await this.$store.dispatch('main/showToast', {
-          title: this.$t('proposal.errors.addProposal'),
-          text: this.$t('proposal.errors.notEnoughFunds', { a: proposalThreshold, b: delegated }),
-        });
-      } else this.showAddProposal();
+        this.ShowToast(this.$t('proposal.errors.notEnoughFunds', { a: proposalThreshold, b: delegated }),
+          this.$t('proposal.errors.addProposal'));
+      } else {
+        this.showAddProposal();
+      }
     },
     showAddProposal() {
       this.ShowModal({
         key: modals.addProposal,
-        callback: async () => await this.$store.dispatch('proposals/getProposals', { limit: 12, offset: 0 }),
       });
     },
   },

@@ -332,20 +332,6 @@ export default {
         callback: async () => this.updateDelegatedUser(),
       });
     },
-    ClipboardSuccessHandler(value) {
-      // TODO: Добавить локализацию
-      this.$store.dispatch('main/showToast', {
-        title: 'Copied successfully',
-        text: value,
-      });
-    },
-    ClipboardErrorHandler(value) {
-      // TODO: Добавить локализацию
-      this.$store.dispatch('main/showToast', {
-        title: 'Copy error',
-        text: value,
-      });
-    },
   },
 };
 </script>
@@ -356,6 +342,7 @@ export default {
   @include main;
   @include text-simple;
   color: $black800;
+
   &__profile {
     width: 100%;
     max-width: 1180px;
