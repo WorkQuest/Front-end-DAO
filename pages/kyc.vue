@@ -43,6 +43,11 @@ export default {
       currentLocale: 'user/getCurrentLang',
     }),
   },
+  watch: {
+    async currentLocale() {
+      await this.initSumSub();
+    },
+  },
   async mounted() {
     this.SetLoader(true);
     await this.initSumSub();
@@ -59,7 +64,7 @@ export default {
           .withAccessToken(accessToken, () => {
           })
           .withConf({
-            lang: this.currentLocale,
+            lang: this.currentLocale.slice(10, 12),
             email,
             onError: (error) => {
               console.log('WebSDK onError', error);

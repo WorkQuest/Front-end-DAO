@@ -36,14 +36,8 @@
                 data-selector="ACTION-BTN-SHOW-LOCALE"
                 @click="showLocale()"
               >
-                <span
-                  v-if="currentLocale"
-                  class="header__button_locale-name"
-                >
+                <span class="header__button_locale-name">
                   {{ currentLocale.toUpperCase() }}
-                </span>
-                <span v-else>
-                  {{ $t('ui.locals.en').toUpperCase() }}
                 </span>
                 <span class="icon icon-caret_down" />
                 <transition name="fade">
