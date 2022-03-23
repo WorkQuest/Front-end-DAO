@@ -1,6 +1,9 @@
 /* eslint-disable no-param-reassign */
 
 export default {
+  setLang(state, data) {
+    state.currentLang = data;
+  },
   setTokens(state, {
     access, refresh, social, userStatus,
   }) {
@@ -9,7 +12,9 @@ export default {
     this.$cookies.set('socialNetwork', social, { path: '/' });
     this.$cookies.set('access', access, { path: '/' });
     this.$cookies.set('refresh', refresh, { path: '/' });
-    if (userStatus) { this.$cookies.set('userStatus', userStatus, { path: '/' }); }
+    if (userStatus) {
+      this.$cookies.set('userStatus', userStatus, { path: '/' });
+    }
   },
   setUserData(state, data) {
     state.userData = data;
