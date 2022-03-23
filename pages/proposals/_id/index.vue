@@ -20,19 +20,22 @@
       <div class="proposal__content content">
         <div class="proposal__info info content__column">
           <div class="info__top info__top_blue">
-            <!-- TODO: потом удалить -->
-            <span>{{ `Voting #${+idCard - 1}` }}</span>
+            <span class="info__voting-number">
+              {{ `${$t('proposals.voting')} #${card.createdEvent.contractProposalId}` }}
+            </span>
             <span
               class="info__status"
-              :class="cardsStatusColor(status)"
-            >{{ getPriority(status) }}</span>
+              :class="cardsStatusColor(card.status)"
+            >{{ getPriority(card.status) }}</span>
           </div>
           <div class="info__header header">
             <div class="header__title">
-              <span>{{ title }}</span>
+              <span>{{ card.title }}</span>
             </div>
             <div class="header__subtitle">
-              <span v-if="dateStart && dateEnd">{{ $moment(dateStart).format('lll') }} - {{ $moment(dateEnd).format('lll') }}</span>
+              <span v-if="dateStart && dateEnd">
+                {{ $moment(dateStart).format('lll') }} - {{ $moment(dateEnd).format('lll') }}
+              </span>
             </div>
           </div>
           <div class="info__transactions transactions">
@@ -45,7 +48,7 @@
                 class="hash__value"
                 target="_blank"
               >
-                {{ hash.length ? CutTxn(hash) : '...' }}
+                {{ CutTxn(card.createdEvent.transactionHash, 6, 6) }}
               </a>
             </div>
             <div class="transactions__files files">
@@ -69,13 +72,13 @@
               {{ $t('proposal.description') }}
             </div>
             <div class="description__value">
-              {{ description }}
+              {{ card.description }}
             </div>
           </div>
           <div class="info__forum forum">
             <nuxt-link
               class="forum__link btn"
-              :to="discussionId ? `/discussions/${discussionId}` : '/discussions'"
+              :to="card.discussionId ? `/discussions/${card.discussionId}` : '/discussions'"
             >
               <base-btn
                 mode="outline"
@@ -161,14 +164,14 @@
               <base-btn
                 mode="delete"
                 class="btn__votes btn__votes_size"
-                @click="toVote(false)"
+                @click="doVote(false)"
               >
                 {{ $t('proposal.no') }}
               </base-btn>
               <base-btn
                 mode="approve"
                 class="btn__votes btn__votes_size btn__votes_green"
-                @click="toVote(true)"
+                @click="doVote(true)"
               >
                 {{ $t('proposal.yes') }}
               </base-btn>
@@ -182,7 +185,7 @@
                 {'btn__voted_red': vote === false },
               ]"
             >
-              {{ vote ? $t('proposal.agree') : $t('proposal.disagree') }}
+              {{ $t('proposal.youVoted') }} {{ vote ? $t('proposal.yes') : $t('proposal.no') }}
             </base-btn>
           </div>
         </div>
@@ -263,26 +266,36 @@
 <script>
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
-import { proposalStatuses, Chains } from '~/utils/enums';
+import { ExplorerUrls, proposalStatuses, TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
+import abi from '~/abi/index';
+import { getStyledAmount } from '~/utils/wallet';
 
 export default {
+  name: 'ProposalInfo',
   data() {
     return {
+      isProd: process.env.PROD === 'true',
+      idCard: null,
+      card: {
+        createdEvent: {
+          contractProposalId: '',
+          transactionHash: '',
+          votingPeriod: 0,
+        },
+        description: '',
+        medias: [],
+        status: 0,
+        title: '',
+      },
+      documents: [],
+      dateStart: '',
+      dateEnd: '',
       limit: 10,
       currentPage: 1,
       historyTableData: [],
       historyCount: 0,
-      idCard: null,
-      discussionId: null,
-      status: 0,
-      dateStart: '',
-      dateEnd: '',
-      title: '',
       ddValue: 0,
-      documents: [],
-      hash: '',
-      description: null,
       results: {
         percents: {
           yes: 0,
@@ -297,13 +310,14 @@ export default {
       vote: null,
       isDescending: true,
       isActive: true,
-      isFirstLoading: true,
     };
   },
   computed: {
     ...mapGetters({
-      isConnected: 'web3/getWalletIsConnected',
-      isChairperson: 'web3/isChairpersonRole',
+      userWalletAddress: 'user/getUserWalletAddress',
+      proposalThreshold: 'proposals/proposalThreshold',
+      isWalletConnected: 'wallet/getIsWalletConnected',
+      isChairperson: 'wallet/isChairpersonRole',
       cards: 'proposals/cards',
     }),
     docs() {
@@ -344,16 +358,6 @@ export default {
     },
   },
   watch: {
-    async isConnected(newVal) {
-      if (this.isFirstLoading) return;
-      if (!newVal) {
-        this.resetDataFromContract();
-        return;
-      }
-      this.SetLoader(true);
-      await this.loadCard();
-      this.SetLoader(false);
-    },
     async isDescending() {
       await this.fetchVoting(this.currentPage);
     },
@@ -365,30 +369,27 @@ export default {
     },
   },
   async beforeMount() {
-    const isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
-    if (isMobile) {
-      await this.$router.push('/proposals');
-    }
+    await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
   },
   async mounted() {
+    if (!this.isWalletConnected) return;
     this.SetLoader(true);
-    this.idCard = +this.$route.params.id;
+    this.idCard = this.$route.params.id;
 
-    let card = null;
+    let tempCard = null;
     if (this.cards && this.cards.length) {
       // eslint-disable-next-line no-restricted-syntax
       for (const item of this.cards) {
         if (item.proposalId === this.idCard) {
-          card = item;
+          tempCard = item;
           break;
         }
       }
     }
-    if (card === null) {
+    // Not found in store
+    if (tempCard === null) {
       const [proposalRes, votingRes] = await Promise.all([
-        this.$store.dispatch('proposals/getProposal', {
-          proposalId: this.idCard,
-        }),
+        this.$store.dispatch('proposals/getProposal', { proposalId: this.idCard }),
         this.fetchVoting(this.currentPage),
       ]);
       if (!proposalRes.ok || !votingRes) {
@@ -396,28 +397,14 @@ export default {
         await this.$router.push('/proposals');
         return;
       }
-      card = proposalRes.result;
-    } else {
-      const votingRes = this.fetchVoting(this.currentPage);
-      if (!votingRes) {
-        this.SetLoader(false);
-        await this.$router.push('/proposals');
-        return;
-      }
+      tempCard = proposalRes.result;
     }
-    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-    if (this.isConnected) {
-      await this.loadCard();
-    }
-    this.discussionId = card.discussionId;
-    this.title = card.title;
-    this.description = card.description;
-    this.hash = card.txHash;
-    this.dateStart = new Date(card.timestamp * 1000);
-    this.dateEnd = new Date((card.timestamp + card.votingPeriod) * 1000);
+    this.card = tempCard;
+    this.dateStart = new Date(this.card.createdEvent.timestamp * 1000);
+    this.dateEnd = new Date((+this.card.createdEvent.timestamp + +this.card.createdEvent.votingPeriod) * 1000);
     let i = 1;
     // eslint-disable-next-line no-restricted-syntax
-    for (const media of card.medias) {
+    for (const media of this.card.medias) {
       const type = media.contentType.split('/')[0] === 'image' ? 'img' : 'doc';
       this.documents.push({
         id: i,
@@ -427,7 +414,8 @@ export default {
       });
       if (type === 'doc') i += 1;
     }
-    this.isFirstLoading = false;
+    await this.loadCard();
+
     this.SetLoader(false);
   },
   methods: {
@@ -437,15 +425,15 @@ export default {
         params: {
           limit: this.limit,
           offset: (page - 1) * this.limit,
-          createdAt: this.isDescending ? 'desc' : 'asc',
           support: this.ddValue > 0 ? this.ddValue === 1 : null,
+          'sort[createdAt]': this.isDescending ? 'desc' : 'asc',
         },
       });
       if (!votingRes.ok) {
         return false;
       }
       this.historyCount = votingRes.result.count;
-      this.fillTableData(votingRes.result.voting);
+      this.fillTableData(votingRes.result.votes);
       return true;
     },
     fillTableData(votes) {
@@ -465,19 +453,12 @@ export default {
       this.historyTableData = result;
     },
     getHashLink() {
-      if (!this.hash) return '';
-      return process.env.PROD === 'true'
-        ? `https://rinkeby.etherscan.io/tx/${this.hash}` : `https://rinkeby.etherscan.io/tx/${this.hash}`;
-    },
-    async checkRole() { // TODO: remove check chairperson and move logic to admin panel
-      await this.$store.dispatch('web3/isChairpersonRole');
+      return `${ExplorerUrls[this.isProd ? 'PROD' : 'DEV']}/transactions/${this.card.createdEvent.transactionHash}`;
     },
     async executeVoting() {
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!this.isConnected) return;
       this.SetLoader(true);
       if (!this.isChairperson) return;
-      await this.$store.dispatch('web3/executeVoting', this.idCard);
+      await this.$store.dispatch('wallet/executeVoting', this.card.createdEvent.contractProposalId);
       this.isActive = false;
       await this.updateVoteResults();
       this.SetLoader(false);
@@ -496,16 +477,15 @@ export default {
     },
     async loadCard() {
       const [proposalRes] = await Promise.all([
-        this.$store.dispatch('web3/getProposalInfoById', this.idCard),
+        this.$store.dispatch('wallet/getProposalInfoById', this.card.createdEvent.contractProposalId),
         this.updateVoteResults(),
         this.getReceipt(),
-        this.checkRole(),
+        this.$store.dispatch('wallet/isChairpersonRole'), // TODO: remove check chairperson and move logic to admin panel
       ]);
       if (!proposalRes.ok) return;
-      const { result } = proposalRes.result;
       const {
         forVotes, againstVotes, active,
-      } = result;
+      } = proposalRes.result;
       const yes = +(new BigNumber(forVotes).shiftedBy(-18));
       const no = +(new BigNumber(againstVotes).shiftedBy(-18));
       this.results.votes.yes = yes;
@@ -514,10 +494,10 @@ export default {
       if (sumVotes <= 0) {
         this.results.percents.yes = 0;
         this.results.percents.no = 0;
-      } else if (no - yes === no) {
+      } else if (!+new BigNumber(no).minus(yes)) {
         this.results.percents.yes = 0;
         this.results.percents.no = 100;
-      } else if (yes - no === yes) {
+      } else if (!+new BigNumber(yes).minus(no)) {
         this.results.percents.yes = 100;
         this.results.percents.no = 0;
       } else {
@@ -531,18 +511,17 @@ export default {
       this.isActive = active;
     },
     async updateVoteResults() {
-      const res = await this.$store.dispatch('web3/voteResults', this.idCard);
+      const res = await this.$store.dispatch('wallet/voteResults', this.card.createdEvent.contractProposalId);
       if (!res.ok) return;
       const { succeded, defeated } = res.result;
       if (!succeded && !defeated) {
-        this.status = 1;
+        this.card.status = 1;
       } else if (defeated || !succeded) {
-        this.status = 2;
-      } else this.status = 3;
+        this.card.status = 2;
+      } else this.card.status = 3;
     },
     async getReceipt() {
-      const { address } = await this.$store.dispatch('web3/getAccount');
-      const res = await this.$store.dispatch('web3/getReceipt', { id: this.idCard, accountAddress: address });
+      const res = await this.$store.dispatch('wallet/getReceipt', { id: this.card.createdEvent.contractProposalId, accountAddress: this.userWalletAddress });
       if (res.ok && res.result) {
         const { hasVoted, support } = res.result;
         this.isVoted = hasVoted;
@@ -559,57 +538,68 @@ export default {
       return statusClass[idx] || 'None';
     },
     getPriority(index) {
-      const priority = {
+      return {
         [proposalStatuses.PENDING]: this.$t('proposals.cards.status.pending'),
         [proposalStatuses.ACTIVE]: this.$t('proposals.cards.status.active'),
         [proposalStatuses.REJECTED]: this.$t('proposals.cards.status.rejected'),
         [proposalStatuses.ACCEPTED]: this.$t('proposals.cards.status.accepted'),
-      };
-      return priority[index] || 'None';
+      }[index] || 'None';
     },
-    async toVote(value) {
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!this.isConnected) return;
-
-      const account = await this.$store.dispatch('web3/getAccount');
-      const [delegated, voteThreshold] = await Promise.all([
-        this.$store.dispatch('web3/getVotes', account.address),
-        this.$store.dispatch('web3/getVoteThreshold'),
+    async doVote(value) {
+      const [delegatedRes, voteThreshold] = await Promise.all([
+        this.$store.dispatch('wallet/getVotesByAddresses', [this.userWalletAddress]),
+        this.$store.dispatch('wallet/getVoteThreshold'),
+        this.$store.dispatch('wallet/getBalance'),
       ]);
-      if (+delegated.result < +voteThreshold.result) {
-        await this.$store.dispatch('main/showToast', {
-          title: this.$t('proposal.errors.voteError'),
-          text: this.$t('proposal.errors.notEnoughFunds', {
+      const delegated = getStyledAmount(delegatedRes.result[0]);
+      if (new BigNumber(delegated).isLessThan(voteThreshold.result)) {
+        this.ShowToast(
+          this.$tc('proposal.errors.notEnoughFunds', {
             a: +voteThreshold.result,
-            b: +delegated.result,
-          }),
-        });
+            b: +delegated,
+          },
+          this.$t('proposal.errors.voteError')),
+        );
         return;
       }
 
       this.SetLoader(true);
-      if (this.$moment().isAfter(this.$moment(this.endTime))) {
-        await this.$store.dispatch('main/showToast', {
-          title: this.$t('proposal.voteError'),
-          text: this.$t('proposal.errors.votingTimeIsExpired'),
-        });
+      if (this.$moment().isAfter(this.$moment(this.dateEnd))) {
+        this.ShowToast(this.$t('proposal.errors.votingTimeIsExpired'), this.$t('proposal.voteError'));
         this.SetLoader(false);
         return;
       }
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!this.isConnected) return;
-      const res = await this.$store.dispatch('web3/doVote', { id: this.idCard, value });
-      if (!res.ok) {
-        await this.$store.dispatch('main/showToast', {
-          title: this.$t('proposal.errors.voteError'),
-          text: this.$t('proposal.errors.delegatedAfter'),
-        });
-        this.SetLoader(false);
-        return;
-      }
-      await this.fetchVoting(this.currentPage);
-      await this.loadCard();
+
+      if (!this.isWalletConnected) return;
+      const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
+        method: 'doVote',
+        _abi: abi.WORKNET_VOTING,
+        contractAddress: process.env.WORKNET_VOTING,
+        data: [this.card.createdEvent.contractProposalId, value],
+      });
       this.SetLoader(false);
+      if (!feeRes.ok) return;
+      this.ShowModal({
+        key: modals.transactionReceipt,
+        title: this.$t('proposal.voteForProposal'),
+        fields: {
+          from: { name: this.$t('modals.fromAddress'), value: this.userWalletAddress },
+          to: { name: this.$t('modals.toAddress'), value: process.env.WORKNET_VOTING },
+          fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
+        },
+        submitMethod: async () => {
+          this.SetLoader(true);
+          const res = await this.$store.dispatch('wallet/doVote', { id: this.card.createdEvent.contractProposalId, value });
+          if (!res.ok) {
+            this.ShowToast(this.$t('proposal.errors.delegatedAfter'), this.$t('proposal.errors.voteError'));
+            this.SetLoader(false);
+            return;
+          }
+          await this.fetchVoting(this.currentPage);
+          await this.loadCard();
+          this.SetLoader(false);
+        },
+      });
     },
   },
 };
