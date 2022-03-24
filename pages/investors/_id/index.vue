@@ -63,8 +63,8 @@
                   v-if="input.isVisible"
                   class="contacts__name"
                   :is-hide-error="true"
-                  mode="iconWhite"
                   :disabled="true"
+                  mode="left"
                   :value="fillInputs(input)"
                   :placeholder="$t('investor.notFilled')"
                 >
@@ -95,8 +95,8 @@
                 :key="input.key"
                 class="social__network"
                 :disabled="true"
+                mode="left"
                 :is-hide-error="true"
-                mode="iconWhite"
                 :value="investor.additionalInfo && investor.additionalInfo.socialNetwork ? investor.additionalInfo.socialNetwork[input.key] : ''"
                 :placeholder="$t('investor.notFilled')"
               >
@@ -332,18 +332,6 @@ export default {
         callback: async () => this.updateDelegatedUser(),
       });
     },
-    ClipboardSuccessHandler(value) {
-      this.$store.dispatch('main/showToast', {
-        title: 'Copied successfully',
-        text: value,
-      });
-    },
-    ClipboardErrorHandler(value) {
-      this.$store.dispatch('main/showToast', {
-        title: 'Copy error',
-        text: value,
-      });
-    },
   },
 };
 </script>
@@ -496,17 +484,20 @@ export default {
   }
 
   &__textarea {
+    @include text-simple;
     height: 86px;
     padding: 10px 10px 0 10px;
     border-radius: 6px;
     resize: none;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 18.2px;
     background-color: $white;
     border: 1px solid $black0;
 
     &::placeholder {
       color: $black800;
+      padding-left: 30px;
+      padding-top: 20px;
     }
   }
 }
@@ -610,6 +601,10 @@ export default {
 }
 
 @include _767 {
+  .title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
   .investor {
     width: 100vw;
     display: block;

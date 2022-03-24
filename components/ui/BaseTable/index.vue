@@ -95,9 +95,13 @@
       </base-btn>
     </template>
     <template #cell(investorAddress)="el">
-      <span v-if="el.item.investorAddress">
+      <a
+        v-if="el.item.investorAddress"
+        :href="getAddressUrl(el.item.investorAddress)"
+        target="_blank"
+      >
         {{ CutTxn(el.item.investorAddress, 5, 6) }}
-      </span>
+      </a>
       <span
         v-else
         class="table__grey"
@@ -137,6 +141,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
+import { ExplorerUrls } from '~/utils/enums';
 
 export default {
   props: {
@@ -166,16 +171,10 @@ export default {
   },
   methods: {
     getTransactionUrl(hash) {
-      if (this.isProd) {
-        return `https://dev-explorer.workquest.co/transactions/${hash}`;
-      }
-      return `https://dev-explorer.workquest.co/transactions/${hash}`;
+      return `${ExplorerUrls[this.isProd ? 'PROD' : 'DEV']}/transactions/${hash}`;
     },
     getAddressUrl(address) {
-      if (this.isProd) {
-        return `https://dev-explorer.workquest.co/address/${address}`;
-      }
-      return `https://dev-explorer.workquest.co/address/${address}`;
+      return `${ExplorerUrls[this.isProd ? 'PROD' : 'DEV']}/address/${address}`;
     },
     myProfile(id) {
       return this.userData.id === id;

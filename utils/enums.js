@@ -99,3 +99,8 @@ export const UserStatuses = Object.freeze({
   Confirmed: 1,
   NeedSetRole: 2,
 });
+
+export const ExplorerUrls = Object.freeze({
+  PROD: 'https://dev-explorer.workquest.co',
+  DEV: 'https://dev-explorer.workquest.co',
+});

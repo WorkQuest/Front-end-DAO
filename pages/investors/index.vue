@@ -10,6 +10,7 @@
         is-search
         :placeholder="$t('investors.search')"
         mode="icon"
+        data-selector="INPUT-SEARCH-INVESTOR"
       />
       <base-table
         v-if="investorsCount !== 0"
@@ -69,7 +70,7 @@ export default {
         { key: 'avatar', label: '' },
         { key: 'fullName', label: this.$t('investors.table.name'), sortable: true },
         { key: 'investorAddress', label: this.$t('investors.table.address') },
-        { key: 'copy', label: '', sortable: true },
+        { key: 'copy', label: '' },
         { key: 'voting', label: this.$t('investors.table.voting'), sortable: true },
         { key: 'undelegate', label: '' },
         { key: 'delegate', label: '' },
@@ -154,7 +155,6 @@ export default {
 
   &__body {
     margin-top: 30px;
-    max-width: 1180px;
     height: 100%;
   }
   &__table {
@@ -189,11 +189,30 @@ export default {
 }
 
 @include _1199 {
+  .investors {
+    &__table {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    &__investors {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  }
   .body {
-    max-width: 100vw;
+    width: 100%;
+    min-width: 0;
+    max-width: 99vw;
+
+    &__search {
+      margin: 20px;
+      max-width: 100%;
+      min-width: 0;
+    }
 
     &__title {
-      margin-left: 10px;
+      margin-left: 20px;
     }
   }
 }
@@ -210,9 +229,6 @@ export default {
 }
 
 @include _767 {
-  .body {
-    max-width: 100vw;
-  }
   .investors {
     &__table {
       display: none;
@@ -222,6 +238,8 @@ export default {
       display: block;
       background: $white;
       padding: 16px;
+      margin-right: 20px;
+      margin-left: 20px;
     }
 
     &__pagination {

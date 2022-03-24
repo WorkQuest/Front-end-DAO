@@ -8,22 +8,28 @@
         <label
           for="depositPercent_input"
           class="ctm-modal__label"
-        >{{ $t('modals.depositPercentFromAQuest') }}</label>
+        >
+          {{ $t('modals.depositPercentFromAQuest') }}
+        </label>
         <base-field
           id="depositPercent_input"
           :is-hide-error="true"
-          :placeholder="'13%'"
+          placeholder="13%"
+          data-selector="DEPOSIT-PERCENT"
         />
       </div>
       <div class="ctm-modal__content-field">
         <label
           for="amount_input"
           class="ctm-modal__label"
-        >{{ $t('modals.firstDepositAmount') }}</label>
+        >
+          {{ $t('modals.firstDepositAmount') }}
+        </label>
         <base-field
           id="amount_input"
           :is-hide-error="true"
-          :placeholder="'130 WUSD'"
+          placeholder="130 WUSD"
+          data-selector="AMOUNT"
         />
         <div class="ctm-modal__subtitle">
           {{ $t('modals.aboutFirstDeposit') }}
@@ -84,12 +90,13 @@ export default {
 
 .ctm-modal {
   @include modalKit;
+
   &__content-field {
     margin: 15px 0 0 0;
   }
 
   &__content-btns {
-    .btn-group{
+    .btn-group {
       display: grid;
       grid-template-columns: repeat(2, calc(50% - 10px));
       grid-gap: 20px;
@@ -143,12 +150,14 @@ export default {
 
 .messageSend {
   max-width: 495px !important;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 10px;
   }

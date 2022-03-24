@@ -26,6 +26,7 @@
           v-model="title"
           :placeholder="$t('modals.discussionTopic')"
           class="add-discussion__field"
+          data-selector="DISCUSSION-TOPIC"
           rules="required|max:78"
           :name="$t('modals.discussionTopic')"
         />
@@ -37,6 +38,7 @@
           class="add-discussion__body"
           :placeholder="$t('modals.description')"
           rules="required|max:2000"
+          data-selector="DESCRIPTION"
           mode="add-discussion"
           :name="$t('modals.description')"
         />
@@ -154,7 +156,7 @@ export default {
     async createDiscussion() {
       this.SetLoader(true);
       this.$refs.observer.validate();
-      const medias = await this.uploadFiles(this.documents);
+      const medias = await this.UploadFiles(this.documents);
       this.title = this.title.trim();
       this.discussion = this.discussion.trim();
       const response = await this.$store.dispatch('discussions/createDiscussion', {
@@ -180,20 +182,24 @@ export default {
 .icon-btn_left {
   margin: 0;
 }
+
 .uploader {
   &__container {
     margin: 30px 0 30px 0;
   }
+
   &__btn {
     height: 46px !important;
     width: 162px !important;
     margin-left: auto;
     margin-top: 15px;
+
     &_hidden {
       display: none;
     }
   }
 }
+
 .add-discussion {
   &__content {
     padding: 30px 28px;

@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
 import moment from 'moment';
 import VueTippy, { TippyComponent } from 'vue-tippy';
 import modals from '~/store/modals/modals';
@@ -9,7 +8,7 @@ Vue.component('tippy', TippyComponent);
 
 Vue.mixin({
   methods: {
-    async uploadFiles(files) {
+    async UploadFiles(files) {
       if (!files.length) return [];
       const fetchData = [];
       const fetchUrlsData = [];
@@ -46,20 +45,14 @@ Vue.mixin({
       this.$store.dispatch('modals/hide');
     },
     ClipboardSuccessHandler(value) {
-      this.$store.dispatch('main/showToast', {
-        title: 'Copied successfully',
-        text: value,
-      });
+      this.ShowToast(value, this.$t('modals.textCopy'));
     },
     ClipboardErrorHandler(value) {
-      this.$store.dispatch('main/showToast', {
-        title: 'Copy error',
-        text: value,
-      });
+      this.ShowToast(value, this.$t('modals.textCopyError'));
     },
     ShowError(label) {
       this.$bvToast.toast(label, {
-        title: 'Ошибка',
+        title: this.$t('modals.error'),
         variant: 'warning',
         solid: true,
         toaster: 'b-toaster-bottom-right',
@@ -112,6 +105,8 @@ Vue.mixin({
         solid: true,
         toaster: 'b-toaster-bottom-right',
         appendToast: true,
+        toastClass: 'custom-toast-width',
+        bodyClass: 'custom-toast-width',
       });
     },
   },

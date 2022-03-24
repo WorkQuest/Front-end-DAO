@@ -11,6 +11,7 @@
         is-search
         :placeholder="$t('discussions.seacrhField')"
         mode="icon"
+        data-selector="FIELD-SEARCH"
         @input="searchDiscussion"
       />
       <base-btn

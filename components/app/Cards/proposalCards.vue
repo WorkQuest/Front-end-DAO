@@ -31,6 +31,7 @@
                 is-search
                 class="search__input"
                 :placeholder="$t('proposals.ui.search')"
+                data-selector="FIELD-SEARCH"
                 mode="icon"
               />
             </div>
@@ -55,8 +56,8 @@
           <div class="card__header">
             <div class="card__header_top">
               <div class="card__header_left">
-                <!-- TODO: потом удалить -->
-                Voting<span v-if="card.status !== 0">#{{ +card.proposalId - 1 }}</span>
+                {{ $t('proposals.voting') }}
+                <span v-if="card.status !== 0">#{{ +card.createdEvent.contractProposalId }}</span>
               </div>
               <div class="card__header_right">
                 <div class="card__status">
@@ -72,7 +73,7 @@
             v-if="card.status !== 0"
             class="card__date"
           >
-            {{ $moment(new Date(card.timestamp * 1000)).format('ll') }} - {{ $moment(new Date(card.timestamp * 1000 + card.votingPeriod)).format('ll') }}
+            {{ $moment(new Date(card.createdEvent.timestamp * 1000)).format('ll') }} - {{ $moment(new Date(card.createdEvent.timestamp * 1000 + card.createdEvent.votingPeriod)).format('ll') }}
           </div>
           <div
             class="card__about"
@@ -88,7 +89,7 @@
               <nuxt-link
                 v-if="card.status !== 0"
                 class="btn__link"
-                :to="`/proposals/${card.proposalId}`"
+                :to="`/proposals/${card.id}`"
               >
                 <base-btn
                   mode="outline"
@@ -128,12 +129,13 @@ export default {
       timeoutIdSearch: null,
       isDescending: true,
       cardsLimit: 12,
-      ddValue: 0,
+      ddValue: 2,
       isMobile: false,
     };
   },
   computed: {
     ...mapGetters({
+      isWalletConnected: 'wallet/getIsWalletConnected',
       cards: 'proposals/cards',
       cardsCount: 'proposals/cardsCount',
       prevFilters: 'proposals/filters',
@@ -194,17 +196,8 @@ export default {
       },
     },
   },
-  async beforeMount() {
-    this.isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
-    if (this.isMobile) {
-      this.ShowModal({
-        key: modals.status,
-        title: 'Please install Metamask!',
-        subtitle: 'Please open site from Metamask app',
-      });
-    }
-  },
   async mounted() {
+    if (!this.isWalletConnected) return;
     this.SetLoader(true);
     this.currentPage = this.prevFilters.lastPage || 1;
     this.search = this.prevFilters.search || '';
@@ -241,14 +234,17 @@ export default {
       }, 500);
     },
     async loadPage(page) {
+      if (!this.isWalletConnected) return;
       this.currentPage = page;
       const params = {
         limit: this.cardsLimit,
         offset: (page - 1) * this.cardsLimit,
         q: this.search || null,
-        status: this.ddValue - 1 >= 0 ? this.ddValue - 1 : null,
-        createdAt: this.isDescending ? 'desc' : 'asc',
+        'sort[createdAt]': this.isDescending ? 'desc' : 'asc',
       };
+      if (this.ddValue - 1 >= 0) {
+        params.statuses = [this.ddValue - 1];
+      }
       await this.$store.dispatch('proposals/getProposals', params);
     },
   },
@@ -256,25 +252,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .message {
   &__action {
     margin-top: 10px;
   }
 }
+
 .btn {
   &__container {
     display: flex;
     flex-direction: row-reverse;
     justify-content: space-between;
   }
+
   &__wrapper {
     width: 100%;
   }
+
   &__link {
     text-decoration: none;
   }
 }
+
 .proposals {
   &__search {
     width: 580px;
@@ -290,34 +289,42 @@ export default {
     flex-shrink: 0;
   }
 }
+
 .search {
   display: flex;
   align-items: center;
   height: 100%;
   justify-items: center;
+
   &__icon {
     margin-bottom: -10px;
+
     &::before {
       font-size: 24px;
       color: $blue;
     }
   }
+
   &__inputs {
     width: 100%;
     height: 43px;
     display: grid;
     align-items: center;
   }
+
   &__input {
     display: flex;
     align-items: center;
   }
 }
+
 .main {
   @include main;
+
   &-white {
     @include main-white;
   }
+
   &__title {
     @include text-simple;
     font-weight: 500;
@@ -326,13 +333,16 @@ export default {
     color: $black800;
     margin: 30px 0 25px 0;
   }
-  &__pagination{
+
+  &__pagination {
     margin-top: 20px;
   }
+
   &__body {
     margin-top: 20px;
   }
 }
+
 .menu {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -340,24 +350,29 @@ export default {
   justify-content: space-between;
   max-width: 1180px;
   width: 100%;
+
   &__left {
     display: grid;
     grid-template-columns: repeat(2, auto);
     grid-gap: 20px;
     justify-content: flex-start;
   }
+
   &__right {
     justify-content: flex-end;
   }
-  &__drop{
+
+  &__drop {
     width: 183px;
   }
 }
+
 .map {
   &__container {
     position: relative;
   }
 }
+
 .content {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -365,20 +380,24 @@ export default {
   grid-gap: 20px;
   margin-top: 20px;
 }
-.btn_white{
+
+.btn_white {
   border: 1px solid rgba(0, 0, 0, 0);
   padding: 0 20px;
   width: 100%;
   white-space: nowrap;
+
   &:hover {
     background: #FFFFFF;
     border: 1px solid rgba(0, 0, 0, 0.1);
   }
 }
+
 .icon {
   &__sorting {
     color: #000000;
   }
+
   &_blue {
     color: $blue;
     font-size: 24px;
@@ -394,24 +413,30 @@ export default {
   align-items: center;
   box-shadow: none;
   transition: .2s;
+
   &:hover {
     box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
   }
+
   &_higher {
     border: 1px solid #F6CF00;
   }
+
   &__content {
     display: grid;
     grid-template-rows: 0.8fr 0.7fr 1fr 0.5fr;
     width: 100%;
     padding: 20px;
   }
+
   &__header {
     display: flex;
     flex-direction: column;
+
     &_left {
       color: #0083C7;
     }
+
     &_top {
       display: flex;
       justify-content: space-between;
@@ -419,6 +444,7 @@ export default {
       align-items: center;
     }
   }
+
   &__status {
     font-size: 12px;
     justify-content: flex-start;
@@ -427,30 +453,37 @@ export default {
     display: flex;
     padding: 0 4px;
     border-radius: 3px;
+
     &_pending {
       background-color: #f6f8fa;
       color: #AAB0B9;
     }
+
     &_active {
       background-color: #f6f8fa;
       color: $blue;
     }
+
     &_rejected {
       background-color: #fcebeb;
       color: $red;
     }
-    &_accepted{
+
+    &_accepted {
       background-color: #f6f8fa;
       color: $green;
     }
+
     &_disabled {
       display: none;
     }
   }
+
   &__title {
     font-weight: 400;
     font-size: 14px;
   }
+
   &__date {
     font-weight: 400;
     font-size: 14px;
@@ -460,13 +493,14 @@ export default {
     max-height: 65px;
     text-overflow: ellipsis;
   }
+
   &__about {
     color: #4C5767;
     font-size: 18px;
     font-style: normal;
     font-weight: 500;
     line-height: 28px;
-    letter-spacing: 0em;
+    letter-spacing: 0;
     text-align: left;
 
     overflow: hidden;
@@ -474,6 +508,7 @@ export default {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+
     &_pending {
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -482,6 +517,7 @@ export default {
     }
   }
 }
+
 .dd {
   color: #8D96A2;
   border: 1px solid rgba(0, 0, 0, 0);
@@ -493,7 +529,7 @@ export default {
     padding-left: 20px;
     padding-right: 20px;
   }
-   .content {
+  .content {
     grid-template-columns: repeat(3, 1fr);
   }
   .menu {
@@ -503,10 +539,12 @@ export default {
     padding: 10px;
   }
 }
+
 @include _991 {
   .menu {
     justify-content: flex-start;
     display: flex;
+
     &__right {
       flex-grow: 3;
     }
@@ -520,9 +558,11 @@ export default {
     grid-gap: 10px;
   }
 }
+
 @include _767 {
   .main {
     display: block;
+
     .content {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -530,37 +570,44 @@ export default {
   .search {
     grid-template-columns: auto auto;
     grid-gap: 10px;
+
     &__toggle {
       display: none;
     }
+
     &__actions {
       border: none;
     }
   }
 }
+
 @include _575 {
   .main {
     .menu {
       display: flex;
       flex-direction: column;
       grid-template-columns: auto;
+
       &__right {
         grid-template-columns: repeat(2, 1fr);
       }
+
       &__drop {
         width: 100vw;
       }
     }
+
     .menu__left {
       display: flex;
       flex-direction: row-reverse;
     }
+
     .content {
       grid-template-columns: 1fr;
     }
   }
   .dd::v-deep .dd__btn {
-        padding: 0 10px;
-      }
+    padding: 0 10px;
+  }
 }
 </style>

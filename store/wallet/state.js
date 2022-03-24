@@ -17,4 +17,7 @@ export default () => ({
       fullBalance: 0,
     },
   },
+
+  isChairpersonRole: false,
+  chairpersonRoleHash: null,
 });
