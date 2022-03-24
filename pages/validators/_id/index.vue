@@ -26,7 +26,7 @@
             <div class="left__info">
               <div class="left__user">
                 <div class="left__text left__text_name">
-                  Name SecondName
+                  Вовоже_CrS Вовожевич_CrS444444444444444444444444444444444
                 </div>
                 <div class="left__date">
                   Created on 22 Aug, 2021
@@ -137,7 +137,7 @@ export default {
   }
   &__block {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: 1fr 1fr;
     grid-gap: 20px;
   }
   &__head {
@@ -199,6 +199,9 @@ export default {
   &__text {
     font-weight: 600;
     font-size: 18px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
     &_name {
       font-weight: 500;
     }
@@ -295,10 +298,24 @@ export default {
   }
 }
 
+@include _767 {
+  .left {
+    &__text {
+      &_name {
+        width: calc(100vw - 180px);
+      }
+    }
+  }
+}
+
 @include _380 {
   .validator {
     &__profile {
       max-height: 100%;
+    }
+    &__block {
+      grid-template-columns: auto;
+      grid-template-rows: repeat(2, 340px);
     }
   }
   .bar {
