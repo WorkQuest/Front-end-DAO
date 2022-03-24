@@ -49,6 +49,7 @@
                 selector="SHOW-DEPOSIT-MODAL"
                 mode="outline"
                 class="balance__btn"
+                :disabled="true"
                 @click="showModal({key: 'deposit'})"
               >
                 {{ $t('wallet.deposit') }}
@@ -57,6 +58,7 @@
                 selector="SHOW-WITHDRAW-MODAL"
                 mode="outline"
                 class="balance__btn"
+                :disabled="true"
                 @click="showModal({key: 'withdraw', branchText: 'withdraw' })"
               >
                 {{ $t('wallet.withdraw') }}
@@ -83,6 +85,7 @@
               selector="SHOW-ADD-CARD-MODAL"
               class="card__btn"
               mode="outline"
+              :disabled="true"
               @click="showModal({key: 'addCard', branchText: 'adding' })"
             >
               {{ $t('wallet.addCard') }}

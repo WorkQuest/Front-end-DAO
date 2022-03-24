@@ -18,6 +18,7 @@
           :placeholder="$t('signUp.password')"
           :name="$t('signUp.password')"
           class="confirm__password"
+          data-selector="FIELD-PASSWORD"
           rules="required_if|min:8"
           type="password"
           vid="confirmation"
@@ -26,6 +27,7 @@
           v-else
           v-model="mnemonic"
           rules="required|mnemonic"
+          data-selector="FIELD-SECRET"
           :placeholder="$t('createWallet.secretPhrase')"
           :name="$t('createWallet.secretPhrase')"
           :type="mnemonicInputType"

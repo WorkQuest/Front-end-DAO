@@ -110,6 +110,7 @@ export default {
 <style lang="scss" scoped>
 .main {
   @include main;
+
   &-white {
     @include main;
     background: $white;
@@ -117,10 +118,12 @@ export default {
     border-radius: 6px;
     justify-content: center;
   }
+
   &__body_large {
     margin: 30px 15px 0 15px;
   }
 }
+
 .page {
   &__grid {
     display: grid;
@@ -128,12 +131,14 @@ export default {
     border-radius: 6px;
     background: linear-gradient(135deg, #0083C7 0%, #103D7C 100%);
   }
+
   &__title {
     margin: 20px 0 20px 0;
     font-weight: 500;
     font-size: 25px;
     color: $black800;
   }
+
   &__profile {
     @include main-white;
     justify-content: flex-start;
@@ -141,26 +146,32 @@ export default {
     margin: 20px 0 20px 0;
     display: inherit;
   }
+
   &__checkbox {
     margin: 50px 0 20px 20px;
     display: flex;
     flex-direction: row;
   }
+
   &__part {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+
     &_left {
       display: grid;
     }
+
     &_right {
       display: grid;
     }
   }
+
   &__info {
     border-radius: 6px;
     color: $white;
     min-height: 85px;
   }
+
   &__badge {
     background: rgba(0, 131, 199, 0.1);
     border-radius: 44px;
@@ -169,10 +180,12 @@ export default {
     padding: 5px 6px;
     display: flex;
     text-align: center;
+
     &-skills {
       padding: 15px;
     }
   }
+
   &__skills {
     flex-direction: row;
     flex-wrap: wrap;
@@ -182,13 +195,16 @@ export default {
     justify-content: flex-start;
   }
 }
-.info{
+
+.info {
   padding: 40px 0 40px 20px;
+
   &__title {
     line-height: 58px;
     font-size: 45px;
     font-weight: 500;
   }
+
   &__subtitle {
     margin-top: 9px;
     line-height: 23px;
@@ -196,6 +212,7 @@ export default {
     font-weight: 500;
     opacity: 0.5;
   }
+
   &__btn-container {
     display: flex;
     margin-top: 25px;
@@ -217,134 +234,163 @@ export default {
   font-size: 25px;
   color: $blue;
   align-items: center;
+
   &__gradient {
     color: transparent;
     -webkit-background-clip: text;
     background-image: linear-gradient(135deg, #0083C7 0%, #00AA5B 100%);
   }
+
   &-check_all_big:before {
     @extend .icon;
     content: "\ea00";
     color: $white;
     padding: 0 0 0 10px;
   }
+
   &-Lock:before {
     @extend .icon;
     @extend .icon__gradient;
     content: "\ea24";
   }
+
   &-user_pin:before {
     @extend .icon;
     @extend .icon__gradient;
     content: "\e908";
   }
+
   &-caret_right:before {
     @extend .icon;
     @extend .icon__gradient;
     content: "\ea4a";
     color: $black200;
   }
+
   &-data:before {
     @extend .icon;
     @extend .icon__gradient;
     content: "\e914";
   }
+
   &-group_alt:before {
     @extend .icon;
     @extend .icon__gradient;
     content: "\e900";
   }
+
   &-home_alt_check:before {
     @extend .icon;
     @extend .icon__gradient;
     content: "\e961";
   }
+
   &-credit_card:before {
     @extend .icon;
     @extend .icon__gradient;
     content: "\ea0e";
   }
+
   &-Case:before {
     @extend .icon;
     @extend .icon__gradient;
     content: "\e9ff";
   }
+
   &-line_chart_up:before {
     @extend .icon;
     @extend .icon__gradient;
     content: "\e9cb";
   }
+
   &-settings:before {
     @extend .icon;
     content: "\ea34";
   }
+
   &-chevron_big_right:before {
     @extend .icon;
     content: "\ea4e";
     color: $black200;
   }
+
   &-plus_circle:before {
     @extend .icon;
     content: "\e9a6";
   }
+
   &-Case:before {
     @extend .icon;
     content: "\e9ff";
   }
+
   &-id_card:before {
     @extend .icon;
     content: "\e902";
   }
+
   &-Earth:before {
     @extend .icon;
     content: "\ea11";
   }
+
   &-facebook:before {
     @extend .icon;
     content: "\e9e5";
   }
+
   &-LinkedIn::before {
     @extend .icon;
     content: "\e9ed";
   }
+
   &-twitter::before {
     @extend .icon;
     content: "\e9fa";
   }
+
   &-instagram::before {
     @extend .icon;
     content: "\e9ea";
   }
+
   &-phone::before {
     @extend .icon;
     content: "\ea2d";
   }
+
   &-mail::before {
     @extend .icon;
     content: "\ea27";
   }
+
   &-location::before {
     @extend .icon;
     content: "\ea23";
   }
+
   &-user::before {
     @extend .icon;
     content: "\e90c";
   }
+
   &-close_big::before {
     content: "\e948";
     color: #2e3a59;
     font-size: 26px;
   }
+
   &__close {
     position: relative;
     bottom: 200px;
     right: 10px;
     z-index: 2;
+
     &_closed {
       display: none;
     }
   }
+
   &-edit {
     position: absolute;
     top: 50%;
@@ -352,11 +398,13 @@ export default {
     left: 50%;
     transform: translate(-50%, -50%);
   }
+
   &-edit::before {
     @extend .icon;
     content: "\e997"
   }
 }
+
 @include _991 {
   .higher {
     &-level {
@@ -371,6 +419,7 @@ export default {
     }
   }
 }
+
 @include _767 {
   .main {
     &__body {

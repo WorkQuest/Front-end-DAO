@@ -13,6 +13,7 @@
               :placeholder="$t('modals.votingTopic')"
               :label="$t('modals.votingTopic')"
               rules="required|max:78|min:3"
+              data-selector="VOTING-TOPIC"
               :name="$t('modals.votingTopicField')"
             />
           </div>
@@ -45,6 +46,7 @@
                 v-model="descriptionInput"
                 class="description__textarea"
                 name="description"
+                data-selector="TEXTAREA-DESCRIPTION"
               />
               <div class="description__error">
                 {{ errors[0] }}
@@ -261,6 +263,7 @@ export default {
 
 .addProposal {
   min-width: 630px;
+
   &__content {
     padding: 0 28px 30px;
     margin-top: 25px;
@@ -272,9 +275,11 @@ export default {
     height: 46px;
     margin-bottom: 50px;
   }
+
   &__voting {
     width: 100%;
   }
+
   &__dates {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -302,6 +307,7 @@ export default {
     font-size: 20px;
     margin-left: 7px;
   }
+
   &__caret {
     display: inline-block;
     height: 100%;
@@ -309,6 +315,7 @@ export default {
     font-size: 25px;
     color: #AAB0B9;
     padding-top: 10px;
+
     &:hover {
       color: #0083C7;
     }
@@ -323,7 +330,8 @@ export default {
     height: 24px;
     color: #1D2127;
   }
-  &__field{
+
+  &__field {
     min-width: 72px;
     text-align: center;
   }
@@ -342,12 +350,14 @@ export default {
     width: 100%;
     height: 100%;
   }
+
   &__body {
     @include text-simple;
     display: flex;
     justify-content: center;
     align-items: center;
   }
+
   &__number {
     @include text-simple;
     font-weight: 400;
@@ -369,6 +379,7 @@ export default {
     min-height: 174px;
     width: 100%;
     padding: 10px 20px;
+
     &:focus {
       background: #FFFFFF;
       border: 1px solid #0083C7;
@@ -388,11 +399,13 @@ export default {
     width: 162px !important;
     margin-left: auto;
     margin-top: 15px;
+
     &_hidden {
       display: none;
     }
   }
 }
+
 .date-field {
   margin-bottom: 25px;
   margin-top: 5px;
@@ -403,11 +416,13 @@ export default {
   font-size: 16px;
   line-height: 130%;
 }
+
 @include _767 {
   .addProposal {
     min-width: 550px;
   }
 }
+
 @include _575 {
   .addProposal {
     min-width: 90vw;

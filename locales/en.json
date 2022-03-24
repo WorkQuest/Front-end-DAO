@@ -260,6 +260,11 @@
   },
   "modals": {
     "trxFee": "Transactions fee",
+    "metamask": {
+      "install": "Please install Metamask!",
+      "subtitle": "Please open site from Metamask app"
+    },
+    "txInfo": "Transaction info",
     "textCopy": "Text has been copied",
     "textCopyError": "Copy error",
     "success": "Success",
@@ -444,6 +449,7 @@
     "proposals": "Proposals",
     "investors": "Investors",
     "discussions": "Discussions",
+    "validators": "Validators",
     "KYC": "KYC",
     "wallet": "Wallet",
     "myQuests": "My quests",
@@ -740,5 +746,32 @@
   "investor": {
     "notFilled": "Not filled",
     "notFound": "Investor not found"
+  },
+  "validators": {
+    "title": "Validators",
+    "candidates": "Candidates",
+    "searchValidator": "Search validator or candidate",
+    "searchCandidates": "Search proposal",
+    "table": {
+      "name": "Name",
+      "address": "Address",
+      "missedBlocks": "Missed blocks",
+      "fee": "Fee",
+      "stake": "Stake",
+      "minStake": "Min stake",
+      "slots": "Slots"
+    }
+  },
+  "validator": {
+    "title": "Validator Profile",
+    "address": "Address",
+    "fee": "Fee",
+    "commonStake": "Common stake",
+    "missedBlocks": "Missed blocks",
+    "slots": "Slots",
+    "occupied": "Occupied",
+    "delegators": "Delegators",
+    "minimalStake": "Minimal stake",
+    "outOf": "out of"
   }
 }

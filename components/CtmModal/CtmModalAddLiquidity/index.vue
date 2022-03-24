@@ -10,22 +10,28 @@
             <label
               for="amountOfWusd_input"
               class="ctm-modal__label"
-            >{{ $t('modals.amountOfWusd') }}</label>
+            >
+              {{ $t('modals.amountOfWusd') }}
+            </label>
             <base-field
               id="amountOfWusd_input"
               :is-hide-error="true"
-              :placeholder="'10 ETH'"
+              placeholder="10 ETH"
+              data-selector="AMOUNT-OF-WUSD"
             />
           </div>
           <div class="ctm-modal__content-field">
             <label
               for="amountOfEth_input"
               class="ctm-modal__label"
-            >{{ $t('modals.amountOfEth') }}</label>
+            >
+              {{ $t('modals.amountOfEth') }}
+            </label>
             <base-field
               id="amountOfEth_input"
               :is-hide-error="true"
-              :placeholder="'1000 WUSD'"
+              placeholder="1000 WUSD"
+              data-selector="AMOUNT-OF-ETH"
             />
             <div class="ctm-modal__title-head">
               {{ $t('modals.tip') }}
@@ -117,6 +123,7 @@ export default {
   .addLiquidity {
     max-width: 945px !important;
   }
+
   &__content-field {
     margin: 15px 0 0 0;
   }
@@ -135,7 +142,7 @@ export default {
   }
 
   &__content-btns {
-    .btn-group{
+    .btn-group {
       display: grid;
       grid-template-columns: repeat(2, calc(50% - 10px));
       grid-gap: 20px;
