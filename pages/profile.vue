@@ -157,14 +157,19 @@
               :key="cell.type"
               class="profile-cont__field"
             >
+              <label :for="cell.label">
+                {{ cell.label }}
+              </label>
               <vue-phone-number-input
                 v-if="isProfileEdit"
+                :id="cell.label"
                 v-model="phone[cell.type].fullPhone"
                 class="input-phone"
                 error-color="#EB5757"
                 clearable
                 show-code-on-list
                 required
+                :disabled="cell.disabled"
                 :default-country-code="phone[cell.type].codeRegion"
                 size="lg"
                 @update="updatedPhone[cell.type] = $event"
@@ -331,32 +336,28 @@ export default {
       const { phone, tempPhone, additionalInfo } = this.userData;
       const mainPhone = {
         type: 'main',
+        label: 'Main phone number',
         fullNumber: null,
         placeholder: this.$t('settings.mainNumberMissing'),
         isVerify: false,
+        disabled: true,
       };
-      if (phone) {
-        mainPhone.fullNumber = phone.fullPhone;
-        mainPhone.placeholder = phone.fullPhone;
-        mainPhone.isVerify = true;
-      }
-      if (tempPhone) {
-        mainPhone.fullNumber = tempPhone.fullPhone;
-        mainPhone.placeholder = tempPhone.fullPhone;
-      }
+      mainPhone.fullNumber = phone ? phone?.fullPhone : tempPhone?.fullPhone;
+      mainPhone.placeholder = phone ? phone?.fullPhone : tempPhone?.fullPhone;
+      mainPhone.isVerify = !!phone;
       phones.push(mainPhone);
 
       if (this.userRole === UserRole.EMPLOYER) {
         const secondPhone = {
           type: 'second',
+          label: 'Additional phone number',
           fullNumber: null,
           placeholder: this.$t('settings.secondNumberMissing'),
           isVerify: false,
+          disabled: false,
         };
-        if (additionalInfo.secondMobileNumber) {
-          secondPhone.fullNumber = additionalInfo.secondMobileNumber.fullPhone;
-          secondPhone.placeholder = additionalInfo.secondMobileNumber.fullPhone;
-        }
+        secondPhone.fullNumber = additionalInfo.secondMobileNumber?.fullPhone || null;
+        secondPhone.placeholder = additionalInfo.secondMobileNumber?.fullPhone || this.$t('settings.secondNumberMissing');
         phones.push(secondPhone);
       }
       return phones;
@@ -551,21 +552,18 @@ export default {
       const mainPhone = this.updatedPhone.main;
       const secondPhone = this.updatedPhone.second;
 
-      const phoneNumber = mainPhone
-        ? {
-          phone: mainPhone.nationalNumber || null,
-          fullPhone: mainPhone.formatInternational ? mainPhone.formatInternational.replace(/\s/g, '') : null,
-          codeRegion: mainPhone.countryCode || null,
-        }
-        : null;
-
-      const secondMobileNumber = secondPhone
-        ? {
-          phone: secondPhone.nationalNumber || null,
-          fullPhone: secondPhone.formatInternational ? secondPhone.formatInternational.replace(/\s/g, '') : null,
-          codeRegion: secondPhone.countryCode || null,
-        }
-        : null;
+      let phoneNumber = {
+        phone: mainPhone?.phoneNumber || null,
+        fullPhone: mainPhone?.formattedNumber || null,
+        codeRegion: mainPhone?.formattedNumber || null,
+      };
+      let secondMobileNumber = {
+        phone: secondPhone?.phoneNumber || null,
+        fullPhone: secondPhone?.formattedNumber || null,
+        codeRegion: secondPhone?.formattedNumber || null,
+      };
+      if (!phoneNumber.fullPhone) phoneNumber = null;
+      if (!secondMobileNumber.fullPhone) secondMobileNumber = null;
 
       const { avatar_change, userRole } = this;
 
