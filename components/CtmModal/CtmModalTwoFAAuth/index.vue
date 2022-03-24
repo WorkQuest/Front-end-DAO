@@ -377,12 +377,10 @@ export default {
       this.CloseModal();
     },
     previousStep() {
-      // eslint-disable-next-line no-plusplus
-      this.step--;
+      this.step -= 1;
     },
     nextStep() {
-      // eslint-disable-next-line no-plusplus
-      this.step++;
+      this.step += 1;
     },
     nextStepWithEnable2FA() {
       this.enable2FA();
@@ -476,10 +474,6 @@ export default {
 }
 
 .step {
-  &__number {
-    //padding: 10px;
-  }
-
   &__container {
     &_grid {
       display: grid;
