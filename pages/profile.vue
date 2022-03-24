@@ -348,7 +348,7 @@ export default {
         fullNumber: null,
         placeholder: this.$t('settings.mainNumberMissing'),
         isVerify: false,
-        disabled: true,
+        disabled: false,
       };
       mainPhone.fullNumber = phone ? phone?.fullPhone : tempPhone?.fullPhone;
       mainPhone.placeholder = phone ? phone?.fullPhone : tempPhone?.fullPhone;
@@ -563,12 +563,12 @@ export default {
       let phoneNumber = {
         phone: mainPhone?.phoneNumber || null,
         fullPhone: mainPhone?.formattedNumber || null,
-        codeRegion: mainPhone?.formattedNumber || null,
+        codeRegion: mainPhone?.countryCode || null,
       };
       let secondMobileNumber = {
         phone: secondPhone?.phoneNumber || null,
         fullPhone: secondPhone?.formattedNumber || null,
-        codeRegion: secondPhone?.formattedNumber || null,
+        codeRegion: secondPhone?.countryCode || null,
       };
       if (!phoneNumber.fullPhone) phoneNumber = null;
       if (!secondMobileNumber.fullPhone) secondMobileNumber = null;
