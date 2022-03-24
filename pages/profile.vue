@@ -155,9 +155,12 @@
             <div
               v-for="cell in phoneInputsArr"
               :key="cell.type"
-              class="profile-cont__field"
+              class="profile-cont__field field__phone"
             >
-              <label :for="cell.label">
+              <label
+                class="profile-cont__label"
+                :for="cell.label"
+              >
                 {{ cell.label }}
               </label>
               <vue-phone-number-input
@@ -177,6 +180,7 @@
               <base-field
                 v-else
                 :value="cell.fullNumber"
+                class="field__input"
                 :placeholder="cell.placeholder"
                 :disabled="true"
                 is-hide-error
@@ -189,10 +193,14 @@
             </div>
           </div>
           <div class="profile-cont__about about">
-            <div class="about__title">
+            <label
+              for="about"
+              class="about__title"
+            >
               {{ $t('profile.aboutMe') }}
-            </div>
+            </label>
             <textarea
+              id="about"
               v-model="localUserData.additionalInfo.description"
               class="about__textarea"
               :class="{ 'about__textarea_disabled': !isProfileEdit }"
@@ -671,7 +679,7 @@ export default {
     margin-top: 20px;
     padding: 20px;
 
-    background: #FFFFFF;
+    background: $white;
     border-radius: 6px;
   }
 
@@ -683,7 +691,7 @@ export default {
 }
 
 .banner {
-  color: #FFFFFF;
+  color: $white;
   border-radius: 6px;
   margin-top: 30px;
 
@@ -1060,10 +1068,6 @@ export default {
       grid-row: 1/7;
     }
 
-    &__status {
-      grid-column: 2;
-    }
-
     &__social {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -1081,42 +1085,68 @@ export default {
 }
 
 @include _767 {
-  .security {
-    grid-template-columns: 1fr;
+  .field {
+    &__input {
+      max-height: 46px !important;
+    }
 
-    &__password,
-    &__auth {
-      display: flex;
-      justify-items: unset;
-      justify-content: space-between;
+    &__phone {
+      margin: 5px 0;
+      height: 70px;
     }
   }
-}
-
-@include _575 {
+  .avatar__img {
+    height: 149px;
+    width: 149px;
+    border: 1px solid #F7F8FA;
+    border-radius: 6px;
+  }
   .profile-cont {
+    &__label {
+      display: flex;
+    }
+
+    &__main-data {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    &__status {
+      display: flex;
+    }
 
     &__avatar {
-      grid-row: 1;
+      display: flex;
+      justify-content: center;
       margin-bottom: 17px;
     }
 
-    &__field {
-      grid-column: 1/3;
-    }
-
-    &__social {
+    .security {
       grid-template-columns: 1fr;
+
+      &__password,
+      &__auth {
+        display: flex;
+        justify-items: unset;
+        justify-content: space-between;
+      }
     }
   }
 
-  .security {
-    &__password,
-    &__auth {
-      display: grid;
-      gap: 10px;
-      justify-items: center;
-      justify-content: center;
+  @include _575 {
+    &__social {
+      grid-template-columns: 1fr;
+    }
+
+    .security {
+      &__password,
+      &__auth {
+        display: grid;
+        gap: 10px;
+        justify-items: center;
+        justify-content: center;
+      }
     }
   }
 }
@@ -1132,8 +1162,8 @@ export default {
     min-height: 46px !important;
 
     &:focus {
-      background-color: #FFFFFF !important;
-      border: 1px solid #0083C7 !important;
+      background-color: $white !important;
+      border: 1px solid $blue !important;
     }
   }
 
