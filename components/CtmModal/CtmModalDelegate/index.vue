@@ -12,11 +12,10 @@
           <div class="delegate__input">
             <base-field
               disabled
-              :value="investorAddress"
+              data-selector="ADDRESS"
+              :value="convertValue"
               class="address__body"
-            >
-              {{ investorAddress }}
-            </base-field>
+            />
           </div>
         </div>
         <div class="content__tokens tokens">
@@ -31,6 +30,7 @@
               v-model="tokensAmount"
               class="footer__body"
               placeholder="10000 WQT"
+              data-selector="AMOUNT"
               :name="$t('modals.tokensNumber')"
               :rules="`required${min}|max_bn:${balance}|min_value:1|decimalPlaces:18`"
               @input="replaceDot"
@@ -70,6 +70,7 @@ export default {
       tokensAmount: '',
       balance: 0,
       investorAddress: '',
+      windowSize: 0,
     };
   },
   computed: {
@@ -81,6 +82,26 @@ export default {
     }),
     min() {
       return this.options?.min ? `|min_value:${this.options.min}` : '';
+    },
+    convertValue() {
+      this.windowSizeListener();
+      if (this.windowSize > 480) {
+        return this.investorAddress;
+      }
+      let a = 0;
+      if (this.windowSize <= 480) {
+        a = 17;
+      }
+      if (this.windowSize <= 450) {
+        a = 15;
+      }
+      if (this.windowSize <= 380) {
+        a = 13;
+      }
+      if (this.windowSize <= 350) {
+        a = 10;
+      }
+      return this.CutTxn(this.investorAddress, a, a);
     },
   },
   async beforeMount() {
@@ -103,6 +124,11 @@ export default {
     },
     maxDelegate() {
       this.tokensAmount = this.balance;
+    },
+    windowSizeListener() {
+      window.addEventListener('resize', () => {
+        this.windowSize = window.innerWidth;
+      });
     },
     async delegate() {
       const { callback } = this.options;
