@@ -395,9 +395,9 @@ export default {
         localUserData, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
       } = this;
 
-      this.phone.main = localUserData.phone || localUserData.tempPhone || { fullPhone: null, codeRegion: null };
+      this.phone.main = localUserData.phone || localUserData.tempPhone || { fullPhone: null, codeRegion: 'RU' };
 
-      this.phone.second = localUserData.additionalInfo.secondMobileNumber || { fullPhone: null, codeRegion: null };
+      this.phone.second = localUserData.additionalInfo.secondMobileNumber || { fullPhone: null, codeRegion: 'RU' };
 
       this.socialInputs = [{
         key: 'instagram',
@@ -563,12 +563,12 @@ export default {
       let phoneNumber = {
         phone: mainPhone?.phoneNumber || null,
         fullPhone: mainPhone?.formattedNumber || null,
-        codeRegion: mainPhone?.countryCode || null,
+        codeRegion: mainPhone?.countryCode,
       };
       let secondMobileNumber = {
         phone: secondPhone?.phoneNumber || null,
         fullPhone: secondPhone?.formattedNumber || null,
-        codeRegion: secondPhone?.countryCode || null,
+        codeRegion: secondPhone?.countryCode,
       };
       if (!phoneNumber.fullPhone) phoneNumber = null;
       if (!secondMobileNumber.fullPhone) secondMobileNumber = null;
