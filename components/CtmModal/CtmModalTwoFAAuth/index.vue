@@ -212,6 +212,7 @@
               v-model="models[item.model]"
               :vid="item.id"
               :name="item.name"
+              :data-selector="item.selector"
               :is-hide-error="false"
               :placeholder="item.placeholder"
               :rules="item.rules"
@@ -323,6 +324,7 @@ export default {
           placeholder: this.$t('modals.conformationCodeFromMail'),
           rules: 'required|alpha_num',
           name: this.$t('modals.emailVerificationCodeField'),
+          selector: 'CONFIRM-CODE',
         },
         {
           id: 'totp',
@@ -331,6 +333,7 @@ export default {
           placeholder: this.$t('modals.twoFAConfirmationCode'),
           rules: 'required|alpha_num',
           name: this.$t('modals.googleVerificationCodeField'),
+          selector: 'GOOGLE-VERIFICATION-CODE',
         },
       ];
     },
@@ -374,12 +377,10 @@ export default {
       this.CloseModal();
     },
     previousStep() {
-      // eslint-disable-next-line no-plusplus
-      this.step--;
+      this.step -= 1;
     },
     nextStep() {
-      // eslint-disable-next-line no-plusplus
-      this.step++;
+      this.step += 1;
     },
     nextStepWithEnable2FA() {
       this.enable2FA();
@@ -406,6 +407,7 @@ export default {
     font-weight: 400;
     color: $black700;
     font-size: 18px;
+
     &_grey {
       @extend .content__text;
       font-size: 16px;
@@ -441,6 +443,7 @@ export default {
     margin: 33px 10px 0 0;
     width: 100%;
   }
+
   &__text {
     font-weight: 400;
     font-size: 16px;
@@ -461,6 +464,7 @@ export default {
     align-items: flex-end;
     grid-gap: 10px;
   }
+
   &__3col {
     display: grid;
     grid-template-columns: 6fr 1fr 6fr;
@@ -470,9 +474,6 @@ export default {
 }
 
 .step {
-  &__number {
-    //padding: 10px;
-  }
   &__container {
     &_grid {
       display: grid;
@@ -485,6 +486,7 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+
   &__step {
     display: inline-flex;
     justify-content: center;
@@ -504,6 +506,7 @@ export default {
     & span:first-child {
       margin-right: 10px;
     }
+
     &_active {
       @extend .step-panel__step;
       color: $white;
@@ -511,6 +514,7 @@ export default {
     }
   }
 }
+
 .line {
   display: block;
   height: 1px;
@@ -518,15 +522,18 @@ export default {
   margin: auto 0;
   padding: 0;
   width: 35px;
+
   &__active {
     @extend .line;
     border-top: 1px solid $blue;
   }
 }
+
 .ctm-modal {
   &__content-field {
     margin: 15px 0 0 0;
   }
+
   &__equal {
     margin: 0 0 35px 10px;
   }
@@ -545,11 +552,13 @@ export default {
     width: 100%;
     background-color: $white;
     resize: none;
+
     &::placeholder {
       color: $black800;
     }
   }
 }
+
 .btn {
   &__container {
     display: flex;
@@ -557,12 +566,15 @@ export default {
     justify-content: space-between;
     margin: 15px 0 0 0;
   }
+
   &__wrapper {
     width: 45%;
   }
+
   &__onebtn {
     width: 100%;
   }
+
   &__copy {
     background: $white;
     border: 1px solid $black0;
@@ -574,12 +586,14 @@ export default {
 
 .messageSend {
   max-width: 430px !important;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 10px;
   }
