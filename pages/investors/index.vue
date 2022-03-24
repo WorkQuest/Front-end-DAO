@@ -190,11 +190,6 @@ export default {
 
 @include _1199 {
   .investors {
-    &__table {
-      padding-left: 20px;
-      padding-right: 20px;
-    }
-
     &__investors {
       padding-left: 20px;
       padding-right: 20px;
@@ -206,7 +201,6 @@ export default {
     max-width: 99vw;
 
     &__search {
-      margin: 20px;
       max-width: 100%;
       min-width: 0;
     }
@@ -223,7 +217,7 @@ export default {
       padding: 0 20px;
     }
     &__table {
-      width: calc(100vw - 40px);
+      width: calc(100vw - 49px);
     }
   }
 }
@@ -238,8 +232,6 @@ export default {
       display: block;
       background: $white;
       padding: 16px;
-      margin-right: 20px;
-      margin-left: 20px;
     }
 
     &__pagination {
