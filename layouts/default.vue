@@ -388,6 +388,7 @@ export default {
         { path: '/wallet', title: this.$t('ui.wallet') },
         { path: '/investors', title: this.$t('ui.investors') },
         { path: '/discussions', title: this.$t('ui.discussions') },
+        { path: '/validators', title: this.$t('ui.validators') },
         { path: '/KYC', title: this.$t('ui.KYC') },
       ],
       userDDLinks: [
@@ -1140,7 +1141,7 @@ export default {
   &__links {
     display: grid;
     align-items: center;
-    grid-template-columns: repeat(5, auto);
+    grid-template-columns: repeat(6, auto);
     grid-gap: 25px;
   }
 
@@ -1533,6 +1534,8 @@ export default {
       display: flex;
     }
   }
+}
+@include _767 {
   .footer {
     &__content {
       display: flex;

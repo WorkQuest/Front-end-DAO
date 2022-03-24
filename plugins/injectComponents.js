@@ -21,6 +21,7 @@ import RootCommentField from '~/components/app/Pages/Discussions/RootCommentFiel
 import CommentField from '~/components/app/Pages/Discussions/CommentField';
 import TableItem from '~/components/mobile/TableItem.vue';
 import EmptyData from '~/components/ui/EmptyData';
+import ProgressBar from '~/components/ui/ProgressBar';
 
 Vue.component('empty-data', EmptyData);
 Vue.component('comment-footer', CommentFooter);
@@ -43,3 +44,4 @@ Vue.component('base-files', BaseFiles);
 Vue.component('base-pager', BasePager);
 Vue.component('mobile-table-item', TableItem);
 Vue.component('vue-phone-number-input', VuePhoneNumberInput);
+Vue.component('progress-bar', ProgressBar);

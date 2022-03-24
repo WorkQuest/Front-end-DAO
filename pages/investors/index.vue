@@ -157,9 +157,10 @@ export default {
     margin-top: 30px;
     height: 100%;
   }
-
   &__table {
+    overflow: auto;
     margin-bottom: 15px;
+    position: relative;
   }
 
   &__investors {
@@ -182,7 +183,6 @@ export default {
   &__search {
     margin: 20px 0 20px 0;
     background-color: $white;
-    width: 1180px;
     height: 43px;
     border-radius: 6px;
   }
@@ -190,11 +190,6 @@ export default {
 
 @include _1199 {
   .investors {
-    &__table {
-      padding-left: 20px;
-      padding-right: 20px;
-    }
-
     &__investors {
       padding-left: 20px;
       padding-right: 20px;
@@ -206,7 +201,6 @@ export default {
     max-width: 99vw;
 
     &__search {
-      margin: 20px;
       max-width: 100%;
       min-width: 0;
     }
@@ -218,9 +212,13 @@ export default {
 }
 
 @include _991 {
-  .table {
-    width: 100%;
-    max-width: 99vw;
+  .investors {
+    &__body {
+      padding: 0 20px;
+    }
+    &__table {
+      width: calc(100vw - 49px);
+    }
   }
 }
 
@@ -234,8 +232,6 @@ export default {
       display: block;
       background: $white;
       padding: 16px;
-      margin-right: 20px;
-      margin-left: 20px;
     }
 
     &__pagination {
