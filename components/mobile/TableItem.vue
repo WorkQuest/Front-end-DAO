@@ -244,6 +244,7 @@ export default {
         font-weight: normal;
         margin-left: 10px;
         &_large {
+          width: calc(100vw - 80px);
           display: block;
           font-size: 20px;
           color: $black800;
