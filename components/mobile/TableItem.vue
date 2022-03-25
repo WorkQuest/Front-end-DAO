@@ -302,4 +302,14 @@ export default {
       object-fit: cover;
     }
   }
+
+@include _767 {
+  .item {
+    &__info {
+      &_large {
+        width: calc(100vw - 80px);
+      }
+    }
+  }
+}
 </style>
