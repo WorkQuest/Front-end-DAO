@@ -244,6 +244,7 @@ export default {
         font-weight: normal;
         margin-left: 10px;
         &_large {
+          width: calc(100vw - 80px);
           display: block;
           font-size: 20px;
           color: $black800;
@@ -302,14 +303,4 @@ export default {
       object-fit: cover;
     }
   }
-
-@include _767 {
-  .item {
-    &__info {
-      &_large {
-        width: calc(100vw - 80px);
-      }
-    }
-  }
-}
 </style>
