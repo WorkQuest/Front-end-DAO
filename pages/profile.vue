@@ -366,7 +366,6 @@ export default {
         disabled: false,
       };
       mainPhone.fullNumber = phone ? phone?.fullPhone : tempPhone?.fullPhone;
-      mainPhone.placeholder = phone ? phone?.fullPhone : tempPhone?.fullPhone;
       mainPhone.isVerify = !!phone;
       phones.push(mainPhone);
 
@@ -381,7 +380,6 @@ export default {
           disabled: false,
         };
         secondPhone.fullNumber = additionalInfo.secondMobileNumber?.fullPhone || null;
-        secondPhone.placeholder = additionalInfo.secondMobileNumber?.fullPhone || this.$t('settings.secondNumberMissing');
         phones.push(secondPhone);
       }
       return phones;
@@ -1104,15 +1102,8 @@ export default {
 }
 
 @include _767 {
-  .field {
-    &__input {
-      max-height: 46px !important;
-    }
-
-    &__phone {
-      margin: 5px 0;
-      height: 70px;
-    }
+  .field__phone {
+    height: fit-content;
   }
   .avatar__img {
     height: 149px;
