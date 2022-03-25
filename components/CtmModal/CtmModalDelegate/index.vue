@@ -70,7 +70,7 @@ export default {
       tokensAmount: '',
       balance: 0,
       investorAddress: '',
-      windowSize: 0,
+      windowSize: window.innerWidth,
     };
   },
   computed: {
@@ -84,7 +84,6 @@ export default {
       return this.options?.min ? `|min_value:${this.options.min}` : '';
     },
     convertValue() {
-      this.windowSizeListener();
       if (this.windowSize > 480) {
         return this.investorAddress;
       }
@@ -110,6 +109,9 @@ export default {
       this.CloseModal();
     }
     this.investorAddress = this.options.investorAddress;
+    window.addEventListener('resize', () => {
+      this.windowSize = window.innerWidth;
+    });
   },
   async mounted() {
     await Promise.all([
@@ -124,11 +126,6 @@ export default {
     },
     maxDelegate() {
       this.tokensAmount = this.balance;
-    },
-    windowSizeListener() {
-      window.addEventListener('resize', () => {
-        this.windowSize = window.innerWidth;
-      });
     },
     async delegate() {
       const { callback } = this.options;
