@@ -161,6 +161,7 @@
               class="profile-cont__field field__phone"
             >
               <label
+                v-if="isProfileEdit"
                 class="profile-cont__label"
                 :for="cell.label"
               >
@@ -183,6 +184,7 @@
               />
               <base-field
                 v-else
+                :label="cell.label"
                 :data-selector="cell.selector"
                 :value="cell.fullNumber"
                 class="field__input"
