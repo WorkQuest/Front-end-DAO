@@ -752,7 +752,7 @@ export default {
 }
 
 .profile-cont {
-  background-color: #fff;
+  background-color: $white;
   border-radius: 6px;
 
   &__social-input {
@@ -850,11 +850,11 @@ export default {
   }
 
   &_verified {
-    color: #0083C7;
+    color: $blue;
     background: rgba(0, 131, 199, 0.1);
 
     & .status__icon {
-      color: #0083C7;
+      color: $blue;
     }
   }
 }
@@ -881,7 +881,7 @@ export default {
     width: 40px;
     height: 40px;
 
-    background: #F7F8FA;
+    background: $black0;
     border-radius: 6px;
 
     -moz-transition: all 0.5s;
@@ -890,10 +890,10 @@ export default {
     transition: all 0.5s;
 
     &:hover {
-      background: #0083C7;
+      background: $blue;
 
       & .edit__icon {
-        color: #FFFFFF;
+        color: $white;
       }
     }
   }
@@ -922,7 +922,7 @@ export default {
     margin-right: -50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: #0083C7;
+    color: $blue;
     font-size: 20px;
   }
 }
@@ -932,10 +932,9 @@ export default {
   flex-direction: column;
 
   &__title {
-    color: #1D2127;
+    color: $black800;
     font-size: 16px;
     line-height: 21px;
-
     margin-bottom: 5px;
   }
 
@@ -944,22 +943,22 @@ export default {
     padding: 10px 10px 0 10px;
     border: none;
     border-radius: 6px;
-    color: #1D2127;
-    background-color: #F7F8FA;
+    color: $black800;
+    background-color: $black100;
     resize: none;
 
     &:focus {
-      background-color: #FFFFFF;
-      border: 1px solid #F3F7FA;
+      background-color: $white;
+      border: 1px solid $black0;
     }
 
     &_disabled {
-      background-color: #FFFFFF;
-      border: 1px solid #F3F7FA;
+      background-color: $white;
+      border: 1px solid $black100;
     }
 
     &::placeholder {
-      color: #D8DFE3;
+      color: $black100;
     }
   }
 }
@@ -987,8 +986,7 @@ export default {
     font-weight: 500;
     font-size: 22px;
     line-height: 39px;
-
-    color: #000000;
+    color: $black800;
   }
 
   &__btn {
@@ -999,8 +997,7 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-
-    background: #FFFFFF;
+    background: $white;
     border-radius: 6px;
     padding: 20px;
   }
@@ -1010,12 +1007,10 @@ export default {
   }
 }
 
-.icon {
-  &__input {
-    font-size: 23px;
-    color: #0083C7;
-    line-height: 36px;
-  }
+.icon__input {
+  font-size: 23px;
+  color: $blue;
+  line-height: 36px;
 }
 
 .selector {
@@ -1028,7 +1023,7 @@ export default {
   }
 
   &__items {
-    background: #FFFFFF;
+    background: $white;
     display: grid;
     grid-template-columns: 1fr;
     width: 100%;
@@ -1037,7 +1032,7 @@ export default {
   &__item {
     @include text-simple;
     padding: 15px 20px;
-    background: #FFFFFF;
+    background: $white;
     font-weight: 500;
     font-size: 16px;
     color: $black800;
@@ -1045,7 +1040,7 @@ export default {
     transition: .3s;
 
     &:hover {
-      background: #F3F7FA;
+      background: $black100;
     }
   }
 }
@@ -1108,7 +1103,7 @@ export default {
   .avatar__img {
     height: 149px;
     width: 149px;
-    border: 1px solid #F7F8FA;
+    border: 1px solid $black0;
     border-radius: 6px;
   }
   .profile-cont {
@@ -1166,7 +1161,7 @@ export default {
 <style lang="scss">
 .input-phone {
   input {
-    background-color: #F7F8FA !important;
+    background-color: $black100 !important;
     border: unset !important;
     height: 46px !important;
     min-height: 46px !important;
@@ -1185,7 +1180,7 @@ export default {
   .input-tel__input {
     border-top-right-radius: 6px !important;
     border-bottom-right-radius: 6px !important;
-    border-left: 1px solid #ccc !important;
+    border-left: 1px solid $black200 !important;
   }
 }
 </style>
