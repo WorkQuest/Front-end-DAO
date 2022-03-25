@@ -84,11 +84,12 @@ export default {
       return this.options?.min ? `|min_value:${this.options.min}` : '';
     },
     convertValue() {
-      if (this.windowSize > 480) return this.investorAddress;
+      const { windowSize } = this;
+      if (windowSize > 480) return this.investorAddress;
       let a = 10;
-      if (this.windowSize > 450) a = 17;
-      else if (this.windowSize > 380) a = 15;
-      else if (this.windowSize > 350) a = 13;
+      if (windowSize > 450) a = 17;
+      else if (windowSize > 380) a = 15;
+      else if (windowSize > 350) a = 13;
       return this.CutTxn(this.investorAddress, a, a);
     },
   },
