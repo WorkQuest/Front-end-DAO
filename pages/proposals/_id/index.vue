@@ -103,14 +103,10 @@
                   {{ `${results.percents.yes}%` }}
                 </div>
               </div>
-              <div class="bar__line">
-                <div class="bar__line_gray">
-                  <div
-                    class="bar__line_green"
-                    :style="`width: ${results.percents.yes}%`"
-                  />
-                </div>
-              </div>
+              <progress-bar
+                :value="results.percents.yes"
+                mode="green"
+              />
               <div class="bar__votes">
                 {{ results.votes.yes }} {{ $t('proposal.votes') }}
               </div>
@@ -124,14 +120,10 @@
                   {{ `${results.percents.no}%` }}
                 </div>
               </div>
-              <div class="bar__line">
-                <div class="bar__line_gray">
-                  <div
-                    class="bar__line_red"
-                    :style="`width: ${results.percents.no}%`"
-                  />
-                </div>
-              </div>
+              <progress-bar
+                :value="results.percents.no"
+                mode="red"
+              />
               <div class="bar__votes">
                 {{ results.votes.no }} {{ $t('proposal.votes') }}
               </div>

@@ -388,6 +388,7 @@ export default {
         { path: '/wallet', title: this.$t('ui.wallet') },
         { path: '/investors', title: this.$t('ui.investors') },
         { path: '/discussions', title: this.$t('ui.discussions') },
+        { path: '/validators', title: this.$t('ui.validators') },
         { path: '/KYC', title: this.$t('ui.KYC') },
       ],
       userDDLinks: [
@@ -602,6 +603,10 @@ export default {
   &-container {
     &__avatar {
       padding: 15px;
+      max-width: 80px;
+      max-height: 80px;
+      width: 100%;
+      height: 100%;
     }
 
     &__user {
@@ -627,8 +632,8 @@ export default {
 
   &__avatar {
     max-height: 40px;
-    max-width: 40px;
     height: 100%;
+    max-width: 40px;
     width: 100%;
     border-radius: 137px;
   }
@@ -637,6 +642,9 @@ export default {
     font-weight: 500;
     font-size: 16px;
     color: $black800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__role {
@@ -948,14 +956,20 @@ export default {
   }
 
   &__avatar {
+    display: flex;
+    flex-wrap: nowrap;
     max-width: 40px;
     max-height: 40px;
+    width: 100%;
+    height: 100%;
     border-radius: 100%;
   }
 
   &__img {
-    width: 40px;
-    height: 40px;
+    max-width: 40px;
+    max-height: 40px;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     object-fit: cover;
   }
@@ -997,6 +1011,9 @@ export default {
     font-size: 16px;
     line-height: 130%;
     color: $black800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &_blue {
       font-weight: normal;
@@ -1016,6 +1033,7 @@ export default {
     grid-template-columns: 1fr;
     grid-gap: 5px;
     text-align: left;
+    min-width: 0;
   }
 }
 
@@ -1123,7 +1141,7 @@ export default {
   &__links {
     display: grid;
     align-items: center;
-    grid-template-columns: repeat(5, auto);
+    grid-template-columns: repeat(6, auto);
     grid-gap: 25px;
   }
 
@@ -1516,6 +1534,8 @@ export default {
       display: flex;
     }
   }
+}
+@include _767 {
   .footer {
     &__content {
       display: flex;

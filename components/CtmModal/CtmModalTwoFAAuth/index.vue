@@ -140,6 +140,7 @@
             :placeholder="item.placeholder"
             :rules="item.rules"
             :name="item.name"
+            :data-selector="item.selector"
           />
         </div>
       </div>
@@ -243,6 +244,7 @@ export default {
           placeholder: this.$t('modals.conformationCodeFromMail'),
           rules: 'required|alpha_num',
           name: this.$t('modals.emailVerificationCodeField'),
+          selector: 'CONFIRM-CODE',
         },
         {
           id: 'totp',
@@ -251,6 +253,7 @@ export default {
           placeholder: this.$t('modals.twoFAConfirmationCode'),
           rules: 'required|alpha_num',
           name: this.$t('securityCheck.confCodeField'),
+          selector: 'GOOGLE-VERIFICATION-CODE',
         },
       ],
     };

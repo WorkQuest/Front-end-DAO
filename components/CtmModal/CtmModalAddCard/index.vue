@@ -14,9 +14,10 @@
             v-model="cardNumber_input"
             :name="$t('modals.numberOfCard')"
             type="tel"
+            data-selector="CARD-NUMBER"
             rules="max:19|required"
             inputmode="numeric"
-            :placeholder="'1234 1234 1234 1234'"
+            placeholder="1234 1234 1234 1234"
           />
         </div>
         <div class="ctm-modal__content-field">
@@ -27,6 +28,7 @@
             id="name_input"
             v-model="name_input"
             :name="$t('modals.cardholderName')"
+            data-selector="CARDHOLDER-NAME"
             placeholder="John Doe"
             type="text"
             rules="max:30|required"
@@ -41,7 +43,8 @@
               id="date_input"
               v-model="date_input"
               :name="$t('modals.date')"
-              :placeholder="'02/24'"
+              data-selector="DATE"
+              placeholder="02/24"
               rules="max:5|required|date"
             />
           </div>
@@ -53,6 +56,7 @@
               id="cvv_input"
               v-model="cvv_input"
               :name="$t('modals.cvv')"
+              data-selector="CVV"
               placeholder="242"
               rules="max:4|required"
             />

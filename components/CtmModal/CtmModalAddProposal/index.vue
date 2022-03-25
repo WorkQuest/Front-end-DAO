@@ -13,6 +13,7 @@
               :placeholder="$t('modals.votingTopic')"
               :label="$t('modals.votingTopic')"
               rules="required|max:78|min:3"
+              data-selector="VOTING-TOPIC"
               :name="$t('modals.votingTopicField')"
             />
           </div>
@@ -45,6 +46,7 @@
                 v-model="descriptionInput"
                 class="description__textarea"
                 name="description"
+                data-selector="TEXTAREA-DESCRIPTION"
               />
               <div class="description__error">
                 {{ errors[0] }}

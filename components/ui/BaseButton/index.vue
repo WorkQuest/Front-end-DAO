@@ -64,6 +64,7 @@ export default {
       return [
         { 'base-btn_disabled': disabled },
         { 'base-btn_light': mode === 'light' },
+        { 'base-btn_max': mode === 'max' },
         { 'base-btn_outline': mode === 'outline' },
         { 'base-btn_like': mode === 'like' },
         { 'base-btn_borderless-left': mode === 'borderless-left' },
@@ -122,6 +123,19 @@ export default {
 
   &:hover {
     background: #103D7C;
+  }
+
+  &_max {
+    background-color: $black0;
+    color: $blue;
+    font-weight: 600;
+    font-size: 16px;
+    height: 40px;
+    line-height: 130%;
+
+    &:hover {
+      background-color: $black0;
+    }
   }
 
   &_like {
