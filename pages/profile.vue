@@ -97,6 +97,7 @@
             </base-field>
             <base-field
               v-model="localUserData.additionalInfo.address"
+              v-click-outside="hideAddressSelector"
               :placeholder="address || $t('settings.addressInput')"
               :disabled="!isProfileEdit"
               :is-with-loader="true"
@@ -106,7 +107,7 @@
               mode-error="small"
               :rules="isProfileEdit ? 'required' : ''"
               class="profile-cont__field"
-              @focus="changeFocusValue"
+              @focus="isGeoInputOnFocus = true"
               @input="getPositionData"
             >
               <template v-slot:left>
@@ -293,6 +294,7 @@
 <script>
 
 import { mapGetters } from 'vuex';
+import ClickOutside from 'vue-click-outside';
 import { GeoCode } from 'geo-coder';
 import modals from '~/store/modals/modals';
 import { UserRole, SumSubStatuses } from '~/utils/enums';
@@ -301,6 +303,9 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 export default {
   name: 'Settings',
   SumSubStatuses,
+  directives: {
+    ClickOutside,
+  },
   data() {
     return {
       updatedPhone: {
@@ -390,6 +395,9 @@ export default {
     this.SetLoader(false);
   },
   methods: {
+    hideAddressSelector() {
+      this.isGeoInputOnFocus = false;
+    },
     totpToggle() {
       const mode = this.userData.totpIsActive ? 'disableTwoFAAuth' : 'twoFAAuth';
       this.ShowModal({
@@ -462,14 +470,7 @@ export default {
         latitude: address.lat,
       };
     },
-    changeFocusValue(arg) {
-      setTimeout(() => {
-        this.isGeoInputOnFocus = arg;
-      }, 300);
-    },
     getPositionData(address) {
-      this.addresses = [];
-
       if (!address) {
         this.localUserData.additionalInfo.address = null;
         this.localUserData.location = null;
