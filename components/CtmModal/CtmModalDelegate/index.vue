@@ -12,11 +12,10 @@
           <div class="delegate__input">
             <base-field
               disabled
-              :value="investorAddress"
+              data-selector="ADDRESS"
+              :value="convertValue"
               class="address__body"
-            >
-              {{ investorAddress }}
-            </base-field>
+            />
           </div>
         </div>
         <div class="content__tokens tokens">
@@ -31,6 +30,7 @@
               v-model="tokensAmount"
               class="footer__body"
               placeholder="10000 WQT"
+              data-selector="AMOUNT"
               :name="$t('modals.tokensNumber')"
               :rules="`required${min}|max_bn:${balance}|min_value:1|decimalPlaces:18`"
               @input="replaceDot"
@@ -70,6 +70,7 @@ export default {
       tokensAmount: '',
       balance: 0,
       investorAddress: '',
+      windowSize: window.innerWidth,
     };
   },
   computed: {
@@ -82,6 +83,15 @@ export default {
     min() {
       return this.options?.min ? `|min_value:${this.options.min}` : '';
     },
+    convertValue() {
+      const { windowSize } = this;
+      if (windowSize > 480) return this.investorAddress;
+      let a = 10;
+      if (windowSize > 450) a = 17;
+      else if (windowSize > 380) a = 15;
+      else if (windowSize > 350) a = 13;
+      return this.CutTxn(this.investorAddress, a, a);
+    },
   },
   async beforeMount() {
     if (!this.isWalletConnected) {
@@ -89,6 +99,9 @@ export default {
       this.CloseModal();
     }
     this.investorAddress = this.options.investorAddress;
+    window.addEventListener('resize', () => {
+      this.windowSize = window.innerWidth;
+    });
   },
   async mounted() {
     await Promise.all([
