@@ -22,7 +22,7 @@ import {
   getChairpersonHash,
   hasRole,
   getProposalThreshold,
-  connectWallet,
+  connectWallet, getFreezed,
 } from '~/utils/wallet';
 import abi from '~/abi/index';
 import { errorCodes, TokenSymbols } from '~/utils/enums';
@@ -167,7 +167,9 @@ export default {
       const address = !+res.result ? null : res.result.toLowerCase();
       let votingPowerArray = null;
       let user = null;
+      let freezed = null;
       if (address) {
+        freezed = await getFreezed();
         votingPowerArray = await dispatch('getVotesByAddresses', [address]);
         if (address === rootGetters['user/getUserWalletAddress']) user = rootGetters['user/getUserData'];
         else user = await dispatch('user/getUserByWalletAddress', address, { root: true });
@@ -177,6 +179,7 @@ export default {
         investorAddress: address,
         voting: votingPowerArray ? getStyledAmount(votingPowerArray.result[0]) : null,
         fullName: `${user.firstName || ''} ${user.lastName || ''}`,
+        freezed: getStyledAmount(freezed.result),
       } : null;
       commit(
         'investors/setDelegatedToUser', delegatedData, { root: true },
