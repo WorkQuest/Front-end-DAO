@@ -244,17 +244,20 @@ export default {
         font-weight: normal;
         margin-left: 10px;
         &_large {
-            display: block;
-            font-size: 20px;
-            color: $black800;
+          width: calc(100vw - 80px);
+          display: block;
+          font-size: 20px;
+          color: $black800;
+          text-overflow: ellipsis;
+          overflow: hidden;
         }
         &_green {
-            font-weight: normal;
-            color: $green;
+          font-weight: normal;
+          color: $green;
         }
         &_red {
-            font-weight: normal;
-            color: $red;
+          font-weight: normal;
+          color: $red;
         }
         &_yes {
           background: $green;
