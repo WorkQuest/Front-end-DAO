@@ -30,7 +30,7 @@
             </div>
             <div class="btn__wrapper">
               <base-btn
-                :mode="'outline'"
+                mode="outline"
                 class="message__action"
                 @click="CloseModal"
               >
