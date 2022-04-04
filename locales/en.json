@@ -736,6 +736,8 @@
   "investors": {
     "title": "Investors",
     "search": "Search investor",
+    "notEnoughTokens": "You dont have enough WQT tokens!",
+    "delegateInfo": "Delegate info",
     "table": {
       "name": "Name",
       "address": "Address",
