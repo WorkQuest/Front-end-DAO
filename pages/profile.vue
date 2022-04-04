@@ -358,7 +358,7 @@ export default {
       const { phone, tempPhone, additionalInfo } = this.userData;
       const mainPhone = {
         type: 'main',
-        label: 'Main phone number',
+        label: this.$t('settings.firstNumber'),
         fullNumber: null,
         selector: 'MAIN-PHONE',
         placeholder: this.$t('settings.mainNumberMissing'),
@@ -372,7 +372,7 @@ export default {
       if (this.userRole === UserRole.EMPLOYER) {
         const secondPhone = {
           type: 'second',
-          label: 'Additional phone number',
+          label: this.$t('settings.secondNumber'),
           fullNumber: null,
           selector: 'SECOND-PHONE',
           placeholder: this.$t('settings.secondNumberMissing'),
