@@ -22,7 +22,7 @@ import {
   getChairpersonHash,
   hasRole,
   getProposalThreshold,
-  connectWallet,
+  connectWallet, getFreezed,
 } from '~/utils/wallet';
 import abi from '~/abi/index';
 import { errorCodes, TokenSymbols } from '~/utils/enums';
