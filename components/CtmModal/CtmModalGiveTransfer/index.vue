@@ -19,6 +19,7 @@
             :placeholder="$t('modals.address')"
             rules="required|address"
             :name="$t('modals.addressField')"
+            data-selector="INPUT_RECIPIENT"
           />
         </div>
         <div class="content__input input">
@@ -40,6 +41,7 @@
             :placeholder="$t('modals.amount')"
             :rules="`required|decimal|is_not:0|max_bn:${maxAmount}|decimalPlaces:18`"
             :name="$t('modals.amountField')"
+            data-selector="INPUT_AMOUNT"
             @input="replaceDot"
           >
             <template
@@ -49,6 +51,7 @@
               <base-btn
                 mode="max"
                 class="max__button"
+                selector="MAX"
                 @click="maxBalance"
               >
                 <span class="max__text">
@@ -62,6 +65,7 @@
           <base-btn
             mode="outline"
             class="buttons__action"
+            selector="CANCEL"
             @click="hide"
           >
             {{ $t('meta.cancel') }}
@@ -69,6 +73,7 @@
           <base-btn
             class="buttons__action"
             :disabled="invalid || !isCanSubmit"
+            selector="SUBMIT"
             @click="handleSubmit(showWithdrawInfo)"
           >
             {{ $t('meta.send') }}
@@ -145,6 +150,7 @@ export default {
     // Для просчета максимальной суммы транзакции от комиссии
     async updateMaxFee() {
       if (!this.isConnected) return;
+      console.log(this.balance, this.balance.WQT.fullBalance);
       const [wusd, wqt] = await Promise.all([
         this.$store.dispatch('wallet/getTransferFeeData', {
           recipient: this.userData.wallet.address,

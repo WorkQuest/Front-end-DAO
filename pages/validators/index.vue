@@ -1,6 +1,9 @@
 <template>
   <div class="validators">
     <div class="validators__body">
+      <button @click="test">
+        test
+      </button>
       <div class="validators__head head">
         <div class="head__title">
           {{ $t('validators.title') }}
@@ -9,6 +12,7 @@
           <button
             class="head__button"
             :class="{ 'head__button_active' : tableType === 'validators' }"
+            data-selector="VALIDATORS"
             @click="tableType = 'validators'"
           >
             {{ $t('validators.title') }}
@@ -16,6 +20,7 @@
           <button
             class="head__button"
             :class="{ 'head__button_active' : tableType === 'candidates' }"
+            data-selector="CANDIDATES"
             @click="tableType = 'candidates'"
           >
             {{ $t('validators.candidates') }}
@@ -28,10 +33,12 @@
         is-search
         :placeholder="$t(`validators.${tableType === 'validators' ? 'searchValidator' : 'searchCandidates'}`)"
         mode="icon"
+        data-selector="SEARCH"
       />
       <base-table
         class="validators__table"
         :fields="tableFields"
+        :items="validators"
       />
       <base-pager
         v-model="currPage"
@@ -44,6 +51,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { test } from '~/utils/wallet';
 
 export default {
   name: 'Validators',
@@ -59,9 +67,23 @@ export default {
   },
   computed: {
     ...mapGetters({
+      isWalletConnected: 'web3/getWalletIsConnected',
       userData: 'user/getUserData',
-      isConnected: 'web3/getWalletIsConnected',
+      validatorsList: 'validators/getValidatorsList',
+      validatorsCount: 'validators/getValidatorsCount',
     }),
+    validators() {
+      const res = [];
+      // eslint-disable-next-line no-restricted-syntax
+      for (const item of this.validatorsList) {
+        res.push({
+          fullName: item.description.moniker,
+          investorAddress: item.operator_address,
+          fee: item.commission.commission_rates.rate,
+        });
+      }
+      return res;
+    },
     tableFields() {
       const mainFields = [
         { key: 'avatar', label: this.$t('validators.table.name') },
@@ -89,6 +111,19 @@ export default {
     },
     totalPages() {
       return 2;
+    },
+  },
+  beforeCreate() {
+    this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
+  },
+  async beforeMount() {
+    await Promise.all([
+      this.$store.dispatch('validators/getValidators'),
+    ]);
+  },
+  methods: {
+    async test() {
+      await test();
     },
   },
 };

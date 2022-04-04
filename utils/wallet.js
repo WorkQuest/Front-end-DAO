@@ -11,11 +11,12 @@ const bip39 = require('bip39');
 BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN });
 BigNumber.config({ EXPONENTIAL_AT: 60 });
 
+const path = Object.freeze("m/44'/60'/0'/0/0");
 // eslint-disable-next-line import/prefer-default-export
 export const generateMnemonic = () => bip39.generateMnemonic();
 export const createWallet = (mnemonic) => {
   try {
-    return ethers.utils.HDNode.fromMnemonic(mnemonic).derivePath("m/44'/60'/0'/0/0");
+    return ethers.utils.HDNode.fromMnemonic(mnemonic).derivePath(path);
   } catch (e) {
     // incorrect mnemonic
     return false;
@@ -35,6 +36,7 @@ export const GetWalletProvider = () => web3;
 const wallet = {
   address: null,
   privateKey: null,
+  mnemonic: null,
   init(address, privateKey) {
     if (!web3) web3 = new Web3(process.env.WQ_PROVIDER);
     this.address = address.toLowerCase();
@@ -106,6 +108,7 @@ export const connectWallet = (userAddress, userPassword) => {
         ...JSON.parse(sessionStorage.getItem('mnemonic')),
         [userAddress]: mnemonic,
       }));
+      wallet.mnemonic = mnemonic;
       return success();
     }
   }
@@ -126,6 +129,7 @@ export const connectWithMnemonic = (userAddress) => {
   const _walletTemp = createWallet(mnemonic);
   if (_walletTemp && _walletTemp.address.toLowerCase() === userAddress) {
     wallet.init(_walletTemp.address.toLowerCase(), _walletTemp.privateKey);
+    wallet.mnemonic = mnemonic;
     return true;
   }
   return false;
@@ -438,5 +442,24 @@ export const executeVoting = async (id) => {
     return success(res);
   } catch (e) {
     return error(errorCodes.ExecuteVoting, e.message, e);
+  }
+};
+
+// const cosmos = new Cosmos('https://dev-node-nyc3.workquest.co', '20211224');
+// cosmos.setPath(path);
+
+// TODO REST API FOR VALIDATORS: https://dev-node-nyc3.workquest.co/api/
+//
+// TODO префикс ETH у нас
+
+/** VALIDATORS */
+export const test = async () => {
+  try {
+    const t = await web3.eth.getAccounts();
+    console.log(t);
+    // console.log('TEST RESULT:', cosmos.getAddress(wallet.mnemonic));
+    // this.$store.dispatch('')
+  } catch (e) {
+    console.error(e);
   }
 };
