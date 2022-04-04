@@ -27,9 +27,12 @@
                 <span class="balance__currency-text">
                   {{ balance[selectedToken].balance + ' ' + selectedToken }}
                 </span>
-                <span class="balance__usd_mobile">
+                <span class="balance__usd-mobile">
+                  <span class="balance__usd-mobile_blue">
+                    {{ $t('wallet.delegated') }}
+                  </span>
                   <span v-if="selectedToken === tokenSymbols.WUSD">
-                    {{ `$ ${balance[tokenSymbols.WUSD].balance}` }}
+                    {{ `$ ${delegatedBalance}` }}
                   </span>
                 </span>
                 <base-dd
@@ -38,9 +41,12 @@
                   :items="tokenSymbolsDd"
                 />
               </span>
-              <span class="balance__usd">
+              <span class="balance__usd balance__usd_blue">
                 <span v-if="selectedToken === tokenSymbols.WUSD">
-                  {{ `$ ${balance[tokenSymbols.WUSD].balance}` }}
+                  <span class="balance__usd">
+                    {{ $t('wallet.delegated') }}
+                  </span>
+                  {{ `$ ${delegatedBalance}` }}
                 </span>
               </span>
             </div>
@@ -144,6 +150,7 @@ export default {
       transactionsCount: 'wallet/getTransactionsCount',
       isWalletConnected: 'wallet/getIsWalletConnected',
       balance: 'wallet/getBalanceData',
+      delegatedBalance: 'user/getDelegatedBalance',
       selectedToken: 'wallet/getSelectedToken',
       userWalletAddress: 'user/getUserWalletAddress',
     }),
@@ -216,6 +223,7 @@ export default {
   },
   async mounted() {
     if (!this.isWalletConnected) return;
+    await this.$store.dispatch('wallet/delegatedBalance', this.userWalletAddress);
     const i = this.tokenSymbolsDd.indexOf(this.selectedToken);
     this.ddValue = i >= 0 && i < this.tokenSymbolsDd.length ? i : 1;
     await this.loadData();
@@ -443,15 +451,23 @@ export default {
 
   &__usd {
     @include text-simple;
-    color: $blue;
     height: 24px;
+    color: $black800;
 
-    &_mobile {
+    &_blue {
+      color: $blue;
+    }
+
+    &-mobile {
       display: none;
       height: 33px;
-      color: $blue;
+      color: $black800;
       font-size: 18px;
       font-weight: normal;
+    }
+
+    &_blue {
+      color: $blue;
     }
   }
 }

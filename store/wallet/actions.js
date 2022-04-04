@@ -161,6 +161,14 @@ export default {
       return error(errorCodes.GetVotes, e.message, e);
     }
   },
+  async delegatedBalance({ commit, dispatch, rootGetters }, address) {
+    console.log('delegatedBalance');
+    let freezed = null;
+    if (address) {
+      freezed = await getFreezed();
+      commit('user/setDelegatedBalance', getStyledAmount(freezed.result), { root: true });
+    }
+  },
   async getDelegates({ commit, dispatch, rootGetters }) {
     const res = await getDelegates();
     if (res.ok) {
