@@ -601,6 +601,8 @@
     }
   },
   "settings": {
+    "firstNumber": "Main phone number",
+    "secondNumber": "Additional phone number",
     "description": "And you are beautiful",
     "imgLoaded": "Image loaded successful",
     "workExp": "Work experience",
