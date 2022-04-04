@@ -35,7 +35,11 @@
       <div class="wq-profile__header">
         {{ $t('profile.title') }}
       </div>
-      <div class="profile-cont">
+      <validation-observer
+        v-slot="{ invalid, handleSubmit}"
+        class="profile-cont"
+        tag="div"
+      >
         <div class="profile-cont__grid-container">
           <div class="profile-cont__main-data">
             <div class="profile-cont__avatar avatar">
@@ -53,7 +57,7 @@
                 <ValidationProvider
                   v-slot="{ validate }"
                   class="edit__validator"
-                  rules="required|ext:png,jpeg,jpg"
+                  rules="ext:png,jpeg,jpg"
                   tag="div"
                 >
                   <input
@@ -93,6 +97,7 @@
             </base-field>
             <base-field
               v-model="localUserData.additionalInfo.address"
+              v-click-outside="hideAddressSelector"
               :placeholder="address || $t('settings.addressInput')"
               :disabled="!isProfileEdit"
               :is-with-loader="true"
@@ -100,8 +105,9 @@
               data-selector="BASE-INPUT-FIELD-ADDRESS"
               :name="$t('modals.addressField')"
               mode-error="small"
+              :rules="isProfileEdit ? 'required' : ''"
               class="profile-cont__field"
-              @focus="changeFocusValue"
+              @focus="isGeoInputOnFocus = true"
               @input="getPositionData"
             >
               <template v-slot:left>
@@ -153,10 +159,18 @@
             <div
               v-for="cell in phoneInputsArr"
               :key="cell.type"
-              class="profile-cont__field"
+              class="profile-cont__field field__phone"
             >
+              <label
+                v-if="isProfileEdit"
+                class="profile-cont__label"
+                :for="cell.label"
+              >
+                {{ cell.label }}
+              </label>
               <vue-phone-number-input
                 v-if="isProfileEdit"
+                :id="cell.label"
                 v-model="phone[cell.type].fullPhone"
                 class="input-phone"
                 error-color="#EB5757"
@@ -164,14 +178,17 @@
                 clearable
                 show-code-on-list
                 required
+                :disabled="cell.disabled"
                 :default-country-code="phone[cell.type].codeRegion"
                 size="lg"
                 @update="updatedPhone[cell.type] = $event"
               />
               <base-field
                 v-else
+                :label="cell.label"
                 :data-selector="cell.selector"
                 :value="cell.fullNumber"
+                class="field__input"
                 :placeholder="cell.placeholder"
                 :disabled="true"
                 is-hide-error
@@ -184,10 +201,14 @@
             </div>
           </div>
           <div class="profile-cont__about about">
-            <div class="about__title">
+            <label
+              for="about"
+              class="about__title"
+            >
               {{ $t('profile.aboutMe') }}
-            </div>
+            </label>
             <textarea
+              id="about"
               v-model="localUserData.additionalInfo.description"
               class="about__textarea"
               data-selector="TEXTAREA-ABOUT-ME"
@@ -223,13 +244,14 @@
             <base-btn
               mode="lightBlue"
               class="action__btn"
-              @click="handleClickEditBtn"
+              :disabled="invalid"
+              @click="handleSubmit(handleClickEditBtn)"
             >
               {{ $t(`profile.${isProfileEdit ? 'save' : 'change'}`) }}
             </base-btn>
           </div>
         </div>
-      </div>
+      </validation-observer>
       <div
         v-if="isProfileEdit"
         class="wq-profile__header"
@@ -272,6 +294,7 @@
 <script>
 
 import { mapGetters } from 'vuex';
+import ClickOutside from 'vue-click-outside';
 import { GeoCode } from 'geo-coder';
 import modals from '~/store/modals/modals';
 import { UserRole, SumSubStatuses } from '~/utils/enums';
@@ -280,6 +303,9 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 export default {
   name: 'Settings',
   SumSubStatuses,
+  directives: {
+    ClickOutside,
+  },
   data() {
     return {
       updatedPhone: {
@@ -332,34 +358,28 @@ export default {
       const { phone, tempPhone, additionalInfo } = this.userData;
       const mainPhone = {
         type: 'main',
+        label: this.$t('settings.firstNumber'),
         fullNumber: null,
         selector: 'MAIN-PHONE',
         placeholder: this.$t('settings.mainNumberMissing'),
         isVerify: false,
+        disabled: false,
       };
-      if (phone) {
-        mainPhone.fullNumber = phone.fullPhone;
-        mainPhone.placeholder = phone.fullPhone;
-        mainPhone.isVerify = true;
-      }
-      if (tempPhone) {
-        mainPhone.fullNumber = tempPhone.fullPhone;
-        mainPhone.placeholder = tempPhone.fullPhone;
-      }
+      mainPhone.fullNumber = phone ? phone?.fullPhone : tempPhone?.fullPhone;
+      mainPhone.isVerify = !!phone;
       phones.push(mainPhone);
 
       if (this.userRole === UserRole.EMPLOYER) {
         const secondPhone = {
           type: 'second',
+          label: this.$t('settings.secondNumber'),
           fullNumber: null,
           selector: 'SECOND-PHONE',
           placeholder: this.$t('settings.secondNumberMissing'),
           isVerify: false,
+          disabled: false,
         };
-        if (additionalInfo.secondMobileNumber) {
-          secondPhone.fullNumber = additionalInfo.secondMobileNumber.fullPhone;
-          secondPhone.placeholder = additionalInfo.secondMobileNumber.fullPhone;
-        }
+        secondPhone.fullNumber = additionalInfo.secondMobileNumber?.fullPhone || null;
         phones.push(secondPhone);
       }
       return phones;
@@ -373,6 +393,9 @@ export default {
     this.SetLoader(false);
   },
   methods: {
+    hideAddressSelector() {
+      this.isGeoInputOnFocus = false;
+    },
     totpToggle() {
       const mode = this.userData.totpIsActive ? 'disableTwoFAAuth' : 'twoFAAuth';
       this.ShowModal({
@@ -389,9 +412,9 @@ export default {
         localUserData, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
       } = this;
 
-      this.phone.main = localUserData.phone || localUserData.tempPhone || { fullPhone: null, codeRegion: null };
+      this.phone.main = localUserData.phone || localUserData.tempPhone || { fullPhone: null, codeRegion: 'RU' };
 
-      this.phone.second = localUserData.additionalInfo.secondMobileNumber || { fullPhone: null, codeRegion: null };
+      this.phone.second = localUserData.additionalInfo.secondMobileNumber || { fullPhone: null, codeRegion: 'RU' };
 
       this.socialInputs = [{
         key: 'instagram',
@@ -445,14 +468,8 @@ export default {
         latitude: address.lat,
       };
     },
-    changeFocusValue(arg) {
-      setTimeout(() => {
-        this.isGeoInputOnFocus = arg;
-      }, 300);
-    },
     getPositionData(address) {
       this.addresses = [];
-
       if (!address) {
         this.localUserData.additionalInfo.address = null;
         this.localUserData.location = null;
@@ -560,21 +577,18 @@ export default {
       const mainPhone = this.updatedPhone.main;
       const secondPhone = this.updatedPhone.second;
 
-      const phoneNumber = mainPhone
-        ? {
-          phone: mainPhone.nationalNumber || null,
-          fullPhone: mainPhone.formatInternational ? mainPhone.formatInternational.replace(/\s/g, '') : null,
-          codeRegion: mainPhone.countryCode || null,
-        }
-        : null;
-
-      const secondMobileNumber = secondPhone
-        ? {
-          phone: secondPhone.nationalNumber || null,
-          fullPhone: secondPhone.formatInternational ? secondPhone.formatInternational.replace(/\s/g, '') : null,
-          codeRegion: secondPhone.countryCode || null,
-        }
-        : null;
+      let phoneNumber = {
+        phone: mainPhone?.phoneNumber || null,
+        fullPhone: mainPhone?.formattedNumber || null,
+        codeRegion: mainPhone?.countryCode,
+      };
+      let secondMobileNumber = {
+        phone: secondPhone?.phoneNumber || null,
+        fullPhone: secondPhone?.formattedNumber || null,
+        codeRegion: secondPhone?.countryCode,
+      };
+      if (!phoneNumber.fullPhone) phoneNumber = null;
+      if (!secondMobileNumber.fullPhone) secondMobileNumber = null;
 
       const { avatar_change, userRole } = this;
 
@@ -682,7 +696,7 @@ export default {
     margin-top: 20px;
     padding: 20px;
 
-    background: #FFFFFF;
+    background: $white;
     border-radius: 6px;
   }
 
@@ -694,7 +708,7 @@ export default {
 }
 
 .banner {
-  color: #FFFFFF;
+  color: $white;
   border-radius: 6px;
   margin-top: 30px;
 
@@ -738,7 +752,7 @@ export default {
 }
 
 .profile-cont {
-  background-color: #fff;
+  background-color: $white;
   border-radius: 6px;
 
   &__social-input {
@@ -836,11 +850,11 @@ export default {
   }
 
   &_verified {
-    color: #0083C7;
+    color: $blue;
     background: rgba(0, 131, 199, 0.1);
 
     & .status__icon {
-      color: #0083C7;
+      color: $blue;
     }
   }
 }
@@ -867,7 +881,7 @@ export default {
     width: 40px;
     height: 40px;
 
-    background: #F7F8FA;
+    background: $black0;
     border-radius: 6px;
 
     -moz-transition: all 0.5s;
@@ -876,10 +890,10 @@ export default {
     transition: all 0.5s;
 
     &:hover {
-      background: #0083C7;
+      background: $blue;
 
       & .edit__icon {
-        color: #FFFFFF;
+        color: $white;
       }
     }
   }
@@ -908,7 +922,7 @@ export default {
     margin-right: -50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: #0083C7;
+    color: $blue;
     font-size: 20px;
   }
 }
@@ -918,10 +932,9 @@ export default {
   flex-direction: column;
 
   &__title {
-    color: #1D2127;
+    color: $black800;
     font-size: 16px;
     line-height: 21px;
-
     margin-bottom: 5px;
   }
 
@@ -930,22 +943,22 @@ export default {
     padding: 10px 10px 0 10px;
     border: none;
     border-radius: 6px;
-    color: #1D2127;
-    background-color: #F7F8FA;
+    color: $black800;
+    background-color: $black100;
     resize: none;
 
     &:focus {
-      background-color: #FFFFFF;
-      border: 1px solid #F3F7FA;
+      background-color: $white;
+      border: 1px solid $black0;
     }
 
     &_disabled {
-      background-color: #FFFFFF;
-      border: 1px solid #F3F7FA;
+      background-color: $white;
+      border: 1px solid $black100;
     }
 
     &::placeholder {
-      color: #D8DFE3;
+      color: $black100;
     }
   }
 }
@@ -973,8 +986,7 @@ export default {
     font-weight: 500;
     font-size: 22px;
     line-height: 39px;
-
-    color: #000000;
+    color: $black800;
   }
 
   &__btn {
@@ -985,8 +997,7 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-
-    background: #FFFFFF;
+    background: $white;
     border-radius: 6px;
     padding: 20px;
   }
@@ -996,12 +1007,10 @@ export default {
   }
 }
 
-.icon {
-  &__input {
-    font-size: 23px;
-    color: #0083C7;
-    line-height: 36px;
-  }
+.icon__input {
+  font-size: 23px;
+  color: $blue;
+  line-height: 36px;
 }
 
 .selector {
@@ -1014,7 +1023,7 @@ export default {
   }
 
   &__items {
-    background: #FFFFFF;
+    background: $white;
     display: grid;
     grid-template-columns: 1fr;
     width: 100%;
@@ -1023,7 +1032,7 @@ export default {
   &__item {
     @include text-simple;
     padding: 15px 20px;
-    background: #FFFFFF;
+    background: $white;
     font-weight: 500;
     font-size: 16px;
     color: $black800;
@@ -1031,7 +1040,7 @@ export default {
     transition: .3s;
 
     &:hover {
-      background: #F3F7FA;
+      background: $black100;
     }
   }
 }
@@ -1067,16 +1076,8 @@ export default {
     }
   }
   .profile-cont {
-    &__main-data {
-      grid-template-columns: 151px 1fr;
-    }
-
     &__avatar {
       grid-row: 1/7;
-    }
-
-    &__status {
-      grid-column: 2;
     }
 
     &__social {
@@ -1096,42 +1097,61 @@ export default {
 }
 
 @include _767 {
-  .security {
-    grid-template-columns: 1fr;
-
-    &__password,
-    &__auth {
-      display: flex;
-      justify-items: unset;
-      justify-content: space-between;
-    }
+  .field__phone {
+    height: fit-content;
   }
-}
-
-@include _575 {
+  .avatar__img {
+    height: 149px;
+    width: 149px;
+    border: 1px solid $black0;
+    border-radius: 6px;
+  }
   .profile-cont {
+    &__label {
+      display: flex;
+    }
+
+    &__main-data {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    &__status {
+      display: flex;
+    }
 
     &__avatar {
-      grid-row: 1;
+      display: flex;
+      justify-content: center;
       margin-bottom: 17px;
     }
 
-    &__field {
-      grid-column: 1/3;
-    }
-
-    &__social {
+    .security {
       grid-template-columns: 1fr;
+
+      &__password,
+      &__auth {
+        display: flex;
+        justify-items: unset;
+        justify-content: space-between;
+      }
     }
   }
 
-  .security {
-    &__password,
-    &__auth {
-      display: grid;
-      gap: 10px;
-      justify-items: center;
-      justify-content: center;
+  @include _575 {
+    &__social {
+      grid-template-columns: 1fr;
+    }
+
+    .security {
+      &__password,
+      &__auth {
+        display: grid;
+        gap: 10px;
+        justify-items: center;
+        justify-content: center;
+      }
     }
   }
 }
@@ -1141,14 +1161,14 @@ export default {
 <style lang="scss">
 .input-phone {
   input {
-    background-color: #F7F8FA !important;
+    background-color: $black100 !important;
     border: unset !important;
     height: 46px !important;
     min-height: 46px !important;
 
     &:focus {
-      background-color: #FFFFFF !important;
-      border: 1px solid #0083C7 !important;
+      background-color: $white !important;
+      border: 1px solid $blue !important;
     }
   }
 
@@ -1160,7 +1180,7 @@ export default {
   .input-tel__input {
     border-top-right-radius: 6px !important;
     border-bottom-right-radius: 6px !important;
-    border-left: 1px solid #ccc !important;
+    border-left: 1px solid $black200 !important;
   }
 }
 </style>
