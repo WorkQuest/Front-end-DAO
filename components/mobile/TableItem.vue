@@ -148,7 +148,7 @@
         v-if="delegatedToUser && item.investorAddress === delegatedToUser.address"
         mode="lightRed"
         class="btn__delegate"
-        :disabled="balanceData.WQT.balance === 0"
+        :disabled="!+balanceData.WQT.balance"
         @click="openModalUndelegate(item)"
       >
         {{ $t('modals.undelegate') }}
@@ -156,7 +156,7 @@
       <base-btn
         mode="lightBlue"
         class="btn__delegate"
-        @click="balanceData.WQT.balance === 0 ? toastsDisputeInfo($t('investors.notEnoughTokens')) : openModalDelegate(item)"
+        @click="!+balanceData.WQT.balance ? toastsDisputeInfo($t('investors.notEnoughTokens')) : openModalDelegate(item)"
       >
         {{ $t('modals.delegate') }}
       </base-btn>
