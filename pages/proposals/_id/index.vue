@@ -604,8 +604,14 @@ export default {
 
   &__body {
     margin: 30px 15px 0 15px;
-    max-width: 1180px;
     height: 100%;
+  }
+
+  &__info {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__header {
@@ -673,7 +679,7 @@ export default {
     &_blue {
       font-size: 14px;
       line-height: 130%;
-      color: #0083C7;
+      color: $blue;
     }
   }
 
@@ -711,9 +717,9 @@ export default {
   }
 
   &__transactions {
-    display: grid;
-    grid-template-columns: max-content auto;
-    grid-gap: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     margin-top: 20px;
   }
 
@@ -735,6 +741,10 @@ export default {
 
 .header {
   &__title {
+    min-width: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     font-weight: 600;
     font-size: 24px;
     line-height: 32px;
@@ -809,6 +819,10 @@ export default {
     line-height: 130%;
     color: #7C838D;
     margin: 10px 0;
+    min-width: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 }
 
@@ -1002,6 +1016,20 @@ export default {
   color: #8D96A2;
   border: 1px solid rgba(0, 0, 0, 0);
   min-width: 140px;
+}
+
+@include _1300 {
+  .proposal {
+    &__content {
+      display: flex;
+      flex-direction: column;
+      margin-right: 30px;
+    }
+
+    &__history {
+      margin-right: 30px;
+    }
+  }
 }
 
 @include _991 {
