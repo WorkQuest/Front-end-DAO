@@ -211,8 +211,8 @@ export default {
       this.ShowModal({
         key: modals.transactionReceipt,
         fields: {
-          from: { name: this.$t('modals.fromAddress'), value: this.userData.wallet.address },
-          to: { name: this.$t('modals.toAddress'), value: this.recipient },
+          from: { name: this.$t('modals.fromAddress'), value: this.convertToBech32('wq', this.userData.wallet.address) },
+          to: { name: this.$t('modals.toAddress'), value: this.convertToBech32('wq', this.recipient) },
           amount: {
             name: this.$t('modals.amount'),
             value: this.amount,
@@ -230,51 +230,60 @@ export default {
 
 <style lang="scss" scoped>
 
-.transfer{
+.transfer {
   max-width: 500px !important;
-  padding: 0!important;
-  &__content{
-    padding: 20px 28px 30px 28px!important;
+  padding: 0 !important;
+
+  &__content {
+    padding: 20px 28px 30px 28px !important;
   }
 }
+
 .buttons {
   display: flex;
   justify-content: space-between;
-  &__action{
-    width: 212px!important;
+
+  &__action {
+    width: 212px !important;
+
     &:not(:last-child) {
       margin-right: 10px;
     }
   }
 }
 
-.input{
-  &__field{
+.input {
+  &__field {
     margin-top: 5px;
   }
 }
-.content{
+
+.content {
   &__step {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
   }
-  &__panel{
+
+  &__panel {
     @include text-simple;
     font-weight: 400;
     font-size: 16px;
     color: $black500;
     margin: 0 20px 0 0;
     cursor: pointer;
+
     &_active {
       color: $black800;
       border-bottom: 2px solid $blue;
       padding: 0 0 12px 0;
     }
   }
-  &__card{
+
+  &__card {
     margin: 40px auto;
   }
+
   &__text {
     font-size: 16px;
     line-height: 130%;
@@ -282,16 +291,18 @@ export default {
     text-align: center;
   }
 }
-.grid{
-  &__title{
+
+.grid {
+  &__title {
     margin: 15px 5px 0 0;
   }
 }
-.max{
-  &__button{
+
+.max {
+  &__button {
     color: $black700 !important;
-    margin-right: 10px!important;
-    background-color: transparent!important;
+    margin-right: 10px !important;
+    background-color: transparent !important;
   }
 }
 </style>
