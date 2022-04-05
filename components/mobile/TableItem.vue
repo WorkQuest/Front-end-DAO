@@ -10,7 +10,7 @@
     >
       {{ $t('wallet.table.txHash') }}
       <span class="item__info_large">
-        {{ CutTxn(item.tx_hash, 9, 6) }}
+        {{ CutTxn(convertToBech32('wq', item.tx_hash), 9, 6) }}
       </span>
     </div>
     <div
@@ -19,7 +19,7 @@
     >
       {{ $t('proposal.table.hash') }}
       <span class="item__info_large">
-        {{ CutTxn(item.hash, 9, 6) }}
+        {{ CutTxn(convertToBech32('wq', item.hash), 9, 6) }}
       </span>
     </div>
     <p
@@ -111,7 +111,7 @@
     >
       {{ $t('proposal.table.address') }}
       <span class="item__info">
-        {{ CutTxn(item.address || item.investorAddress, 9, 6) }}
+        {{ CutTxn(convertToBech32('wq', item.address || item.investorAddress), 9, 6) }}
         <base-btn
           v-if="item.investorAddress"
           v-clipboard:copy="item.investorAddress"
@@ -171,7 +171,8 @@ export default {
   props: {
     item: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
     },
     isLast: {
       type: Boolean,
@@ -211,96 +212,110 @@ export default {
 </script>
 <style lang="scss" scoped>
 .item {
-    padding: 20px 0;
-    border-bottom: 1px solid $black100;
-    grid-template-columns: 1fr 1fr;
-    display: grid;
-    &__link {
-      &:hover {
-        text-decoration: none;
-      }
-    }
-    &__separator {
-        border: none;
-        padding-bottom: 0;
-    }
-    &__hash {
-      font-weight: 600;
-      font-size: 14px;
-      color: $black300;
-    }
-    &__timestamp {
-      font-weight: normal;
-      font-size: 14px;
-      color: $black400;
-      justify-self: flex-end;
-    }
-    &__subtitle {
-      font-weight: 600;
-      grid-column: 1/3;
-      margin-top: 11px;
-    }
-    &__info {
-        font-weight: normal;
-        margin-left: 10px;
-        &_large {
-          width: calc(100vw - 80px);
-          display: block;
-          font-size: 20px;
-          color: $black800;
-          text-overflow: ellipsis;
-          overflow: hidden;
-        }
-        &_green {
-          font-weight: normal;
-          color: $green;
-        }
-        &_red {
-          font-weight: normal;
-          color: $red;
-        }
-        &_yes {
-          background: $green;
-          width: 63px;
-          height: 31px;
-          border-radius: 6px;
-          display: inline-flex;
-          justify-content: center;
-          align-items: center;
-          @include text-simple;
-          @include text-usual;
-          color: $white;
-          margin-left: 10px;
-        }
-        &_no {
-          background: $red;
-          width: 63px;
-          height: 31px;
-          border-radius: 6px;
-          display: inline-flex;
-          justify-content: center;
-          align-items: center;
-          @include text-simple;
-          @include text-usual;
-          color: $white;
-          margin-left: 10px;
-        }
-    }
-    &__buttons {
-      display: flex;
-      gap: 10px;
-      margin: 10px 0;
-    }
-    &__copy {
-      display: inline-block !important;
-      width: 15px !important;
-      height: 100% !important;
-    }
-    &__image {
-      width: 120px;
-      height: 120px;
-      -o-object-fit: cover;
-      object-fit: cover;
+  padding: 20px 0;
+  border-bottom: 1px solid $black100;
+  grid-template-columns: 1fr 1fr;
+  display: grid;
+
+  &__link {
+    &:hover {
+      text-decoration: none;
     }
   }
+
+  &__separator {
+    border: none;
+    padding-bottom: 0;
+  }
+
+  &__hash {
+    font-weight: 600;
+    font-size: 14px;
+    color: $black300;
+  }
+
+  &__timestamp {
+    font-weight: normal;
+    font-size: 14px;
+    color: $black400;
+    justify-self: flex-end;
+  }
+
+  &__subtitle {
+    font-weight: 600;
+    grid-column: 1/3;
+    margin-top: 11px;
+  }
+
+  &__info {
+    font-weight: normal;
+    margin-left: 10px;
+
+    &_large {
+      width: calc(100vw - 80px);
+      display: block;
+      font-size: 20px;
+      color: $black800;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    &_green {
+      font-weight: normal;
+      color: $green;
+    }
+
+    &_red {
+      font-weight: normal;
+      color: $red;
+    }
+
+    &_yes {
+      background: $green;
+      width: 63px;
+      height: 31px;
+      border-radius: 6px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      @include text-simple;
+      @include text-usual;
+      color: $white;
+      margin-left: 10px;
+    }
+
+    &_no {
+      background: $red;
+      width: 63px;
+      height: 31px;
+      border-radius: 6px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      @include text-simple;
+      @include text-usual;
+      color: $white;
+      margin-left: 10px;
+    }
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+  }
+
+  &__copy {
+    display: inline-block !important;
+    width: 15px !important;
+    height: 100% !important;
+  }
+
+  &__image {
+    width: 120px;
+    height: 120px;
+    -o-object-fit: cover;
+    object-fit: cover;
+  }
+}
 </style>

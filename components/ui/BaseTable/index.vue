@@ -21,14 +21,14 @@
         target="_blank"
         class="table__url"
       >
-        {{ CutTxn(el.item.tx_hash, 8, 4) }}
+        {{ CutTxn(convertToBech32('wq', el.item.tx_hash), 8, 4) }}
       </a>
     </template>
     <template #cell(status)="el">
       <span
         :class="{table__success: el.item.status, table__failed: !el.item.status}"
       >
-        {{ el.item.status ? $t('modals.success') : $t('modals.failed') }}
+        {{ el.item.status ? $t('wallet.success') : $t('wallet.failed') }}
       </span>
     </template>
     <template #cell(block)="el">
@@ -100,7 +100,7 @@
         :href="getAddressUrl(el.item.investorAddress)"
         target="_blank"
       >
-        {{ CutTxn(el.item.investorAddress, 5, 6) }}
+        {{ CutTxn(convertToBech32('wq', el.item.investorAddress), 8, 8) }}
       </a>
       <span
         v-else
@@ -115,7 +115,7 @@
         target="_blank"
         class="table__url"
       >
-        {{ CutTxn(el.item.from_address, 4, 4) }}
+        {{ CutTxn(convertToBech32('wq', el.item.from_address), 4, 4) }}
       </a>
     </template>
     <template #cell(to_address)="el">
@@ -124,7 +124,7 @@
         target="_blank"
         class="table__url"
       >
-        {{ CutTxn(el.item.to_address, 4, 4) }}
+        {{ CutTxn(convertToBech32('wq', el.item.to_address), 4, 4) }}
       </a>
     </template>
     <template #cell(fullName)="el">
@@ -236,19 +236,24 @@ export default {
   background: $white;
   border-radius: 6px;
   width: 1180px;
+
   &__title {
     margin: 10px;
     color: $black800;
   }
+
   &__success {
     color: $green;
   }
+
   &__failed {
     color: $red;
   }
+
   &__grey {
     color: $black500;
   }
+
   &__header {
     @include text-simple;
     background: rgba(0, 131, 199, 0.1);
@@ -259,13 +264,16 @@ export default {
     font-size: 12px;
     word-break: break-word;
   }
+
   &__row {
     line-height: 40px;
   }
-  &__link{
+
+  &__link {
     color: $black800 !important;
-    text-decoration: none!important;
+    text-decoration: none !important;
   }
+
   @include _1199 {
     .btn__delegate {
       width: 80px !important;
@@ -276,6 +284,7 @@ export default {
     .table {
       width: 1180px;
       overflow-x: hidden;
+
       .btn__delegate {
         width: 60px !important;
         font-size: 10px;
@@ -285,40 +294,47 @@ export default {
       font-size: 10px;
     }
   }
-  &__copy{
+
+  &__copy {
     color: $blue;
     font-size: 25px;
   }
-  &__avatar{
-    width: 30px!important;
-    height: 30px!important;
+
+  &__avatar {
+    width: 30px !important;
+    height: 30px !important;
     border-radius: 50%;
-    margin: 0!important;
+    margin: 0 !important;
     text-align: center;
     object-fit: cover;
   }
 }
+
 .btn {
   &__vote {
     cursor: default !important;
     width: 63px !important;
     height: 31px !important;
     margin-right: -30px;
-    justify-content: center!important;
+    justify-content: center !important;
+
     &_green {
       margin: auto auto;
       background: $green !important;
     }
+
     &_red {
       margin: auto auto;
       background: $red !important;
     }
   }
-  &__delegate{
+
+  &__delegate {
     width: 130px !important;
     height: 43px !important;
-    &_hidden{
-      display: none!important;
+
+    &_hidden {
+      display: none !important;
     }
   }
 }

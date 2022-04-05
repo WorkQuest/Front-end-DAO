@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import moment from 'moment';
 import VueTippy, { TippyComponent } from 'vue-tippy';
+import converter from 'bech32-converting';
 import modals from '~/store/modals/modals';
 
 Vue.use(VueTippy);
@@ -8,6 +9,11 @@ Vue.component('tippy', TippyComponent);
 
 Vue.mixin({
   methods: {
+    convertToBech32(prefix, address, mode) {
+      const data = converter(prefix).toBech32(address);
+      if (mode === 'mutation') this.$store.commit('wallet/setUserWalletAddressInBech32', data);
+      return data;
+    },
     async UploadFiles(files) {
       if (!files.length) return [];
       const fetchData = [];

@@ -157,6 +157,7 @@ export default {
     margin-top: 30px;
     height: 100%;
   }
+
   &__table {
     overflow: auto;
     margin-bottom: 15px;
@@ -216,6 +217,7 @@ export default {
     &__body {
       padding: 0 20px;
     }
+
     &__table {
       width: calc(100vw - 49px);
     }

@@ -5,9 +5,9 @@
         <div class="wallet__nav">
           <span class="wallet__title">{{ $t('wallet.wallet') }}</span>
           <div class="wallet__address">
-            <span class="user__wallet">{{ CutTxn(userWalletAddress, 8, 8) }}</span>
+            <span class="user__wallet">{{ CutTxn(walletAddressInBech32, 8, 8) }}</span>
             <button
-              v-clipboard:copy="userWalletAddress"
+              v-clipboard:copy="walletAddressInBech32"
               v-clipboard:success="ClipboardSuccessHandler"
               v-clipboard:error="ClipboardErrorHandler"
               type="button"
@@ -146,6 +146,7 @@ export default {
       balance: 'wallet/getBalanceData',
       selectedToken: 'wallet/getSelectedToken',
       userWalletAddress: 'user/getUserWalletAddress',
+      walletAddressInBech32: 'wallet/getUserWalletAddressInBech32',
     }),
     walletTables() {
       return WalletTables;
@@ -212,6 +213,7 @@ export default {
     },
   },
   beforeMount() {
+    this.convertToBech32('wq1', this.userWalletAddress, 'mutation');
     this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
   },
   async mounted() {
