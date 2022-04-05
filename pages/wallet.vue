@@ -27,13 +27,14 @@
                 <span class="balance__currency-text">
                   {{ balance[selectedToken].balance + ' ' + selectedToken }}
                 </span>
-                <span class="balance__usd-mobile">
+                <span
+                  v-if="selectedToken === tokenSymbols.WUSD"
+                  class="balance__usd-mobile"
+                >
                   <span class="balance__usd-mobile_blue">
                     {{ $t('wallet.delegated') }}
                   </span>
-                  <span v-if="selectedToken === tokenSymbols.WUSD">
-                    {{ delegatedBalance }} {{ tokenSymbols.WUSD }}
-                  </span>
+                  {{ delegatedBalance }} {{ tokenSymbols.WUSD }}
                 </span>
                 <base-dd
                   v-model="ddValue"
@@ -41,13 +42,14 @@
                   :items="tokenSymbolsDd"
                 />
               </span>
-              <span class="balance__usd balance__usd_blue">
-                <span v-if="selectedToken === tokenSymbols.WQT">
-                  <span class="balance__usd">
-                    {{ $t('wallet.delegated') }}
-                  </span>
-                  {{ delegatedBalance }} {{ tokenSymbols.WUSD }}
+              <span
+                v-if="selectedToken === tokenSymbols.WUSD"
+                class="balance__usd balance__usd_blue"
+              >
+                <span class="balance__usd">
+                  {{ $t('wallet.delegated') }}
                 </span>
+                {{ delegatedBalance }} {{ tokenSymbols.WUSD }}
               </span>
             </div>
             <div class="balance__bottom">
