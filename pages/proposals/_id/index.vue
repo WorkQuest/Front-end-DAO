@@ -1047,6 +1047,10 @@ export default {
 }
 
 @include _767 {
+  .info__forum {
+    display: flex;
+    justify-content: center;
+  }
   .proposal {
     &__header {
       &-wrapper {
