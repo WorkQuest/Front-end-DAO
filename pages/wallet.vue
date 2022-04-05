@@ -28,13 +28,13 @@
                   {{ balance[selectedToken].balance + ' ' + selectedToken }}
                 </span>
                 <span
-                  v-if="selectedToken === tokenSymbols.WUSD"
+                  v-if="selectedToken === tokenSymbols.WQT"
                   class="balance__usd-mobile"
                 >
                   <span class="balance__usd-mobile_blue">
                     {{ $t('wallet.delegated') }}
                   </span>
-                  {{ delegatedBalance }} {{ tokenSymbols.WUSD }}
+                  {{ delegatedBalance }} {{ tokenSymbols.WQT }}
                 </span>
                 <base-dd
                   v-model="ddValue"
@@ -43,7 +43,7 @@
                 />
               </span>
               <span
-                v-if="selectedToken === tokenSymbols.WUSD"
+                v-if="selectedToken === tokenSymbols.WQT"
                 class="balance__usd balance__usd_blue"
               >
                 <span class="balance__usd">
