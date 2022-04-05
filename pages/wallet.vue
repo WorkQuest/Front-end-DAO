@@ -12,6 +12,7 @@
               v-clipboard:error="ClipboardErrorHandler"
               type="button"
             >
+              <!--              TODO: TEST-->
               <span class="icon-copy wallet__icon" />
             </button>
           </div>
