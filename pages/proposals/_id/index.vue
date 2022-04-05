@@ -218,12 +218,6 @@
           class="history__pagination"
           :total-pages="totalPages"
         />
-        <div
-          v-if="!historyTableData.length"
-          class="history__table history__empty"
-        >
-          {{ $t('proposal.table.isEmpty') }}
-        </div>
         <!-- mobile -->
         <div class="history__proposals">
           <p class="history__subtitle">
@@ -513,7 +507,10 @@ export default {
       } else this.card.status = 3;
     },
     async getReceipt() {
-      const res = await this.$store.dispatch('wallet/getReceipt', { id: this.card.createdEvent.contractProposalId, accountAddress: this.userWalletAddress });
+      const res = await this.$store.dispatch('wallet/getReceipt', {
+        id: this.card.createdEvent.contractProposalId,
+        accountAddress: this.userWalletAddress,
+      });
       if (res.ok && res.result) {
         const { hasVoted, support } = res.result;
         this.isVoted = hasVoted;
@@ -581,7 +578,10 @@ export default {
         },
         submitMethod: async () => {
           this.SetLoader(true);
-          const res = await this.$store.dispatch('wallet/doVote', { id: this.card.createdEvent.contractProposalId, value });
+          const res = await this.$store.dispatch('wallet/doVote', {
+            id: this.card.createdEvent.contractProposalId,
+            value,
+          });
           if (!res.ok) {
             this.ShowToast(this.$t('proposal.errors.delegatedAfter'), this.$t('proposal.errors.voteError'));
             this.SetLoader(false);
@@ -689,15 +689,18 @@ export default {
       background-color: #f6f8fa;
       color: #AAB0B9;
     }
+
     &_active {
       background-color: #f6f8fa;
       color: $blue;
     }
+
     &_rejected {
       background-color: #fcebeb;
       color: $red;
     }
-    &_accepted{
+
+    &_accepted {
       background-color: #f6f8fa;
       color: $green;
     }
@@ -816,6 +819,7 @@ export default {
     color: #1D2127;
     margin-bottom: 15px;
   }
+
   &__finish {
     margin-bottom: 15px;
   }
@@ -874,6 +878,7 @@ export default {
 
 .buttons {
   margin-top: 15px;
+
   &__header {
     font-size: 18px;
     line-height: 130%;
@@ -893,14 +898,18 @@ export default {
     position: relative;
     margin-top: 15px;
   }
+
   &__proposals {
     display: none;
   }
+
   &__empty {
     text-align: center;
   }
+
   &__pagination {
     margin-top: 20px;
+
     &_mobile {
       display: none;
       margin-top: 20px;
@@ -953,14 +962,17 @@ export default {
     &_green {
       color: #00AA5B;
       border-color: rgba(0, 170, 91, 0.1) !important;
+
       &:hover {
         color: #00AA5B;
         background: rgba(0, 170, 91, 0.1);
       }
     }
+
     &_red {
       color: #DF3333;
       border-color: rgba(223, 51, 51, 0.1) !important;
+
       &:hover {
         color: #DF3333;
         background: rgba(223, 51, 51, 0.1);
@@ -971,6 +983,7 @@ export default {
   &__sorting {
     width: 152px;
     border: 1px solid rgba(0, 0, 0, 0);
+
     &:hover {
       background: #FFFFFF;
       border: 1px solid rgba(0, 0, 0, 0.1);
@@ -990,23 +1003,27 @@ export default {
   border: 1px solid rgba(0, 0, 0, 0);
   min-width: 140px;
 }
+
 @include _991 {
   .content {
     grid-template-columns: 1fr;
     grid-row-gap: 20px;
   }
 }
+
 @include _767 {
   .proposal {
     &__header {
       &-wrapper {
-      display: grid;
-      padding: 20px;
+        display: grid;
+        padding: 20px;
       }
     }
+
     &__back, &__header {
       margin: 0;
     }
+
     &__body {
       margin: 22px 5px;
       @include mobile-container;
@@ -1021,12 +1038,15 @@ export default {
     &__table {
       display: none;
     }
+
     &__pagination {
       display: none;
+
       &_mobile {
         display: block;
       }
     }
+
     &__proposals {
       display: block;
       background: $white;
@@ -1034,17 +1054,19 @@ export default {
       margin-top: 15px;
       border-radius: 6px;
     }
+
     &__subtitle {
       font-size: 20px;
     }
   }
-  .info{
+  .info {
     &__transactions {
       grid-gap: 60px;
       margin-top: 20px;
     }
   }
 }
+
 @include _480 {
   .proposal {
     &__body {
@@ -1056,7 +1078,7 @@ export default {
       padding: 0;
     }
   }
-  .info{
+  .info {
     &__transactions {
       grid-gap: 10px;
       grid-template-columns: 1fr;
