@@ -39,7 +39,7 @@
               <span class="header__subtitle-start-date">
                 {{ $moment(dateStart).format('lll') }}
               </span>
-              -
+              <span class="header__subtitle-delimiter">-</span>
               <span class="header__subtitle-end-date">
                 {{ $moment(dateEnd).format('lll') }}
               </span>
@@ -1127,6 +1127,11 @@ export default {
     flex-direction: row;
     flex-wrap: wrap;
     word-wrap: inherit;
+    gap: 5px;
+
+    &-delimiter {
+      display: none;
+    }
   }
 }
 </style>
