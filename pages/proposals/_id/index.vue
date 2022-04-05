@@ -32,9 +32,16 @@
             <div class="header__title">
               <span>{{ card.title }}</span>
             </div>
-            <div class="header__subtitle">
-              <span v-if="dateStart && dateEnd">
-                {{ $moment(dateStart).format('lll') }} - {{ $moment(dateEnd).format('lll') }}
+            <div
+              v-if="dateStart && dateEnd"
+              class="header__subtitle"
+            >
+              <span class="header__subtitle-start-date">
+                {{ $moment(dateStart).format('lll') }}
+              </span>
+              -
+              <span class="header__subtitle-end-date">
+                {{ $moment(dateEnd).format('lll') }}
               </span>
             </div>
           </div>
@@ -1111,6 +1118,15 @@ export default {
       grid-gap: 10px;
       grid-template-columns: 1fr;
     }
+  }
+}
+
+@include _380 {
+  .header__subtitle {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    word-wrap: inherit;
   }
 }
 </style>
