@@ -162,7 +162,6 @@ export default {
     }
   },
   async delegatedBalance({ commit, dispatch, rootGetters }, address) {
-    console.log('delegatedBalance');
     let freezed = null;
     if (address) {
       freezed = await getFreezed();
