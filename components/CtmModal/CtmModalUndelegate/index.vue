@@ -23,7 +23,7 @@
       </div>
       <div class="undelegate__tokens tokens">
         <div class="tokens__footer footer">
-          {{ $tc('modals.willBeUndelegate', delegatedToUser.freezed) }}
+          {{ $tc('modals.willBeUndelegate', tokensAmount) }}
         </div>
       </div>
       <div class="undelegate__bottom bottom">
@@ -48,7 +48,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import BigNumber from 'bignumber.js';
 import { Chains, TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import abi from '~/abi';
@@ -65,7 +64,6 @@ export default {
     ...mapGetters({
       options: 'modals/getOptions',
       userWalletAddress: 'user/getUserWalletAddress',
-      delegatedToUser: 'investors/getDelegatedToUser',
     }),
   },
   beforeMount() {
