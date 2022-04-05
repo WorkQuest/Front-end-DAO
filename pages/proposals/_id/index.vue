@@ -1047,6 +1047,10 @@ export default {
 }
 
 @include _767 {
+  .item {
+    display: flex;
+    flex-direction: column;
+  }
   .info__forum {
     display: flex;
     justify-content: center;
@@ -1063,6 +1067,14 @@ export default {
       margin: 0;
     }
 
+    &__content {
+      margin-right: 10px;
+    }
+
+    &__history {
+      margin-right: 10px;
+    }
+
     &__body {
       margin: 22px 5px;
       @include mobile-container;
@@ -1074,6 +1086,7 @@ export default {
     }
   }
   .history {
+
     &__table {
       display: none;
     }
@@ -1087,7 +1100,8 @@ export default {
     }
 
     &__proposals {
-      display: block;
+      display: flex;
+      flex-direction: column;
       background: $white;
       padding: 20px 15px;
       margin-top: 15px;
