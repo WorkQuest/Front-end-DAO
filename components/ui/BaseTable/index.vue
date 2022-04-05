@@ -58,7 +58,7 @@
     <template #cell(copy)="el">
       <base-btn
         v-if="el.item.investorAddress"
-        v-clipboard:copy="el.item.investorAddress"
+        v-clipboard:copy="convertToBech32('wq', el.item.investorAddress)"
         v-clipboard:success="ClipboardSuccessHandler"
         v-clipboard:error="ClipboardErrorHandler"
         mode="copy"
