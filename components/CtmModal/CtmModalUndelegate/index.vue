@@ -23,7 +23,7 @@
       </div>
       <div class="undelegate__tokens tokens">
         <div class="tokens__footer footer">
-          {{ $tc('modals.willBeUndelegate', tokensAmount) }}
+          {{ $tc('modals.willBeUndelegate', freezedBalance) }}
         </div>
       </div>
       <div class="undelegate__bottom bottom">
@@ -48,7 +48,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import BigNumber from 'bignumber.js';
 import { Chains, TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import abi from '~/abi';
@@ -65,6 +64,7 @@ export default {
     ...mapGetters({
       options: 'modals/getOptions',
       userWalletAddress: 'user/getUserWalletAddress',
+      freezedBalance: 'user/getFreezedBalance',
     }),
   },
   beforeMount() {
@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     async undelegate() {
-      const { tokensAmount, userWalletAddress } = this;
+      const { userWalletAddress } = this;
       const { callback } = this.options;
       this.CloseModal();
       this.SetLoader(true);
@@ -99,7 +99,7 @@ export default {
           const res = await this.$store.dispatch('wallet/undelegate');
           this.SetLoader(false);
           if (res.ok) {
-            this.ShowToast(this.$tc('modals.undelegateAmount', tokensAmount), this.$t('modals.undelegate'));
+            this.ShowToast(this.$tc('modals.undelegateAmount', this.freezedBalance), this.$t('modals.undelegate'));
           } else if (res.msg.includes('Not enough balance to undelegate')) {
             this.ShowToast(this.$t('errors.transaction.notEnoughFunds'), this.$t('errors.undelegateTitle'));
           }
@@ -115,64 +115,77 @@ export default {
 <style lang="scss" scoped>
 .ctm-modal {
   @include modalKit;
-  padding: 30px 36px 30px 28px!important;
+  padding: 30px 36px 30px 28px !important;
 }
 
 .undelegate {
   max-width: 500px !important;
+
   &__content {
-    padding: 30px 28px 30px 28px!important;
+    padding: 30px 28px 30px 28px !important;
   }
-  &__body{
+
+  &__body {
     @include text-usual;
     color: $black800;
     margin: 20px 0 25px 0;
   }
-  &__bottom{
+
+  &__bottom {
     margin-top: 25px;
   }
 }
-.header{
+
+.header {
   display: flex;
   justify-content: space-between;
-  &__title{
+
+  &__title {
     font-weight: 500;
     font-size: 23px;
     line-height: 130%;
   }
-  &__close{
+
+  &__close {
     color: $black800;
     font-size: 25px;
     cursor: pointer;
   }
 }
-.bottom{
+
+.bottom {
   display: flex;
   justify-content: space-between;
-  &__cancel{
-    width: 112px!important;
+
+  &__cancel {
+    width: 112px !important;
   }
-  &__done{
-    width: 257px!important;
+
+  &__done {
+    width: 257px !important;
   }
 }
-.tokens{
-  &__title{
+
+.tokens {
+  &__title {
     @include text-usual;
     color: $black800;
     margin-bottom: 5px;
-    &_grey{
+
+    &_grey {
       color: $black400;
-      margin-bottom: 10px!important;
+      margin-bottom: 10px !important;
     }
   }
 }
+
 .footer {
   display: flex;
   justify-content: space-between;
-  &__maximum{
-    width: 100px!important;
-    height: 46px!important;
+
+  &__maximum {
+    width: 100px !important;
+    height: 46px !important;
   }
 }
 </style>

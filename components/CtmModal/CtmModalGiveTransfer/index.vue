@@ -70,7 +70,7 @@
           </base-btn>
           <base-btn
             class="buttons__action"
-            :disabled="invalid || !isCanSubmit || amount === 0"
+            :disabled="isDisabledAmount() || invalid || !isCanSubmit || amount === 0"
             @click="handleSubmit(showWithdrawInfo)"
           >
             {{ $t('meta.send') }}
@@ -94,7 +94,7 @@ export default {
   data() {
     return {
       recipient: '',
-      amount: '',
+      amount: 0,
       step: 1,
       ddValue: 0,
       maxFee: {
@@ -142,6 +142,13 @@ export default {
     this.isCanSubmit = true;
   },
   methods: {
+    isDisabledAmount() {
+      if (this.selectedToken === TokenSymbols.WQT && this.balance.WQT.fullBalance - this.freezedBalance === 0) {
+        this.amount = 0;
+        return true;
+      }
+      return false;
+    },
     replaceDot() {
       this.amount = this.amount.replace(/,/g, '.');
     },
