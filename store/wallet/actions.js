@@ -161,9 +161,9 @@ export default {
       return error(errorCodes.GetVotes, e.message, e);
     }
   },
-  async delegatedBalance({ commit }) {
+  async freezedBalance({ commit }) {
     const freezed = await getFreezed();
-    commit('user/setDelegatedBalance', getStyledAmount(freezed.result), { root: true });
+    commit('user/setFreezedBalance', getStyledAmount(freezed.result), { root: true });
   },
   async getDelegates({ commit, dispatch, rootGetters }) {
     const res = await getDelegates();

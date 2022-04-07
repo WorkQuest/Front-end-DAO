@@ -494,7 +494,7 @@
   "wallet": {
     "success": "Success",
     "failed": "Failed",
-    "delegated": "Delegated",
+    "freezed": "Freezed",
     "WUSD": "WUSD wallet",
     "cryptoWallet": "Crypto wallet",
     "bankCard": "Bank card",

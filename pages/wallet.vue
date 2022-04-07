@@ -23,7 +23,10 @@
           <div class="wallet__balance balance">
             <div class="balance__top">
               <span class="balance__title">{{ $t('wallet.balance') }}</span>
-              <span class="balance__currency">
+              <span
+                class="balance__currency"
+                :class="[{'balance__currency__margin-bottom' : selectedToken !== tokenSymbols.WQT}]"
+              >
                 <span class="balance__currency-text">
                   {{ balance[selectedToken].balance + ' ' + selectedToken }}
                 </span>
@@ -32,9 +35,9 @@
                   class="balance__usd-mobile"
                 >
                   <span class="balance__usd-mobile_blue">
-                    {{ $t('wallet.delegated') }}
+                    {{ $t('wallet.freezed') }}
                   </span>
-                  {{ delegatedBalance }} {{ tokenSymbols.WQT }}
+                  {{ freezedBalance }} {{ tokenSymbols.WQT }}
                 </span>
                 <base-dd
                   v-model="ddValue"
@@ -42,14 +45,16 @@
                   :items="tokenSymbolsDd"
                 />
               </span>
-              <span
-                v-if="selectedToken === tokenSymbols.WQT"
-                class="balance__usd balance__usd_blue"
-              >
-                <span class="balance__usd">
-                  {{ $t('wallet.delegated') }}
+              <span :class="[{'balance__currency__margin-bottom' : selectedToken !== tokenSymbols.WQT}]">
+                <span
+                  v-if="selectedToken === tokenSymbols.WQT"
+                  class="balance__usd balance__usd_blue"
+                >
+                  <span class="balance__usd">
+                    {{ $t('wallet.freezed') }}
+                  </span>
+                  {{ freezedBalance }} {{ tokenSymbols.WQT }}
                 </span>
-                {{ delegatedBalance }} {{ tokenSymbols.WQT }}
               </span>
             </div>
             <div class="balance__bottom">
@@ -152,7 +157,7 @@ export default {
       transactionsCount: 'wallet/getTransactionsCount',
       isWalletConnected: 'wallet/getIsWalletConnected',
       balance: 'wallet/getBalanceData',
-      delegatedBalance: 'user/getDelegatedBalance',
+      freezedBalance: 'user/getFreezedBalance',
       selectedToken: 'wallet/getSelectedToken',
       userWalletAddress: 'user/getUserWalletAddress',
     }),
@@ -243,7 +248,7 @@ export default {
     async loadData() {
       this.SetLoader(true);
       await Promise.all([
-        this.$store.dispatch('wallet/delegatedBalance', this.userWalletAddress),
+        this.$store.dispatch('wallet/freezedBalance', this.userWalletAddress),
         this.updateBalanceWQT(),
         this.updateBalanceWUSD(),
         this.getTransactions(),
@@ -432,6 +437,10 @@ export default {
     align-items: center;
     justify-content: space-between;
 
+    &__margin-bottom {
+      height: 37px;
+    }
+
     @include _767 {
       font-size: 26px;
     }
@@ -462,7 +471,8 @@ export default {
 
     &-mobile {
       display: none;
-      height: 33px;
+      max-height: 33px;
+      height: 100%;
       color: $black800;
       font-size: 18px;
       font-weight: normal;
