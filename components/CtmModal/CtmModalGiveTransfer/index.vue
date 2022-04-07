@@ -168,7 +168,6 @@ export default {
     },
     maxBalance() {
       if (this.selectedToken === TokenSymbols.WUSD) {
-        console.log('this.delegatedBalance', this.delegatedBalance);
         const max = new BigNumber(this.maxAmount).minus(this.maxFee[this.selectedToken]);
         this.amount = max.isGreaterThan(0) ? max.toString() : '0';
         return;
