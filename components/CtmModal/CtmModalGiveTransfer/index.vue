@@ -70,7 +70,7 @@
           </base-btn>
           <base-btn
             class="buttons__action"
-            :disabled="invalid || !isCanSubmit"
+            :disabled="invalid || !isCanSubmit || amount === 0"
             @click="handleSubmit(showWithdrawInfo)"
           >
             {{ $t('meta.send') }}
