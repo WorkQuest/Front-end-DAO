@@ -112,7 +112,7 @@ export default {
       selectedToken: 'wallet/getSelectedToken',
       userData: 'user/getUserData',
       isConnected: 'wallet/getIsWalletConnected',
-      delegatedBalance: 'user/getDelegatedBalance',
+      freezedBalance: 'user/getFreezedBalance',
     }),
     tokenSymbolsDd() {
       return Object.keys(TokenSymbols);
@@ -172,7 +172,7 @@ export default {
         this.amount = max.isGreaterThan(0) ? max.toString() : '0';
         return;
       }
-      this.amount = this.maxAmount - this.delegatedBalance;
+      this.amount = this.maxAmount - this.freezedBalance;
     },
     async transfer() {
       let res;

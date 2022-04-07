@@ -23,10 +23,7 @@
           <div class="wallet__balance balance">
             <div class="balance__top">
               <span class="balance__title">{{ $t('wallet.balance') }}</span>
-              <span
-                class="balance__currency"
-                :class="[{'balance__currency__margin-bottom' : selectedToken !== tokenSymbols.WQT}]"
-              >
+              <span class="balance__currency">
                 <span class="balance__currency-text">
                   {{ balance[selectedToken].balance + ' ' + selectedToken }}
                 </span>
@@ -431,14 +428,12 @@ export default {
     color: $black800;
     font-weight: 600;
     font-size: 35px;
-    line-height: 130%;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
 
     &__margin-bottom {
-      height: 37px;
+      margin-bottom: 25px;
     }
 
     @include _767 {
