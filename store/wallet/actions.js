@@ -143,8 +143,7 @@ export default {
   async getContractFeeData({ commit }, {
     method, _abi, contractAddress, data, recipient, amount,
   }) {
-    if (amount > 0) return await getContractFeeData(method, _abi, contractAddress, data, recipient, amount);
-    return '';
+    return await getContractFeeData(method, _abi, contractAddress, data, recipient, amount);
   },
 
   /** Investors */

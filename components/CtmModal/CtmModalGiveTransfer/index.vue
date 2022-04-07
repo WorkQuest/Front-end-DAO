@@ -148,18 +148,20 @@ export default {
     // Для просчета максимальной суммы транзакции от комиссии
     async updateMaxFee() {
       if (!this.isConnected) return;
-      const [wusd, wqt] = await Promise.all([
+      const wusd = this.balance.WUSD.fullBalance > 0 ? await Promise.resolve(
         this.$store.dispatch('wallet/getTransferFeeData', {
           recipient: this.userData.wallet.address,
           value: this.balance.WUSD.fullBalance,
         }),
+      ) : 0;
+      const wqt = this.balance.WQT.fullBalance - this.freezedBalance > 0 ? await Promise.resolve(
         this.$store.dispatch('wallet/getContractFeeData', {
           method: 'transfer',
           _abi: abi.ERC20,
           contractAddress: process.env.WORKNET_WQT_TOKEN,
           data: [process.env.WORKNET_WQT_TOKEN, new BigNumber(this.balance.WQT.fullBalance).shiftedBy(18).toString()],
         }),
-      ]);
+      ) : 0;
       this.maxFee.WQT = wqt.ok ? wqt.result.fee : 0;
       this.maxFee.WUSD = wusd.ok ? wusd.result.fee : 0;
     },
