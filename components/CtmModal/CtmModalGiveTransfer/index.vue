@@ -178,12 +178,11 @@ export default {
     },
     maxBalance() {
       if (this.selectedToken === TokenSymbols.WUSD) {
-        const max = new BigNumber(this.maxAmount).minus(this.maxFee[this.selectedToken]).minus(new BigNumber(this.freezedBalance));
+        const max = new BigNumber(this.maxAmount).minus(this.maxFee[this.selectedToken]);
         this.amount = max.isGreaterThan(0) ? max.toString() : '0';
         return;
       }
-      this.amount = new BigNumber(this.balance[this.selectedToken].fullBalance).minus(new BigNumber(this.freezedBalance)).minus(new BigNumber(this.maxFee.WQT)).toString();
-      console.log('this.amount', this.amount);
+      this.amount = new BigNumber(this.balance[this.selectedToken].fullBalance).minus(this.freezedBalance).toString();
     },
     async transfer() {
       let res;
@@ -205,8 +204,6 @@ export default {
       return error();
     },
     async showWithdrawInfo() {
-      console.log('this.amount in showWithdrawInfo', this.amount);
-      console.log('this.amount big', new BigNumber(this.amount).shiftedBy(18).toString());
       const amount = new BigNumber(this.amount).shiftedBy(18).toString();
       const { callback } = this.options;
       this.SetLoader(true);

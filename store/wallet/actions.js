@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import {
   disconnect,
   getBalance,
@@ -163,7 +164,7 @@ export default {
   },
   async freezedBalance({ commit }) {
     const freezed = await getFreezed();
-    commit('user/setFreezedBalance', getStyledAmount(freezed.result), { root: true });
+    commit('user/setFreezedBalance', new BigNumber(freezed.result).shiftedBy(-18), { root: true });
   },
   async getDelegates({ commit, dispatch, rootGetters }) {
     const res = await getDelegates();
