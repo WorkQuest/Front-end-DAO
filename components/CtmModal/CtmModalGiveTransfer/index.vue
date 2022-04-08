@@ -68,10 +68,9 @@
           >
             {{ $t('meta.cancel') }}
           </base-btn>
-          <!--          isDisabledAmount() ||-->
           <base-btn
             class="buttons__action"
-            :disabled="invalid || !isCanSubmit"
+            :disabled="isAmountZero() || isCheckMaxValue() || invalid || !isCanSubmit"
             @click="handleSubmit(showWithdrawInfo)"
           >
             {{ $t('meta.send') }}
@@ -143,12 +142,21 @@ export default {
     this.isCanSubmit = true;
   },
   methods: {
-    isDisabledAmount() {
-      // if (this.selectedToken === TokenSymbols.WQT && this.amount.isEqualTo(0)) {
-      //   this.amount = 0;
-      //   return true;
-      // }
+    isAmountZero() {
+      if (this.selectedToken === TokenSymbols.WQT && new BigNumber(this.amount).isEqualTo(0)) {
+        this.amount = 0;
+        return true;
+      }
       return false;
+    },
+    isCheckMaxValue() {
+      let max;
+      if (this.selectedToken === TokenSymbols.WUSD) {
+        max = new BigNumber(this.maxAmount).minus(this.maxFee[this.selectedToken]).toString();
+      } else if (this.selectedToken === TokenSymbols.WQT) {
+        max = new BigNumber(this.balance[this.selectedToken].fullBalance).minus(this.freezedBalance).toString();
+      }
+      return new BigNumber(this.amount).isGreaterThan(max);
     },
     replaceDot() {
       this.amount = this.amount.replace(/,/g, '.');
@@ -156,20 +164,18 @@ export default {
     // Для просчета максимальной суммы транзакции от комиссии
     async updateMaxFee() {
       if (!this.isConnected) return;
-      const wusd = await Promise.resolve(
+      const [wusd, wqt] = await Promise.all([
         this.$store.dispatch('wallet/getTransferFeeData', {
           recipient: this.userData.wallet.address,
           value: this.balance.WUSD.fullBalance,
         }),
-      );
-      const wqt = await Promise.resolve(
         this.$store.dispatch('wallet/getContractFeeData', {
           method: 'transfer',
           _abi: abi.ERC20,
           contractAddress: process.env.WORKNET_WQT_TOKEN,
           data: [process.env.WORKNET_WQT_TOKEN, this.amount],
         }),
-      );
+      ]);
       this.maxFee.WQT = wqt?.ok ? wqt?.result?.fee : 0;
       this.maxFee.WUSD = wusd?.ok ? wusd?.result?.fee : 0;
     },
@@ -186,16 +192,15 @@ export default {
     },
     async transfer() {
       let res;
-      console.log('this.amount in transfer', this.amount);
       if (this.selectedToken === TokenSymbols.WUSD) {
         res = await this.$store.dispatch('wallet/transfer', {
           recipient: this.recipient,
-          value: this.amount,
+          value: new BigNumber(this.amount).toString(),
         });
       } else if (this.selectedToken === TokenSymbols.WQT) {
         res = await this.$store.dispatch('wallet/transferWQT', {
           recipient: this.recipient,
-          value: this.amount,
+          value: new BigNumber(this.amount).toString(),
         });
       }
       if (res?.ok) {
