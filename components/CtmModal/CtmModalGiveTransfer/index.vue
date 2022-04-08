@@ -40,7 +40,7 @@
             class="input__field"
             data-selector="AMOUNT"
             :placeholder="$t('modals.amount')"
-            :rules="`required|decimal|is_not:0|max_bn:${maxAmount}|decimalPlaces:18`"
+            :rules="`required|decimal|max_bn:${maxAmount}|decimalPlaces:18`"
             :name="$t('modals.amountField')"
             @input="replaceDot"
           >
@@ -68,9 +68,10 @@
           >
             {{ $t('meta.cancel') }}
           </base-btn>
+          <!--          isDisabledAmount() ||-->
           <base-btn
             class="buttons__action"
-            :disabled="isDisabledAmount() || invalid || !isCanSubmit || amount === 0"
+            :disabled="invalid || !isCanSubmit"
             @click="handleSubmit(showWithdrawInfo)"
           >
             {{ $t('meta.send') }}
@@ -118,7 +119,7 @@ export default {
       return Object.keys(TokenSymbols);
     },
     maxAmount() {
-      return this.balance[this.selectedToken].fullBalance || '0';
+      return this.balance[this.selectedToken].fullBalance || 0;
     },
   },
   watch: {
@@ -143,10 +144,10 @@ export default {
   },
   methods: {
     isDisabledAmount() {
-      if (this.selectedToken === TokenSymbols.WQT && this.balance.WQT.fullBalance - this.freezedBalance === 0) {
-        this.amount = 0;
-        return true;
-      }
+      // if (this.selectedToken === TokenSymbols.WQT && this.amount.isEqualTo(0)) {
+      //   this.amount = 0;
+      //   return true;
+      // }
       return false;
     },
     replaceDot() {
@@ -155,36 +156,38 @@ export default {
     // Для просчета максимальной суммы транзакции от комиссии
     async updateMaxFee() {
       if (!this.isConnected) return;
-      const wusd = this.balance.WUSD.fullBalance > 0 ? await Promise.resolve(
+      const wusd = await Promise.resolve(
         this.$store.dispatch('wallet/getTransferFeeData', {
           recipient: this.userData.wallet.address,
           value: this.balance.WUSD.fullBalance,
         }),
-      ) : 0;
-      const wqt = this.balance.WQT.fullBalance - this.freezedBalance > 0 ? await Promise.resolve(
+      );
+      const wqt = await Promise.resolve(
         this.$store.dispatch('wallet/getContractFeeData', {
           method: 'transfer',
           _abi: abi.ERC20,
           contractAddress: process.env.WORKNET_WQT_TOKEN,
-          data: [process.env.WORKNET_WQT_TOKEN, new BigNumber(this.balance.WQT.fullBalance).shiftedBy(18).toString()],
+          data: [process.env.WORKNET_WQT_TOKEN, this.amount],
         }),
-      ) : 0;
-      this.maxFee.WQT = wqt.ok ? wqt.result.fee : 0;
-      this.maxFee.WUSD = wusd.ok ? wusd.result.fee : 0;
+      );
+      this.maxFee.WQT = wqt?.ok ? wqt?.result?.fee : 0;
+      this.maxFee.WUSD = wusd?.ok ? wusd?.result?.fee : 0;
     },
     hide() {
       this.CloseModal();
     },
     maxBalance() {
       if (this.selectedToken === TokenSymbols.WUSD) {
-        const max = new BigNumber(this.maxAmount).minus(this.maxFee[this.selectedToken]);
+        const max = new BigNumber(this.maxAmount).minus(this.maxFee[this.selectedToken]).minus(new BigNumber(this.freezedBalance));
         this.amount = max.isGreaterThan(0) ? max.toString() : '0';
         return;
       }
-      this.amount = this.maxAmount - this.freezedBalance;
+      this.amount = new BigNumber(this.balance[this.selectedToken].fullBalance).minus(new BigNumber(this.freezedBalance)).minus(new BigNumber(this.maxFee.WQT)).toString();
+      console.log('this.amount', this.amount);
     },
     async transfer() {
       let res;
+      console.log('this.amount in transfer', this.amount);
       if (this.selectedToken === TokenSymbols.WUSD) {
         res = await this.$store.dispatch('wallet/transfer', {
           recipient: this.recipient,
@@ -202,6 +205,9 @@ export default {
       return error();
     },
     async showWithdrawInfo() {
+      console.log('this.amount in showWithdrawInfo', this.amount);
+      console.log('this.amount big', new BigNumber(this.amount).shiftedBy(18).toString());
+      const amount = new BigNumber(this.amount).shiftedBy(18).toString();
       const { callback } = this.options;
       this.SetLoader(true);
       this.hide();
@@ -216,7 +222,7 @@ export default {
           method: 'transfer',
           _abi: abi.ERC20,
           contractAddress: process.env.WORKNET_WQT_TOKEN,
-          data: [this.recipient, new BigNumber(this.amount).shiftedBy(18).toString()],
+          data: [this.recipient, amount],
         });
       }
       this.SetLoader(false);
