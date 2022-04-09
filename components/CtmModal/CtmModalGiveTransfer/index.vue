@@ -40,7 +40,7 @@
             class="input__field"
             data-selector="AMOUNT"
             :placeholder="$t('modals.amount')"
-            :rules="`required|decimal|max_bn:${maxAmount}|decimalPlaces:18`"
+            :rules="`required|decimal|is_not:0|max_bn:${maxAmount}|decimalPlaces:18`"
             :name="$t('modals.amountField')"
             @input="replaceDot"
           >
