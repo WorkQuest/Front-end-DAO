@@ -116,12 +116,9 @@ export default {
       return Object.keys(TokenSymbols);
     },
     maxAmount() {
-      if (this.selectedToken === TokenSymbols.WUSD) {
-        return new BigNumber(this.balance[this.selectedToken].fullBalance).minus(this.maxFee[this.selectedToken]).toString();
-      }
-      if (this.selectedToken === TokenSymbols.WQT) {
-        return new BigNumber(this.balance[this.selectedToken].fullBalance).minus(this.freezedBalance).toString();
-      }
+      const fullBalance = new BigNumber(this.balance[this.selectedToken].fullBalance);
+      if (this.selectedToken === TokenSymbols.WUSD) return fullBalance.minus(this.maxFee[this.selectedToken]).toString();
+      if (this.selectedToken === TokenSymbols.WQT) return fullBalance.minus(this.freezedBalance).toString();
       return 0;
     },
   },
@@ -183,12 +180,7 @@ export default {
       this.CloseModal();
     },
     maxBalance() {
-      if (this.selectedToken === TokenSymbols.WUSD) {
-        const max = new BigNumber(this.maxAmount).minus(this.maxFee[this.selectedToken]);
-        this.amount = max.isGreaterThan(0) ? max.toString() : '0';
-        return;
-      }
-      this.amount = new BigNumber(this.balance[this.selectedToken].fullBalance).minus(this.freezedBalance).toString();
+      this.amount = this.maxAmount;
     },
   },
 };
