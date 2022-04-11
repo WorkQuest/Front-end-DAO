@@ -29,7 +29,6 @@
           <base-dd
             v-model="ddValue"
             :items="tokenSymbolsDd"
-            @input="amount = ''"
           />
         </div>
         <div class="content__input input">
@@ -71,7 +70,7 @@
           </base-btn>
           <base-btn
             class="buttons__action"
-            :disabled="isAmountZero() || isCheckMaxValue() || invalid || !isCanSubmit"
+            :disabled="invalid || !isCanSubmit"
             @click="handleSubmit(showWithdrawInfo)"
           >
             {{ $t('meta.send') }}
@@ -117,12 +116,19 @@ export default {
       return Object.keys(TokenSymbols);
     },
     maxAmount() {
-      return this.balance[this.selectedToken].fullBalance || 0;
+      if (this.selectedToken === TokenSymbols.WUSD) {
+        return new BigNumber(this.balance[this.selectedToken].fullBalance).minus(this.maxFee[this.selectedToken]).toString();
+      }
+      if (this.selectedToken === TokenSymbols.WQT) {
+        return new BigNumber(this.balance[this.selectedToken].fullBalance).minus(this.freezedBalance).toString();
+      }
+      return 0;
     },
   },
   watch: {
     ddValue(val) {
       this.$store.dispatch('wallet/setSelectedToken', TokenSymbols[this.tokenSymbolsDd[val]]);
+      this.amount = 0;
     },
     balance: {
       deep: true,
@@ -151,22 +157,6 @@ export default {
         });
       }
       this.hide();
-    },
-    isAmountZero() {
-      if (this.selectedToken === TokenSymbols.WQT && new BigNumber(this.amount).isEqualTo(0)) {
-        this.amount = 0;
-        return true;
-      }
-      return false;
-    },
-    isCheckMaxValue() {
-      let max;
-      if (this.selectedToken === TokenSymbols.WUSD) {
-        max = new BigNumber(this.maxAmount).minus(this.maxFee[this.selectedToken]).toString();
-      } else if (this.selectedToken === TokenSymbols.WQT) {
-        max = new BigNumber(this.balance[this.selectedToken].fullBalance).minus(this.freezedBalance).toString();
-      }
-      return new BigNumber(this.amount).isGreaterThan(max);
     },
     replaceDot() {
       this.amount = this.amount.replace(/,/g, '.');

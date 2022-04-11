@@ -132,7 +132,7 @@ import modals from '~/store/modals/modals';
 import { TokenSymbolByContract, TokenSymbols, WalletTables } from '~/utils/enums';
 import { getStyledAmount } from '~/utils/wallet';
 import EmptyData from '~/components/app/EmptyData';
-import abi from '~/abi';
+import ERC20 from '~/abi/ERC20';
 import { error, success } from '~/utils/success-error';
 
 export default {
@@ -274,7 +274,6 @@ export default {
         key: modals.giveTransfer,
         submit: async ({ recipient, amount, selectedToken }) => {
           const value = new BigNumber(amount).shiftedBy(18).toString();
-          this.SetLoader(true);
           let feeRes;
           if (selectedToken === TokenSymbols.WUSD) {
             feeRes = await this.$store.dispatch('wallet/getTransferFeeData', {
@@ -284,12 +283,11 @@ export default {
           } else {
             feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
               method: 'transfer',
-              _abi: abi.ERC20,
+              _abi: ERC20,
               contractAddress: process.env.WORKNET_WQT_TOKEN,
               data: [recipient, value],
             });
           }
-          this.SetLoader(false);
           this.ShowModal({
             key: modals.transactionReceipt,
             fields: {
@@ -303,14 +301,19 @@ export default {
               fee: { name: this.$t('wallet.table.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
             },
             submitMethod: async () => {
+              this.CloseModal();
+              this.SetLoader(true);
               const res = await this.$store.dispatch(`wallet/transfer${selectedToken === TokenSymbols.WUSD ? '' : 'WQT'}`, {
                 recipient,
                 value: selectedToken === TokenSymbols.WUSD ? amount : new BigNumber(amount),
               });
-              if (res?.ok) return success();
+              this.SetLoader(false);
+              if (res?.ok) {
+                await this.loadData();
+                return success();
+              }
               return error();
             },
-            callback: async () => await this.loadData(),
           });
         },
       });
