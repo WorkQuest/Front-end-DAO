@@ -1,4 +1,5 @@
 export default {
+  getFrozenBalance: (state) => state.frozenBalance,
   getCurrentLang: (state) => state.currentLang,
   isAuth: (state) => !!(state.tokens.access && state.tokens.refresh),
   getStatusKYC: (state) => state.userData.statusKYC,
