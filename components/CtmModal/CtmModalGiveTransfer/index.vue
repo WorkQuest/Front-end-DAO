@@ -29,6 +29,7 @@
           <base-dd
             v-model="ddValue"
             :items="tokenSymbolsDd"
+            @input="amount = ''"
           />
         </div>
         <div class="content__input input">
@@ -84,9 +85,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
-import modals from '~/store/modals/modals';
 import { TokenSymbols } from '~/utils/enums';
-import { error, success } from '~/utils/success-error';
 import abi from '~/abi/index';
 
 export default {
@@ -142,6 +141,17 @@ export default {
     this.isCanSubmit = true;
   },
   methods: {
+    showWithdrawInfo() {
+      const { submit } = this.options;
+      if (submit) {
+        submit({
+          recipient: this.recipient,
+          amount: this.amount,
+          selectedToken: this.selectedToken,
+        });
+      }
+      this.hide();
+    },
     isAmountZero() {
       if (this.selectedToken === TokenSymbols.WQT && new BigNumber(this.amount).isEqualTo(0)) {
         this.amount = 0;
@@ -189,60 +199,6 @@ export default {
         return;
       }
       this.amount = new BigNumber(this.balance[this.selectedToken].fullBalance).minus(this.freezedBalance).toString();
-    },
-    async transfer() {
-      let res;
-      if (this.selectedToken === TokenSymbols.WUSD) {
-        res = await this.$store.dispatch('wallet/transfer', {
-          recipient: this.recipient,
-          value: new BigNumber(this.amount).toString(),
-        });
-      } else if (this.selectedToken === TokenSymbols.WQT) {
-        res = await this.$store.dispatch('wallet/transferWQT', {
-          recipient: this.recipient,
-          value: new BigNumber(this.amount).toString(),
-        });
-      }
-      if (res?.ok) {
-        return success();
-      }
-      return error();
-    },
-    async showWithdrawInfo() {
-      const amount = new BigNumber(this.amount).shiftedBy(18).toString();
-      const { callback } = this.options;
-      this.SetLoader(true);
-      this.hide();
-      let feeRes;
-      if (this.selectedToken === TokenSymbols.WUSD) {
-        feeRes = await this.$store.dispatch('wallet/getTransferFeeData', {
-          recipient: this.recipient,
-          value: this.amount,
-        });
-      } else {
-        feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
-          method: 'transfer',
-          _abi: abi.ERC20,
-          contractAddress: process.env.WORKNET_WQT_TOKEN,
-          data: [this.recipient, amount],
-        });
-      }
-      this.SetLoader(false);
-      this.ShowModal({
-        key: modals.transactionReceipt,
-        fields: {
-          from: { name: this.$t('modals.fromAddress'), value: this.userData.wallet.address },
-          to: { name: this.$t('modals.toAddress'), value: this.recipient },
-          amount: {
-            name: this.$t('modals.amount'),
-            value: this.amount,
-            symbol: this.selectedToken, // REQUIRED!
-          },
-          fee: { name: this.$t('wallet.table.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
-        },
-        submitMethod: async () => this.transfer(),
-        callback,
-      });
     },
   },
 };

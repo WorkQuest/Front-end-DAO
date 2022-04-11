@@ -50,7 +50,7 @@
                   <span class="balance__usd">
                     {{ $t('wallet.freezed') }}
                   </span>
-                  {{ freezedBalance }} {{ tokenSymbols.WQT }}
+                  {{ Number(freezedBalance.toString()).toFixed(4) }} {{ tokenSymbols.WQT }}
                 </span>
               </span>
             </div>
@@ -132,6 +132,8 @@ import modals from '~/store/modals/modals';
 import { TokenSymbolByContract, TokenSymbols, WalletTables } from '~/utils/enums';
 import { getStyledAmount } from '~/utils/wallet';
 import EmptyData from '~/components/app/EmptyData';
+import abi from '~/abi';
+import { error, success } from '~/utils/success-error';
 
 export default {
   name: 'Wallet',
@@ -270,7 +272,47 @@ export default {
     showTransferModal() {
       this.ShowModal({
         key: modals.giveTransfer,
-        callback: async () => await this.loadData(),
+        submit: async ({ recipient, amount, selectedToken }) => {
+          const value = new BigNumber(amount).shiftedBy(18).toString();
+          this.SetLoader(true);
+          let feeRes;
+          if (selectedToken === TokenSymbols.WUSD) {
+            feeRes = await this.$store.dispatch('wallet/getTransferFeeData', {
+              recipient,
+              value: amount,
+            });
+          } else {
+            feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
+              method: 'transfer',
+              _abi: abi.ERC20,
+              contractAddress: process.env.WORKNET_WQT_TOKEN,
+              data: [recipient, value],
+            });
+          }
+          this.SetLoader(false);
+          this.ShowModal({
+            key: modals.transactionReceipt,
+            fields: {
+              from: { name: this.$t('modals.fromAddress'), value: this.userData.wallet.address },
+              to: { name: this.$t('modals.toAddress'), value: recipient },
+              amount: {
+                name: this.$t('modals.amount'),
+                value: amount,
+                symbol: selectedToken, // REQUIRED!
+              },
+              fee: { name: this.$t('wallet.table.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
+            },
+            submitMethod: async () => {
+              const res = await this.$store.dispatch(`wallet/transfer${selectedToken === TokenSymbols.WUSD ? '' : 'WQT'}`, {
+                recipient,
+                value: selectedToken === TokenSymbols.WUSD ? amount : new BigNumber(amount),
+              });
+              if (res?.ok) return success();
+              return error();
+            },
+            callback: async () => await this.loadData(),
+          });
+        },
       });
     },
   },
