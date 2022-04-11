@@ -303,13 +303,15 @@ export default {
             submitMethod: async () => {
               this.CloseModal();
               this.SetLoader(true);
-              const res = await this.$store.dispatch(`wallet/transfer${selectedToken === TokenSymbols.WUSD ? '' : 'WQT'}`, {
+              const action = selectedToken === TokenSymbols.WUSD ? 'transfer' : 'transferWQT';
+              const res = await this.$store.dispatch(`wallet/${action}`, {
                 recipient,
-                value: selectedToken === TokenSymbols.WUSD ? amount : new BigNumber(amount),
+                value: amount,
               });
               this.SetLoader(false);
               if (res?.ok) {
                 await this.loadData();
+                await this.ShowModal({ key: 'transactionSend' });
                 return success();
               }
               return error();

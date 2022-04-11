@@ -64,7 +64,7 @@
           <base-btn
             mode="outline"
             class="buttons__action"
-            @click="hide"
+            @click="CloseModal()"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
@@ -153,7 +153,6 @@ export default {
           selectedToken: this.selectedToken,
         });
       }
-      this.hide();
     },
     replaceDot() {
       this.amount = this.amount.replace(/,/g, '.');
@@ -175,9 +174,6 @@ export default {
       ]);
       this.maxFee.WQT = wqt?.ok ? wqt?.result?.fee : 0;
       this.maxFee.WUSD = wusd?.ok ? wusd?.result?.fee : 0;
-    },
-    hide() {
-      this.CloseModal();
     },
     maxBalance() {
       this.amount = this.maxAmount;
