@@ -48,7 +48,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { Chains, TokenSymbols } from '~/utils/enums';
+import { TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import abi from '~/abi';
 
