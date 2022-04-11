@@ -110,7 +110,7 @@ export default {
       selectedToken: 'wallet/getSelectedToken',
       userData: 'user/getUserData',
       isConnected: 'wallet/getIsWalletConnected',
-      freezedBalance: 'user/getFreezedBalance',
+      frozenBalance: 'user/getFrozenBalance',
     }),
     tokenSymbolsDd() {
       return Object.keys(TokenSymbols);
@@ -118,7 +118,7 @@ export default {
     maxAmount() {
       const fullBalance = new BigNumber(this.balance[this.selectedToken].fullBalance);
       if (this.selectedToken === TokenSymbols.WUSD) return fullBalance.minus(this.maxFee[this.selectedToken]).toString();
-      if (this.selectedToken === TokenSymbols.WQT) return fullBalance.minus(this.freezedBalance).toString();
+      if (this.selectedToken === TokenSymbols.WQT) return fullBalance.minus(this.frozenBalance).toString();
       return 0;
     },
   },

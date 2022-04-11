@@ -64,7 +64,7 @@ export default {
     ...mapGetters({
       options: 'modals/getOptions',
       userWalletAddress: 'user/getUserWalletAddress',
-      freezedBalance: 'user/getFreezedBalance',
+      frozenBalance: 'user/getFrozenBalance',
     }),
   },
   beforeMount() {
@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     async undelegate() {
-      const { userWalletAddress, freezedBalance } = this;
+      const { userWalletAddress, frozenBalance } = this;
       const { callback } = this.options;
       this.CloseModal();
       this.SetLoader(true);
@@ -99,7 +99,7 @@ export default {
           const res = await this.$store.dispatch('wallet/undelegate');
           this.SetLoader(false);
           if (res.ok) {
-            this.ShowToast(this.$tc('modals.undelegateAmount', freezedBalance), this.$t('modals.undelegate'));
+            this.ShowToast(this.$tc('modals.undelegateAmount', frozenBalance), this.$t('modals.undelegate'));
           } else if (res.msg.includes('Not enough balance to undelegate')) {
             this.ShowToast(this.$t('errors.transaction.notEnoughFunds'), this.$t('errors.undelegateTitle'));
           }

@@ -34,7 +34,7 @@
                   <span class="balance__usd-mobile_blue">
                     {{ $t('wallet.freezed') }}
                   </span>
-                  {{ freezedBalance }} {{ tokenSymbols.WQT }}
+                  {{ frozenBalance }} {{ tokenSymbols.WQT }}
                 </span>
                 <base-dd
                   v-model="ddValue"
@@ -50,7 +50,7 @@
                   <span class="balance__usd">
                     {{ $t('wallet.freezed') }}
                   </span>
-                  {{ Number(freezedBalance.toString()).toFixed(4) }} {{ tokenSymbols.WQT }}
+                  {{ Number(frozenBalance.toString()).toFixed(4) }} {{ tokenSymbols.WQT }}
                 </span>
               </span>
             </div>
@@ -156,7 +156,7 @@ export default {
       transactionsCount: 'wallet/getTransactionsCount',
       isWalletConnected: 'wallet/getIsWalletConnected',
       balance: 'wallet/getBalanceData',
-      freezedBalance: 'user/getFreezedBalance',
+      frozenBalance: 'user/getFrozenBalance',
       selectedToken: 'wallet/getSelectedToken',
       userWalletAddress: 'user/getUserWalletAddress',
     }),
@@ -247,7 +247,7 @@ export default {
     async loadData() {
       this.SetLoader(true);
       await Promise.all([
-        this.$store.dispatch('wallet/freezedBalance', { address: this.userWalletAddress }),
+        this.$store.dispatch('wallet/frozenBalance', { address: this.userWalletAddress }),
         this.updateBalanceWQT(),
         this.updateBalanceWUSD(),
         this.getTransactions(),

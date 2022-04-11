@@ -162,7 +162,7 @@ export default {
       return error(errorCodes.GetVotes, e.message, e);
     }
   },
-  async freezedBalance({ commit }, { address }) {
+  async frozenBalance({ commit }, { address }) {
     try {
       const res = await fetchWalletContractData(
         'freezed',
@@ -170,7 +170,7 @@ export default {
         process.env.WORKNET_WQT_TOKEN,
         [address],
       );
-      commit('user/setFreezedBalance', new BigNumber(res).shiftedBy(-18), { root: true });
+      commit('user/setFrozenBalance', new BigNumber(res).shiftedBy(-18), { root: true });
       return success(res);
     } catch (e) {
       return error(errorCodes.Undelegate, e.message, e);
