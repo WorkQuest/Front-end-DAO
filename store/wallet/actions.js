@@ -23,7 +23,7 @@ import {
   getChairpersonHash,
   hasRole,
   getProposalThreshold,
-  connectWallet, getFreezed,
+  connectWallet,
 } from '~/utils/wallet';
 import abi from '~/abi/index';
 import { errorCodes, TokenSymbols } from '~/utils/enums';
@@ -162,9 +162,19 @@ export default {
       return error(errorCodes.GetVotes, e.message, e);
     }
   },
-  async freezedBalance({ commit }) {
-    const freezed = await getFreezed();
-    commit('user/setFreezedBalance', new BigNumber(freezed.result).shiftedBy(-18), { root: true });
+  async freezedBalance({ commit }, { address }) {
+    try {
+      const res = await fetchWalletContractData(
+        'freezed',
+        abi.WQToken,
+        process.env.WORKNET_WQT_TOKEN,
+        [address],
+      );
+      commit('user/setFreezedBalance', new BigNumber(res).shiftedBy(-18), { root: true });
+      return success(res);
+    } catch (e) {
+      return error(errorCodes.Undelegate, e.message, e);
+    }
   },
   async getDelegates({ commit, dispatch, rootGetters }) {
     const res = await getDelegates();
