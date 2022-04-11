@@ -32,7 +32,7 @@
                   class="balance__usd-mobile"
                 >
                   <span class="balance__usd-mobile_blue">
-                    {{ $t('wallet.freezed') }}
+                    {{ $t('wallet.frozen') }}
                   </span>
                   {{ frozenBalance }} {{ tokenSymbols.WQT }}
                 </span>
@@ -48,7 +48,7 @@
                   class="balance__usd balance__usd_blue"
                 >
                   <span class="balance__usd">
-                    {{ $t('wallet.freezed') }}
+                    {{ $t('wallet.frozen') }}
                   </span>
                   {{ Number(frozenBalance.toString()).toFixed(4) }} {{ tokenSymbols.WQT }}
                 </span>
