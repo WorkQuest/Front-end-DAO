@@ -23,7 +23,7 @@
       </div>
       <div class="undelegate__tokens tokens">
         <div class="tokens__footer footer">
-          {{ $tc('modals.willBeUndelegate', tokensAmount) }}
+          {{ $tc('modals.willBeUndelegate', freezedBalance) }}
         </div>
       </div>
       <div class="undelegate__bottom bottom">
@@ -48,8 +48,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import BigNumber from 'bignumber.js';
-import { Chains, TokenSymbols } from '~/utils/enums';
+import { TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import abi from '~/abi';
 
@@ -65,6 +64,7 @@ export default {
     ...mapGetters({
       options: 'modals/getOptions',
       userWalletAddress: 'user/getUserWalletAddress',
+      frozenBalance: 'user/getFrozenBalance',
     }),
   },
   beforeMount() {
@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     async undelegate() {
-      const { tokensAmount, userWalletAddress } = this;
+      const { userWalletAddress, frozenBalance } = this;
       const { callback } = this.options;
       this.CloseModal();
       this.SetLoader(true);
@@ -99,7 +99,7 @@ export default {
           const res = await this.$store.dispatch('wallet/undelegate');
           this.SetLoader(false);
           if (res.ok) {
-            this.ShowToast(this.$tc('modals.undelegateAmount', tokensAmount), this.$t('modals.undelegate'));
+            this.ShowToast(this.$tc('modals.undelegateAmount', frozenBalance), this.$t('modals.undelegate'));
           } else if (res.msg.includes('Not enough balance to undelegate')) {
             this.ShowToast(this.$t('errors.transaction.notEnoughFunds'), this.$t('errors.undelegateTitle'));
           }
@@ -145,7 +145,8 @@ export default {
     font-size: 23px;
     line-height: 130%;
   }
-  &__close{
+
+  &__close {
     color: $black800;
     font-size: 25px;
     cursor: pointer;
@@ -176,20 +177,15 @@ export default {
       margin-bottom: 10px !important;
     }
   }
+}
 
-  .footer {
-    display: flex;
-    justify-content: space-between;
+.footer {
+  display: flex;
+  justify-content: space-between;
 
-    &__body {
-      width: 100%;
-      height: 46px !important;
-    }
-
-    &__maximum {
-      width: 100px !important;
-      height: 46px !important;
-    }
+  &__maximum {
+    width: 100px !important;
+    height: 46px !important;
   }
 }
 

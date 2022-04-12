@@ -507,6 +507,9 @@
     }
   },
   "wallet": {
+    "success": "Success",
+    "failed": "Failed",
+    "frozen": "Frozen balance",
     "WUSD": "WUSD wallet",
     "cryptoWallet": "Crypto wallet",
     "bankCard": "Bank card",
