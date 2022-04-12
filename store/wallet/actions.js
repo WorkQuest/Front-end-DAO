@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import {
   disconnect,
   getBalance,
@@ -159,6 +160,20 @@ export default {
     } catch (e) {
       console.error('getVotes');
       return error(errorCodes.GetVotes, e.message, e);
+    }
+  },
+  async frozenBalance({ commit }, { address }) {
+    try {
+      const res = await fetchWalletContractData(
+        'freezed',
+        abi.WQToken,
+        process.env.WORKNET_WQT_TOKEN,
+        [address],
+      );
+      commit('user/setFrozenBalance', new BigNumber(res).shiftedBy(-18), { root: true });
+      return success(res);
+    } catch (e) {
+      return error(errorCodes.Undelegate, e.message, e);
     }
   },
   async getDelegates({ commit, dispatch, rootGetters }) {

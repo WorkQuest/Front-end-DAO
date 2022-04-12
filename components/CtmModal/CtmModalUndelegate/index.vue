@@ -23,7 +23,7 @@
       </div>
       <div class="undelegate__tokens tokens">
         <div class="tokens__footer footer">
-          {{ $tc('modals.willBeUndelegate', tokensAmount) }}
+          {{ $tc('modals.willBeUndelegate', freezedBalance) }}
         </div>
       </div>
       <div class="undelegate__bottom bottom">
@@ -48,7 +48,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { Chains, TokenSymbols } from '~/utils/enums';
+import { TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import abi from '~/abi';
 
@@ -64,6 +64,7 @@ export default {
     ...mapGetters({
       options: 'modals/getOptions',
       userWalletAddress: 'user/getUserWalletAddress',
+      frozenBalance: 'user/getFrozenBalance',
     }),
   },
   beforeMount() {
@@ -74,19 +75,16 @@ export default {
   },
   methods: {
     async undelegate() {
-      const { tokensAmount, userWalletAddress } = this;
+      const { userWalletAddress, frozenBalance } = this;
       const { callback } = this.options;
       this.CloseModal();
       this.SetLoader(true);
-      const [feeRes] = await Promise.all([
-        this.$store.dispatch('wallet/getContractFeeData', {
-          method: 'undelegate',
-          _abi: abi.WQToken,
-          contractAddress: process.env.WORKNET_WQT_TOKEN,
-          data: [],
-        }),
-        this.$store.dispatch('wallet/getBalance'),
-      ]);
+      const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
+        method: 'undelegate',
+        _abi: abi.WQToken,
+        contractAddress: process.env.WORKNET_WQT_TOKEN,
+        data: [],
+      });
       this.SetLoader(false);
       this.ShowModal({
         key: modals.transactionReceipt,
@@ -101,7 +99,7 @@ export default {
           const res = await this.$store.dispatch('wallet/undelegate');
           this.SetLoader(false);
           if (res.ok) {
-            this.ShowToast(this.$tc('modals.undelegateAmount', this.delegatedToUser.freezed), this.$t('modals.undelegate'));
+            this.ShowToast(this.$tc('modals.undelegateAmount', frozenBalance), this.$t('modals.undelegate'));
           } else if (res.msg.includes('Not enough balance to undelegate')) {
             this.ShowToast(this.$t('errors.transaction.notEnoughFunds'), this.$t('errors.undelegateTitle'));
           }

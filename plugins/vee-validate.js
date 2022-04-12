@@ -35,9 +35,9 @@ extend('numberOfCard', {
     const cardNumber = value.replaceAll(/[^0-9]/g, '');
     const maxNumberLength = 19;
     const checkCardNumber = (number) => (americanExpress.test(number)
-        || dinersClub.test(number) || discover.test(number) || jcb.test(number)
-        || maestro.test(number) || mastercard.test(number) || visa.test(number))
-        && number.length <= maxNumberLength;
+                || dinersClub.test(number) || discover.test(number) || jcb.test(number)
+                || maestro.test(number) || mastercard.test(number) || visa.test(number))
+            && number.length <= maxNumberLength;
     return {
       required: true,
       valid: checkCardNumber(cardNumber),
@@ -121,7 +121,7 @@ extend('twitter', {
 extend('facebook', {
   validate(value) {
     // eslint-disable-next-line
-    const regex = /(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?([\w\-]*)?/;
+        const regex = /(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?([\w\-]*)?/;
     return {
       required: true,
       valid: regex.test(value),
@@ -132,7 +132,7 @@ extend('facebook', {
 extend('linkedIn', {
   validate(value) {
     // eslint-disable-next-line
-    const regex = /((https?:\/\/)?((www|\w\w)\.)?linkedin\.com\/)((([\w]{2,3})?)|([^\/]+\/(([\w|\d-&#?=])+\/?){1,}))$/;
+        const regex = /((https?:\/\/)?((www|\w\w)\.)?linkedin\.com\/)((([\w]{2,3})?)|([^\/]+\/(([\w|\d-&#?=])+\/?){1,}))$/;
     return {
       required: true,
       valid: regex.test(value),
@@ -181,7 +181,7 @@ extend('max_bn', {
     };
   },
   params: ['max'],
-  message: 'Value must be less than or equal {max}',
+  message: 'Value must be more than or equal {max}',
 });
 
 export default ({ app }) => {
