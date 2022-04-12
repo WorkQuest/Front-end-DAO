@@ -167,10 +167,6 @@ export default {
   &__investors {
     display: none;
   }
-
-  &__pagination {
-    margin: 10px 15px 0 0;
-  }
 }
 
 .body {

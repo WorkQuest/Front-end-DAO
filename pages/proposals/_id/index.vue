@@ -32,9 +32,16 @@
             <div class="header__title">
               <span>{{ card.title }}</span>
             </div>
-            <div class="header__subtitle">
-              <span v-if="dateStart && dateEnd">
-                {{ $moment(dateStart).format('lll') }} - {{ $moment(dateEnd).format('lll') }}
+            <div
+              v-if="dateStart && dateEnd"
+              class="header__subtitle"
+            >
+              <span class="header__subtitle-start-date">
+                {{ $moment(dateStart).format('lll') }}
+              </span>
+              <span class="header__subtitle-delimiter">-</span>
+              <span class="header__subtitle-end-date">
+                {{ $moment(dateEnd).format('lll') }}
               </span>
             </div>
           </div>
@@ -218,12 +225,6 @@
           class="history__pagination"
           :total-pages="totalPages"
         />
-        <div
-          v-if="!historyTableData.length"
-          class="history__table history__empty"
-        >
-          {{ $t('proposal.table.isEmpty') }}
-        </div>
         <!-- mobile -->
         <div class="history__proposals">
           <p class="history__subtitle">
@@ -610,8 +611,14 @@ export default {
 
   &__body {
     margin: 30px 15px 0 15px;
-    max-width: 1180px;
     height: 100%;
+  }
+
+  &__info {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__header {
@@ -679,7 +686,7 @@ export default {
     &_blue {
       font-size: 14px;
       line-height: 130%;
-      color: #0083C7;
+      color: $blue;
     }
   }
 
@@ -717,9 +724,9 @@ export default {
   }
 
   &__transactions {
-    display: grid;
-    grid-template-columns: max-content auto;
-    grid-gap: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     margin-top: 20px;
   }
 
@@ -741,6 +748,10 @@ export default {
 
 .header {
   &__title {
+    min-width: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     font-weight: 600;
     font-size: 24px;
     line-height: 32px;
@@ -815,6 +826,10 @@ export default {
     line-height: 130%;
     color: #7C838D;
     margin: 10px 0;
+    min-width: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 }
 
@@ -1010,6 +1025,20 @@ export default {
   min-width: 140px;
 }
 
+@include _1300 {
+  .proposal {
+    &__content {
+      display: flex;
+      flex-direction: column;
+      margin-right: 30px;
+    }
+
+    &__history {
+      margin-right: 30px;
+    }
+  }
+}
+
 @include _991 {
   .content {
     grid-template-columns: 1fr;
@@ -1018,6 +1047,14 @@ export default {
 }
 
 @include _767 {
+  .item {
+    display: flex;
+    flex-direction: column;
+  }
+  .info__forum {
+    display: flex;
+    justify-content: center;
+  }
   .proposal {
     &__header {
       &-wrapper {
@@ -1028,6 +1065,14 @@ export default {
 
     &__back, &__header {
       margin: 0;
+    }
+
+    &__content {
+      margin-right: 10px;
+    }
+
+    &__history {
+      margin-right: 10px;
     }
 
     &__body {
@@ -1041,6 +1086,7 @@ export default {
     }
   }
   .history {
+
     &__table {
       display: none;
     }
@@ -1054,7 +1100,8 @@ export default {
     }
 
     &__proposals {
-      display: block;
+      display: flex;
+      flex-direction: column;
       background: $white;
       padding: 20px 15px;
       margin-top: 15px;
@@ -1088,6 +1135,20 @@ export default {
     &__transactions {
       grid-gap: 10px;
       grid-template-columns: 1fr;
+    }
+  }
+}
+
+@include _380 {
+  .header__subtitle {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    word-wrap: inherit;
+    gap: 5px;
+
+    &-delimiter {
+      display: none;
     }
   }
 }
