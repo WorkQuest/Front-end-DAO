@@ -10,7 +10,7 @@
     >
       {{ $t('wallet.table.txHash') }}
       <span class="item__info_large">
-        {{ CutTxn(convertToBech32('wq', item.tx_hash), 9, 6) }}
+        {{ CutTxn(item.tx_hash, 9, 6) }}
       </span>
     </div>
     <div
@@ -19,7 +19,7 @@
     >
       {{ $t('proposal.table.hash') }}
       <span class="item__info_large">
-        {{ CutTxn(convertToBech32('wq', item.hash), 9, 6) }}
+        {{ CutTxn(item.hash, 9, 6) }}
       </span>
     </div>
     <p
@@ -111,7 +111,7 @@
     >
       {{ $t('proposal.table.address') }}
       <span class="item__info">
-        {{ CutTxn(convertToBech32('wq', item.address || item.investorAddress), 9, 6) }}
+        {{ CutTxn(item.address || item.investorAddress, 9, 6) }}
         <base-btn
           v-if="item.investorAddress"
           v-clipboard:copy="item.investorAddress"

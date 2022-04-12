@@ -55,7 +55,7 @@
                 class="hash__value"
                 target="_blank"
               >
-                {{ CutTxn(convertToBech32('wq', card.createdEvent.transactionHash), 6, 6) }}
+                {{ CutTxn(card.createdEvent.transactionHash, 6, 6) }}
               </a>
             </div>
             <div class="transactions__files files">
