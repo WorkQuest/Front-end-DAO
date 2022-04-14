@@ -231,7 +231,9 @@ export default {
     }
 
     &__pagination {
-      margin-right: 10px;
+      margin-top: 15px;
+      margin-left: auto;
+      margin-right: auto;
     }
   }
 }
