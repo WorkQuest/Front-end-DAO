@@ -79,7 +79,7 @@
         mode="lightRed"
         class="btn__delegate"
         :class="delegateClass(el)"
-        :disabled="!+balanceData.WQT.balance"
+        :disabled="!balanceData.WQT.balance"
         @click="openModalUndelegate(el)"
       >
         {{ $t('modals.undelegate') }}
@@ -90,7 +90,7 @@
         v-if="el.item.investorAddress"
         mode="lightBlue"
         class="btn__delegate"
-        @click="!+balanceData.WQT.balance ? toastsDisputeInfo($t('investors.notEnoughTokens')) : openModalDelegate(el)"
+        @click="!balanceData.WQT.balance ? toastsDisputeInfo($t('investors.notEnoughTokens')) : openModalDelegate(el)"
       >
         {{ $t('modals.delegate') }}
       </base-btn>

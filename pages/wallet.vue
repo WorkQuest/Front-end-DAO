@@ -160,9 +160,6 @@ export default {
       selectedToken: 'wallet/getSelectedToken',
       userWalletAddress: 'user/getUserWalletAddress',
     }),
-    walletTables() {
-      return WalletTables;
-    },
     totalPages() {
       if (!this.transactionsCount) return 0;
       return Math.ceil(this.transactionsCount / this.txsPerPage);
@@ -234,10 +231,6 @@ export default {
     await this.loadData();
   },
   methods: {
-    getSwitchButtonMode(btn) {
-      if (btn === this.selectedWalletTable) return '';
-      return 'outline';
-    },
     async getTransactions() {
       await this.$store.dispatch('wallet/getTransactions', {
         limit: this.txsPerPage,

@@ -23,7 +23,7 @@
       </div>
       <div class="undelegate__tokens tokens">
         <div class="tokens__footer footer">
-          {{ $tc('modals.willBeUndelegate', freezedBalance) }}
+          {{ $tc('modals.willBeUndelegate', frozenBalance) }}
         </div>
       </div>
       <div class="undelegate__bottom bottom">
@@ -51,6 +51,7 @@ import { mapGetters } from 'vuex';
 import { TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import abi from '~/abi';
+import { getStyledAmount } from '~/utils/wallet';
 
 export default {
   name: 'Undelegate',
