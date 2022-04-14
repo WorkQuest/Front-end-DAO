@@ -36,6 +36,7 @@ export default {
     try {
       const response = await this.$axios.$get('/v1/profile/me');
       const { result } = response;
+      console.log(result);
       commit('setUserData', result);
       if (result.wallet?.address) connectWithMnemonic(result.wallet.address);
       return response;

@@ -325,6 +325,10 @@ export default {
       socialInputs: [],
       nameInputsArr: [],
       coordinates: undefined,
+      profileVisibility: {
+        network: this.userData?.profileVisibilitySetting?.network ?? 0,
+        ratingStatus: this.userData?.profileVisibilitySetting?.ratingStatus ?? 0,
+      },
       phone: {
         main: {
           fullPhone: null,
@@ -406,12 +410,13 @@ export default {
       this.$router.push('/KYC');
     },
     setCurrData() {
+      console.log(this.userData);
       this.localUserData = JSON.parse(JSON.stringify(this.userData));
 
       const {
         localUserData, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
       } = this;
-
+      this.localUserData.additionalInfo.address = this.userData?.locationPlaceName;
       this.phone.main = localUserData.phone || localUserData.tempPhone || { fullPhone: null, codeRegion: 'RU' };
 
       this.phone.second = localUserData.additionalInfo.secondMobileNumber || { fullPhone: null, codeRegion: 'RU' };
@@ -467,9 +472,9 @@ export default {
         longitude: address.lng,
         latitude: address.lat,
       };
+      this.hideAddressSelector();
     },
     getPositionData(address) {
-      this.addresses = [];
       if (!address) {
         this.localUserData.additionalInfo.address = null;
         this.localUserData.location = null;
@@ -604,12 +609,12 @@ export default {
         };
         await this.$store.dispatch('user/setImage', response);
       }
-
       let config = {
         avatarId,
         firstName,
         lastName,
         phoneNumber,
+        profileVisibility: this.profileVisibility,
         locationFull: {
           location,
           locationPlaceName: this.localUserData.additionalInfo.address,
