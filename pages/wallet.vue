@@ -119,6 +119,7 @@
           v-if="totalPages > 1"
           v-model="currentPage"
           :total-pages="totalPages"
+          class="wallet__pager"
         />
       </div>
     </div>
@@ -619,6 +620,11 @@ export default {
   }
   .balance__bottom {
     gap: 10px;
+  }
+  .wallet {
+    &__pager {
+      margin: auto;
+    }
   }
 }
 

@@ -108,9 +108,6 @@ export default {
     margin-bottom: 15px;
     position: relative;
   }
-  &__pagination{
-    margin: 10px 15px 0 0;
-  }
   &__head {
     display: flex;
     justify-content: space-between;
