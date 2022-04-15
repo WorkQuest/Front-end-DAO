@@ -1,12 +1,20 @@
+/* eslint-disable no-tabs */
 import { ethers } from 'ethers';
 import { AES, enc } from 'crypto-js';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
+import message, { cosmos } from '@cosmostation/cosmosjs/src/messages/proto';
+import converter from 'bech32-converting';
+import secp256k1 from 'secp256k1';
+import * as bip32 from 'bip32';
+import crypto from 'crypto';
 import { error, success } from '~/utils/success-error';
 import abi from '~/abi/index';
 import { errorCodes } from '~/utils/enums';
 
 const bip39 = require('bip39');
+
+console.log('secp256k1', secp256k1);
 
 BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN });
 BigNumber.config({ EXPONENTIAL_AT: 60 });
@@ -445,21 +453,101 @@ export const executeVoting = async (id) => {
   }
 };
 
-// const cosmos = new Cosmos('https://dev-node-nyc3.workquest.co', '20211224');
-// cosmos.setPath(path);
+/** VALIDATORS */
+// TODO: вырезать пакет bip32 если не будет использоваться
 
-// TODO REST API FOR VALIDATORS: https://dev-node-nyc3.workquest.co/api/
-//
-// TODO префикс ETH у нас
+const nodeUrl = 'https://dev-node-nyc3.workquest.co/api/';
+const chainId = '20211224';
+cosmos.path = process.env.WQ_PROVIDER;
+cosmos.chainId = chainId;
+const getCosmosAccounts = async (address) => {
+  const accountsApi = '/cosmos/auth/v1beta1/accounts/';
+  return fetch(nodeUrl + accountsApi + address).then((response) => response.json());
+};
 
 /** VALIDATORS */
+const getECPairPriv = async (mnemonic) => {
+  const seed = await bip39.mnemonicToSeed(mnemonic);
+  const node = await bip32.fromSeed(seed);
+  const child = node.derivePath(path);
+  return child.privateKey;
+};
+const getPubKeyAny = (privKey) => secp256k1.publicKeyCreate(privKey);
+
+const sign = (txBody, authInfo, accountNumber, privKey) => {
+  const bodyBytes = message.cosmos.tx.v1beta1.TxBody.encode(txBody).finish();
+  const authInfoBytes = message.cosmos.tx.v1beta1.AuthInfo.encode(authInfo).finish();
+  const signDoc = new message.cosmos.tx.v1beta1.SignDoc({
+    body_bytes: bodyBytes,
+    auth_info_bytes: authInfoBytes,
+    chain_id: chainId,
+    account_number: Number(accountNumber),
+  });
+  const signMessage = message.cosmos.tx.v1beta1.SignDoc.encode(signDoc).finish();
+  const hash = crypto.createHash('sha256').update(signMessage).digest();
+  const sig = secp256k1.sign(hash, Buffer.from(privKey));
+  const txRaw = new message.cosmos.tx.v1beta1.TxRaw({
+    body_bytes: bodyBytes,
+    auth_info_bytes: authInfoBytes,
+    signatures: [sig.signature],
+  });
+  const txBytes = message.cosmos.tx.v1beta1.TxRaw.encode(txRaw).finish();
+  const txBytesBase64 = Buffer.from(txBytes, 'binary').toString('base64');
+  return txBytes;
+};
+
 export const test = async () => {
   try {
-    const t = await web3.eth.getAccounts();
-    console.log(t);
-    // console.log('TEST RESULT:', cosmos.getAddress(wallet.mnemonic));
-    // this.$store.dispatch('')
+    const address = converter('ethm').toBech32(wallet.address);
+    console.log(`Cosmos address: ${address}`);
+
+    const data = await getCosmosAccounts(address);
+    console.log('Accounts', data);
+
+    const privKey = await getECPairPriv(wallet.mnemonic);
+    console.log('priv', privKey);
+    const pubKeyAny = getPubKeyAny(privKey);
+    console.log('pub', pubKeyAny);
+
+    // signDoc = (1)txBody + (2)authInfo
+    // ---------------------------------- (1)txBody ----------------------------------
+    const msgSend = new message.cosmos.bank.v1beta1.MsgSend({
+      from_address: address,
+      to_address: address,
+      amount: [{ amount: String('10') }],
+    });
+    console.log('msgSend', msgSend);
+
+    const msgSendAny = new message.google.protobuf.Any({
+      type_url: '/cosmos.bank.v1beta1.MsgSend',
+      value: message.cosmos.bank.v1beta1.MsgSend.encode(msgSend).finish(),
+    });
+    console.log('msgSendAny', msgSendAny);
+
+    const txBody = new message.cosmos.tx.v1beta1.TxBody({ messages: [msgSendAny], memo: '' });
+    console.log('txBody', txBody);
+
+    // --------------------------------- (2)authInfo ---------------------------------
+    const signerInfo = new message.cosmos.tx.v1beta1.SignerInfo({
+      public_key: pubKeyAny,
+      mode_info: { single: { mode: message.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT } },
+      sequence: data.account.base_account.sequence,
+    });
+    console.log('signerInfo', signerInfo);
+
+    const feeValue = new message.cosmos.tx.v1beta1.Fee({
+      amount: [{ amount: String('10') }],
+      gas_limit: 200000,
+    });
+    console.log('feeValue', feeValue);
+
+    const authInfo = new message.cosmos.tx.v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
+    console.log('authInfo', authInfo);
+
+    // -------------------------------- sign --------------------------------
+    const signedTxBytes = secp256k1.sign(txBody, authInfo, data.account.base_account.account_number, privKey);
+    cosmos.broadcast(signedTxBytes).then((response) => console.log(response));
   } catch (e) {
-    console.error(e);
+    console.error('test', e);
   }
 };
