@@ -23,7 +23,7 @@
       </div>
       <div class="undelegate__tokens tokens">
         <div class="tokens__footer footer">
-          {{ $tc('modals.willBeUndelegate', frozenBalance) }}
+          {{ $tc('modals.willBeUndelegate', Floor(frozenBalance)) }}
         </div>
       </div>
       <div class="undelegate__bottom bottom">
@@ -51,7 +51,6 @@ import { mapGetters } from 'vuex';
 import { TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import abi from '~/abi';
-import { getStyledAmount } from '~/utils/wallet';
 
 export default {
   name: 'Undelegate',
@@ -70,9 +69,6 @@ export default {
   },
   beforeMount() {
     this.tokensAmount = this.options.tokensAmount;
-  },
-  async mounted() {
-    await this.$store.dispatch('wallet/getBalance');
   },
   methods: {
     async undelegate() {
@@ -100,7 +96,7 @@ export default {
           const res = await this.$store.dispatch('wallet/undelegate');
           this.SetLoader(false);
           if (res.ok) {
-            this.ShowToast(this.$tc('modals.undelegateAmount', frozenBalance), this.$t('modals.undelegate'));
+            this.ShowToast(this.$tc('modals.undelegateAmount', this.Floor(frozenBalance)), this.$t('modals.undelegate'));
           } else if (res.msg.includes('Not enough balance to undelegate')) {
             this.ShowToast(this.$t('errors.transaction.notEnoughFunds'), this.$t('errors.undelegateTitle'));
           }

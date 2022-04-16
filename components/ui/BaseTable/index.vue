@@ -79,7 +79,7 @@
         mode="lightRed"
         class="btn__delegate"
         :class="delegateClass(el)"
-        :disabled="!balanceData.WQT.balance"
+        :disabled="!balanceWQT"
         @click="openModalUndelegate(el)"
       >
         {{ $t('modals.undelegate') }}
@@ -90,7 +90,7 @@
         v-if="el.item.investorAddress"
         mode="lightBlue"
         class="btn__delegate"
-        @click="!balanceData.WQT.balance ? toastsDisputeInfo($t('investors.notEnoughTokens')) : openModalDelegate(el)"
+        @click="!balanceWQT ? toastsDisputeInfo($t('investors.notEnoughTokens')) : openModalDelegate(el)"
       >
         {{ $t('modals.delegate') }}
       </base-btn>
@@ -168,7 +168,7 @@ export default {
     ...mapGetters({
       userData: 'user/getUserData',
       delegatedToUser: 'investors/getDelegatedToUser',
-      balanceData: 'wallet/getBalanceData',
+      balanceWQT: 'wallet/getBalanceWQT',
     }),
   },
   methods: {

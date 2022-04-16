@@ -34,7 +34,7 @@
                   <span class="balance__usd-mobile_blue">
                     {{ $t('wallet.frozen') }}
                   </span>
-                  {{ frozenBalance }} {{ tokenSymbols.WQT }}
+                  {{ Floor(frozenBalance) }} {{ tokenSymbols.WQT }}
                 </span>
                 <base-dd
                   v-model="ddValue"
@@ -50,7 +50,7 @@
                   <span class="balance__usd">
                     {{ $t('wallet.frozen') }}
                   </span>
-                  {{ Number(frozenBalance.toString()).toFixed(4) }} {{ tokenSymbols.WQT }}
+                  {{ Floor(frozenBalance) }} {{ tokenSymbols.WQT }}
                 </span>
               </span>
             </div>

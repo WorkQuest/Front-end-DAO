@@ -305,20 +305,6 @@ export const getContractFeeData = async (_method, _abi, _contractAddress, data, 
 };
 
 /* Investors */
-export const getFreezed = async () => {
-  try {
-    const res = await fetchWalletContractData(
-      'freezed',
-      abi.WQToken,
-      process.env.WORKNET_WQT_TOKEN,
-      [wallet.address],
-    );
-    return success(res);
-  } catch (e) {
-    console.error('getFreezed; ', e);
-    return error(errorCodes.Undelegate, e.message, e);
-  }
-};
 
 export const getDelegates = async () => {
   try {
