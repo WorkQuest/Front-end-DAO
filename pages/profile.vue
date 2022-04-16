@@ -410,7 +410,6 @@ export default {
       this.$router.push('/KYC');
     },
     setCurrData() {
-      console.log(this.userData);
       this.localUserData = JSON.parse(JSON.stringify(this.userData));
 
       const {
@@ -564,13 +563,6 @@ export default {
       this.ShowModal({
         key: modals.changePassInSettings,
       });
-    },
-    switch2Fa() {
-      this.twoFa = !this.twoFa;
-    },
-    switchSms() {
-      this.sms = !this.sms;
-      this.$router.push('/sms-verification');
     },
     async editUserData() {
       const {
