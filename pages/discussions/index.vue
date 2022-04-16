@@ -159,10 +159,6 @@ export default {
     width: 220px;
     height: 43px;
   }
-
-  &__pager {
-    margin-top: 5px;
-  }
 }
 
 @include _1199 {
@@ -181,6 +177,10 @@ export default {
     &__cards {
       grid-template-columns: 1fr;
       margin: 20px;
+    }
+
+    &__pager {
+      margin-right: 20px;
     }
   }
 }
@@ -204,8 +204,13 @@ export default {
 }
 
 @include _480 {
-  .discussions__btn {
-    font-size: 12px;
+  .discussions {
+    &__btn {
+      font-size: 12px;
+    }
+    &__pager {
+      margin: 0 auto;
+    }
   }
 }
 </style>
