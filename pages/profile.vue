@@ -560,13 +560,6 @@ export default {
         key: modals.changePassInSettings,
       });
     },
-    switch2Fa() {
-      this.twoFa = !this.twoFa;
-    },
-    switchSms() {
-      this.sms = !this.sms;
-      this.$router.push('/sms-verification');
-    },
     async editUserData() {
       const {
         avatarId, firstName, lastName, location, additionalInfo: {
