@@ -143,6 +143,7 @@ export default {
     [modals.cardHasBeenAdded]: CtmModalCardHasBeenAdded,
     [modals.deposit]: CtmModalDeposit,
     [modals.addCard]: CtmModalAddCard,
+    // TODO: Доделать
     CtmModalWithdraw,
     CtmModalReviewEmployer,
     CtmModalThanksSend,
