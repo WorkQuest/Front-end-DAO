@@ -76,6 +76,7 @@ export default {
     showThanksModal() {
       this.ShowModal({
         key: modals.thanks,
+        title: this.$t('modals.thanks'),
       });
     },
   },

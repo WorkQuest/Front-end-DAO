@@ -100,7 +100,8 @@ export default {
   methods: {
     showCardHasBeenAddedModal() {
       this.ShowModal({
-        key: modals.cardHasBeenAdded,
+        key: modals.status,
+        title: this.$t('modals.cardHasBeenAdded'),
       });
     },
   },

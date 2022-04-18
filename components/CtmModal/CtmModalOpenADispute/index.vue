@@ -67,7 +67,9 @@ export default {
   methods: {
     showRequestSendModal() {
       this.ShowModal({
-        key: modals.requestSend,
+        key: modals.status,
+        img: require('assets/img/ui/message.svg'),
+        title: this.$t('modals.requestSend'),
       });
     },
   },

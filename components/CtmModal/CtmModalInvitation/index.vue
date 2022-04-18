@@ -130,7 +130,8 @@ export default {
     },
     showTransactionSendModal() {
       this.ShowModal({
-        key: modals.inviteSend,
+        key: modals.status,
+        title: this.$t('modals.inviteSend'),
       });
     },
   },

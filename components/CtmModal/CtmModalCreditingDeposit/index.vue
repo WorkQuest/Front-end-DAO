@@ -19,6 +19,7 @@
             <base-field
               id="amountOfETH_input"
               :is-hide-error="true"
+              data-selector="AMOUNT-ETH"
               class="input"
               placeholder="10 ETH"
             />
@@ -36,6 +37,7 @@
             <base-field
               id="amountOfWUSD_input"
               :is-hide-error="true"
+              data-selector="AMOUNT-WUSD"
               class="input"
               placeholder="1000 WUSD"
             />

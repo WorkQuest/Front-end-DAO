@@ -1,5 +1,4 @@
 <template>
-  <!--  TODO: Check-->
   <ctm-modal-box
     class="ctm-modal"
     :title="$t('modals.signWorkQuest.title')"

@@ -233,7 +233,9 @@ export default {
     },
     showTransactionSendModal() {
       this.ShowModal({
-        key: modals.transactionSend,
+        img: require('assets/img/ui/transactionSend.svg'),
+        key: modals.status,
+        title: this.$t('modals.transactionSend'),
       });
     },
   },
