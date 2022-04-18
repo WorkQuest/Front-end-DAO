@@ -5,64 +5,65 @@
       class="ctm-modal"
       @mousedown.self="backgroundClick"
     >
-      <ctm-modal-box
-        v-if="modals.default === currentModalKey"
-      >
-        <div class="ctm-modal__content ctm-modal__text">
-          {{ options.text }}
-        </div>
-      </ctm-modal-box>
-      <CtmModalConfirmEmail v-if="modals.emailConfirm === currentModalKey" />
-      <CtmModalRestore v-if="modals.restore === currentModalKey" />
-      <CtmModalChangePassword v-if="modals.changePassword === currentModalKey" />
-      <CtmModalPrivacy v-if="modals.privacy === currentModalKey" />
-      <CtmModalSkills v-if="modals.skills === currentModalKey" />
-      <CtmModalMessageSend v-if="modals.messageSend === currentModalKey" />
-      <CtmModalSendARequest v-if="modals.sendARequest === currentModalKey" />
-      <CtmModalRequestSend v-if="modals.requestSend === currentModalKey" />
-      <CtmModalThanksSend v-if="modals.thanks === currentModalKey" />
-      <CtmModalQuestAgreed v-if="modals.questAgreed === currentModalKey" />
-      <CtmModalAreYouSure v-if="modals.areYouSure === currentModalKey" />
-      <CtmModalTransactionSend v-if="modals.transactionSend === currentModalKey" />
-      <CtmModalCardHasBeenAdded v-if="modals.cardHasBeenAdded === currentModalKey" />
-      <CtmModalDeposit v-if="modals.deposit === currentModalKey" />
-      <CtmModalAddCard v-if="modals.addCard === currentModalKey" />
-      <CtmModalWithdraw v-if="modals.withdraw === currentModalKey" />
-      <CtmModalReviewEmployer v-if="modals.review === currentModalKey" />
-      <CtmModalInviteSend v-if="modals.inviteSend === currentModalKey" />
-      <CtmModalQuestCreated v-if="modals.questCreated === currentModalKey" />
-      <CtmModalRaiseViews v-if="modals.raiseViews === currentModalKey" />
-      <CtmModalInvitation v-if="modals.invitation === currentModalKey" />
-      <CtmModalApplyForAPension v-if="modals.applyForAPension === currentModalKey" />
-      <CtmModalMakeDeposit v-if="modals.makeDeposit === currentModalKey" />
-      <CtmModalChangePercent v-if="modals.changePercent === currentModalKey" />
-      <CtmModalOpenADeposit v-if="modals.openADeposit === currentModalKey" />
-      <CtmModalStatus v-if="modals.status === currentModalKey" />
-      <CtmModalAddLiquidity v-if="modals.addLiquidity === currentModalKey" />
-      <CtmModalRemoveLiquidity v-if="modals.removeLiquidity === currentModalKey" />
-      <CtmModalCreditingDeposit v-if="modals.creditingDeposit === currentModalKey" />
-      <CtmModalConfirmDetails v-if="modals.confirmDetails === currentModalKey" />
-      <CtmModalInsureCase v-if="modals.insureCase === currentModalKey" />
-      <CtmModalWithdrawAbout v-if="modals.withdrawAbout === currentModalKey" />
-      <CtmModalAddCase v-if="modals.addCase === currentModalKey" />
-      <CtmModalWelcome v-if="modals.welcome === currentModalKey" />
-      <CtmModalOpenADispute v-if="modals.openADispute === currentModalKey" />
-      <CtmModalNotice v-if="modals.notice === currentModalKey" />
-      <CtmModalTransfer v-if="modals.transfer === currentModalKey" />
-      <CtmModalChangePassInSettings v-if="modals.changePassInSettings === currentModalKey" />
-      <CtmModalTwoFAAuth v-if="modals.twoFAAuth === currentModalKey" />
-      <CtmModalDisableTwoFA v-if="modals.disableTwoFAAuth === currentModalKey" />
-      <CtmModalAddDiscussion v-if="modals.addDiscussion === currentModalKey" />
-      <CtmModalAddProposal v-if="modals.addProposal === currentModalKey" />
-      <CtmModalDelegate v-if="modals.delegate === currentModalKey" />
-      <CtmModalUndelegate v-if="modals.undelegate === currentModalKey" />
-      <CtmModalWarning v-if="modals.warning === currentModalKey" />
-      <CtmModalSignWorkQuest v-if="modals.signWorkQuest === currentModalKey" />
-      <CtmModalGallery v-if="modals.gallery === currentModalKey" />
-      <CtmModalShowFile v-if="modals.showFile === currentModalKey" />
-      <CtmModalTransactionReceipt v-if="modals.transactionReceipt === currentModalKey" />
-      <CtmModalGiveTransfer v-if="modals.giveTransfer === currentModalKey" />
-      <CtmModalSecurityCheck v-if="modals.securityCheck === currentModalKey" />
+      <!--      <ctm-modal-box-->
+      <!--        v-if="modals.default === currentModalKey"-->
+      <!--      >-->
+      <!--        <div class="ctm-modal__content ctm-modal__text">-->
+      <!--          {{ options.text }}-->
+      <!--        </div>-->
+      <!--      </ctm-modal-box>-->
+      <!--      <CtmModalConfirmEmail v-if="modals.emailConfirm === currentModalKey" />-->
+      <!--      <CtmModalRestore v-if="modals.restore === currentModalKey" />-->
+      <!--      <CtmModalChangePassword v-if="modals.changePassword === currentModalKey" />-->
+      <!--      <CtmModalPrivacy v-if="modals.privacy === currentModalKey" />-->
+      <!--      <CtmModalSkills v-if="modals.skills === currentModalKey" />-->
+      <!--      <CtmModalMessageSend v-if="modals.messageSend === currentModalKey" />-->
+      <!--      <CtmModalSendARequest v-if="modals.sendARequest === currentModalKey" />-->
+      <!--      <CtmModalRequestSend v-if="modals.requestSend === currentModalKey" />-->
+      <!--      <CtmModalThanksSend v-if="modals.thanks === currentModalKey" />-->
+      <!--      <CtmModalQuestAgreed v-if="modals.questAgreed === currentModalKey" />-->
+      <!--      <CtmModalAreYouSure v-if="modals.areYouSure === currentModalKey" />-->
+      <!--      <CtmModalTransactionSend v-if="modals.transactionSend === currentModalKey" />-->
+      <!--      <CtmModalCardHasBeenAdded v-if="modals.cardHasBeenAdded === currentModalKey" />-->
+      <!--      <CtmModalDeposit v-if="modals.deposit === currentModalKey" />-->
+      <!--      <CtmModalAddCard v-if="modals.addCard === currentModalKey" />-->
+      <!--      <CtmModalWithdraw v-if="modals.withdraw === currentModalKey" />-->
+      <!--      <CtmModalReviewEmployer v-if="modals.review === currentModalKey" />-->
+      <!--      <CtmModalInviteSend v-if="modals.inviteSend === currentModalKey" />-->
+      <!--      <CtmModalQuestCreated v-if="modals.questCreated === currentModalKey" />-->
+      <!--      <CtmModalRaiseViews v-if="modals.raiseViews === currentModalKey" />-->
+      <!--      <CtmModalInvitation v-if="modals.invitation === currentModalKey" />-->
+      <!--      <CtmModalApplyForAPension v-if="modals.applyForAPension === currentModalKey" />-->
+      <!--      <CtmModalMakeDeposit v-if="modals.makeDeposit === currentModalKey" />-->
+      <!--      <CtmModalChangePercent v-if="modals.changePercent === currentModalKey" />-->
+      <!--      <CtmModalOpenADeposit v-if="modals.openADeposit === currentModalKey" />-->
+      <!--      <CtmModalStatus v-if="modals.status === currentModalKey" />-->
+      <!--      <CtmModalAddLiquidity v-if="modals.addLiquidity === currentModalKey" />-->
+      <!--      <CtmModalRemoveLiquidity v-if="modals.removeLiquidity === currentModalKey" />-->
+      <!--      <CtmModalCreditingDeposit v-if="modals.creditingDeposit === currentModalKey" />-->
+      <!--      <CtmModalConfirmDetails v-if="modals.confirmDetails === currentModalKey" />-->
+      <!--      <CtmModalInsureCase v-if="modals.insureCase === currentModalKey" />-->
+      <!--      <CtmModalWithdrawAbout v-if="modals.withdrawAbout === currentModalKey" />-->
+      <!--      <CtmModalAddCase v-if="modals.addCase === currentModalKey" />-->
+      <!--      <CtmModalWelcome v-if="modals.welcome === currentModalKey" />-->
+      <!--      <CtmModalOpenADispute v-if="modals.openADispute === currentModalKey" />-->
+      <!--      <CtmModalNotice v-if="modals.notice === currentModalKey" />-->
+      <!--      <CtmModalTransfer v-if="modals.transfer === currentModalKey" />-->
+      <!--      <CtmModalChangePassInSettings v-if="modals.changePassInSettings === currentModalKey" />-->
+      <!--      <CtmModalTwoFAAuth v-if="modals.twoFAAuth === currentModalKey" />-->
+      <!--      <CtmModalDisableTwoFA v-if="modals.disableTwoFAAuth === currentModalKey" />-->
+      <!--      <CtmModalAddDiscussion v-if="modals.addDiscussion === currentModalKey" />-->
+      <!--      <CtmModalAddProposal v-if="modals.addProposal === currentModalKey" />-->
+      <!--      <CtmModalDelegate v-if="modals.delegate === currentModalKey" />-->
+      <!--      <CtmModalUndelegate v-if="modals.undelegate === currentModalKey" />-->
+      <!--      <CtmModalWarning v-if="modals.warning === currentModalKey" />-->
+      <!--      <CtmModalSignWorkQuest v-if="modals.signWorkQuest === currentModalKey" />-->
+      <!--      <CtmModalGallery v-if="modals.gallery === currentModalKey" />-->
+      <!--      <CtmModalShowFile v-if="modals.showFile === currentModalKey" />-->
+      <!--      <CtmModalTransactionReceipt v-if="modals.transactionReceipt === currentModalKey" />-->
+      <!--      <CtmModalGiveTransfer v-if="modals.giveTransfer === currentModalKey" />-->
+      <!--      <CtmModalSecurityCheck v-if="modals.securityCheck === currentModalKey" />-->
+      <component :is="currentModalKey" />
     </div>
   </transition>
 </template>
@@ -125,23 +126,23 @@ import CtmModalSecurityCheck from './CtmModalSecurityCheck';
 export default {
   name: 'ModalBox',
   components: {
-    CtmModalGiveTransfer,
-    CtmModalShowFile,
-    CtmModalGallery,
-    CtmModalConfirmEmail,
-    CtmModalRestore,
-    CtmModalChangePassword,
-    CtmModalPrivacy,
-    CtmModalSkills,
-    CtmModalMessageSend,
-    CtmModalSendARequest,
-    CtmModalRequestSend,
-    CtmModalQuestAgreed,
-    CtmModalAreYouSure,
-    CtmModalTransactionSend,
-    CtmModalCardHasBeenAdded,
-    CtmModalDeposit,
-    CtmModalAddCard,
+    [modals.giveTransfer]: CtmModalGiveTransfer,
+    [modals.showFile]: CtmModalShowFile,
+    [modals.gallery]: CtmModalGallery,
+    [modals.emailConfirm]: CtmModalConfirmEmail,
+    [modals.restore]: CtmModalRestore,
+    [modals.changePassword]: CtmModalChangePassword,
+    [modals.privacy]: CtmModalPrivacy,
+    [modals.skills]: CtmModalSkills,
+    [modals.messageSend]: CtmModalMessageSend,
+    [modals.sendARequest]: CtmModalSendARequest,
+    [modals.requestSend]: CtmModalRequestSend,
+    [modals.questAgreed]: CtmModalQuestAgreed,
+    [modals.areYouSure]: CtmModalAreYouSure,
+    [modals.transactionSend]: CtmModalTransactionSend,
+    [modals.cardHasBeenAdded]: CtmModalCardHasBeenAdded,
+    [modals.deposit]: CtmModalDeposit,
+    [modals.addCard]: CtmModalAddCard,
     CtmModalWithdraw,
     CtmModalReviewEmployer,
     CtmModalThanksSend,
