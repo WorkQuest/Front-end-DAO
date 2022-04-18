@@ -88,15 +88,12 @@ export default {
     margin-right: 130px;
   }
   &__logo {
-    display: grid;
+    display: flex;
     align-items: center;
-    grid-template-columns: 40px 1fr;
-    grid-gap: 5px;
     cursor: pointer;
-    width: 170px;
-    padding: 10px 38.5%;
-    margin-top: 15px;
+    margin: 15px;
     span {
+      margin-left: 10px;
       font-family: 'Inter', sans-serif;
       font-style: normal;
       font-weight: bold;
@@ -110,10 +107,9 @@ export default {
     align-items: center;
   }
   &__right {
-    display: grid;
-    grid-template-rows: auto 1fr;
-    grid-gap: 53px;
-
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
     background-image: url("~assets/img/app/auth_proposals-bg.svg");
     background-position: right;
     background-repeat: no-repeat;
@@ -148,14 +144,13 @@ export default {
   .template {
     &__container {
       grid-template-columns: 1fr;
-      grid-template-rows: 500px 1fr;
+      grid-template-rows: repeat(2, 1fr);
     }
     &__left {
       margin: 0;
       max-width: initial;
       justify-self: initial;
       padding: 0px 10px;
-      max-width: calc(100vw - 10px);
     }
     &__content {
       margin: 0 auto;
@@ -172,17 +167,51 @@ export default {
       font-size: 32px;
     }
     &__logo {
-      padding: 10px 39%;
+      padding-left: 39%;
     }
   }
 }
 @include _575 {
   .template {
     &__container {
-      grid-template-rows: 300px 1fr;
+      grid-template-rows: 300px auto;
+    }
+    &__logo {
+      padding: 0;
     }
     &__left {
       padding: 0 10px 30px;
+    }
+  }
+}
+@include _380 {
+  .template {
+    &__container {
+      grid-template-rows: 180px auto;
+    }
+    &__content {
+      padding-top: 15px;
+    }
+    &__logo {
+      align-items: flex-start;
+      flex-direction: column;
+      span {
+        font-size: 20px;
+        margin-left: 0;
+        margin-top:5px;
+      }
+    }
+  }
+}
+@include _350() {
+  .template {
+    &__logo {
+      span {
+        font-size: 18px;
+      }
+    }
+    &__left {
+      max-width: calc(100vw - 10px);
     }
   }
 }
