@@ -1,8 +1,11 @@
+import { error } from '~/utils/success-error';
+
+const nodeUrl = 'https://dev-node-nyc3.workquest.co/api';
 export default {
   async getValidators({ commit }) {
     try {
       const nodeApi = this.$axios.create({
-        baseURL: 'https://dev-node-nyc3.workquest.co/api/cosmos/staking/v1beta1/validators',
+        baseURL: `${nodeUrl}/cosmos/staking/v1beta1/validators`,
       });
       const res = await nodeApi.$get('', {
         // params: {
@@ -13,6 +16,33 @@ export default {
       console.log(res);
     } catch (e) {
       console.error('getValidators', e);
+    }
+  },
+  async broadcast({ commit }, { signedTxBytes, broadCastMode = 'BROADCAST_MODE_SYNC' }) {
+    try {
+      const txBytesBase64 = Buffer.from(signedTxBytes, 'binary')
+        .toString('base64');
+      // const options = {
+      //   method: 'POST',
+      //   url: `${this.url}/cosmos/tx/v1beta1/txs`,
+      //   headers:
+      //       { 'Content-Type': 'application/json' },
+      //   body: { tx_bytes: txBytesBase64, mode: broadCastMode },
+      //   json: true,
+      // };
+
+      const nodeApi = this.$axios.create({
+        baseURL: `${nodeUrl}/cosmos/tx/v1beta1/txs`,
+      });
+      return await nodeApi.$post(`${nodeUrl}/cosmos/tx/v1beta1/txs`, {
+        tx_bytes: txBytesBase64,
+        mode: broadCastMode,
+      }, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    } catch (e) {
+      console.error('wallet/broadcast', e);
+      return error();
     }
   },
 };

@@ -8,6 +8,7 @@ import converter from 'bech32-converting';
 import secp256k1 from 'secp256k1';
 import * as bip32 from 'bip32';
 import crypto from 'crypto';
+import axios from '@nuxtjs/axios';
 import { error, success } from '~/utils/success-error';
 import abi from '~/abi/index';
 import { errorCodes } from '~/utils/enums';
@@ -492,21 +493,21 @@ const sign = (txBody, authInfo, accountNumber, privKey) => {
   });
   const txBytes = message.cosmos.tx.v1beta1.TxRaw.encode(txRaw).finish();
   const txBytesBase64 = Buffer.from(txBytes, 'binary').toString('base64');
-  return txBytes;
+  return txBytes; // txBytesBase64;
 };
 
 export const test = async () => {
   try {
     const address = converter('ethm').toBech32(wallet.address);
-    console.log(`Cosmos address: ${address}`);
+    // console.log(`Cosmos address: ${address}`);
 
     const data = await getCosmosAccounts(address);
-    console.log('Accounts', data);
+    // console.log('Accounts', data);
 
     const privKey = await getECPairPriv(wallet.mnemonic);
-    console.log('priv', privKey);
+    // console.log('priv', privKey);
     const pubKeyAny = getPubKeyAny(privKey);
-    console.log('pub', pubKeyAny);
+    // console.log('pub', pubKeyAny);
 
     // signDoc = (1)txBody + (2)authInfo
     // ---------------------------------- (1)txBody ----------------------------------
@@ -515,16 +516,16 @@ export const test = async () => {
       to_address: address,
       amount: [{ amount: String('10') }],
     });
-    console.log('msgSend', msgSend);
+    // console.log('msgSend', msgSend);
 
     const msgSendAny = new message.google.protobuf.Any({
       type_url: '/cosmos.bank.v1beta1.MsgSend',
       value: message.cosmos.bank.v1beta1.MsgSend.encode(msgSend).finish(),
     });
-    console.log('msgSendAny', msgSendAny);
+    // console.log('msgSendAny', msgSendAny);
 
     const txBody = new message.cosmos.tx.v1beta1.TxBody({ messages: [msgSendAny], memo: '' });
-    console.log('txBody', txBody);
+    // console.log('txBody', txBody);
 
     // --------------------------------- (2)authInfo ---------------------------------
     const signerInfo = new message.cosmos.tx.v1beta1.SignerInfo({
@@ -532,23 +533,21 @@ export const test = async () => {
       mode_info: { single: { mode: message.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT } },
       sequence: data.account.base_account.sequence,
     });
-    console.log('signerInfo', signerInfo);
+    // console.log('signerInfo', signerInfo);
 
     const feeValue = new message.cosmos.tx.v1beta1.Fee({
       amount: [{ amount: String('10') }],
       gas_limit: 200000,
     });
-    console.log('feeValue', feeValue);
+    // console.log('feeValue', feeValue);
 
     const authInfo = new message.cosmos.tx.v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
-    console.log('authInfo', authInfo);
+    // console.log('authInfo', authInfo);
 
     // -------------------------------- sign --------------------------------
-    console.log('-------- sign --------');
-    console.log(secp256k1);
-    const signedTxBytes = secp256k1.sign(txBody, authInfo, data.account.base_account.account_number, privKey);
-    // cosmos.broadcast(signedTxBytes).then((response) => console.log(response));
+    return success(sign(txBody, authInfo, data.account.base_account.account_number, privKey)); // signedTxBytes
   } catch (e) {
     console.error('test', e);
+    return error();
   }
 };
