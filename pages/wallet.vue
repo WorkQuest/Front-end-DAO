@@ -305,7 +305,11 @@ export default {
               this.SetLoader(false);
               if (res?.ok) {
                 await this.loadData();
-                await this.ShowModal({ key: 'transactionSend' });
+                await this.ShowModal({
+                  img: require('assets/img/ui/transactionSend.svg'),
+                  key: modals.status,
+                  title: this.$t('modals.transactionSend'),
+                });
                 return success();
               }
               return error();
