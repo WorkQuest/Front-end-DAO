@@ -492,6 +492,9 @@
     }
   },
   "wallet": {
+    "success": "Success",
+    "failed": "Failed",
+    "frozen": "Frozen balance",
     "WUSD": "WUSD wallet",
     "cryptoWallet": "Crypto wallet",
     "bankCard": "Bank card",
@@ -601,6 +604,8 @@
     }
   },
   "settings": {
+    "firstNumber": "Main phone number",
+    "secondNumber": "Additional phone number",
     "description": "And you are beautiful",
     "imgLoaded": "Image loaded successful",
     "workExp": "Work experience",

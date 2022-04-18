@@ -240,7 +240,7 @@ export const sendWalletTransaction = async (_method, payload) => {
     gasPrice,
     gas: gasEstimate,
   };
-  // noinspection ES6RedundantAwait
+    // noinspection ES6RedundantAwait
   return await web3.eth.sendTransaction(transactionData);
 };
 export const fetchWalletContractData = async (_method, _abi, _address, _params) => {

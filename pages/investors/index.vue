@@ -166,10 +166,6 @@ export default {
   &__investors {
     display: none;
   }
-
-  &__pagination {
-    margin: 10px 15px 0 0;
-  }
 }
 
 .body {
@@ -235,7 +231,9 @@ export default {
     }
 
     &__pagination {
-      margin-right: 10px;
+      margin-top: 15px;
+      margin-left: auto;
+      margin-right: auto;
     }
   }
 }
