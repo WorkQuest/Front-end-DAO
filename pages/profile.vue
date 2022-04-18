@@ -392,8 +392,6 @@ export default {
   beforeMount() {
     this.isVerified = !!this.userData.statusKYC;
     this.setCurrData();
-  },
-  mounted() {
     this.SetLoader(false);
   },
   methods: {
