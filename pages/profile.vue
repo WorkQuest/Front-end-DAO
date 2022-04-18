@@ -457,7 +457,14 @@ export default {
     },
     handleClickEditBtn() {
       if (this.isProfileEdit) this.editUserData();
-      else this.showModalWarning();
+      else {
+        this.ShowModal({
+          key: modals.warning,
+          callback: () => {
+            this.isProfileEdit = true;
+          },
+        });
+      }
     },
     handleChangeSocial(val, key) {
       if (!val) this.localUserData.additionalInfo.socialNetwork[key] = null;
@@ -547,14 +554,6 @@ export default {
         img: require('~/assets/img/ui/questAgreed.svg'),
         title: this.$t('modals.saved'),
         subtitle: this.$t('modals.userDataHasBeenSaved'),
-      });
-    },
-    showModalWarning() {
-      this.ShowModal({
-        key: modals.warning,
-        callback: () => {
-          this.isProfileEdit = true;
-        },
       });
     },
     modalChangePassword() {

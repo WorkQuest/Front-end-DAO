@@ -15,31 +15,16 @@ import { mapGetters } from 'vuex';
 import modals from '@/store/modals/modals';
 import CtmModalGiveTransfer from './CtmModalGiveTransfer';
 import CtmModalShowFile from './CtmModalShowFile';
-import CtmModalGallery from './CtmModalGallery';
 import CtmModalConfirmEmail from './CtmModalConfirmEmail';
 import CtmModalChangePassword from './CtmModalChangePassword';
 import CtmModalRestore from './CtmModalRestore';
 import CtmModalPrivacy from './CtmModalPrivacy';
-import CtmModalReviewEmployer from './CtmModalReviewEmployer';
 import CtmModalDeposit from './CtmModalDeposit';
 import CtmModalAddCard from './CtmModalAddCard';
 import CtmModalWithdraw from './CtmModalWithdraw';
-import CtmModalInvitation from './CtmModalInvitation';
-import CtmModalRaiseViews from './CtmModalRaiseViews';
-import CtmModalApplyForAPension from './CtmModalApplyForAPension';
-import CtmModalMakeDeposit from './CtmModalMakeDeposit';
-import CtmModalChangePercent from './CtmModalChangePercent';
-import CtmModalOpenADeposit from './CtmModalOpenADeposit';
 import CtmModalStatus from './CtmModalStatus';
-import CtmModalAddLiquidity from './CtmModalAddLiquidity';
-import CtmModalRemoveLiquidity from './CtmModalRemoveLiquidity';
-import CtmModalCreditingDeposit from './CtmModalCreditingDeposit';
 import CtmModalConfirmDetails from './CtmModalConfirmDetails';
-import CtmModalInsureCase from './CtmModalInsureCase';
-import CtmModalWithdrawAbout from './CtmModalWithdrawAbout';
-import CtmModalAddCase from './CtmModalAddCase';
 import CtmModalOpenADispute from './CtmModalOpenADispute';
-import CtmModalTransfer from './CtmModalTransfer';
 import CtmModalChangePassInSettings from './CtmModalChangePassInSettings';
 import CtmModalTwoFAAuth from './CtmModalTwoFAAuth';
 import CtmModalDisableTwoFA from './CtmModalDisableTwoFA';
@@ -57,7 +42,6 @@ export default {
   components: {
     [modals.giveTransfer]: CtmModalGiveTransfer,
     [modals.showFile]: CtmModalShowFile,
-    [modals.gallery]: CtmModalGallery,
     [modals.emailConfirm]: CtmModalConfirmEmail,
     [modals.restore]: CtmModalRestore,
     [modals.changePassword]: CtmModalChangePassword,
@@ -65,23 +49,9 @@ export default {
     [modals.deposit]: CtmModalDeposit,
     [modals.addCard]: CtmModalAddCard,
     [modals.withdraw]: CtmModalWithdraw,
-    [modals.review]: CtmModalReviewEmployer,
-    [modals.invitation]: CtmModalInvitation,
-    [modals.raiseViews]: CtmModalRaiseViews,
-    [modals.applyForAPension]: CtmModalApplyForAPension,
-    [modals.makeDeposit]: CtmModalMakeDeposit,
-    [modals.changePercent]: CtmModalChangePercent,
-    [modals.openADeposit]: CtmModalOpenADeposit,
     [modals.status]: CtmModalStatus,
-    [modals.addLiquidity]: CtmModalAddLiquidity,
-    [modals.removeLiquidity]: CtmModalRemoveLiquidity,
-    [modals.creditingDeposit]: CtmModalCreditingDeposit,
     [modals.confirmDetails]: CtmModalConfirmDetails,
-    [modals.insureCase]: CtmModalInsureCase,
-    [modals.withdrawAbout]: CtmModalWithdrawAbout,
-    [modals.addCase]: CtmModalAddCase,
     [modals.openADispute]: CtmModalOpenADispute,
-    [modals.transfer]: CtmModalTransfer,
     [modals.changePassInSettings]: CtmModalChangePassInSettings,
     [modals.twoFAAuth]: CtmModalTwoFAAuth,
     [modals.disableTwoFAAuth]: CtmModalDisableTwoFA,
@@ -94,9 +64,7 @@ export default {
     [modals.transactionReceipt]: CtmModalTransactionReceipt,
     [modals.securityCheck]: CtmModalSecurityCheck,
   },
-  data: () => ({
-    modals,
-  }),
+  data: () => ({ modals }),
   computed: {
     ...mapGetters({
       isShow: 'modals/getIsShow',
@@ -106,9 +74,7 @@ export default {
   },
   methods: {
     backgroundClick() {
-      if (!this.options.isUnclosable) {
-        this.close();
-      }
+      if (!this.options.isUnclosable) this.close();
     },
     close() {
       this.$store.dispatch('modals/hide');
