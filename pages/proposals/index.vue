@@ -77,7 +77,8 @@ export default {
       let { proposalThreshold } = this;
       const floorNumberFrozenBalance = this.Floor(Number((frozenBalance).toString()));
       if (!proposalThreshold) {
-        proposalThreshold = await this.$store.dispatch('wallet/getProposalThreshold');
+        const { result } = await this.$store.dispatch('wallet/getProposalThreshold');
+        proposalThreshold = result;
         await this.$store.dispatch('proposals/setProposalThreshold', proposalThreshold);
       }
       this.SetLoader(false);

@@ -1,5 +1,8 @@
 export default () => ({
-  proposalThreshold: null,
+  proposalThreshold: {
+    ok: {},
+    result: {},
+  },
   cards: [],
   cardsCount: 0,
   filters: {
