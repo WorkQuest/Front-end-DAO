@@ -67,7 +67,7 @@
             <base-btn
               mode="outline"
               class="message__action"
-              @click="hide()"
+              @click="CloseModal"
             >
               {{ $t('meta.cancel') }}
             </base-btn>
@@ -98,12 +98,10 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     showCardHasBeenAddedModal() {
       this.ShowModal({
-        key: modals.cardHasBeenAdded,
+        key: modals.status,
+        title: this.$t('modals.cardHasBeenAdded'),
       });
     },
   },

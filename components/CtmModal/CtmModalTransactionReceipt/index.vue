@@ -101,7 +101,9 @@ export default {
           if (callback) await callback();
           if (isShowSuccess) {
             await this.$store.dispatch('modals/show', {
-              key: modals.transactionSend,
+              img: require('assets/img/ui/transactionSend.svg'),
+              key: modals.status,
+              title: this.$t('modals.transactionSend'),
             });
           }
         }

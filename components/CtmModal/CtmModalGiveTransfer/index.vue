@@ -64,7 +64,7 @@
           <base-btn
             mode="outline"
             class="buttons__action"
-            @click="CloseModal()"
+            @click="CloseModal"
           >
             {{ $t('meta.cancel') }}
           </base-btn>

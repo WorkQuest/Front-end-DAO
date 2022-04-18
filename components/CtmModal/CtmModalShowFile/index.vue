@@ -24,11 +24,6 @@ export default {
       options: 'modals/getOptions',
     }),
   },
-  methods: {
-    hide() {
-      this.CloseModal();
-    },
-  },
 };
 </script>
 
@@ -40,6 +35,7 @@ export default {
     opacity: 0;
     visibility: hidden;
   }
+
   &__close {
     transition: .5s ease-in-out;
     opacity: 0;
@@ -56,6 +52,7 @@ export default {
 
 .ctm-modal {
   @include modalKit;
+
   &__box {
     max-width: 1200px !important;
     max-height: 100% !important;
@@ -63,9 +60,11 @@ export default {
     height: auto !important;
     padding: 0 !important;
   }
+
   &__content {
     margin: auto auto;
   }
+
   .content {
     margin-top: 28px;
     overflow-y: auto;
