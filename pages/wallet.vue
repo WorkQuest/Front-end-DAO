@@ -34,7 +34,7 @@
                   <span class="balance__usd-mobile_blue">
                     {{ $t('wallet.frozen') }}
                   </span>
-                  {{ frozenBalance }} {{ tokenSymbols.WQT }}
+                  {{ Floor(frozenBalance) }} {{ tokenSymbols.WQT }}
                 </span>
                 <base-dd
                   v-model="ddValue"
@@ -50,7 +50,7 @@
                   <span class="balance__usd">
                     {{ $t('wallet.frozen') }}
                   </span>
-                  {{ Number(frozenBalance.toString()).toFixed(4) }} {{ tokenSymbols.WQT }}
+                  {{ Floor(frozenBalance) }} {{ tokenSymbols.WQT }}
                 </span>
               </span>
             </div>
@@ -161,9 +161,6 @@ export default {
       selectedToken: 'wallet/getSelectedToken',
       userWalletAddress: 'user/getUserWalletAddress',
     }),
-    walletTables() {
-      return WalletTables;
-    },
     totalPages() {
       if (!this.transactionsCount) return 0;
       return Math.ceil(this.transactionsCount / this.txsPerPage);
@@ -235,10 +232,6 @@ export default {
     await this.loadData();
   },
   methods: {
-    getSwitchButtonMode(btn) {
-      if (btn === this.selectedWalletTable) return '';
-      return 'outline';
-    },
     async getTransactions() {
       await this.$store.dispatch('wallet/getTransactions', {
         limit: this.txsPerPage,

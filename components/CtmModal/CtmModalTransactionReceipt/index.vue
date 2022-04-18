@@ -86,7 +86,7 @@ export default {
       this.canSend = new BigNumber(amount).plus(fee).isLessThanOrEqualTo(wusdBalance);
     } else if (fee) {
       // Only need check transaction fee with user balance
-      this.canSend = new BigNumber(fee).isLessThanOrEqualTo(wusdBalance);
+      this.canSend = new BigNumber(fee).isLessThanOrEqualTo(wusdBalance).toString();
     }
   },
   methods: {
