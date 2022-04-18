@@ -123,7 +123,11 @@ export default {
   },
   async mounted() {
     if (!this.isWalletConnected) return;
-    await this.getInvestors();
+    await Promise.all([
+      this.getInvestors(),
+      this.$store.dispatch('wallet/getBalanceWQT', this.userWalletAddress),
+      this.$store.dispatch('wallet/frozenBalance', { address: this.userWalletAddress }),
+    ]);
   },
   beforeDestroy() {
     clearTimeout(this.timeout);
@@ -233,7 +237,9 @@ export default {
     }
 
     &__pagination {
-      margin-right: 10px;
+      margin-top: 15px;
+      margin-left: auto;
+      margin-right: auto;
     }
   }
 }

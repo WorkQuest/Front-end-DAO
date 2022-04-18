@@ -1,4 +1,5 @@
 <template>
+  <!--  TODO: Refactoring needed-->
   <ctm-modal-box
     class="message"
     :title="$t('modals.openADispute')"
@@ -11,7 +12,9 @@
               <label
                 for="reason-dd"
                 class="ctm-modal__label"
-              >{{ $t('modals.reason') }}</label>
+              >
+                {{ $t('modals.reason') }}
+              </label>
               <base-dd
                 id="reason-dd"
                 type="gray"
@@ -22,16 +25,16 @@
               <div class="btn__wrapper">
                 <base-btn
                   class="message__action"
-                  @click="showRequestSendModal() "
+                  @click="showRequestSendModal()"
                 >
                   {{ $t('meta.send') }}
                 </base-btn>
               </div>
               <div class="btn__wrapper">
                 <base-btn
-                  :mode="'outline'"
+                  mode="outline"
                   class="message__action"
-                  @click="hide()"
+                  @click="CloseModal"
                 >
                   {{ $t('meta.cancel') }}
                 </base-btn>
@@ -62,12 +65,11 @@ export default {
     },
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     showRequestSendModal() {
       this.ShowModal({
-        key: modals.requestSend,
+        key: modals.status,
+        img: require('assets/img/ui/message.svg'),
+        title: this.$t('modals.requestSend'),
       });
     },
   },
@@ -83,6 +85,7 @@ export default {
     justify-content: space-between;
     margin: 15px 0 0 0;
   }
+
   &__wrapper {
     width: 45%;
   }

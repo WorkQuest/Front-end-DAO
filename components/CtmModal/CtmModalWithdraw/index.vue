@@ -14,8 +14,9 @@
               id="amountInput"
               v-model="amountWDX"
               :name="$t('modals.amount')"
+              data-selector="AMOUNT"
               type="number"
-              :placeholder="'0 WDX'"
+              placeholder="0 WDX"
               rules="required"
             >
               <template
@@ -33,7 +34,8 @@
             <base-field
               v-model="amountUSD"
               mode="white"
-              :placeholder="'$ 0'"
+              placeholder="$ 0"
+              data-selector="AMOUNT-USD"
               :disabled="true"
             >
               <template
@@ -61,7 +63,9 @@
               class="field__add-card"
               @click="showAddCardModal"
             >
-              <span>{{ $t('modals.addAnotherCard') }}</span>
+              <span>
+                {{ $t('modals.addAnotherCard') }}
+              </span>
             </div>
           </div>
         </div>
@@ -77,12 +81,13 @@
               <base-field
                 id="cardNumberInput"
                 v-model="cardNumberInput"
+                data-selector="CARD-NUMBER"
                 :name="$t('modals.numberOfCard')"
                 type="tel"
                 rules="max:19|required"
                 pattern="[0-9\s]{13,19}"
                 inputmode="numeric"
-                :placeholder="'1234 1234 1234 1234'"
+                placeholder="1234 1234 1234 1234"
               />
             </div>
           </div>
@@ -96,7 +101,8 @@
                   id="dateInput"
                   v-model="dateInput"
                   :name="$t('modals.date')"
-                  :placeholder="'02/24'"
+                  data-selector="DATE"
+                  placeholder="02/24"
                   rules="max:5|required|date"
                 />
               </div>
@@ -109,8 +115,9 @@
                 <base-field
                   id="cvvInput"
                   v-model="cvvInput"
+                  data-selector="CVV"
                   :name="$t('modals.cvv')"
-                  :placeholder="'242'"
+                  placeholder="242"
                   rules="max:4|required"
                 />
               </div>
@@ -127,7 +134,7 @@
             <base-btn
               mode="outline"
               class="actions__cancel"
-              @click="hide()"
+              @click="CloseModal"
             >
               {{ $t('meta.cancel') }}
             </base-btn>
@@ -167,12 +174,11 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     showTransactionSendModal() {
       this.ShowModal({
-        key: modals.transactionSend,
+        img: require('assets/img/ui/transactionSend.svg'),
+        key: modals.status,
+        title: this.$t('modals.transactionSend'),
       });
     },
     showAddCardModal() {
@@ -188,6 +194,7 @@ export default {
 
 .withdrawal {
   max-width: 615px !important;
+
   &__content {
     padding: 0 28px 30px;
     margin-top: 25px;
@@ -198,6 +205,7 @@ export default {
   &__input {
     height: 46px;
   }
+
   &__amount {
     display: grid;
     grid-template-columns: 47% 6% 47%;
@@ -205,18 +213,22 @@ export default {
     align-items: flex-end;
     margin-bottom: 20px;
   }
-  &__row{
+
+  &__row {
     margin-bottom: 20px;
   }
+
   &__equal {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%;
   }
+
   &__title {
     margin-bottom: 5px;
   }
+
   &__wrap {
     display: grid;
     grid-template-columns: 50% 50%;

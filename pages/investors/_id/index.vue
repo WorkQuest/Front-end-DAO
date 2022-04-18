@@ -318,7 +318,6 @@ export default {
     async openModalDelegate() {
       this.ShowModal({
         key: modals.delegate,
-        stake: this.stake,
         investorAddress: this.investorAddress,
         callback: async () => this.updateDelegatedUser(),
       });
@@ -326,7 +325,6 @@ export default {
     async openModalUndelegate() {
       this.ShowModal({
         key: modals.undelegate,
-        stake: this.stake,
         name: `${this.investor.firstName} ${this.investor.lastName}`,
         tokensAmount: this.votingPower,
         callback: async () => this.updateDelegatedUser(),

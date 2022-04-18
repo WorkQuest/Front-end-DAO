@@ -79,6 +79,7 @@
         mode="lightRed"
         class="btn__delegate"
         :class="delegateClass(el)"
+        :disabled="!balanceWQT"
         @click="openModalUndelegate(el)"
       >
         {{ $t('modals.undelegate') }}
@@ -89,7 +90,7 @@
         v-if="el.item.investorAddress"
         mode="lightBlue"
         class="btn__delegate"
-        @click="openModalDelegate(el)"
+        @click="!balanceWQT ? toastsDelegateInfo($t('investors.notEnoughTokens')) : openModalDelegate(el)"
       >
         {{ $t('modals.delegate') }}
       </base-btn>
@@ -167,9 +168,13 @@ export default {
     ...mapGetters({
       userData: 'user/getUserData',
       delegatedToUser: 'investors/getDelegatedToUser',
+      balanceWQT: 'wallet/getBalanceWQT',
     }),
   },
   methods: {
+    toastsDelegateInfo(value) {
+      this.ShowToast(value, this.$t('investors.delegateInfo'));
+    },
     getTransactionUrl(hash) {
       return `${ExplorerUrls[this.isProd ? 'PROD' : 'DEV']}/transactions/${hash}`;
     },

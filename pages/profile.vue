@@ -325,6 +325,10 @@ export default {
       socialInputs: [],
       nameInputsArr: [],
       coordinates: undefined,
+      profileVisibility: {
+        network: this.userData?.profileVisibilitySetting?.network ?? 0,
+        ratingStatus: this.userData?.profileVisibilitySetting?.ratingStatus ?? 0,
+      },
       phone: {
         main: {
           fullPhone: null,
@@ -389,9 +393,6 @@ export default {
     this.isVerified = !!this.userData.statusKYC;
     this.setCurrData();
   },
-  mounted() {
-    this.SetLoader(false);
-  },
   methods: {
     hideAddressSelector() {
       this.isGeoInputOnFocus = false;
@@ -411,7 +412,7 @@ export default {
       const {
         localUserData, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
       } = this;
-
+      this.localUserData.additionalInfo.address = this.userData?.locationPlaceName;
       this.phone.main = localUserData.phone || localUserData.tempPhone || { fullPhone: null, codeRegion: 'RU' };
 
       this.phone.second = localUserData.additionalInfo.secondMobileNumber || { fullPhone: null, codeRegion: 'RU' };
@@ -456,7 +457,14 @@ export default {
     },
     handleClickEditBtn() {
       if (this.isProfileEdit) this.editUserData();
-      else this.showModalWarning();
+      else {
+        this.ShowModal({
+          key: modals.warning,
+          callback: () => {
+            this.isProfileEdit = true;
+          },
+        });
+      }
     },
     handleChangeSocial(val, key) {
       if (!val) this.localUserData.additionalInfo.socialNetwork[key] = null;
@@ -467,6 +475,7 @@ export default {
         longitude: address.lng,
         latitude: address.lat,
       };
+      this.hideAddressSelector();
     },
     getPositionData(address) {
       this.addresses = [];
@@ -547,25 +556,10 @@ export default {
         subtitle: this.$t('modals.userDataHasBeenSaved'),
       });
     },
-    showModalWarning() {
-      this.ShowModal({
-        key: modals.warning,
-        callback: () => {
-          this.isProfileEdit = true;
-        },
-      });
-    },
     modalChangePassword() {
       this.ShowModal({
         key: modals.changePassInSettings,
       });
-    },
-    switch2Fa() {
-      this.twoFa = !this.twoFa;
-    },
-    switchSms() {
-      this.sms = !this.sms;
-      this.$router.push('/sms-verification');
     },
     async editUserData() {
       const {
@@ -604,12 +598,12 @@ export default {
         };
         await this.$store.dispatch('user/setImage', response);
       }
-
       let config = {
         avatarId,
         firstName,
         lastName,
         phoneNumber,
+        profileVisibility: this.profileVisibility,
         locationFull: {
           location,
           locationPlaceName: this.localUserData.additionalInfo.address,

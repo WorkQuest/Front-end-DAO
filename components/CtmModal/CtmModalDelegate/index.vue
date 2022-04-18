@@ -146,7 +146,7 @@ export default {
           });
           this.SetLoader(false);
           if (res.ok) {
-            this.ShowToast(`Delegated ${tokensAmount} WQT`, this.$t('modals.delegate'));
+            this.ShowToast(`Delegated ${this.Floor(tokensAmount)} WQT`, this.$t('modals.delegate'));
           } else if (res.msg.includes('Not enough balance to delegate')) {
             this.ShowToast(this.$t('errors.delegate.notEnoughBalance'), this.$t('errors.delegate.title'));
           }
@@ -162,54 +162,65 @@ export default {
 <style lang="scss" scoped>
 .delegate {
   max-width: 500px !important;
+
   &__content {
-    padding: 20px 28px 30px 28px!important;
+    padding: 20px 28px 30px 28px !important;
   }
-  &__body{
+
+  &__body {
     @include text-usual;
     color: $black800;
     margin: 25px 0;
-    background-color: $white!important;
+    background-color: $white !important;
   }
-  &__done{
+
+  &__done {
     margin-top: 25px;
   }
+
   &__input {
     height: 46px;
     margin-bottom: 15px;
   }
 }
+
 .footer {
   display: flex;
   justify-content: space-between;
   grid-gap: 10px;
-  &__body{
+
+  &__body {
     width: 100%;
-    height: 46px!important;
+    height: 46px !important;
   }
-  &__maximum{
-    width: 100px!important;
-    height: 46px!important;
+
+  &__maximum {
+    width: 100px !important;
+    height: 46px !important;
   }
 }
-.address{
-  &__label{
+
+.address {
+  &__label {
     @include text-usual;
     color: $black800;
-    margin: 0!important;
+    margin: 0 !important;
   }
-  &__body{
+
+  &__body {
     margin-top: 5px;
   }
 }
-.tokens{
-  &__title{
+
+.tokens {
+  &__title {
     @include text-usual;
     color: $black800;
     margin-bottom: 5px;
-    &_grey{
+
+    &_grey {
       color: $black400;
-      margin-bottom: 10px!important;
+      margin-bottom: 10px !important;
     }
   }
 }
