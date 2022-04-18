@@ -8,7 +8,7 @@ export default {
   name: 'Index',
   created() {
     if (this.$cookies.get('access')) this.$router.push(Path.PROPOSALS);
-    else this.$router.push('/sign-in');
+    else this.$router.push(Path.SIGN_IN);
   },
 };
 </script>
