@@ -62,13 +62,13 @@
         <div class="btn-group">
           <base-btn
             class="btn"
-            @click="hide()"
+            @click="CloseModal"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
           <base-btn
             class="btn_bl"
-            @click="hide()"
+            @click="CloseModal"
           >
             {{ $t('modals.connectWallet') }}
           </base-btn>
@@ -106,11 +106,6 @@ export default {
     ...mapGetters({
       options: 'modals/getOptions',
     }),
-  },
-  methods: {
-    hide() {
-      this.CloseModal();
-    },
   },
 };
 </script>

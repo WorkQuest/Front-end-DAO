@@ -5,23 +5,32 @@
   >
     <div class="ctm-modal__content">
       <div class="grid__1col">
-        <label for="priceOfAClick_input">{{ $t('modals.priceOfAClick') }}</label>
+        <label for="priceOfAClick_input">
+          {{ $t('modals.priceOfAClick') }}
+        </label>
         <base-field
           id="priceOfAClick_input"
           v-model="priceOfAClick_input"
-          :placeholder="'230 WUSD'"
+          data-selector="PRICE-PER-CLICK"
+          placeholder="230 WUSD"
         />
-        <label for="city_input">{{ $t('modals.city') }}</label>
+        <label for="city_input">
+          {{ $t('modals.city') }}
+        </label>
         <base-field
           id="city_input"
           v-model="city_input"
-          :placeholder="'Moscow'"
+          data-selector="CITY"
+          placeholder="Moscow"
         />
-        <label for="period_input">{{ $t('modals.period') }}</label>
+        <label for="period_input">
+          {{ $t('modals.period') }}
+        </label>
         <base-field
           id="period_input"
           v-model="period_input"
-          :placeholder="'Week'"
+          data-selector="PERIOD"
+          placeholder="Week"
         />
       </div>
       <div class="payment__container">
@@ -43,8 +52,8 @@
         </div>
         <div class="btn__wrapper">
           <base-btn
-            :mode="'outline'"
-            @click="hide()"
+            mode="outline"
+            @click="CloseModal"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
@@ -73,9 +82,6 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     showTransactionSendModal() {
       this.ShowModal({
         key: modals.transactionSend,
@@ -93,11 +99,13 @@ export default {
     align-items: center;
     justify-content: flex-start;
   }
+
   &__title {
     color: $black500;
-    font-weight:400;
+    font-weight: 400;
     font-size: 16px;
   }
+
   &__cost {
     color: $blue;
     font-weight: 500;
@@ -117,10 +125,12 @@ export default {
 .link {
   text-align: right;
 }
+
 .ctm-modal {
   &__content-field {
     margin: 15px 0 0 0;
   }
+
   &__equal {
     margin: 0 0 35px 10px;
   }
@@ -139,11 +149,13 @@ export default {
     width: 100%;
     background-color: $white;
     resize: none;
+
     &::placeholder {
       color: $black800;
     }
   }
 }
+
 .grid {
   &__2col {
     display: grid;
@@ -152,6 +164,7 @@ export default {
     align-items: flex-end;
   }
 }
+
 .grid {
   &__3col {
     display: grid;
@@ -160,6 +173,7 @@ export default {
     align-items: flex-end;
   }
 }
+
 .btn {
   &__container {
     display: flex;
@@ -167,6 +181,7 @@ export default {
     justify-content: space-between;
     margin: 15px 0 0 0;
   }
+
   &__wrapper {
     width: 45%;
   }
@@ -174,12 +189,14 @@ export default {
 
 .messageSend {
   max-width: 650px !important;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 10px;
   }

@@ -1,4 +1,5 @@
 <template>
+  <!--  TODO: Refactoring needed-->
   <ctm-modal-box
     class="addLiquidity"
     :title="$t('modals.removeLiquidity')"
@@ -10,11 +11,14 @@
             <label
               for="withdrawalAmount_input"
               class="ctm-modal__label"
-            >{{ $t('modals.withdrawalAmount') }}</label>
+            >
+              {{ $t('modals.withdrawalAmount') }}
+            </label>
             <base-field
               id="withdrawalAmount_input"
               :is-hide-error="true"
-              :placeholder="'1000 WUSD'"
+              data-selector="AMOUNT"
+              placeholder="1000 WUSD"
             />
           </div>
           <div class="ctm-modal__content-field">
@@ -55,13 +59,13 @@
         <div class="btn-group">
           <base-btn
             class="btn"
-            @click="hide()"
+            @click="CloseModal"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
           <base-btn
             class="btn_bl"
-            @click="hide()"
+            @click="CloseModal"
           >
             {{ $t('modals.removeLiquidity') }}
           </base-btn>
@@ -112,11 +116,6 @@ export default {
       options: 'modals/getOptions',
     }),
   },
-  methods: {
-    hide() {
-      this.CloseModal();
-    },
-  },
 };
 </script>
 
@@ -128,6 +127,7 @@ export default {
   .addLiquidity {
     max-width: 875px !important;
   }
+
   &__content-field {
     margin: 15px 0 0 0;
   }
@@ -168,7 +168,7 @@ export default {
   }
 
   &__content-btns {
-    .btn-group{
+    .btn-group {
       display: grid;
       grid-template-columns: repeat(2, calc(50% - 10px));
       grid-gap: 20px;

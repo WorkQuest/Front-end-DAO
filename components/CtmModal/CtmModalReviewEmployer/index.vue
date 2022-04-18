@@ -6,9 +6,7 @@
     <div class="body">
       <div class="btn-rating">
         <button>
-          <b-form-rating
-            v-model="localRating"
-          />
+          <b-form-rating v-model="localRating" />
         </button>
       </div>
       <div class="ctm-modal__content">
@@ -30,7 +28,7 @@
                 <div class="btn__wrapper">
                   <base-btn
                     class="message__action"
-                    @click="showThanksModal() "
+                    @click="showThanksModal()"
                   >
                     {{ $t('meta.send') }}
                   </base-btn>
@@ -38,7 +36,7 @@
                 <div class="btn__wrapper">
                   <base-btn
                     class="message__action"
-                    @click="hide()"
+                    @click="CloseModal"
                   >
                     {{ $t('meta.cancel') }}
                   </base-btn>
@@ -75,9 +73,6 @@ export default {
     this.localRating = JSON.parse(JSON.stringify(this.options.rating));
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     showThanksModal() {
       this.ShowModal({
         key: modals.thanks,

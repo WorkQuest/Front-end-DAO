@@ -12,6 +12,7 @@
           <base-field
             id="address_input"
             v-model="address"
+            data-selector="RECIPIENT-ADDRESS"
             :name="$t('modals.recepientAddressField')"
             :placeholder="$t('modals.recepientAddress')"
             type="text"
@@ -35,6 +36,7 @@
             id="amount_input"
             v-model="amount"
             placeholder="0 WUSD"
+            data-selector="AMOUNT"
             type="number"
             rules="required|decimal"
             :name="$t('modals.amountField')"
@@ -53,7 +55,7 @@
             <base-btn
               mode="outline"
               class="message__action"
-              @click="hide()"
+              @click="CloseModal"
             >
               {{ $t('meta.cancel') }}
             </base-btn>
@@ -84,9 +86,6 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     showTransactionSendModal() {
       this.ShowModal({
         key: modals.transactionSend,

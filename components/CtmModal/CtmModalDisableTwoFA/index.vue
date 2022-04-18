@@ -22,6 +22,7 @@
               vid="totp"
               :placeholder="errorMessage || $t('modals.enterCode')"
               rules="required|min:6|numeric"
+              data-selector="2FA-CODE"
               name="disable 2FA"
               :is-hide-error="false"
             />
@@ -45,7 +46,7 @@
               mode="outline"
               class="message__action"
               selector="CANCEL"
-              @click="hide"
+              @click="CloseModal"
             >
               {{ $t('meta.cancel') }}
             </base-btn>
@@ -75,15 +76,12 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     async disable2FA() {
       const response = await this.$store.dispatch('user/disable2FA', {
         totp: this.twoFACode,
       });
       if (response.ok) {
-        this.hide();
+        this.CloseModal();
         this.showModalSuccess();
       } else this.validationErrorFields(response.data);
     },

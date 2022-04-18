@@ -11,13 +11,13 @@
         <div class="btn-group">
           <base-btn
             class="btn"
-            @click="hide()"
+            @click="CloseModal"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
           <base-btn
             class="btn_bl"
-            @click="hide()"
+            @click="CloseModal"
           >
             {{ $t('meta.submit') }}
           </base-btn>
@@ -33,18 +33,10 @@ import modals from '~/store/modals/modals';
 
 export default {
   name: 'ModalWithdrawAbout',
-  data() {
-    return {};
-  },
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
     }),
-  },
-  methods: {
-    hide() {
-      this.CloseModal();
-    },
   },
 };
 </script>
@@ -53,16 +45,17 @@ export default {
 
 .ctm-modal {
   @include modalKit;
+
   &__content-field {
     margin: 15px 0 0 0;
   }
 
   &__desc {
-      text-align: left;
-      font-size: 16px;
-      font-weight: 400;
-      line-height: 21px;
-      color: #4C5767;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 21px;
+    color: #4C5767;
   }
 
   &__content-btns {
@@ -109,6 +102,7 @@ export default {
 
 .messageSend {
   max-width: 390px !important;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;

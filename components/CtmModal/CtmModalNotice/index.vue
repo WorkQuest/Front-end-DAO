@@ -1,4 +1,5 @@
 <template>
+  <!--  TODO: Use modal status-->
   <ctm-modal-box
     class="messageSend"
     :is-header="false"
@@ -19,7 +20,7 @@
           </div>
           <base-btn
             class="email__action"
-            @click="hide()"
+            @click="CloseModal"
           >
             {{ $t('meta.iAgree') }}
           </base-btn>
@@ -40,17 +41,13 @@ export default {
     }),
 
   },
-  methods: {
-    hide() {
-      this.CloseModal();
-    },
-  },
 };
 </script>
 
 <style lang="scss" scoped>
 .ctm-modal {
   @include modalKit;
+
   &__box {
     background: $black0;
   }
@@ -61,6 +58,7 @@ export default {
     display: flex;
     justify-self: flex-start;
   }
+
   &__title {
     @include text-simple;
     font-weight: 600;
@@ -69,6 +67,7 @@ export default {
     display: flex;
     justify-self: flex-start;
   }
+
   &__desc {
     @include text-simple;
     font-weight: 400;
@@ -79,12 +78,14 @@ export default {
 
 .messageSend {
   max-width: 337px !important;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 10px;
   }

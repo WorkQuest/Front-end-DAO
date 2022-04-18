@@ -1,4 +1,5 @@
 <template>
+  <!--  TODO: Refactoring needed!-->
   <ctm-modal-box
     class="messageSend"
     :title="$t('modals.invitation')"
@@ -34,7 +35,9 @@
         </div>
         <div class="grid__field">
           <div class="ctm-modal__content-field">
-            <label for="chooseQuest_input">{{ $t('modals.chooseQuest') }}</label>
+            <label for="chooseQuest_input">
+              {{ $t('modals.chooseQuest') }}
+            </label>
             <base-dd
               v-model="questIndex"
               type="gray"
@@ -43,7 +46,9 @@
           </div>
         </div>
         <div class="ctm-modal__content-field grid__field">
-          <label for="message_input">{{ $t('modals.message') }}</label>
+          <label for="message_input">
+            {{ $t('modals.message') }}
+          </label>
           <textarea
             id="message_input"
             v-model="message_input"
@@ -63,8 +68,8 @@
           <div class="btn__wrapper">
             <base-btn
               class="message__action"
-              :mode="'outline'"
-              @click="hide()"
+              mode="outline"
+              @click="CloseModal"
             >
               {{ $t('meta.cancel') }}
             </base-btn>
@@ -123,9 +128,6 @@ export default {
         { card__level_disabled: card.level.code === '0' },
       ];
     },
-    hide() {
-      this.CloseModal();
-    },
     showTransactionSendModal() {
       this.ShowModal({
         key: modals.inviteSend,
@@ -144,6 +146,7 @@ export default {
     justify-content: center;
     align-items: center;
     display: flex;
+
     &_higher {
       display: block;
       margin: 0 0 0 7px;
@@ -152,6 +155,7 @@ export default {
       border-radius: 3px;
       color: $white;
     }
+
     &_reliable {
       display: block;
       margin: 0 0 0 7px;
@@ -160,6 +164,7 @@ export default {
       border-radius: 3px;
       color: $white;
     }
+
     &_checked {
       display: block;
       margin: 0 0 0 7px;
@@ -168,6 +173,7 @@ export default {
       border-radius: 3px;
       color: $white;
     }
+
     &_disabled {
       display: none;
     }
@@ -200,13 +206,15 @@ export default {
 
 .ctm-modal {
   @include modalKit;
+
   &__content-field {
     display: grid;
   }
+
   &__img {
     width: 61px;
     height: 61px;
-    border-radius:73px;
+    border-radius: 73px;
     margin: 0 10px 0 0;
   }
 }
@@ -220,20 +228,24 @@ export default {
     width: 100%;
     background-color: $white;
     resize: none;
+
     &::placeholder {
       color: $black800;
     }
   }
 }
+
 .grid {
   &__field {
     display: grid;
     margin-top: 25px;
+
     &_top {
       margin: 0;
     }
   }
 }
+
 .btn {
   &__container {
     display: flex;
@@ -241,6 +253,7 @@ export default {
     justify-content: space-between;
     margin-top: 25px;
   }
+
   &__wrapper {
     width: 45%;
   }
@@ -248,12 +261,14 @@ export default {
 
 .messageSend {
   max-width: 680px !important;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 10px;
   }

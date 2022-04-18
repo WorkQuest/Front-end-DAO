@@ -39,7 +39,7 @@
         <div class="btn-group">
           <base-btn
             class="btn"
-            @click="hide()"
+            @click="CloseModal"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
@@ -70,9 +70,6 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     showPensionIsRegisteredModal() {
       this.ShowModal({
         key: modals.status,

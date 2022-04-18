@@ -18,7 +18,7 @@
           </div>
           <base-btn
             class="email__action"
-            @click="hide()"
+            @click="CloseModal"
           >
             {{ $t('meta.ok') }}
           </base-btn>
@@ -40,11 +40,6 @@ export default {
     ...mapGetters({
       options: 'modals/getOptions',
     }),
-  },
-  methods: {
-    hide() {
-      this.CloseModal();
-    },
   },
 };
 </script>

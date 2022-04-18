@@ -13,7 +13,7 @@
         <div class="gallery-modal__close">
           <div
             class="control-btn control-btn_bg"
-            @click="hide"
+            @click="CloseModal"
           >
             <span class="icon-close_big" />
           </div>
@@ -30,7 +30,7 @@
               <span class="icon-short_left" />
             </div>
             <div class="gallery-modal__title">
-              {{ $t('gallery.counter', {n: options.index + 1, c: options.count} ) }}
+              {{ $t('gallery.counter', {n: options.index + 1, c: options.count}) }}
             </div>
             <div
               class="control-btn"
@@ -85,9 +85,6 @@ export default {
       const currIndex = advanceIndex + 1 > count ? 0 : advanceIndex < 0 ? count - 1 : advanceIndex;
 
       this.$store.commit('modals/setCurrOptionByKey', [{ key: 'index', val: currIndex }]);
-    },
-    hide() {
-      this.CloseModal();
     },
   },
 };

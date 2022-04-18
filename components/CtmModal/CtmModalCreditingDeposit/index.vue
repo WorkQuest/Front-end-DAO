@@ -10,7 +10,9 @@
             <label
               for="amountOfETH_input"
               class="ctm-modal__label"
-            >{{ $t('modals.howMuchEthWouldYouLikeToLock') }}</label>
+            >
+              {{ $t('modals.howMuchEthWouldYouLikeToLock') }}
+            </label>
             <div class="ctm-modal__subtitle">
               {{ $t('modals.smallTemp') }}
             </div>
@@ -18,14 +20,16 @@
               id="amountOfETH_input"
               :is-hide-error="true"
               class="input"
-              :placeholder="'10 ETH'"
+              placeholder="10 ETH"
             />
           </div>
           <div class="ctm-modal__content-field">
             <label
               for="amountOfWUSD_input"
               class="ctm-modal__label"
-            >{{ $t('modals.howMuchWusdWouldYouLikeToGenerate') }}</label>
+            >
+              {{ $t('modals.howMuchWusdWouldYouLikeToGenerate') }}
+            </label>
             <div class="ctm-modal__subtitle">
               {{ $t('modals.smallTemp') }}
             </div>
@@ -33,7 +37,7 @@
               id="amountOfWUSD_input"
               :is-hide-error="true"
               class="input"
-              :placeholder="'1000 WUSD'"
+              placeholder="1000 WUSD"
             />
             <div class="ctm-modal__title-head" />
             <div class="ctm-modal__subtitle">
@@ -59,7 +63,7 @@
         <div class="btn-group">
           <base-btn
             class="btn"
-            @click="hide()"
+            @click="CloseModal"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
@@ -117,9 +121,6 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     openConfirmDetailsModal() {
       this.ShowModal({
         key: modals.confirmDetails,
@@ -138,6 +139,7 @@ export default {
   .addLiquidity {
     max-width: 945px !important;
   }
+
   &__content-field {
     margin: 15px 0 0 0;
   }
@@ -156,7 +158,7 @@ export default {
   }
 
   &__content-btns {
-    .btn-group{
+    .btn-group {
       display: grid;
       grid-template-columns: repeat(2, calc(50% - 10px));
       grid-gap: 20px;
@@ -220,6 +222,6 @@ export default {
 }
 
 .input {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 </style>

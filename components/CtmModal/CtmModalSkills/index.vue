@@ -1,4 +1,5 @@
 <template>
+  <!--  TODO: Check-->
   <ctm-modal-box
     class="skills"
     :title="$t('skills.title')"
@@ -66,7 +67,7 @@
           >
             {{ $t('meta.reset') }}
           </base-btn>
-          <base-btn @click="hide()">
+          <base-btn @click="CloseModal">
             {{ $t('meta.ok') }}
           </base-btn>
         </div>
@@ -117,9 +118,6 @@ export default {
     clearTags() {
       this.$store.dispatch('ui/clearTags');
     },
-    hide() {
-      this.CloseModal();
-    },
   },
 };
 </script>
@@ -130,57 +128,69 @@ export default {
     display: grid;
     grid-gap: 25px;
   }
+
   &__actions {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 20px;
   }
+
   &__tags {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 20px;
   }
+
   &__drop {
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 44px;
+
     &.not-collapsed {
       span {
         transition: .3s;
         transform: rotate(-180deg);
       }
     }
+
     span::before {
       color: #2E3A59;
       font-size: 24px;
     }
   }
+
   &__selects {
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 5px;
   }
+
   &__checkbox {
     height: 24px;
     width: 24px;
     background: #F7F8FA;
     border-radius: 3px;
+
     &_checked {
       background: $blue url('/assets/img/ui/checked.svg') no-repeat 50% 50%;
     }
   }
+
   &__text {
     @include text-simple;
     font-size: 16px;
+
     &_title {
       line-height: 130%;
     }
+
     &_grey {
       color: $black500;
       line-height: 130%;
     }
   }
+
   &__select {
     display: flex;
     align-items: center;
@@ -189,26 +199,31 @@ export default {
     cursor: pointer;
     padding-left: 20px;
   }
+
   &__items {
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 5px;
   }
 }
+
 .ctm-modal {
   @include modalKit;
 }
+
 .tags {
   &__btn {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     span::before {
       color: $blue;
       font-size: 24px;
       padding-left: 3px;
     }
   }
+
   &__item {
     min-width: 135px;
     max-width: 150px;

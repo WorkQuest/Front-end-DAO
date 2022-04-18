@@ -8,19 +8,22 @@
         <label
           for="depositAmount_input"
           class="ctm-modal__label"
-        >{{ $t('modals.depositAmount') }}</label>
+        >
+          {{ $t('modals.depositAmount') }}
+        </label>
         <base-field
           id="depositAmount_input"
           v-model="amount_input"
           :is-hide-error="true"
-          :placeholder="'3 500'"
+          data-selector="AMOUNT"
+          placeholder="3 500"
         />
       </div>
       <div class="ctm-modal__content-btns">
         <div class="btn-group">
           <base-btn
             class="btn"
-            @click="hide()"
+            @click="CloseModal"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
@@ -53,9 +56,6 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     showPensionIsRegisteredModal() {
     },
   },
@@ -65,6 +65,7 @@ export default {
 <style lang="scss" scoped>
 .ctm-modal {
   @include modalKit;
+
   &__content-field {
     margin: 15px 0 0 0;
   }
@@ -117,12 +118,14 @@ export default {
 
 .messageSend {
   max-width: 495px !important;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 10px;
   }

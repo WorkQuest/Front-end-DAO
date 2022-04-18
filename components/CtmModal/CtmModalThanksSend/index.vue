@@ -1,4 +1,5 @@
 <template>
+  <!--  TODO: Use modal status-->
   <ctm-modal-box
     class="messageSend"
     :is-header="false"
@@ -18,7 +19,7 @@
           </div>
           <base-btn
             class="email__action"
-            @click="hide()"
+            @click="CloseModal"
           >
             {{ $t('meta.ok') }}
           </base-btn>
@@ -29,19 +30,9 @@
 </template>
 
 <script>
-import modals from '~/store/modals/modals';
 
 export default {
   name: 'ModalThanksSend',
-  data() {
-    return {
-    };
-  },
-  methods: {
-    hide() {
-      this.CloseModal();
-    },
-  },
 };
 </script>
 
@@ -52,12 +43,14 @@ export default {
 
 .messageSend {
   max-width: 337px !important;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 10px;
   }

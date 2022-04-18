@@ -1,4 +1,5 @@
 <template>
+  <!--  TODO: Refactoring needed!-->
   <ctm-modal-box
     class="messageSend"
     :title="$t('modals.deposit')"
@@ -29,15 +30,18 @@
           <div
             class="ctm-modal__content-field"
           >
-            <label for="amount_input">{{ $t('modals.amount') }}</label>
+            <label for="amount_input">
+              {{ $t('modals.amount') }}
+            </label>
             <div class="ctm-modal__input">
               <base-field
                 id="amount_input"
                 v-model="amount_input"
                 :name="$t('modals.amount')"
+                data-selector="AMOUNT"
                 type="number"
                 rules="required"
-                :placeholder="'0 WUSD'"
+                placeholder="0 WUSD"
               />
             </div>
           </div>
@@ -48,14 +52,17 @@
         >
           <div class="grid__3col">
             <div class="ctm-modal__content-field">
-              <label for="amount_input2">{{ $t('modals.amount') }}</label>
+              <label for="amount_input2">
+                {{ $t('modals.amount') }}
+              </label>
               <base-field
                 id="amount_input2"
                 v-model="amount_input"
                 :name="$t('modals.amount')"
                 type="number"
                 rules="required"
-                :placeholder="'0 WUSD'"
+                data-selector="AMOUNT"
+                placeholder="0 WUSD"
               />
             </div>
             <div class="ctm-modal__equal">
@@ -67,8 +74,9 @@
                 :name="$t('modals.amount')"
                 mode="white"
                 type="number"
+                data-selector="BALANCE"
                 rules="required"
-                :placeholder="'$ 0'"
+                placeholder="$ 0"
               />
             </div>
           </div>
@@ -79,23 +87,21 @@
               v-model="cardNumber_input"
               :name="$t('modals.numberOfCard')"
               type="tel"
-              :placeholder="'1234 1234 1234 1234'"
+              placeholder="1234 1234 1234 1234"
+              data-selector="CARD-NUMBER"
               rules="max:19|required"
             />
           </div>
-          <div
-            class="grid__2col"
-          >
-            <div
-              class="ctm-modal__content-field"
-            >
+          <div class="grid__2col">
+            <div class="ctm-modal__content-field">
               <label for="date_input">{{ $t('modals.date') }}</label>
               <base-field
                 id="date_input"
                 v-model="date_input"
                 :name="$t('modals.date')"
-                :placeholder="'02/24'"
+                placeholder="02/24"
                 rules="max:5|required|date"
+                data-selector="DATE"
               />
             </div>
             <div class="ctm-modal__content-field">
@@ -105,7 +111,8 @@
                 v-model="cvv_input"
                 :name="$t('modals.cvv')"
                 type="number"
-                :placeholder="'242'"
+                placeholder="242"
+                data-selector="CVV"
                 rules="max:4|required"
               />
             </div>
@@ -123,13 +130,19 @@
             >
           </div>
           <div>
-            <span class="step-three__text">{{ $t('wallet.send') }}</span>
-            <span class="step-three__text_blue">0.2 $</span>
+            <span class="step-three__text">
+              {{ $t('wallet.send') }}
+            </span>
+            <span class="step-three__text_blue">
+              0.2 $
+            </span>
             <div class="step-three__text">
               {{ $t('wallet.toThisAddress') }}
             </div>
             <div class="code__container">
-              <span class="code__text">{{ code }}</span>
+              <span class="code__text">
+                {{ code }}
+              </span>
               <button
                 v-clipboard:copy="code"
                 v-clipboard:success="ClipboardSuccessHandler"
@@ -171,7 +184,7 @@
             >
               <base-btn
                 class="message__action"
-                @click="handleSubmit(hide)"
+                @click="handleSubmit(CloseModal)"
               >
                 {{ $t('meta.submit') }}
               </base-btn>
@@ -179,9 +192,9 @@
           </div>
           <div class="btn__wrapper">
             <base-btn
-              :mode="'outline'"
+              mode="outline"
               class="message__action"
-              @click="hide()"
+              @click="CloseModal"
             >
               {{ $t('meta.cancel') }}
             </base-btn>
@@ -215,12 +228,8 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     nextStep() {
-      // eslint-disable-next-line no-plusplus
-      this.step++;
+      this.step += 1;
     },
     showTransactionSendModal() {
       this.ShowModal({
@@ -250,6 +259,7 @@ export default {
     padding: 12px;
     margin: 33px 0 0 0;
   }
+
   &__text {
     font-weight: 400;
     font-size: 16px;
@@ -269,6 +279,7 @@ export default {
     align-items: flex-end;
     grid-gap: 10px;
   }
+
   &__3col {
     display: grid;
     grid-template-columns: 6fr 1fr 6fr;
@@ -284,12 +295,14 @@ export default {
       font-weight: 400;
       font-size: 16px;
       color: $black500;
+
       &_blue {
         @extend .step-three__text;
         color: $blue;
       }
     }
   }
+
   &__container {
     &_grid {
       display: grid;
@@ -302,12 +315,14 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+
   &__step {
     @include text-simple;
     font-weight: 400;
     font-size: 16px;
     color: $black500;
     margin: 0 10px 0 0;
+
     &_active {
       color: $black800;
       border-bottom: 1px solid $blue;
@@ -320,9 +335,11 @@ export default {
   &__content-field {
     margin: 15px 0 0 0;
   }
+
   &__equal {
     margin: 0 0 35px 10px;
   }
+
   &__input {
     height: 46px;
   }
@@ -341,11 +358,13 @@ export default {
     width: 100%;
     background-color: $white;
     resize: none;
+
     &::placeholder {
       color: $black800;
     }
   }
 }
+
 .btn {
   &__container {
     display: flex;
@@ -353,6 +372,7 @@ export default {
     justify-content: space-between;
     margin: 15px 0 0 0;
   }
+
   &__wrapper {
     width: 45%;
   }
@@ -360,12 +380,14 @@ export default {
 
 .messageSend {
   max-width: 495px !important;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 10px;
   }

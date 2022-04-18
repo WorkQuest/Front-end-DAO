@@ -25,16 +25,16 @@
               <div class="btn__wrapper">
                 <base-btn
                   class="message__action"
-                  @click="showRequestSendModal() "
+                  @click="showRequestSendModal()"
                 >
                   {{ $t('meta.send') }}
                 </base-btn>
               </div>
               <div class="btn__wrapper">
                 <base-btn
-                  :mode="'outline'"
+                  mode="outline"
                   class="message__action"
-                  @click="hide()"
+                  @click="CloseModal"
                 >
                   {{ $t('meta.cancel') }}
                 </base-btn>
@@ -69,9 +69,6 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     showRequestSendModal() {
       this.ShowModal({
         key: modals.requestSend,
@@ -84,10 +81,12 @@ export default {
 <style lang="scss" scoped>
 .ctm-modal {
   @include modalKit;
+
   &__box {
     max-width: 800px;
   }
 }
+
 .modal {
   &__title {
     @include text-simple;
@@ -95,31 +94,37 @@ export default {
     font-weight: 500;
     font-size: 23px;
   }
+
   &__desc {
     @include text-simple;
     width: 100%;
   }
+
   &__labelMessage {
     @include text-simple;
     font-size: 16px;
     color: $black800;
   }
 }
+
 .file {
   &__wrapper {
     margin: 0 0 25px 0;
   }
 }
+
 .message {
   &__wrapper {
     margin: 0 0 25px 0;
   }
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 10px;
   }
@@ -138,6 +143,7 @@ export default {
     }
   }
 }
+
 .btn {
   &__container {
     display: flex;
@@ -145,14 +151,17 @@ export default {
     justify-content: space-between;
     margin: 15px 0 0 0;
   }
+
   &__wrapper {
     width: 45%;
   }
 }
-.ctm-modal{
+
+.ctm-modal {
   &__box {
     max-width: 800px !important;
   }
+
   &__title {
     margin: 0 0 0 9% !important;
   }

@@ -23,7 +23,7 @@
       </div>
       <div class="undelegate__tokens tokens">
         <div class="tokens__footer footer">
-          {{ $tc('modals.willBeUndelegate', freezedBalance) }}
+          {{ $tc('modals.willBeUndelegate', frozenBalance) }}
         </div>
       </div>
       <div class="undelegate__bottom bottom">

@@ -1,4 +1,5 @@
 <template>
+  <!--  TODO: Check-->
   <ctm-modal-box
     class="modal"
     :is-header="false"
@@ -14,10 +15,10 @@
     </div>
     <div class="btn__grid">
       <base-dd
-        :type="'gray'"
+        type="gray"
         :items="items"
       />
-      <base-btn :mode="'grey'">
+      <base-btn mode="grey">
         <span class="icon-plus" />
       </base-btn>
     </div>
@@ -25,16 +26,16 @@
       <div class="btn__wrapper">
         <base-btn
           class="message__action"
-          @click="hide()"
+          @click="CloseModal"
         >
           {{ $t('meta.submit') }}
         </base-btn>
       </div>
       <div class="btn__wrapper">
         <base-btn
-          :mode="'outline'"
+          mode="outline"
           class="message__action"
-          @click="hide()"
+          @click="CloseModal"
         >
           {{ $t('meta.later') }}
         </base-btn>
@@ -62,11 +63,6 @@ export default {
       ];
     },
   },
-  methods: {
-    hide() {
-      this.CloseModal();
-    },
-  },
 };
 </script>
 
@@ -91,12 +87,14 @@ export default {
     margin: 20px;
     grid-gap: 10px;
   }
+
   &__container {
     display: flex;
     flex-direction: row-reverse;
     justify-content: space-between;
     margin: 15px 10px 0 10px;
   }
+
   &__wrapper {
     width: 45%;
   }
@@ -111,6 +109,7 @@ export default {
     padding: 20px 0 10px 20px;
     width: 200px;
   }
+
   &__subtitle {
     @include text-simple;
     font-weight: 400;
@@ -124,16 +123,18 @@ export default {
   overflow: visible;
   max-width: 413px !important;
   height: 292px;
+
   &__header {
     height: 131px;
     width: 100%;
     background: linear-gradient(135deg, #0083C7 0%, #00AA5B 100%);
   }
+
   &__content {
-   display: grid;
-   grid-template-columns: 1fr;
-   justify-items: center;
-   grid-gap: 20px;
- }
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    grid-gap: 20px;
+  }
 }
 </style>
