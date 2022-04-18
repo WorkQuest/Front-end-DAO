@@ -18,7 +18,8 @@
           <base-field
             v-model="securityCode"
             :placeholder="$t('securityCheck.placeholder')"
-            :name="$t('securityCheck.title')"
+            :name="$tc('securityCheck.title')"
+            data-selector="SECURITY-CODE"
             rules="required|alpha_num|length:6"
             class="content__input"
           />
@@ -77,27 +78,33 @@ export default {
 <style lang="scss" scoped>
 .check {
   max-width: 382px !important;
+
   &__content {
     justify-items: center;
-    padding: 0 28px 30px 28px!important;
+    padding: 0 28px 30px 28px !important;
   }
 }
-.content{
-  &__msg{
+
+.content {
+  &__msg {
     color: red;
   }
-  &__title{
+
+  &__title {
     font-size: 16px;
     line-height: 130%;
     margin-bottom: 4px;
   }
-  &__field{
+
+  &__field {
     margin: 25px 0 0 0;
   }
-  &__buttons{
+
+  &__buttons {
     margin-top: 25px;
   }
-  &__body{
+
+  &__body {
     font-size: 14px;
     color: $black400;
   }
