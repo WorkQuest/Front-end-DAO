@@ -471,6 +471,7 @@ export default {
       this.hideAddressSelector();
     },
     getPositionData(address) {
+      this.addresses = [];
       if (!address) {
         this.localUserData.additionalInfo.address = null;
         this.localUserData.location = null;
