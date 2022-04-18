@@ -170,7 +170,7 @@ export default {
         process.env.WORKNET_WQT_TOKEN,
         [address],
       );
-      commit('user/setFrozenBalance', new BigNumber(res).shiftedBy(-18), { root: true });
+      commit('user/setFrozenBalance', new BigNumber(res).shiftedBy(-18).toString(), { root: true });
       return success(res);
     } catch (e) {
       return error(errorCodes.Undelegate, e.message, e);
@@ -220,8 +220,10 @@ export default {
   async getVoteThreshold() {
     return await getVoteThreshold();
   },
-  async getProposalThreshold() {
-    return await getProposalThreshold();
+  async getProposalThreshold({ commit }) {
+    const { result, ok } = await getProposalThreshold();
+    if (ok) commit('proposals/setProposalThreshold', result, { root: true });
+    return result;
   },
   async getReceipt({ commit }, { id, accountAddress }) {
     return await getReceipt(id, accountAddress);

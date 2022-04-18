@@ -45,8 +45,6 @@
 import { mapGetters } from 'vuex';
 import proposalCards from '~/components/app/Cards/proposalCards';
 import modals from '~/store/modals/modals';
-import { Chains } from '~/utils/enums';
-import { getStyledAmount } from '~/utils/wallet';
 
 export default {
   name: 'Proposals',
@@ -64,44 +62,28 @@ export default {
     ...mapGetters({
       isWalletConnected: 'wallet/getIsWalletConnected',
       userWalletAddress: 'user/getUserWalletAddress',
+      frozenBalance: 'user/getFrozenBalance',
       proposalThreshold: 'proposals/proposalThreshold',
     }),
   },
   async beforeCreate() {
     await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
+    await this.$store.dispatch('wallet/frozenBalance', { address: this.userWalletAddress });
   },
   methods: {
-    isCloseInfo() {
-      this.isShowInfo = !this.isShowInfo;
-    },
     async addProposalModal() {
       this.SetLoader(true);
-      let delegated;
-      let { proposalThreshold } = this;
-      if (!proposalThreshold) {
-        const [delegatedRes, proposalThresholdRes] = await Promise.all([
-          this.$store.dispatch('wallet/getVotesByAddresses', [this.userWalletAddress]),
-          this.$store.dispatch('wallet/getProposalThreshold'),
-        ]);
-        delegated = getStyledAmount(delegatedRes.result[0], true);
-        proposalThreshold = proposalThresholdRes.result;
-        await this.$store.dispatch('proposals/setProposalThreshold', proposalThreshold);
-      } else {
-        const delegatedRes = await this.$store.dispatch('wallet/getVotesByAddresses', [this.userWalletAddress]);
-        delegated = getStyledAmount(delegatedRes.result[0], true);
-      }
+      const { frozenBalance, proposalThreshold, Floor } = this;
+      if (!proposalThreshold) await this.$store.dispatch('wallet/getProposalThreshold');
       this.SetLoader(false);
-      if (+delegated < +proposalThreshold) {
-        this.ShowToast(this.$t('proposal.errors.notEnoughFunds', { a: proposalThreshold, b: delegated }),
+      if (+frozenBalance < +proposalThreshold) {
+        this.ShowToast(this.$t('proposal.errors.notEnoughFunds', { a: proposalThreshold, b: Floor(frozenBalance) }),
           this.$t('proposal.errors.addProposal'));
       } else {
-        this.showAddProposal();
+        this.ShowModal({
+          key: modals.addProposal,
+        });
       }
-    },
-    showAddProposal() {
-      this.ShowModal({
-        key: modals.addProposal,
-      });
     },
   },
 };
