@@ -75,16 +75,14 @@ export default {
       this.SetLoader(true);
       const { frozenBalance } = this;
       let { proposalThreshold } = this;
+      const floorNumberFrozenBalance = this.Floor(Number((frozenBalance).toString()));
       if (!proposalThreshold) {
-        const [proposalThresholdRes] = await Promise.all([
-          this.$store.dispatch('wallet/getProposalThreshold'),
-        ]);
-        proposalThreshold = proposalThresholdRes.result;
+        proposalThreshold = await this.$store.dispatch('wallet/getProposalThreshold');
         await this.$store.dispatch('proposals/setProposalThreshold', proposalThreshold);
       }
       this.SetLoader(false);
-      if (this.Floor(Number((frozenBalance).toString())) < +proposalThreshold) {
-        this.ShowToast(this.$t('proposal.errors.notEnoughFunds', { a: proposalThreshold, b: frozenBalance }),
+      if (floorNumberFrozenBalance < +proposalThreshold) {
+        this.ShowToast(this.$t('proposal.errors.notEnoughFunds', { a: proposalThreshold, b: floorNumberFrozenBalance }),
           this.$t('proposal.errors.addProposal'));
       } else {
         this.ShowModal({
