@@ -170,7 +170,7 @@ export default {
         process.env.WORKNET_WQT_TOKEN,
         [address],
       );
-      commit('user/setFrozenBalance', new BigNumber(res).shiftedBy(-18), { root: true });
+      commit('user/setFrozenBalance', new BigNumber(res).shiftedBy(-18).toString(), { root: true });
       return success(res);
     } catch (e) {
       return error(errorCodes.Undelegate, e.message, e);
