@@ -79,6 +79,7 @@
         mode="lightRed"
         class="btn__delegate"
         :class="delegateClass(el)"
+        :disabled="!balanceWQT"
         @click="openModalUndelegate(el)"
       >
         {{ $t('modals.undelegate') }}
@@ -89,7 +90,7 @@
         v-if="el.item.investorAddress"
         mode="lightBlue"
         class="btn__delegate"
-        @click="openModalDelegate(el)"
+        @click="!balanceWQT ? toastsDelegateInfo($t('investors.notEnoughTokens')) : openModalDelegate(el)"
       >
         {{ $t('modals.delegate') }}
       </base-btn>
@@ -167,9 +168,13 @@ export default {
     ...mapGetters({
       userData: 'user/getUserData',
       delegatedToUser: 'investors/getDelegatedToUser',
+      balanceWQT: 'wallet/getBalanceWQT',
     }),
   },
   methods: {
+    toastsDelegateInfo(value) {
+      this.ShowToast(value, this.$t('investors.delegateInfo'));
+    },
     getTransactionUrl(hash) {
       return `${ExplorerUrls[this.isProd ? 'PROD' : 'DEV']}/transactions/${hash}`;
     },
@@ -236,19 +241,24 @@ export default {
   background: $white;
   border-radius: 6px;
   width: 1180px;
+
   &__title {
     margin: 10px;
     color: $black800;
   }
+
   &__success {
     color: $green;
   }
+
   &__failed {
     color: $red;
   }
+
   &__grey {
     color: $black500;
   }
+
   &__header {
     @include text-simple;
     background: rgba(0, 131, 199, 0.1);
@@ -259,13 +269,16 @@ export default {
     font-size: 12px;
     word-break: break-word;
   }
+
   &__row {
     line-height: 40px;
   }
-  &__link{
+
+  &__link {
     color: $black800 !important;
-    text-decoration: none!important;
+    text-decoration: none !important;
   }
+
   @include _1199 {
     .btn__delegate {
       width: 80px !important;
@@ -276,6 +289,7 @@ export default {
     .table {
       width: 1180px;
       overflow-x: hidden;
+
       .btn__delegate {
         width: 60px !important;
         font-size: 10px;
@@ -285,40 +299,47 @@ export default {
       font-size: 10px;
     }
   }
-  &__copy{
+
+  &__copy {
     color: $blue;
     font-size: 25px;
   }
-  &__avatar{
-    width: 30px!important;
-    height: 30px!important;
+
+  &__avatar {
+    width: 30px !important;
+    height: 30px !important;
     border-radius: 50%;
-    margin: 0!important;
+    margin: 0 !important;
     text-align: center;
     object-fit: cover;
   }
 }
+
 .btn {
   &__vote {
     cursor: default !important;
     width: 63px !important;
     height: 31px !important;
     margin-right: -30px;
-    justify-content: center!important;
+    justify-content: center !important;
+
     &_green {
       margin: auto auto;
       background: $green !important;
     }
+
     &_red {
       margin: auto auto;
       background: $red !important;
     }
   }
-  &__delegate{
+
+  &__delegate {
     width: 130px !important;
     height: 43px !important;
-    &_hidden{
-      display: none!important;
+
+    &_hidden {
+      display: none !important;
     }
   }
 }

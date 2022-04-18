@@ -305,6 +305,7 @@ export const getContractFeeData = async (_method, _abi, _contractAddress, data, 
 };
 
 /* Investors */
+
 export const getDelegates = async () => {
   try {
     const res = await fetchWalletContractData(

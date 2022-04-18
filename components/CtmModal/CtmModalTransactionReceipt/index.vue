@@ -86,7 +86,7 @@ export default {
       this.canSend = new BigNumber(amount).plus(fee).isLessThanOrEqualTo(wusdBalance);
     } else if (fee) {
       // Only need check transaction fee with user balance
-      this.canSend = new BigNumber(fee).isLessThanOrEqualTo(wusdBalance);
+      this.canSend = new BigNumber(fee).isLessThanOrEqualTo(wusdBalance).toString();
     }
   },
   methods: {
@@ -116,31 +116,38 @@ export default {
 
 .item {
   margin-bottom: 15px;
-  &:last-child{
+
+  &:last-child {
     margin-bottom: 0;
   }
+
   &__title {
     color: $black500;
   }
-  &__subtitle{
+
+  &__subtitle {
     &_red {
       color: $red;
     }
   }
 }
+
 .error {
   color: $red;
   font-size: 12px;
   margin: 10px 0;
 }
-.content{
-  padding: 0 28px 30px 28px!important;
+
+.content {
+  padding: 0 28px 30px 28px !important;
+
   &__fields {
     margin-top: 20px;
   }
 }
-.buttons{
-  &__group{
+
+.buttons {
+  &__group {
     display: grid;
     grid-template-columns: repeat(2, calc(50% - 10px));
     grid-gap: 20px;
@@ -148,21 +155,24 @@ export default {
     margin-top: 25px;
   }
 }
-.header{
-  &__title{
+
+.header {
+  &__title {
     font-size: 16px;
     line-height: 130%;
     color: $black800;
   }
-  &__icon:before{
+
+  &__icon:before {
     font-size: 16px;
     color: $black500;
     vertical-align: middle;
     margin-left: 6px;
   }
-  &__button{
-    width: 16px!important;
-    height: 16px!important;
+
+  &__button {
+    width: 16px !important;
+    height: 16px !important;
   }
 }
 </style>
