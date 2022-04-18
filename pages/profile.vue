@@ -392,7 +392,6 @@ export default {
   beforeMount() {
     this.isVerified = !!this.userData.statusKYC;
     this.setCurrData();
-    this.SetLoader(false);
   },
   methods: {
     hideAddressSelector() {
