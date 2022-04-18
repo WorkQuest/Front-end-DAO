@@ -221,8 +221,8 @@ export default {
     return await getVoteThreshold();
   },
   async getProposalThreshold({ commit }) {
-    const { result } = await getProposalThreshold();
-    commit('setProposalThreshold', result, { root: true });
+    const { result, ok } = await getProposalThreshold();
+    if (ok) commit('proposals/setProposalThreshold', result, { root: true });
     return result;
   },
   async getReceipt({ commit }, { id, accountAddress }) {
