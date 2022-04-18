@@ -90,7 +90,7 @@
         v-if="el.item.investorAddress"
         mode="lightBlue"
         class="btn__delegate"
-        @click="!balanceWQT ? toastsDisputeInfo($t('investors.notEnoughTokens')) : openModalDelegate(el)"
+        @click="!balanceWQT ? toastsDelegateInfo($t('investors.notEnoughTokens')) : openModalDelegate(el)"
       >
         {{ $t('modals.delegate') }}
       </base-btn>
@@ -172,7 +172,7 @@ export default {
     }),
   },
   methods: {
-    toastsDisputeInfo(value) {
+    toastsDelegateInfo(value) {
       this.ShowToast(value, this.$t('investors.delegateInfo'));
     },
     getTransactionUrl(hash) {

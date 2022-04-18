@@ -156,7 +156,7 @@
       <base-btn
         mode="lightBlue"
         class="btn__delegate"
-        @click="!+balanceData.WQT.balance ? toastsDisputeInfo($t('investors.notEnoughTokens')) : openModalDelegate(item)"
+        @click="!+balanceData.WQT.balance ? toastsDelegateInfo($t('investors.notEnoughTokens')) : openModalDelegate(item)"
       >
         {{ $t('modals.delegate') }}
       </base-btn>
@@ -188,7 +188,7 @@ export default {
     }),
   },
   methods: {
-    toastsDisputeInfo(value) {
+    toastsDelegateInfo(value) {
       this.ShowToast(value, this.$t('investors.delegateInfo'));
     },
     myProfile(id) {
