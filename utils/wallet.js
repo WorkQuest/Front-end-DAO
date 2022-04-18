@@ -454,7 +454,6 @@ export const executeVoting = async (id) => {
 };
 
 /** VALIDATORS */
-// TODO: вырезать пакет bip32 если не будет использоваться
 
 const nodeUrl = 'https://dev-node-nyc3.workquest.co/api/';
 const chainId = '20211224';
@@ -545,8 +544,10 @@ export const test = async () => {
     console.log('authInfo', authInfo);
 
     // -------------------------------- sign --------------------------------
+    console.log('-------- sign --------');
+    console.log(secp256k1);
     const signedTxBytes = secp256k1.sign(txBody, authInfo, data.account.base_account.account_number, privKey);
-    cosmos.broadcast(signedTxBytes).then((response) => console.log(response));
+    // cosmos.broadcast(signedTxBytes).then((response) => console.log(response));
   } catch (e) {
     console.error('test', e);
   }
