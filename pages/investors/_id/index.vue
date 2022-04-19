@@ -67,6 +67,7 @@
                   mode="left"
                   :value="fillInputs(input)"
                   :placeholder="$t('investor.notFilled')"
+                  data-selector="NAME"
                 >
                   <template v-slot:left>
                     <span

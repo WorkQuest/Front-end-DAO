@@ -1,7 +1,7 @@
 <template>
   <ctm-modal-box
     class="restore"
-    :title="$t('forgot.title')"
+    :title="$tc('forgot.title')"
   >
     <div class="ctm-modal__content">
       <ValidationObserver
@@ -19,7 +19,7 @@
           </div>
           <base-field
             v-model="model.email"
-            :name="$t('placeholders.email')"
+            :name="$tc('placeholders.email')"
             :placeholder="$t('placeholders.email')"
             data-selector="EMAIL"
             rules="required|email"

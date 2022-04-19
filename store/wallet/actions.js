@@ -27,8 +27,7 @@ import {
 } from '~/utils/wallet';
 import { errorCodes, TokenSymbols } from '~/utils/enums';
 import { error, success } from '~/utils/success-error';
-import ERC20 from '~/abi/ERC20';
-import WQToken from '~/abi/WQToken';
+import { ERC20, WQToken } from '~/abi/index';
 
 export default {
   async getTransactions({ commit }, params) {

@@ -1,7 +1,7 @@
 <template>
   <ctm-modal-box
     class="check"
-    :title="$t('securityCheck.title')"
+    :title="$tc('securityCheck.title')"
   >
     <div class="check__content">
       <validation-observer
@@ -44,7 +44,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import modals from '~/store/modals/modals';
 
 export default {
   name: 'ModalSecurityCheck',

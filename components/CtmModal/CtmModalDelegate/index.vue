@@ -1,7 +1,7 @@
 <template>
   <ctm-modal-box
     class="delegate"
-    :title="$t('modals.delegate')"
+    :title="$tc('modals.delegate')"
   >
     <div class="delegate__content content">
       <validation-observer v-slot="{handleSubmit, valid}">
@@ -31,7 +31,7 @@
               class="footer__body"
               placeholder="10000 WQT"
               data-selector="AMOUNT"
-              :name="$t('modals.tokensNumber')"
+              :name="$tc('modals.tokensNumber')"
               :rules="`required${min}|max_bn:${balance}|min_value:1|decimalPlaces:18`"
               @input="replaceDot"
             />
@@ -61,7 +61,7 @@ import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
 import { TokenSymbols } from '~/utils/enums';
-import WQToken from '~/abi/WQToken';
+import { WQToken } from '~/abi/index';
 
 export default {
   name: 'Delegate',

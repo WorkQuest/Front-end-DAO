@@ -50,7 +50,7 @@
 import { mapGetters } from 'vuex';
 import { TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
-import abi from '~/abi';
+import { WQToken } from '~/abi/index';
 
 export default {
   name: 'Undelegate',
@@ -79,7 +79,7 @@ export default {
       this.SetLoader(true);
       const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
         method: 'undelegate',
-        abi: abi.WQToken,
+        abi: WQToken,
         contractAddress: process.env.WORKNET_WQT_TOKEN,
         data: [],
       });

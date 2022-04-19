@@ -85,7 +85,7 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import { tokenMap, TokenSymbols } from '~/utils/enums';
-import ERC20 from '~/abi/ERC20';
+import { ERC20 } from '~/abi/index';
 
 export default {
   name: 'ModalTakeTransfer',

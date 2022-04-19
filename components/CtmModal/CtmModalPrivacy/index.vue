@@ -1,7 +1,7 @@
 <template>
   <ctm-modal-box
     class="privacy"
-    :title="$t('privacy.title')"
+    :title="$tc('privacy.title')"
   >
     <div class="ctm-modal__content">
       <div class="ctm-modal__desc">
@@ -11,7 +11,7 @@
         <base-checkbox
           v-model="privacy"
           name="privacy"
-          :label="$t('privacy.agree')"
+          :label="$tc('privacy.agree')"
         >
           <template v-slot:sub>
             <span class="privacy__link">
@@ -22,7 +22,7 @@
         <base-checkbox
           v-model="terms"
           name="terms"
-          :label="$t('privacy.agree')"
+          :label="$tc('privacy.agree')"
         >
           <template v-slot:sub>
             <span class="privacy__link">
@@ -33,7 +33,7 @@
         <base-checkbox
           v-model="aml"
           name="aml"
-          :label="$t('privacy.agree')"
+          :label="$tc('privacy.agree')"
         >
           <template v-slot:sub>
             <span class="privacy__link">

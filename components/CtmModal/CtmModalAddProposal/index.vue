@@ -114,7 +114,7 @@
 
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
-import abi from '~/abi/index';
+import { WQVoting } from '~/abi/index';
 import modals from '~/store/modals/modals';
 import { TokenSymbols } from '~/utils/enums';
 
@@ -157,7 +157,7 @@ export default {
       // Check balance before send proposal data to backend
       const feeCheck = await this.$store.dispatch('wallet/getContractFeeData', {
         method: 'addProposal',
-        abi: abi.WORKNET_VOTING,
+        abi: WQVoting,
         contractAddress: process.env.WORKNET_VOTING,
         data: [1, this.descriptionInput.toString()],
       });
@@ -178,7 +178,7 @@ export default {
         const { nonce } = res.result;
         const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
           method: 'addProposal',
-          abi: abi.WORKNET_VOTING,
+          abi: WQVoting,
           contractAddress: process.env.WORKNET_VOTING,
           data: [nonce, this.descriptionInput.toString()],
         });

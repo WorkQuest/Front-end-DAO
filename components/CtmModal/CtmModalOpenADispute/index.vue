@@ -2,7 +2,7 @@
   <!--  TODO: Refactoring needed-->
   <ctm-modal-box
     class="message"
-    :title="$t('modals.openADispute')"
+    :title="$tc('modals.openADispute')"
   >
     <div class="ctm-modal__content">
       <div class="message">

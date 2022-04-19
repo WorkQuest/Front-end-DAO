@@ -1,7 +1,7 @@
 <template>
   <ctm-modal-box
     class="info"
-    :title="options.title || $t('modals.txInfo')"
+    :title="options.title || $tc('modals.txInfo')"
   >
     <div class="info__content content">
       <div class="content__fields">
