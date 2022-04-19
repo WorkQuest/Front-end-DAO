@@ -61,7 +61,7 @@ import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
 import { TokenSymbols } from '~/utils/enums';
-import abi from '~/abi/index';
+import WQToken from '~/abi/WQToken';
 
 export default {
   name: 'Delegate',
@@ -84,13 +84,13 @@ export default {
       return this.options?.min ? `|min_value:${this.options.min}` : '';
     },
     convertValue() {
-      const { windowSize } = this;
-      if (windowSize > 480) return this.investorAddress;
+      const { windowSize, convertToBech32, investorAddress } = this;
+      if (windowSize > 480) return convertToBech32('wq', investorAddress);
       let a = 10;
       if (windowSize > 450) a = 17;
       else if (windowSize > 380) a = 15;
       else if (windowSize > 350) a = 13;
-      return this.CutTxn(this.investorAddress, a, a);
+      return this.CutTxn(convertToBech32('wq', investorAddress), a, a);
     },
   },
   async beforeMount() {
@@ -119,12 +119,16 @@ export default {
     },
     async delegate() {
       const { callback } = this.options;
-      const { investorAddress, tokensAmount, userWalletAddress } = this;
+      const {
+        tokensAmount, userWalletAddress, convertToHex, convertToBech32,
+      } = this;
+      let { investorAddress } = this;
+      investorAddress = convertToHex('wq', investorAddress);
       this.CloseModal();
       this.SetLoader(true);
       const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
         method: 'delegate',
-        _abi: abi.WQToken,
+        abi: WQToken,
         contractAddress: process.env.WORKNET_WQT_TOKEN,
         data: [investorAddress, new BigNumber(tokensAmount).shiftedBy(18).toString()],
       });
@@ -133,8 +137,8 @@ export default {
         key: modals.transactionReceipt,
         title: this.$t('modals.delegate'),
         fields: {
-          from: { name: this.$t('modals.fromAddress'), value: userWalletAddress },
-          to: { name: this.$t('modals.toAddress'), value: process.env.WORKNET_WQT_TOKEN },
+          from: { name: this.$t('modals.fromAddress'), value: convertToBech32('wq', userWalletAddress) },
+          to: { name: this.$t('modals.toAddress'), value: convertToBech32('wq', process.env.WORKNET_WQT_TOKEN) },
           amount: { name: this.$t('modals.amount'), value: tokensAmount, symbol: TokenSymbols.WQT },
           fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
         },

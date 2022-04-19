@@ -157,7 +157,7 @@ export default {
       // Check balance before send proposal data to backend
       const feeCheck = await this.$store.dispatch('wallet/getContractFeeData', {
         method: 'addProposal',
-        _abi: abi.WORKNET_VOTING,
+        abi: abi.WORKNET_VOTING,
         contractAddress: process.env.WORKNET_VOTING,
         data: [1, this.descriptionInput.toString()],
       });
@@ -178,7 +178,7 @@ export default {
         const { nonce } = res.result;
         const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
           method: 'addProposal',
-          _abi: abi.WORKNET_VOTING,
+          abi: abi.WORKNET_VOTING,
           contractAddress: process.env.WORKNET_VOTING,
           data: [nonce, this.descriptionInput.toString()],
         });

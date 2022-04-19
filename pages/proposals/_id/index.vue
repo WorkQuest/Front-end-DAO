@@ -569,7 +569,7 @@ export default {
       if (!this.isWalletConnected) return;
       const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
         method: 'doVote',
-        _abi: abi.WORKNET_VOTING,
+        abi: abi.WORKNET_VOTING,
         contractAddress: process.env.WORKNET_VOTING,
         data: [this.card.createdEvent.contractProposalId, value],
       });
