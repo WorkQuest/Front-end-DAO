@@ -81,6 +81,10 @@ export const TokenSymbolByContract = Object.freeze({
   [process.env.WORKNET_WQT_TOKEN.toLowerCase()]: TokenSymbols.WQT,
 });
 
+export const tokenMap = {
+  [TokenSymbols.WQT]: process.env.WORKNET_WQT_TOKEN,
+};
+
 export const WalletTables = Object.freeze({
   TXS: 'TXS',
   COLLATERAL: 'COLLATERAL',

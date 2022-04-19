@@ -17,7 +17,7 @@
             v-model="recipient"
             class="input__field"
             :placeholder="$t('modals.address')"
-            rules="required|address"
+            :rules="`required|${checkFormatAddress(recipient)}`"
             data-selector="ADDRESS"
             :name="$t('modals.addressField')"
           />
@@ -84,8 +84,8 @@
 <script>
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
-import { TokenSymbols } from '~/utils/enums';
-import abi from '~/abi/index';
+import { tokenMap, TokenSymbols } from '~/utils/enums';
+import ERC20 from '~/abi/ERC20';
 
 export default {
   name: 'ModalTakeTransfer',
@@ -116,10 +116,13 @@ export default {
       return Object.keys(TokenSymbols);
     },
     maxAmount() {
-      const fullBalance = new BigNumber(this.balance[this.selectedToken].fullBalance);
-      if (this.selectedToken === TokenSymbols.WUSD) return fullBalance.minus(this.maxFee[this.selectedToken]).toString();
-      if (this.selectedToken === TokenSymbols.WQT) return fullBalance.minus(this.frozenBalance).toString();
-      return 0;
+      const {
+        selectedToken, balance, maxFee, frozenBalance,
+      } = this;
+      const fullBalance = new BigNumber(balance[selectedToken].fullBalance);
+      if (selectedToken === TokenSymbols.WUSD) return fullBalance.minus(maxFee[selectedToken]).toString();
+      if (selectedToken === TokenSymbols.WQT) return fullBalance.minus(frozenBalance).toString();
+      return fullBalance.toString();
     },
   },
   watch: {
@@ -127,32 +130,21 @@ export default {
       this.$store.dispatch('wallet/setSelectedToken', TokenSymbols[this.tokenSymbolsDd[val]]);
       this.amount = 0;
     },
-    balance: {
-      deep: true,
-      handler: async () => {
-        this.isCanSubmit = false;
-        await this.updateMaxFee();
-        this.isCanSubmit = true;
-      },
-    },
   },
   async mounted() {
-    this.isCanSubmit = false;
     const i = this.tokenSymbolsDd.indexOf(this.selectedToken);
     this.ddValue = i >= 0 && i < this.tokenSymbolsDd.length ? i : 1;
     await this.updateMaxFee();
-    this.isCanSubmit = true;
   },
   methods: {
+    checkFormatAddress(address) {
+      if (address.startsWith('wq')) return 'max:41|min:41|addressBech32';
+      return 'address';
+    },
     showWithdrawInfo() {
       const { submit } = this.options;
-      if (submit) {
-        submit({
-          recipient: this.recipient,
-          amount: this.amount,
-          selectedToken: this.selectedToken,
-        });
-      }
+      const { recipient, amount, selectedToken } = this;
+      submit({ recipient, amount, selectedToken });
     },
     replaceDot() {
       this.amount = this.amount.replace(/,/g, '.');
@@ -160,20 +152,28 @@ export default {
     // Для просчета максимальной суммы транзакции от комиссии
     async updateMaxFee() {
       if (!this.isConnected) return;
-      const [wusd, wqt] = await Promise.all([
-        this.$store.dispatch('wallet/getTransferFeeData', {
-          recipient: this.userData.wallet.address,
-          value: this.balance.WUSD.fullBalance,
-        }),
-        this.$store.dispatch('wallet/getContractFeeData', {
+      this.isCanSubmit = false;
+      const {
+        selectedToken, amount, maxFee, userData, balance,
+      } = this;
+      if (selectedToken === TokenSymbols.WUSD) {
+        const feeWUSD = await this.$store.dispatch('wallet/getTransferFeeData', {
+          recipient: userData.wallet.address,
+          value: balance.WUSD.fullBalance,
+        });
+        if (feeWUSD?.ok) maxFee.WUSD = feeWUSD?.result?.fee ?? 0;
+        else maxFee.WUSD = 0;
+      } else {
+        const feeTokens = await this.$store.dispatch('wallet/getContractFeeData', {
           method: 'transfer',
-          _abi: abi.ERC20,
-          contractAddress: process.env.WORKNET_WQT_TOKEN,
-          data: [process.env.WORKNET_WQT_TOKEN, this.amount],
-        }),
-      ]);
-      this.maxFee.WQT = wqt?.ok ? wqt?.result?.fee : 0;
-      this.maxFee.WUSD = wusd?.ok ? wusd?.result?.fee : 0;
+          abi: ERC20,
+          contractAddress: tokenMap[selectedToken],
+          data: [tokenMap[selectedToken], amount],
+        });
+        if (feeTokens?.ok) maxFee[selectedToken] = feeTokens?.result?.fee ?? 0;
+        else maxFee[selectedToken] = 0;
+      }
+      this.isCanSubmit = true;
     },
     maxBalance() {
       this.amount = this.maxAmount;

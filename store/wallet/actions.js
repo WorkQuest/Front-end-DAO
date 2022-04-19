@@ -25,9 +25,10 @@ import {
   getProposalThreshold,
   connectWallet,
 } from '~/utils/wallet';
-import abi from '~/abi/index';
 import { errorCodes, TokenSymbols } from '~/utils/enums';
 import { error, success } from '~/utils/success-error';
+import ERC20 from '~/abi/ERC20';
+import WQToken from '~/abi/WQToken';
 
 export default {
   async getTransactions({ commit }, params) {
@@ -100,7 +101,7 @@ export default {
   async getBalanceWQT({ commit }, userAddress) {
     const res = await fetchWalletContractData(
       'balanceOf',
-      abi.ERC20,
+      ERC20,
       process.env.WORKNET_WQT_TOKEN,
       [userAddress],
     );
@@ -135,6 +136,7 @@ export default {
      * @param commit
      * @param method
      * @param _abi
+     * @param abi
      * @param contractAddress
      * @param data - Array []
      * @param recipient
@@ -142,9 +144,9 @@ export default {
      * @returns {Promise<{result: *, ok: boolean}|{msg: string, code: number, data: null, ok: boolean}|undefined>}
      */
   async getContractFeeData({ commit }, {
-    method, _abi, contractAddress, data, recipient, amount,
+    method, abi, contractAddress, data, recipient, amount,
   }) {
-    return await getContractFeeData(method, _abi, contractAddress, data, recipient, amount);
+    return await getContractFeeData(method, abi, contractAddress, data, recipient, amount);
   },
 
   /** Investors */
@@ -155,7 +157,7 @@ export default {
      */
   async getVotesByAddresses({ commit }, addresses) {
     try {
-      const res = await fetchWalletContractData('getVotes', abi.WQToken, process.env.WORKNET_WQT_TOKEN, [addresses]);
+      const res = await fetchWalletContractData('getVotes', WQToken, process.env.WORKNET_WQT_TOKEN, [addresses]);
       return success(res);
     } catch (e) {
       console.error('getVotes');
@@ -166,7 +168,7 @@ export default {
     try {
       const res = await fetchWalletContractData(
         'freezed',
-        abi.WQToken,
+        WQToken,
         process.env.WORKNET_WQT_TOKEN,
         [address],
       );
