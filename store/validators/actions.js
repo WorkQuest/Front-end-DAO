@@ -1,6 +1,6 @@
 import { error } from '~/utils/success-error';
 
-const nodeUrl = 'https://dev-node-nyc3.workquest.co/api';
+const nodeUrl = `${process.env.WQ_PROVIDER}/api`; // 'https://dev-node-nyc3.workquest.co/api';
 export default {
   async getValidators({ commit }) {
     try {
@@ -34,7 +34,7 @@ export default {
       const nodeApi = this.$axios.create({
         baseURL: `${nodeUrl}/cosmos/tx/v1beta1/txs`,
       });
-      return await nodeApi.$post(`${nodeUrl}/cosmos/tx/v1beta1/txs`, {
+      return await nodeApi.$post('', {
         tx_bytes: txBytesBase64,
         mode: broadCastMode,
       }, {

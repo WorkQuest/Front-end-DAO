@@ -8,14 +8,12 @@ import converter from 'bech32-converting';
 import secp256k1 from 'secp256k1';
 import * as bip32 from 'bip32';
 import crypto from 'crypto';
-import axios from '@nuxtjs/axios';
+import bech32 from 'bech32';
 import { error, success } from '~/utils/success-error';
 import abi from '~/abi/index';
 import { errorCodes } from '~/utils/enums';
 
 const bip39 = require('bip39');
-
-console.log('secp256k1', secp256k1);
 
 BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN });
 BigNumber.config({ EXPONENTIAL_AT: 60 });
@@ -456,13 +454,12 @@ export const executeVoting = async (id) => {
 
 /** VALIDATORS */
 
-const nodeUrl = 'https://dev-node-nyc3.workquest.co/api/';
-const chainId = '20211224';
+const chainId = '20220112'; // '20211224'; - old
 cosmos.path = process.env.WQ_PROVIDER;
 cosmos.chainId = chainId;
 const getCosmosAccounts = async (address) => {
-  const accountsApi = '/cosmos/auth/v1beta1/accounts/';
-  return fetch(nodeUrl + accountsApi + address).then((response) => response.json());
+  const accountsApi = '/api/cosmos/auth/v1beta1/accounts/';
+  return fetch(process.env.WQ_PROVIDER + accountsApi + address).then((response) => response.json());
 };
 
 /** VALIDATORS */
@@ -472,7 +469,22 @@ const getECPairPriv = async (mnemonic) => {
   const child = node.derivePath(path);
   return child.privateKey;
 };
-const getPubKeyAny = (privKey) => secp256k1.publicKeyCreate(privKey);
+const getPubKeyAny = (privKey) => {
+  const pubKeyByte = secp256k1.publicKeyCreate(privKey);
+  // eslint-disable-next-line new-cap
+  const buf1 = new Buffer.from([10]);
+  // eslint-disable-next-line new-cap
+  const buf2 = new Buffer.from([pubKeyByte.length]);
+  // eslint-disable-next-line new-cap
+  const buf3 = new Buffer.from(pubKeyByte);
+  const pubKey = Buffer.concat([buf1, buf2, buf3]);
+  return new message.google.protobuf.Any({ // pubKeyAny
+    // type_url: '/cosmos.crypto.ed25519.PubKey', // задан в валидаторах (жалуется: panic message redacted to hide potentially sensitive system info: panic)
+    type_url: '/cosmos.crypto.secp256k1.PubKey', // Был по дефолту
+    // type_url: '/ethermint.crypto.v1.ethsecp256k1.PubKey', - скидвали мне
+    value: pubKey,
+  });
+};
 
 const sign = (txBody, authInfo, accountNumber, privKey) => {
   const bodyBytes = message.cosmos.tx.v1beta1.TxBody.encode(txBody).finish();
@@ -496,54 +508,51 @@ const sign = (txBody, authInfo, accountNumber, privKey) => {
   return txBytes; // txBytesBase64;
 };
 
+export const getCosmosAddress = async (mnemonic) => {
+  if (!bip39.validateMnemonic(mnemonic)) throw new Error('mnemonic phrases have invalid checksums');
+  const seed = await bip39.mnemonicToSeed(mnemonic);
+  const node = await bip32.fromSeed(seed);
+  const child = await node.derivePath(path);
+  const words = bech32.toWords(child.identifier);
+  return bech32.encode('ethm', words);
+};
+
 export const test = async () => {
   try {
-    const address = converter('ethm').toBech32(wallet.address);
-    // console.log(`Cosmos address: ${address}`);
+    // const testMnemonic = 'range inquiry notice praise heart barely dinosaur license fame family infant midnight flock symptom aerobic dinosaur whisper major hair kitchen never way combine affair';
+    // const w = createWallet(testMnemonic);
+
+    const address = converter('ethm').toBech32(wallet.address); // генится: ethm10fanzq0ksuptyfhcx3wecnekldqk2xw88yvpah
+    // const address = await getCosmosAddress(wallet.mnemonic); // генерируется:  ethm1q9mlmt0j3r4a9frjt755src6aq5mxmvd9y7w5v
 
     const data = await getCosmosAccounts(address);
-    // console.log('Accounts', data);
-
     const privKey = await getECPairPriv(wallet.mnemonic);
-    // console.log('priv', privKey);
     const pubKeyAny = getPubKeyAny(privKey);
-    // console.log('pub', pubKeyAny);
 
     // signDoc = (1)txBody + (2)authInfo
     // ---------------------------------- (1)txBody ----------------------------------
     const msgSend = new message.cosmos.bank.v1beta1.MsgSend({
       from_address: address,
-      to_address: address,
-      amount: [{ amount: String('10') }],
+      to_address: address, // 'ethm1x43lhtppf0k828cm063uy2ul9xjtm79jjp5jwx'
+      amount: [{ denom: 'aphoton', amount: String('100000') }],
     });
-    // console.log('msgSend', msgSend);
 
     const msgSendAny = new message.google.protobuf.Any({
       type_url: '/cosmos.bank.v1beta1.MsgSend',
       value: message.cosmos.bank.v1beta1.MsgSend.encode(msgSend).finish(),
     });
-    // console.log('msgSendAny', msgSendAny);
-
     const txBody = new message.cosmos.tx.v1beta1.TxBody({ messages: [msgSendAny], memo: '' });
-    // console.log('txBody', txBody);
-
     // --------------------------------- (2)authInfo ---------------------------------
     const signerInfo = new message.cosmos.tx.v1beta1.SignerInfo({
       public_key: pubKeyAny,
       mode_info: { single: { mode: message.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT } },
       sequence: data.account.base_account.sequence,
     });
-    // console.log('signerInfo', signerInfo);
-
     const feeValue = new message.cosmos.tx.v1beta1.Fee({
-      amount: [{ amount: String('10') }],
+      amount: [{ denom: 'aphoton', amount: String('5000') }],
       gas_limit: 200000,
     });
-    // console.log('feeValue', feeValue);
-
     const authInfo = new message.cosmos.tx.v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
-    // console.log('authInfo', authInfo);
-
     // -------------------------------- sign --------------------------------
     return success(sign(txBody, authInfo, data.account.base_account.account_number, privKey)); // signedTxBytes
   } catch (e) {
