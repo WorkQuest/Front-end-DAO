@@ -11,12 +11,18 @@ export default {
     access, refresh, social, userStatus,
   }) {
     state.tokens.access = access;
-    state.tokens.refresh = refresh;
-    this.$cookies.set('socialNetwork', social, { path: '/' });
-    this.$cookies.set('access', access, { path: '/' });
-    this.$cookies.set('refresh', refresh, { path: '/' });
+    state.tokens.refresh = refresh || '';
+    const opts = { path: '/' };
+    if (refresh) {
+      const expireRefreshTokenInSeconds = JSON.parse(atob(refresh
+        .split('.')[1])).exp - new Date().getTime() / 1000 || 86400 * 30;
+      opts.maxAge = expireRefreshTokenInSeconds;
+      this.$cookies.set('refresh', refresh, opts);
+    }
+    this.$cookies.set('socialNetwork', social, opts);
+    this.$cookies.set('access', access, opts);
     if (userStatus) {
-      this.$cookies.set('userStatus', userStatus, { path: '/' });
+      this.$cookies.set('userStatus', userStatus, opts);
     }
   },
   setUserData(state, data) {

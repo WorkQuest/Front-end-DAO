@@ -4,8 +4,19 @@ import { connectWithMnemonic } from '~/utils/wallet';
 export default {
   async signIn({ commit, dispatch }, payload) {
     try {
-      const response = await this.$axios.$post('/v1/auth/login', payload);
-      commit('setTokens', response.result);
+      const response = await this.$axios.$post('/v1/auth/login', {
+        email: payload.email,
+        password: payload.password,
+      });
+      const {
+        access, refresh, social, userStatus,
+      } = response.result;
+      commit('setTokens', {
+        refresh: payload.isRememberMeSelected ? refresh : '',
+        access,
+        social,
+        userStatus,
+      });
       return response;
     } catch (e) {
       return error(e.response.data.code, e.response.data.msg);

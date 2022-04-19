@@ -60,7 +60,7 @@
         </base-field>
         <div class="auth__tools">
           <base-checkbox
-            v-model="remember"
+            v-model="isRememberMeSelected"
             name="remember"
             :label="$t('signIn.remember')"
           />
@@ -165,7 +165,7 @@ export default {
       userWalletAddress: null,
       step: WalletState.Default,
       model: { email: '', password: '' },
-      remember: false,
+      isRememberMeSelected: false,
       userStatus: null,
       isLoginWithSocial: false,
     };
@@ -177,6 +177,7 @@ export default {
     }),
   },
   created() {
+    if (this.$cookies.get('access')) this.$router.push(Path.PROPOSALS);
     window.addEventListener('beforeunload', this.unloadHandler);
   },
   async mounted() {
@@ -250,12 +251,10 @@ export default {
       if (this.isLoading) return;
       this.SetLoader(true);
       this.model.email = this.model.email.trim();
-      const { email, password } = this.model;
-      const payload = {
-        email,
-        password,
-      };
-      const { ok, result } = await this.$store.dispatch('user/signIn', payload);
+      const { ok, result } = await this.$store.dispatch('user/signIn', {
+        ...this.model,
+        isRememberMeSelected: this.isRememberMeSelected,
+      });
       if (ok) {
         this.userStatus = result.userStatus;
         this.userWalletAddress = result.address ? result.address.toLowerCase() : '';
