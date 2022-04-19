@@ -85,9 +85,9 @@ export default {
     },
     convertValue() {
       const { windowSize, convertToBech32, investorAddress } = this;
-      if (windowSize > 480) return convertToBech32('wq', investorAddress);
-      let a = 10;
-      if (windowSize > 450) a = 17;
+      let a = 0;
+      if (windowSize > 480) a = 0;
+      else if (windowSize > 450) a = 17;
       else if (windowSize > 380) a = 15;
       else if (windowSize > 350) a = 13;
       return this.CutTxn(convertToBech32('wq', investorAddress), a, a);

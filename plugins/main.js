@@ -104,7 +104,7 @@ Vue.mixin({
     },
     CutTxn(txn, first = 10, second = 10) {
       if (!txn) return '';
-      return `${txn.slice(0, first)}...${txn.slice(-second)}`;
+      return `${txn.slice(0, first)}${first === 0 && second === 0 ? '' : '...'}${txn.slice(-second)}`;
     },
     ShowToast(text, title = null) {
       this.$bvToast.toast(text, {
