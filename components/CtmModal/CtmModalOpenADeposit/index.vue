@@ -1,7 +1,7 @@
 <template>
   <ctm-modal-box
     class="messageSend"
-    :title="$t('saving.openADeposit')"
+    :title="$tc('saving.openADeposit')"
   >
     <div class="ctm-modal__content">
       <div class="ctm-modal__content-field">

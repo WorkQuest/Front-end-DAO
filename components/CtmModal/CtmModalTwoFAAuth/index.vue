@@ -2,7 +2,7 @@
   <!--  TODO: Refactoring needed-->
   <ctm-modal-box
     class="messageSend"
-    :title="$t('modals.twoFAAuth')"
+    :title="$tc('modals.twoFAAuth')"
   >
     <div class="ctm-modal__content">
       <validation-observer
@@ -273,7 +273,7 @@
             class="btn__wrapper"
           >
             <base-btn
-              :mode="'outline'"
+              mode="outline"
               class="message__action"
               @click="previousStep()"
             >

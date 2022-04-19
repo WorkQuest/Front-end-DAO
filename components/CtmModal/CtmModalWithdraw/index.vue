@@ -1,7 +1,7 @@
 <template>
   <ctm-modal-box
     class="withdrawal"
-    :title="$t('modals.withdrawal')"
+    :title="$tc('modals.withdrawal')"
   >
     <div class="withdrawal__content content">
       <validation-observer v-slot="{handleSubmit}">
@@ -13,7 +13,7 @@
             <base-field
               id="amountInput"
               v-model="amountWDX"
-              :name="$t('modals.amount')"
+              :name="$tc('modals.amount')"
               data-selector="AMOUNT"
               type="number"
               placeholder="0 WDX"
@@ -82,7 +82,7 @@
                 id="cardNumberInput"
                 v-model="cardNumberInput"
                 data-selector="CARD-NUMBER"
-                :name="$t('modals.numberOfCard')"
+                :name="$tc('modals.numberOfCard')"
                 type="tel"
                 rules="max:19|required"
                 pattern="[0-9\s]{13,19}"
@@ -100,7 +100,7 @@
                 <base-field
                   id="dateInput"
                   v-model="dateInput"
-                  :name="$t('modals.date')"
+                  :name="$tc('modals.date')"
                   data-selector="DATE"
                   placeholder="02/24"
                   rules="max:5|required|date"
@@ -116,7 +116,7 @@
                   id="cvvInput"
                   v-model="cvvInput"
                   data-selector="CVV"
-                  :name="$t('modals.cvv')"
+                  :name="$tc('modals.cvv')"
                   placeholder="242"
                   rules="max:4|required"
                 />
@@ -126,7 +126,7 @@
           <base-checkbox
             v-model="isShowMap"
             name="map"
-            :label="$t('modals.saveCardForNextPayment')"
+            :label="$tc('modals.saveCardForNextPayment')"
           />
         </div>
         <div class="content__field field">

@@ -173,6 +173,17 @@ extend('address', {
   message: 'Type correct address',
 });
 
+extend('addressBech32', {
+  validate(value) {
+    const regex = /wq1[a-z-0-9]{3,41}$/;
+    return {
+      required: true,
+      valid: regex.test(value),
+    };
+  },
+  message: 'Please enter correct {_field_}',
+});
+
 extend('max_bn', {
   validate(value, { max }) {
     return {

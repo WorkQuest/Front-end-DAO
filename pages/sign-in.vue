@@ -32,6 +32,7 @@
           :placeholder="$t('signUp.email')"
           mode="icon"
           autocomplete="username"
+          data-selector="EMAIL"
         >
           <template v-slot:left>
             <img
@@ -50,6 +51,7 @@
           rules="required_if|min:8"
           type="password"
           vid="confirmation"
+          data-selector="PASSWORD"
         >
           <template v-slot:left>
             <img
@@ -393,7 +395,10 @@ export default {
         ...JSON.parse(sessionStorage.getItem('mnemonic')),
         [wallet.address.toLowerCase()]: wallet.mnemonic.phrase,
       }));
-      this.$store.dispatch('wallet/connectWallet', { userWalletAddress: wallet.address, userPassword: this.model.password });
+      this.$store.dispatch('wallet/connectWallet', {
+        userWalletAddress: wallet.address,
+        userPassword: this.model.password,
+      });
     },
     async redirectSocialLink(socialNetwork) {
       window.location = `${process.env.BASE_URL}v1/auth/login/dao/${socialNetwork}`;
@@ -417,33 +422,40 @@ export default {
   &__back {
     cursor: pointer;
     display: table-cell;
+
     & > span {
       color: $black700;
     }
   }
+
   &__container {
     display: grid;
     grid-template-rows: auto;
   }
+
   &__input {
     height: 46px;
     margin-bottom: 20px;
   }
+
   &__text {
     font-family: 'Inter', sans-serif;
     font-style: normal;
     line-height: 130%;
+
     &_title {
       font-weight: 600;
       font-size: 34px;
       color: $black800;
     }
+
     &_simple {
       color: #000000;
       font-weight: 300;
       font-size: 16px;
       padding-top: 15px;
     }
+
     &_link {
       padding-left: 5px;
       font-weight: 300;
@@ -452,6 +464,7 @@ export default {
       text-decoration: underline;
       cursor: pointer;
     }
+
     &_wrap {
       font-weight: normal;
       color: $black400;
@@ -459,6 +472,7 @@ export default {
       line-height: 130%;
       padding: 15px 0;
     }
+
     &_dark {
       color: $black700;
       font-style: normal;
@@ -467,29 +481,35 @@ export default {
       line-height: 130%;
     }
   }
+
   &__social {
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
+
   &__fields {
     padding-top: 40px;
     display: grid;
     grid-template-columns: 1fr;
   }
+
   &__action {
     padding-top: 40px;
   }
+
   &__icons {
     display: grid;
     grid-template-columns: repeat(5, 40px);
     grid-gap: 30px;
   }
+
   &__tools {
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
+
   &__btn {
     transition: .5s;
     width: 40px;
@@ -499,9 +519,11 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+
     &:hover {
       background: #0083C7;
     }
+
     &:hover {
       span:before {
         background: white;
@@ -509,39 +531,46 @@ export default {
         -webkit-text-fill-color: transparent;
       }
     }
+
     &_twitter {
       span:before {
         font-size: 18px;
         color: #24CAFF;
       }
     }
+
     &_google {
       span:before {
         font-size: 18px;
         color: #094EFF;
       }
     }
+
     &_facebook {
       span:before {
         font-size: 18px;
         color: #3B67D7;
       }
     }
+
     &_linkedin {
       span:before {
         font-size: 18px;
         color: #0A7EEA;
       }
     }
-    &_wq:hover .auth__btn__picture{
+
+    &_wq:hover .auth__btn__picture {
       display: none;
     }
-    &_wq:hover .auth__btn__image{
+
+    &_wq:hover .auth__btn__image {
       display: block;
       width: 22px;
       height: 17px;
     }
-    &__image{
+
+    &__image {
       display: none;
     }
   }
@@ -553,22 +582,27 @@ export default {
       grid-template-columns: repeat(5, 1fr);
       grid-gap: 15px;
     }
+
     &__text {
       &_title {
         font-size: 28px;
       }
+
       &_wrap {
         text-align: center;
       }
+
       &_dark {
         display: none;
       }
     }
+
     &__social {
       justify-content: center;
     }
   }
 }
+
 @include _575 {
   .auth {
     &__icons {

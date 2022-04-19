@@ -2,7 +2,7 @@
   <!--  TODO: Refactoring needed!-->
   <ctm-modal-box
     class="messageSend"
-    :title="$t('modals.deposit')"
+    :title="$tc('modals.deposit')"
   >
     <div class="ctm-modal__content">
       <validation-observer v-slot="{handleSubmit}">
@@ -37,7 +37,7 @@
               <base-field
                 id="amount_input"
                 v-model="amount_input"
-                :name="$t('modals.amount')"
+                :name="$tc('modals.amount')"
                 data-selector="AMOUNT"
                 type="number"
                 rules="required"
@@ -58,7 +58,7 @@
               <base-field
                 id="amount_input2"
                 v-model="amount_input"
-                :name="$t('modals.amount')"
+                :name="$tc('modals.amount')"
                 type="number"
                 rules="required"
                 data-selector="AMOUNT"
@@ -71,7 +71,7 @@
             <div class="ctm-modal__content-field">
               <base-field
                 v-model="balance_input"
-                :name="$t('modals.amount')"
+                :name="$tc('modals.amount')"
                 mode="white"
                 type="number"
                 data-selector="BALANCE"
@@ -85,7 +85,7 @@
             <base-field
               id="cardNumber_input"
               v-model="cardNumber_input"
-              :name="$t('modals.numberOfCard')"
+              :name="$tc('modals.numberOfCard')"
               type="tel"
               placeholder="1234 1234 1234 1234"
               data-selector="CARD-NUMBER"
@@ -98,7 +98,7 @@
               <base-field
                 id="date_input"
                 v-model="date_input"
-                :name="$t('modals.date')"
+                :name="$tc('modals.date')"
                 placeholder="02/24"
                 rules="max:5|required|date"
                 data-selector="DATE"
@@ -109,7 +109,7 @@
               <base-field
                 id="cvv_input"
                 v-model="cvv_input"
-                :name="$t('modals.cvv')"
+                :name="$tc('modals.cvv')"
                 type="number"
                 placeholder="242"
                 data-selector="CVV"

@@ -1,7 +1,7 @@
 <template>
   <ctm-modal-box
     class="addLiquidity"
-    :title="$t('modals.confirmDetails')"
+    :title="$tc('modals.confirmDetails')"
   >
     <div class="ctm-modal__content">
       <div class="ctm-modal__gray-zone">

@@ -170,6 +170,7 @@
                 rules="min:1|max:250"
                 :name="$t('discussions.response')"
                 mode="comment-field"
+                data-selector="OPINION"
                 @keyup.enter.native="addRootCommentResponse"
               />
             </div>
