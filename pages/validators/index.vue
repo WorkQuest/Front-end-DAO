@@ -124,7 +124,6 @@ export default {
   methods: {
     async test() {
       const res = await test();
-      console.log(res);
       const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: res.result });
       console.log('RESULT >>', broadcastRes);
     },

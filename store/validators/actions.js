@@ -20,8 +20,6 @@ export default {
   },
   async broadcast({ commit }, { signedTxBytes, broadCastMode = 'BROADCAST_MODE_SYNC' }) {
     try {
-      const txBytesBase64 = Buffer.from(signedTxBytes, 'binary')
-        .toString('base64');
       // const options = {
       //   method: 'POST',
       //   url: `${this.url}/cosmos/tx/v1beta1/txs`,
@@ -35,7 +33,7 @@ export default {
         baseURL: `${nodeUrl}/cosmos/tx/v1beta1/txs`,
       });
       return await nodeApi.$post('', {
-        tx_bytes: txBytesBase64,
+        tx_bytes: signedTxBytes,
         mode: broadCastMode,
       }, {
         headers: { 'Content-Type': 'application/json' },

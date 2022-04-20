@@ -17,7 +17,7 @@
     "@nuxtjs/moment": "^1.6.1",
     "bech32-converting": "^1.0.8",
     "bignumber.js": "^9.0.1",
-    "bip32": "^2.0.5",
+    "bip32": "^3.0.1",
     "bip39": "^3.0.4",
     "bootstrap-vue": "^2.21.2",
     "cookie-universal-nuxt": "^2.1.4",
