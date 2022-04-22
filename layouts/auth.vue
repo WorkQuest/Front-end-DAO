@@ -17,6 +17,7 @@
           >
           <span>{{ $t('signIn.workQuest') }}</span>
         </div>
+        <span class="template__text">{{ $t('signIn.desc') }}</span>
       </div>
     </div>
     <transition name="fade">
@@ -102,18 +103,29 @@ export default {
       color: #ffffff;
     }
   }
+  &__text {
+    margin: 20px;
+    width: 60%;
+
+    font-style: normal;
+    font-weight: 700;
+    font-size: 75px;
+    line-height: 130%;
+    color: #FFFFFF;
+  }
   &__content {
     display: grid;
     align-items: center;
   }
   &__right {
-    display: flex;
+    display: grid;
     align-items: flex-start;
     flex-direction: column;
-    background-image: url("~assets/img/app/auth_proposals-bg.svg");
+    background-image: url("~assets/img/app/auth_bg.png");
     background-position: right;
     background-repeat: no-repeat;
     background-size: cover;
+    background-position-x: center;
   }
   &__long {
     justify-self: flex-end;
@@ -142,6 +154,9 @@ export default {
 
 @include _1199 {
   .template {
+    &__text {
+      font-size: 70px;
+    }
     &__container {
       grid-template-columns: 1fr;
       grid-template-rows: repeat(2, 1fr);
@@ -179,6 +194,11 @@ export default {
     &__logo {
       padding: 0;
     }
+    &__text {
+      width: auto;
+      margin: 0 10px;
+      font-size: 45px;
+    }
     &__left {
       padding: 0 10px 30px;
     }
@@ -189,12 +209,14 @@ export default {
     &__container {
       grid-template-rows: 180px auto;
     }
+    &__text {
+      font-size: 35px;
+    }
     &__content {
       padding-top: 15px;
     }
     &__logo {
       align-items: flex-start;
-      flex-direction: column;
       span {
         font-size: 20px;
         margin-left: 0;
