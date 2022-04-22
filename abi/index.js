@@ -1,9 +1,9 @@
 import ERC20 from '~/abi/ERC20';
 import WQToken from '~/abi/WQToken';
-import WORKNET_VOTING from '~/abi/WORKNET_VOTING';
+import WQVoting from '~/abi/WQVoting';
 
-export default {
+export {
   ERC20,
   WQToken,
-  WORKNET_VOTING,
+  WQVoting,
 };

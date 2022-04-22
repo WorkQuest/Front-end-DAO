@@ -1,7 +1,7 @@
 <template>
   <ctm-modal-box
     class="privacy"
-    :title="$t('privacy.title')"
+    :title="$tc('privacy.title')"
   >
     <div class="ctm-modal__content">
       <div class="ctm-modal__desc">
@@ -11,28 +11,34 @@
         <base-checkbox
           v-model="privacy"
           name="privacy"
-          :label="$t('privacy.agree')"
+          :label="$tc('privacy.agree')"
         >
           <template v-slot:sub>
-            <span class="privacy__link">{{ $t('privacy.privacyLink') }}</span>
+            <span class="privacy__link">
+              {{ $t('privacy.privacyLink') }}
+            </span>
           </template>
         </base-checkbox>
         <base-checkbox
           v-model="terms"
           name="terms"
-          :label="$t('privacy.agree')"
+          :label="$tc('privacy.agree')"
         >
           <template v-slot:sub>
-            <span class="privacy__link">{{ $t('privacy.termsLink') }}</span>
+            <span class="privacy__link">
+              {{ $t('privacy.termsLink') }}
+            </span>
           </template>
         </base-checkbox>
         <base-checkbox
           v-model="aml"
           name="aml"
-          :label="$t('privacy.agree')"
+          :label="$tc('privacy.agree')"
         >
           <template v-slot:sub>
-            <span class="privacy__link">{{ $t('privacy.amlLink') }}</span>
+            <span class="privacy__link">
+              {{ $t('privacy.amlLink') }}
+            </span>
           </template>
         </base-checkbox>
         <base-btn
@@ -108,18 +114,22 @@ export default {
 <style lang="scss" scoped>
 .ctm-modal {
   @include modalKit;
+
   &__desc {
     text-align: left;
   }
 }
+
 .privacy {
   max-width: 382px !important;
+
   &__forms {
     padding-top: 25px;
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 15px;
   }
+
   &__link {
     font-family: 'Inter', sans-serif;
     font-style: normal;
@@ -129,6 +139,7 @@ export default {
     text-decoration-line: underline;
     color: $blue;
   }
+
   &__action {
     margin-top: 20px;
   }

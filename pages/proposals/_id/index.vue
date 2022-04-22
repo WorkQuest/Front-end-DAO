@@ -261,7 +261,7 @@ import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import { ExplorerUrls, proposalStatuses, TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
-import abi from '~/abi/index';
+import { WQVoting } from '~/abi/index';
 import { getStyledAmount } from '~/utils/wallet';
 
 export default {
@@ -569,7 +569,7 @@ export default {
       if (!this.isWalletConnected) return;
       const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
         method: 'doVote',
-        _abi: abi.WORKNET_VOTING,
+        abi: WQVoting,
         contractAddress: process.env.WORKNET_VOTING,
         data: [this.card.createdEvent.contractProposalId, value],
       });

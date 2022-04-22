@@ -101,7 +101,7 @@
         :href="getAddressUrl(el.item.investorAddress)"
         target="_blank"
       >
-        {{ CutTxn(el.item.investorAddress, 5, 6) }}
+        {{ CutTxn(convertToBech32('wq', el.item.investorAddress), 8, 8) }}
       </a>
       <span
         v-else
@@ -116,7 +116,7 @@
         target="_blank"
         class="table__url"
       >
-        {{ CutTxn(el.item.from_address, 4, 4) }}
+        {{ CutTxn(convertToBech32('wq', el.item.from_address), 4, 4) }}
       </a>
     </template>
     <template #cell(to_address)="el">
@@ -125,7 +125,7 @@
         target="_blank"
         class="table__url"
       >
-        {{ CutTxn(el.item.to_address, 4, 4) }}
+        {{ CutTxn(convertToBech32('wq', el.item.to_address), 4, 4) }}
       </a>
     </template>
     <template #cell(fullName)="el">

@@ -1,7 +1,7 @@
 <template>
   <ctm-modal-box
     class="info"
-    :title="options.title || $t('modals.txInfo')"
+    :title="options.title || $tc('modals.txInfo')"
   >
     <div class="info__content content">
       <div class="content__fields">
@@ -101,7 +101,9 @@ export default {
           if (callback) await callback();
           if (isShowSuccess) {
             await this.$store.dispatch('modals/show', {
-              key: modals.transactionSend,
+              img: require('assets/img/ui/transactionSend.svg'),
+              key: modals.status,
+              title: this.$t('modals.transactionSend'),
             });
           }
         }

@@ -1,32 +1,25 @@
 <template>
+  <!--  TODO: Refactoring needed-->
   <ctm-modal-box
     class="messageSend"
-    :title="$t('modals.twoFAAuth')"
+    :title="$tc('modals.twoFAAuth')"
   >
     <div class="ctm-modal__content">
       <validation-observer
         v-slot="{ handleSubmit }"
         ref="twoFA"
       >
-        <div
-          class="step-panel"
-        >
+        <div class="step-panel">
           <div
             class="step-panel__step"
-            :class="[
-              {'step-panel__step_active': step === 1 || step === 2 || step === 3 || step === 4},
-            ]"
+            :class="[{'step-panel__step_active': step === 1 || step === 2 || step === 3 || step === 4}]"
           >
-            <span
-              :class="[
-                {'hide': step === 2 || step === 3 || step === 4},
-              ]"
-            >{{ $t('modals.step') }}</span>
-            <span
-              :class="[
-                {'step__number': step === 2 || step === 3 || step === 4},
-              ]"
-            >1</span>
+            <span :class="[{'hide': step === 2 || step === 3 || step === 4}]">
+              {{ $t('modals.step') }}
+            </span>
+            <span :class="[{'step__number': step === 2 || step === 3 || step === 4}]">
+              1
+            </span>
           </div>
           <div
             class="line"
@@ -280,7 +273,7 @@
             class="btn__wrapper"
           >
             <base-btn
-              :mode="'outline'"
+              mode="outline"
               class="message__action"
               @click="previousStep()"
             >
