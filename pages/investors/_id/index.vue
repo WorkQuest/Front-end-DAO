@@ -24,11 +24,11 @@
           class="title__panel panel"
         >
           <div class="panel__address">
-            {{ CutTxn(investorAddress, 8, 8) }}
+            {{ CutTxn(convertToBech32('wq', investorAddress), 8, 8) }}
           </div>
           <div class="panel__picture">
             <base-btn
-              v-clipboard:copy="investorAddress"
+              v-clipboard:copy="convertToBech32('wq', investorAddress)"
               v-clipboard:success="ClipboardSuccessHandler"
               v-clipboard:error="ClipboardErrorHandler"
               mode="copy"
@@ -67,6 +67,7 @@
                   mode="left"
                   :value="fillInputs(input)"
                   :placeholder="$t('investor.notFilled')"
+                  data-selector="NAME"
                 >
                   <template v-slot:left>
                     <span
@@ -318,7 +319,6 @@ export default {
     async openModalDelegate() {
       this.ShowModal({
         key: modals.delegate,
-        stake: this.stake,
         investorAddress: this.investorAddress,
         callback: async () => this.updateDelegatedUser(),
       });
@@ -326,7 +326,6 @@ export default {
     async openModalUndelegate() {
       this.ShowModal({
         key: modals.undelegate,
-        stake: this.stake,
         name: `${this.investor.firstName} ${this.investor.lastName}`,
         tokensAmount: this.votingPower,
         callback: async () => this.updateDelegatedUser(),

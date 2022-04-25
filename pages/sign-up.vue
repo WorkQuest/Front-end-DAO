@@ -32,6 +32,7 @@
           autocomplete="off"
           :name="$t('signUp.firstName')"
           rules="required_if|alpha_spaces"
+          data-selector="FIRST-NAME"
         >
           <template v-slot:left>
             <img
@@ -47,6 +48,7 @@
           mode="icon"
           :name="$t('signUp.lastName')"
           rules="required_if|alpha_spaces"
+          data-selector="LAST-NAME"
         >
           <template v-slot:left>
             <img
@@ -63,6 +65,7 @@
           :placeholder="$t('signUp.email')"
           mode="icon"
           autocomplete="username"
+          data-selector="EMAIL"
         >
           <template v-slot:left>
             <img
@@ -81,6 +84,7 @@
           rules="required_if|min:8"
           type="password"
           vid="confirmation"
+          data-selector="PASSWORD"
         >
           <template v-slot:left>
             <img
@@ -97,6 +101,7 @@
           type="password"
           :name="$t('signUp.confirmPassword')"
           rules="required_if|min:8|confirmed:confirmation"
+          data-selector="CONFIRM-PASSWORD"
         >
           <template v-slot:left>
             <img
@@ -163,25 +168,30 @@ export default {
     display: grid;
     grid-template-rows: auto;
   }
+
   &__input {
     height: 46px;
     margin-bottom: 20px;
   }
+
   &__text {
     font-family: 'Inter', sans-serif;
     font-style: normal;
     line-height: 130%;
+
     &_title {
       font-weight: 600;
       font-size: 34px;
       color: $black800;
     }
+
     &_simple {
       color: #000000;
       font-weight: 300;
       font-size: 16px;
       padding-top: 15px;
     }
+
     &_link {
       padding-left: 5px;
       font-weight: 300;
@@ -190,15 +200,18 @@ export default {
       text-decoration: underline;
     }
   }
+
   &__fields {
     padding-top: 40px;
     display: grid;
     grid-template-columns: 1fr;
   }
+
   &__action {
     padding-top: 30px;
   }
 }
+
 @include _1199 {
   .auth {
     &__text {

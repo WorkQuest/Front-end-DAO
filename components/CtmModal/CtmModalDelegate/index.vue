@@ -1,7 +1,7 @@
 <template>
   <ctm-modal-box
     class="delegate"
-    :title="$t('modals.delegate')"
+    :title="$tc('modals.delegate')"
   >
     <div class="delegate__content content">
       <validation-observer v-slot="{handleSubmit, valid}">
@@ -31,7 +31,7 @@
               class="footer__body"
               placeholder="10000 WQT"
               data-selector="AMOUNT"
-              :name="$t('modals.tokensNumber')"
+              :name="$tc('modals.tokensNumber')"
               :rules="`required${min}|max_bn:${balance}|min_value:1|decimalPlaces:18`"
               @input="replaceDot"
             />
@@ -61,7 +61,7 @@ import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
 import { TokenSymbols } from '~/utils/enums';
-import abi from '~/abi/index';
+import { WQToken } from '~/abi/index';
 
 export default {
   name: 'Delegate',
@@ -84,13 +84,14 @@ export default {
       return this.options?.min ? `|min_value:${this.options.min}` : '';
     },
     convertValue() {
-      const { windowSize } = this;
-      if (windowSize > 480) return this.investorAddress;
+      const { windowSize, convertToBech32, investorAddress } = this;
+      const convertedValue = convertToBech32('wq', investorAddress);
+      if (windowSize > 480) return convertedValue;
       let a = 10;
       if (windowSize > 450) a = 17;
       else if (windowSize > 380) a = 15;
       else if (windowSize > 350) a = 13;
-      return this.CutTxn(this.investorAddress, a, a);
+      return this.CutTxn(convertedValue, a, a);
     },
   },
   async beforeMount() {
@@ -119,12 +120,16 @@ export default {
     },
     async delegate() {
       const { callback } = this.options;
-      const { investorAddress, tokensAmount, userWalletAddress } = this;
+      const {
+        tokensAmount, userWalletAddress, convertToHex, convertToBech32,
+      } = this;
+      let { investorAddress } = this;
+      investorAddress = convertToHex('wq', investorAddress);
       this.CloseModal();
       this.SetLoader(true);
       const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
         method: 'delegate',
-        _abi: abi.WQToken,
+        abi: WQToken,
         contractAddress: process.env.WORKNET_WQT_TOKEN,
         data: [investorAddress, new BigNumber(tokensAmount).shiftedBy(18).toString()],
       });
@@ -133,8 +138,8 @@ export default {
         key: modals.transactionReceipt,
         title: this.$t('modals.delegate'),
         fields: {
-          from: { name: this.$t('modals.fromAddress'), value: userWalletAddress },
-          to: { name: this.$t('modals.toAddress'), value: process.env.WORKNET_WQT_TOKEN },
+          from: { name: this.$t('modals.fromAddress'), value: convertToBech32('wq', userWalletAddress) },
+          to: { name: this.$t('modals.toAddress'), value: convertToBech32('wq', process.env.WORKNET_WQT_TOKEN) },
           amount: { name: this.$t('modals.amount'), value: tokensAmount, symbol: TokenSymbols.WQT },
           fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
         },
@@ -146,7 +151,7 @@ export default {
           });
           this.SetLoader(false);
           if (res.ok) {
-            this.ShowToast(`Delegated ${tokensAmount} WQT`, this.$t('modals.delegate'));
+            this.ShowToast(`Delegated ${this.Floor(tokensAmount)} WQT`, this.$t('modals.delegate'));
           } else if (res.msg.includes('Not enough balance to delegate')) {
             this.ShowToast(this.$t('errors.delegate.notEnoughBalance'), this.$t('errors.delegate.title'));
           }
@@ -162,54 +167,65 @@ export default {
 <style lang="scss" scoped>
 .delegate {
   max-width: 500px !important;
+
   &__content {
-    padding: 20px 28px 30px 28px!important;
+    padding: 20px 28px 30px 28px !important;
   }
-  &__body{
+
+  &__body {
     @include text-usual;
     color: $black800;
     margin: 25px 0;
-    background-color: $white!important;
+    background-color: $white !important;
   }
-  &__done{
+
+  &__done {
     margin-top: 25px;
   }
+
   &__input {
     height: 46px;
     margin-bottom: 15px;
   }
 }
+
 .footer {
   display: flex;
   justify-content: space-between;
   grid-gap: 10px;
-  &__body{
+
+  &__body {
     width: 100%;
-    height: 46px!important;
+    height: 46px !important;
   }
-  &__maximum{
-    width: 100px!important;
-    height: 46px!important;
+
+  &__maximum {
+    width: 100px !important;
+    height: 46px !important;
   }
 }
-.address{
-  &__label{
+
+.address {
+  &__label {
     @include text-usual;
     color: $black800;
-    margin: 0!important;
+    margin: 0 !important;
   }
-  &__body{
+
+  &__body {
     margin-top: 5px;
   }
 }
-.tokens{
-  &__title{
+
+.tokens {
+  &__title {
     @include text-usual;
     color: $black800;
     margin-bottom: 5px;
-    &_grey{
+
+    &_grey {
       color: $black400;
-      margin-bottom: 10px!important;
+      margin-bottom: 10px !important;
     }
   }
 }

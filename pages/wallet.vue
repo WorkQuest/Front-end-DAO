@@ -5,9 +5,9 @@
         <div class="wallet__nav">
           <span class="wallet__title">{{ $t('wallet.wallet') }}</span>
           <div class="wallet__address">
-            <span class="user__wallet">{{ CutTxn(userWalletAddress, 8, 8) }}</span>
+            <span class="user__wallet">{{ CutTxn(convertToBech32('wq', userWalletAddress), 8, 8) }}</span>
             <button
-              v-clipboard:copy="userWalletAddress"
+              v-clipboard:copy="convertToBech32('wq', userWalletAddress)"
               v-clipboard:success="ClipboardSuccessHandler"
               v-clipboard:error="ClipboardErrorHandler"
               type="button"
@@ -34,7 +34,7 @@
                   <span class="balance__usd-mobile_blue">
                     {{ $t('wallet.frozen') }}
                   </span>
-                  {{ frozenBalance }} {{ tokenSymbols.WQT }}
+                  {{ Floor(frozenBalance) }} {{ tokenSymbols.WQT }}
                 </span>
                 <base-dd
                   v-model="ddValue"
@@ -50,7 +50,7 @@
                   <span class="balance__usd">
                     {{ $t('wallet.frozen') }}
                   </span>
-                  {{ Number(frozenBalance.toString()).toFixed(4) }} {{ tokenSymbols.WQT }}
+                  {{ Floor(frozenBalance) }} {{ tokenSymbols.WQT }}
                 </span>
               </span>
             </div>
@@ -133,7 +133,7 @@ import modals from '~/store/modals/modals';
 import { TokenSymbolByContract, TokenSymbols, WalletTables } from '~/utils/enums';
 import { getStyledAmount } from '~/utils/wallet';
 import EmptyData from '~/components/app/EmptyData';
-import ERC20 from '~/abi/ERC20';
+import { ERC20 } from '~/abi/index';
 import { error, success } from '~/utils/success-error';
 
 export default {
@@ -161,9 +161,6 @@ export default {
       selectedToken: 'wallet/getSelectedToken',
       userWalletAddress: 'user/getUserWalletAddress',
     }),
-    walletTables() {
-      return WalletTables;
-    },
     totalPages() {
       if (!this.transactionsCount) return 0;
       return Math.ceil(this.transactionsCount / this.txsPerPage);
@@ -210,9 +207,10 @@ export default {
     ddValue(val) {
       this.$store.dispatch('wallet/setSelectedToken', TokenSymbols[this.tokenSymbolsDd[val]]);
     },
-    selectedToken() {
+    async selectedToken() {
       const i = this.tokenSymbolsDd.indexOf(this.selectedToken);
       this.ddValue = i >= 0 && i < this.tokenSymbolsDd.length ? i : 1;
+      await this.loadData();
     },
     isConnected(newVal) {
       if (!newVal) {
@@ -235,10 +233,6 @@ export default {
     await this.loadData();
   },
   methods: {
-    getSwitchButtonMode(btn) {
-      if (btn === this.selectedWalletTable) return '';
-      return 'outline';
-    },
     async getTransactions() {
       await this.$store.dispatch('wallet/getTransactions', {
         limit: this.txsPerPage,
@@ -249,17 +243,11 @@ export default {
       this.SetLoader(true);
       await Promise.all([
         this.$store.dispatch('wallet/frozenBalance', { address: this.userWalletAddress }),
-        this.updateBalanceWQT(),
-        this.updateBalanceWUSD(),
+        this.$store.dispatch('wallet/getBalanceWQT', this.userWalletAddress),
+        this.$store.dispatch('wallet/getBalance'),
         this.getTransactions(),
       ]);
       this.SetLoader(false);
-    },
-    async updateBalanceWQT() {
-      await this.$store.dispatch('wallet/getBalanceWQT', this.userWalletAddress);
-    },
-    async updateBalanceWUSD() {
-      await this.$store.dispatch('wallet/getBalance');
     },
     closeCard() {
       this.cardClosed = true;
@@ -274,6 +262,8 @@ export default {
       this.ShowModal({
         key: modals.giveTransfer,
         submit: async ({ recipient, amount, selectedToken }) => {
+          const { convertToHex, convertToBech32 } = this;
+          recipient = convertToHex('wq', recipient);
           const value = new BigNumber(amount).shiftedBy(18).toString();
           let feeRes;
           if (selectedToken === TokenSymbols.WUSD) {
@@ -284,7 +274,7 @@ export default {
           } else {
             feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
               method: 'transfer',
-              _abi: ERC20,
+              abi: ERC20,
               contractAddress: process.env.WORKNET_WQT_TOKEN,
               data: [recipient, value],
             });
@@ -292,8 +282,8 @@ export default {
           this.ShowModal({
             key: modals.transactionReceipt,
             fields: {
-              from: { name: this.$t('modals.fromAddress'), value: this.userData.wallet.address },
-              to: { name: this.$t('modals.toAddress'), value: recipient },
+              from: { name: this.$t('modals.fromAddress'), value: convertToBech32('wq', this.userData.wallet.address) },
+              to: { name: this.$t('modals.toAddress'), value: convertToBech32('wq', recipient) },
               amount: {
                 name: this.$t('modals.amount'),
                 value: amount,
@@ -312,7 +302,11 @@ export default {
               this.SetLoader(false);
               if (res?.ok) {
                 await this.loadData();
-                await this.ShowModal({ key: 'transactionSend' });
+                await this.ShowModal({
+                  img: require('assets/img/ui/transactionSend.svg'),
+                  key: modals.status,
+                  title: this.$t('modals.transactionSend'),
+                });
                 return success();
               }
               return error();

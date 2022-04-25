@@ -1,7 +1,7 @@
 <template>
   <ctm-modal-box
     class="restore"
-    :title="$t('forgot.title')"
+    :title="$tc('forgot.title')"
   >
     <div class="ctm-modal__content">
       <ValidationObserver
@@ -19,12 +19,14 @@
           </div>
           <base-field
             v-model="model.email"
-            :name="$t('placeholders.email')"
+            :name="$tc('placeholders.email')"
             :placeholder="$t('placeholders.email')"
+            data-selector="EMAIL"
             rules="required|email"
           />
           <base-btn
             class="restore__action"
+            @click="restore"
           >
             {{ $t('meta.send') }}
           </base-btn>
@@ -53,11 +55,8 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     restore() {
-      this.hide();
+      this.CloseModal();
       this.ShowModal({
         key: modals.emailConfirm,
       });
@@ -70,17 +69,21 @@ export default {
 <style lang="scss" scoped>
 .ctm-modal {
   @include modalKit;
+
   &__desc {
     text-align: left;
   }
 }
+
 .restore {
   max-width: 382px !important;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 5px;
   }

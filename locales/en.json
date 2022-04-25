@@ -171,6 +171,7 @@
   },
   "signIn": {
     "title": "Sign in",
+    "desc": "Propose your idea right now",
     "account": "Haven’t account?",
     "regs": "Registration",
     "login": "Login",
@@ -739,6 +740,8 @@
   "investors": {
     "title": "Investors",
     "search": "Search investor",
+    "notEnoughTokens": "You dont have enough WQT tokens!",
+    "delegateInfo": "Delegate info",
     "table": {
       "name": "Name",
       "address": "Address",

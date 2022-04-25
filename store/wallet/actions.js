@@ -25,9 +25,9 @@ import {
   getProposalThreshold,
   connectWallet,
 } from '~/utils/wallet';
-import abi from '~/abi/index';
 import { errorCodes, TokenSymbols } from '~/utils/enums';
 import { error, success } from '~/utils/success-error';
+import { ERC20, WQToken } from '~/abi/index';
 
 export default {
   async getTransactions({ commit }, params) {
@@ -100,7 +100,7 @@ export default {
   async getBalanceWQT({ commit }, userAddress) {
     const res = await fetchWalletContractData(
       'balanceOf',
-      abi.ERC20,
+      ERC20,
       process.env.WORKNET_WQT_TOKEN,
       [userAddress],
     );
@@ -135,6 +135,7 @@ export default {
      * @param commit
      * @param method
      * @param _abi
+     * @param abi
      * @param contractAddress
      * @param data - Array []
      * @param recipient
@@ -142,9 +143,9 @@ export default {
      * @returns {Promise<{result: *, ok: boolean}|{msg: string, code: number, data: null, ok: boolean}|undefined>}
      */
   async getContractFeeData({ commit }, {
-    method, _abi, contractAddress, data, recipient, amount,
+    method, abi, contractAddress, data, recipient, amount,
   }) {
-    return await getContractFeeData(method, _abi, contractAddress, data, recipient, amount);
+    return await getContractFeeData(method, abi, contractAddress, data, recipient, amount);
   },
 
   /** Investors */
@@ -155,7 +156,7 @@ export default {
      */
   async getVotesByAddresses({ commit }, addresses) {
     try {
-      const res = await fetchWalletContractData('getVotes', abi.WQToken, process.env.WORKNET_WQT_TOKEN, [addresses]);
+      const res = await fetchWalletContractData('getVotes', WQToken, process.env.WORKNET_WQT_TOKEN, [addresses]);
       return success(res);
     } catch (e) {
       console.error('getVotes');
@@ -166,11 +167,11 @@ export default {
     try {
       const res = await fetchWalletContractData(
         'freezed',
-        abi.WQToken,
+        WQToken,
         process.env.WORKNET_WQT_TOKEN,
         [address],
       );
-      commit('user/setFrozenBalance', new BigNumber(res).shiftedBy(-18), { root: true });
+      commit('user/setFrozenBalance', new BigNumber(res).shiftedBy(-18).toString(), { root: true });
       return success(res);
     } catch (e) {
       return error(errorCodes.Undelegate, e.message, e);
@@ -220,8 +221,10 @@ export default {
   async getVoteThreshold() {
     return await getVoteThreshold();
   },
-  async getProposalThreshold() {
-    return await getProposalThreshold();
+  async getProposalThreshold({ commit }) {
+    const { result, ok } = await getProposalThreshold();
+    if (ok) commit('proposals/setProposalThreshold', result, { root: true });
+    return result;
   },
   async getReceipt({ commit }, { id, accountAddress }) {
     return await getReceipt(id, accountAddress);

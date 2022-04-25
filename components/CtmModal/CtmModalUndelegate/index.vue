@@ -23,7 +23,7 @@
       </div>
       <div class="undelegate__tokens tokens">
         <div class="tokens__footer footer">
-          {{ $tc('modals.willBeUndelegate', freezedBalance) }}
+          {{ $tc('modals.willBeUndelegate', Floor(frozenBalance)) }}
         </div>
       </div>
       <div class="undelegate__bottom bottom">
@@ -50,7 +50,7 @@
 import { mapGetters } from 'vuex';
 import { TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
-import abi from '~/abi';
+import { WQToken } from '~/abi/index';
 
 export default {
   name: 'Undelegate',
@@ -69,19 +69,17 @@ export default {
   },
   beforeMount() {
     this.tokensAmount = this.options.tokensAmount;
-  },
-  async mounted() {
-    await this.$store.dispatch('wallet/getBalance');
+    this.$store.dispatch('wallet/frozenBalance', { address: this.userWalletAddress });
   },
   methods: {
     async undelegate() {
-      const { userWalletAddress, frozenBalance } = this;
+      const { userWalletAddress, frozenBalance, convertToBech32 } = this;
       const { callback } = this.options;
       this.CloseModal();
       this.SetLoader(true);
       const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
         method: 'undelegate',
-        _abi: abi.WQToken,
+        abi: WQToken,
         contractAddress: process.env.WORKNET_WQT_TOKEN,
         data: [],
       });
@@ -90,8 +88,8 @@ export default {
         key: modals.transactionReceipt,
         title: this.$t('modals.undelegate'),
         fields: {
-          from: { name: this.$t('modals.fromAddress'), value: userWalletAddress },
-          to: { name: this.$t('modals.toAddress'), value: process.env.WORKNET_WQT_TOKEN },
+          from: { name: this.$t('modals.fromAddress'), value: convertToBech32('wq', userWalletAddress) },
+          to: { name: this.$t('modals.toAddress'), value: convertToBech32('wq', process.env.WORKNET_WQT_TOKEN) },
           fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
         },
         submitMethod: async () => {
@@ -99,7 +97,7 @@ export default {
           const res = await this.$store.dispatch('wallet/undelegate');
           this.SetLoader(false);
           if (res.ok) {
-            this.ShowToast(this.$tc('modals.undelegateAmount', frozenBalance), this.$t('modals.undelegate'));
+            this.ShowToast(this.$tc('modals.undelegateAmount', this.Floor(frozenBalance)), this.$t('modals.undelegate'));
           } else if (res.msg.includes('Not enough balance to undelegate')) {
             this.ShowToast(this.$t('errors.transaction.notEnoughFunds'), this.$t('errors.undelegateTitle'));
           }

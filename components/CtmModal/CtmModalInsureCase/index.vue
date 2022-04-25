@@ -1,7 +1,7 @@
 <template>
   <ctm-modal-box
     class="messageSend"
-    :title="$t('modals.insureCase')"
+    :title="$tc('modals.insureCase')"
   >
     <div class="ctm-modal__content">
       <div class="user">
@@ -11,7 +11,7 @@
           alt=""
         >
         <div class="name">
-          {{ $tc('insuring.paymentOfInsurance', $t('insuring.userName') ) }}
+          {{ $tc('insuring.paymentOfInsurance', $t('insuring.userName')) }}
         </div>
       </div>
       <div class="ctm-modal_left">
@@ -29,7 +29,7 @@
       <div class="ctm-modal__content-btns">
         <base-btn
           class="btn"
-          @click="hide()"
+          @click="CloseModal"
         >
           {{ $t('meta.cancel') }}
         </base-btn>
@@ -59,9 +59,6 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     showPensionIsRegisteredModal() {
     },
   },
@@ -72,6 +69,7 @@ export default {
 
 .ctm-modal {
   @include modalKit;
+
   &__content-field {
     margin: 15px 0 0 0;
   }
@@ -89,7 +87,7 @@ export default {
 
     .ava {
       height: 25px;
-      width:  25px;
+      width: 25px;
       border-radius: 50%;
     }
 
@@ -118,25 +116,26 @@ export default {
     gap: 10px;
     margin: 25px 0;
 
-    .pic {}
+    .pic {
+    }
   }
 
   &__content-btns {
     .btn {
-        box-sizing: border-box;
-        font-weight: 400;
-        font-size: 16px;
-        color: #0083C7;
-        border: 1px solid #0083C71A;
-        border-radius: 6px;
-        transition: .3s;
-        background-color: #fff;
+      box-sizing: border-box;
+      font-weight: 400;
+      font-size: 16px;
+      color: #0083C7;
+      border: 1px solid #0083C71A;
+      border-radius: 6px;
+      transition: .3s;
+      background-color: #fff;
 
-        &:hover {
-          background-color: #0083C71A;
-          border: 0px;
-        }
+      &:hover {
+        background-color: #0083C71A;
+        border: 0px;
       }
+    }
   }
 }
 
