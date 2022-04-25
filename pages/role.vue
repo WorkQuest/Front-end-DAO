@@ -153,14 +153,8 @@ export default {
     window.addEventListener('beforeunload', this.clearCookies);
   },
   async beforeMount() {
-    const access = this.$cookies.get('access');
-    const refresh = this.$cookies.get('refresh');
     const userStatus = this.$cookies.get('userStatus');
-    if (!access || !userStatus) {
-      await this.$router.push(Path.SIGN_IN);
-      return;
-    }
-    if (!this.userData.id) await this.$store.dispatch('user/getUserData');
+    if (!this.userData.id && userStatus === UserStatuses.Confirmed) await this.$store.dispatch('user/getUserData');
     if (this.userData.wallet?.address && userStatus === UserStatuses.Confirmed) {
       this.isConfirmingPass = true;
       await this.redirectUser();
@@ -191,6 +185,7 @@ export default {
       this.$cookies.remove('refresh');
       this.$cookies.remove('userLogin');
       this.$cookies.remove('userStatus');
+      this.$cookies.remove('confirmToken');
     },
     toSign() {
       this.$store.dispatch('user/logout');

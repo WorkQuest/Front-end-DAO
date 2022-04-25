@@ -179,14 +179,18 @@ export default {
     }),
   },
   created() {
-    if (this.$cookies.get('access')) this.$router.push(Path.PROPOSALS);
+    const { token } = this.$route.query;
     window.addEventListener('beforeunload', this.unloadHandler);
+    if (token) {
+      this.$cookies.set('confirmToken', String(token));
+    }
   },
   async mounted() {
     this.isLoginWithSocial = this.$cookies.get('socialNetwork');
     const access = this.$cookies.get('access');
     const refresh = this.$cookies.get('refresh');
     const userStatus = this.$cookies.get('userStatus');
+    if (access && +userStatus === UserStatuses.Confirmed) await this.$router.push(Path.PROPOSALS);
     if (this.isLoginWithSocial && access && +userStatus === UserStatuses.Confirmed) {
       this.SetLoader(true);
       await this.$store.dispatch('user/getUserData');
@@ -240,9 +244,9 @@ export default {
       this.addressAssigned = true;
       this.$cookies.set('userLogin', true, { path: '/' });
       // redirect to confirm access if token exists & unconfirmed account
-      const confirmToken = JSON.parse(sessionStorage.getItem('confirmToken'));
+      const confirmToken = this.$cookies.get('confirmToken');
       if (this.userStatus === UserStatuses.Unconfirmed && confirmToken) {
-        this.$router.push(`/confirm/?token=${confirmToken}`);
+        this.$router.push(`${Path.ROLE}/?token=${confirmToken}`);
         return;
       }
       sessionStorage.removeItem('confirmToken');
@@ -260,6 +264,7 @@ export default {
       if (ok) {
         this.userStatus = result.userStatus;
         this.userWalletAddress = result.address ? result.address.toLowerCase() : '';
+        this.$cookies.set('userStatus', result.userStatus);
         if (result.totpIsActive) {
           await this.ShowModal({
             key: modals.securityCheck,
@@ -272,7 +277,7 @@ export default {
       this.SetLoader(false);
     },
     async nextStepAction() {
-      const confirmToken = sessionStorage.getItem('confirmToken');
+      const confirmToken = this.$cookies.get('confirmToken');
       // Unconfirmed account w/o confirm token
       if (this.userStatus === UserStatuses.Unconfirmed && !confirmToken) {
         await this.$store.dispatch('main/showToast', {

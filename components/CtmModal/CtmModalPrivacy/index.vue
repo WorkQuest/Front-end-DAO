@@ -77,33 +77,22 @@ export default {
   },
   methods: {
     async onSubmit() {
-      // Role page & select role
-      if (this.$cookies.get('userStatus') === UserStatuses.NeedSetRole) {
-        const response = await this.$store.dispatch('user/setUserRole', { role: this.options.role });
-        if (response?.ok) {
-          this.$cookies.set('role', this.options.role, { path: '/' });
-          this.$cookies.set('userStatus', 1, { path: '/' });
-          this.options.callback();
-          this.CloseModal();
-          return;
-        }
-      } else { // Confirm account page
-        const payload = {
-          confirmCode: this.options.confirmCode,
-          role: this.options.role,
-        };
-        const response = await this.$store.dispatch('user/confirm', payload);
-        if (response?.ok) {
-          this.$cookies.set('role', this.options.role, { path: '/' });
-          this.$cookies.set('userStatus', 1, { path: '/' });
-          sessionStorage.removeItem('confirmToken');
-          this.ShowToast(this.$t('modals.yourAccountVerified'), this.$t('modals.success'));
-          await this.$router.push(Path.ROLE);
-        } else {
-          // Wrong confirm token
-          await this.$store.dispatch('user/logout');
-          await this.$router.push(Path.SIGN_IN);
-        }
+      const payload = {
+        confirmCode: this.$cookies.get('confirmToken'),
+        role: this.options.role,
+      };
+      const response = await this.$store.dispatch('user/confirm', payload);
+      if (response?.ok) {
+        this.$cookies.set('role', this.options.role, { path: '/' });
+        this.$cookies.set('userStatus', 1, { path: '/' });
+        this.$cookies.remove('confirmToken');
+        this.ShowToast(this.$t('modals.yourAccountVerified'), this.$t('modals.success'));
+        await this.options.callback();
+        await this.$router.push(Path.ROLE);
+      } else {
+        // Wrong confirm token
+        await this.$store.dispatch('user/logout');
+        await this.$router.push(Path.SIGN_IN);
       }
       this.CloseModal();
     },
