@@ -343,6 +343,7 @@ export default {
       this.isAddComment = false;
       this.opinion = '';
       await this.getRootComments();
+      await this.getCurrentDiscussion();
       this.SetLoader(false);
     },
     async getCurrentDiscussion() {
