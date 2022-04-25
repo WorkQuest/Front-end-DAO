@@ -553,7 +553,7 @@ export default {
       }
     }
 
-    &_linkedin {
+    &_LinkedIn {
       span:before {
         font-size: 18px;
         color: #0A7EEA;

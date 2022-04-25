@@ -17,6 +17,7 @@
           >
           <span>{{ $t('signIn.workQuest') }}</span>
         </div>
+        <span class="template__text">{{ $t('signIn.desc') }}</span>
       </div>
     </div>
     <transition name="fade">
@@ -88,15 +89,12 @@ export default {
     margin-right: 130px;
   }
   &__logo {
-    display: grid;
+    display: flex;
     align-items: center;
-    grid-template-columns: 40px 1fr;
-    grid-gap: 5px;
     cursor: pointer;
-    width: 170px;
-    padding: 10px 38.5%;
-    margin-top: 15px;
+    margin: 15px;
     span {
+      margin-left: 10px;
       font-family: 'Inter', sans-serif;
       font-style: normal;
       font-weight: bold;
@@ -105,19 +103,29 @@ export default {
       color: #ffffff;
     }
   }
+  &__text {
+    margin: 20px;
+    width: 60%;
+
+    font-style: normal;
+    font-weight: 700;
+    font-size: 75px;
+    line-height: 130%;
+    color: #FFFFFF;
+  }
   &__content {
     display: grid;
     align-items: center;
   }
   &__right {
     display: grid;
-    grid-template-rows: auto 1fr;
-    grid-gap: 53px;
-
-    background-image: url("~assets/img/app/auth_proposals-bg.svg");
+    align-items: flex-start;
+    flex-direction: column;
+    background-image: url("~assets/img/app/auth_bg.png");
     background-position: right;
     background-repeat: no-repeat;
     background-size: cover;
+    background-position-x: center;
   }
   &__long {
     justify-self: flex-end;
@@ -146,16 +154,18 @@ export default {
 
 @include _1199 {
   .template {
+    &__text {
+      font-size: 70px;
+    }
     &__container {
       grid-template-columns: 1fr;
-      grid-template-rows: 500px 1fr;
+      grid-template-rows: repeat(2, 1fr);
     }
     &__left {
       margin: 0;
       max-width: initial;
       justify-self: initial;
       padding: 0px 10px;
-      max-width: calc(100vw - 10px);
     }
     &__content {
       margin: 0 auto;
@@ -172,17 +182,58 @@ export default {
       font-size: 32px;
     }
     &__logo {
-      padding: 10px 39%;
+      padding-left: 39%;
     }
   }
 }
 @include _575 {
   .template {
     &__container {
-      grid-template-rows: 300px 1fr;
+      grid-template-rows: 300px auto;
+    }
+    &__logo {
+      padding: 0;
+    }
+    &__text {
+      width: auto;
+      margin: 0 10px;
+      font-size: 45px;
     }
     &__left {
       padding: 0 10px 30px;
+    }
+  }
+}
+@include _380 {
+  .template {
+    &__container {
+      grid-template-rows: 180px auto;
+    }
+    &__text {
+      font-size: 35px;
+    }
+    &__content {
+      padding-top: 15px;
+    }
+    &__logo {
+      align-items: flex-start;
+      span {
+        font-size: 20px;
+        margin-left: 0;
+        margin-top:5px;
+      }
+    }
+  }
+}
+@include _350() {
+  .template {
+    &__logo {
+      span {
+        font-size: 18px;
+      }
+    }
+    &__left {
+      max-width: calc(100vw - 10px);
     }
   }
 }

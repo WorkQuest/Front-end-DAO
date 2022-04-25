@@ -171,6 +171,7 @@
   },
   "signIn": {
     "title": "Sign in",
+    "desc": "Propose your idea right now",
     "account": "Haven’t account?",
     "regs": "Registration",
     "login": "Login",
