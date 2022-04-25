@@ -3,16 +3,20 @@ import { ethers } from 'ethers';
 import { AES, enc } from 'crypto-js';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
-import message, { cosmos } from '@cosmostation/cosmosjs/src/messages/proto';
+import message from '@cosmostation/cosmosjs/src/messages/proto';
+import { keccak_256 } from '@noble/hashes/sha3';
 import converter from 'bech32-converting';
 import secp256k1 from 'secp256k1';
-// import * as bip32 from 'bip32';
-import crypto from 'crypto';
 import { error, success } from '~/utils/success-error';
 import abi from '~/abi/index';
 import { errorCodes } from '~/utils/enums';
 
 const bip39 = require('bip39');
+
+let bip32Lib;
+const BIP32Factory = require('bip32').default;
+
+import('tiny-secp256k1').then((ecc) => BIP32Factory(ecc)).then((bip32) => { bip32Lib = bip32; });
 
 BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN });
 BigNumber.config({ EXPONENTIAL_AT: 60 });
@@ -452,97 +456,39 @@ export const executeVoting = async (id) => {
 };
 
 /** VALIDATORS */
-
-const chainId = 'worknet_20220112-1'; // '20220112'; // '20211224'; - old
-// cosmos.url = process.env.WQ_PROVIDER;
-// cosmos.path = path;
-console.log('message', message);
-// cosmos.chainId = chainId;
-
-const hexToBytes = (hex) => {
-  const bytes = [];
-  for (let c = 0; c < hex.length; c += 2) {
-    bytes.push(parseInt(hex.substr(c, 2), 16));
-  }
-  return bytes;
-};
-const bytesToHex = (bytes) => {
-  const hex = [];
-  for (let i = 0; i < bytes.length; i += 1) {
-    const current = bytes[i] < 0 ? bytes[i] + 256 : bytes[i];
-    // eslint-disable-next-line no-bitwise
-    hex.push((current >>> 4).toString(16));
-    // eslint-disable-next-line no-bitwise
-    hex.push((current & 0xF).toString(16));
-  }
-  return hex.join('');
-};
+const chainId = 'worknet_20220112-1';
 
 const fetchCosmosAccount = async (address) => {
   const accountsApi = '/api/cosmos/auth/v1beta1/accounts/';
   return fetch(process.env.WQ_PROVIDER + accountsApi + address).then((response) => response.json());
 };
 
-// import('tiny-secp256k1').then(ecc => BIP32Factory(ecc)).then(bip32 => {
-//
-//   const m = 'range inquiry notice praise heart barely dinosaur license fame family infant midnight flock symptom aerobic dinosaur whisper major hair kitchen never way combine affair';
-//   bip39.mnemonicToSeed(m).then(seed => {
-//     const node = bip32.fromSeed(seed);
-//     const child = node.derivePath("m/44'/60'/0'/0/0");
-//     console.log(bytesToHex(child.privateKey));
-//   });
-// });
+const getPrivAndPublic = async (mnemonic) => {
+  const seed = await bip39.mnemonicToSeed(mnemonic);
+  const node = bip32Lib.fromSeed(seed);
+  const child = node.derivePath("m/44'/60'/0'/0/0");
 
-const BIP32Factory = require('bip32').default;
+  const ECPariPriv = child.privateKey;
 
-let ECPariPriv;
-let pubKeyAny;
-import('tiny-secp256k1').then((ecc) => BIP32Factory(ecc)).then((bip32) => {
-  const m = 'spot flush switch era payment family aerobic talk balcony ugly orient marine';
-  bip39.mnemonicToSeed(m).then((seed) => {
-    const node = bip32.fromSeed(seed);
-    const child = node.derivePath("m/44'/60'/0'/0/0");
-
-    ECPariPriv = child.privateKey;
-
-    const tempPub = child.publicKey;
-    // eslint-disable-next-line new-cap
-    const buf1 = new Buffer.from([10]);
-    // eslint-disable-next-line new-cap
-    const buf2 = new Buffer.from([tempPub.length]);
-    // eslint-disable-next-line new-cap
-    const buf3 = new Buffer.from(tempPub);
-    const pubKey = Buffer.concat([buf1, buf2, buf3]);
-    pubKeyAny = new message.google.protobuf.Any({
-      type_url: '/ethermint.crypto.v1.ethsecp256k1.PubKey',
-      value: pubKey,
-    });
-  });
-});
-// const getECPairPriv = async (mnemonic) => {
-//   // const seed = await bip39.mnemonicToSeed(mnemonic);
-//   // const node = bip32.fromSeed(seed);
-//   // console.log('NODE', node);
-//   // const child = node.derivePath("m/44'/60'/0'/0/0");
-//   // return child.privateKey;
-// };
-const getPubKeyAny = (privKey) => {
-  const pubKeyByte = secp256k1.publicKeyCreate(privKey);
+  const tempPub = child.publicKey;
   // eslint-disable-next-line new-cap
   const buf1 = new Buffer.from([10]);
   // eslint-disable-next-line new-cap
-  const buf2 = new Buffer.from([pubKeyByte.length]);
+  const buf2 = new Buffer.from([tempPub.length]);
   // eslint-disable-next-line new-cap
-  const buf3 = new Buffer.from(pubKeyByte);
+  const buf3 = new Buffer.from(tempPub);
   const pubKey = Buffer.concat([buf1, buf2, buf3]);
-  return new message.google.protobuf.Any({ // pubKeyAny
-    // type_url: '/cosmos.crypto.secp256k1.PubKey',
+  const pubKeyAny = new message.google.protobuf.Any({
     type_url: '/ethermint.crypto.v1.ethsecp256k1.PubKey',
     value: pubKey,
   });
-  // type_url: '/cosmos.crypto.ed25519.PubKey', // задан в валидаторах (жалуется: panic message redacted to hide potentially sensitive system info: panic)
-  // type_url: '/ethermint.crypto.v1.ethsecp256k1.PubKey',
+  return { pubKeyAny, privKey: ECPariPriv };
 };
+
+function toRealUint8Array(data) {
+  if (data instanceof Uint8Array) return data;
+  return Uint8Array.from(data);
+}
 
 const sign = (txBody, authInfo, accountNumber, privKey) => {
   const bodyBytes = message.cosmos.tx.v1beta1.TxBody.encode(txBody).finish();
@@ -554,8 +500,8 @@ const sign = (txBody, authInfo, accountNumber, privKey) => {
     account_number: Number(accountNumber),
   });
   const signMessage = message.cosmos.tx.v1beta1.SignDoc.encode(signDoc).finish();
-  const hash = crypto.createHash('sha256').update(signMessage).digest();
-  const sig = secp256k1.sign(hash, Buffer.from(privKey));
+  const hash = keccak_256.create().update(toRealUint8Array(signMessage)).digest();
+  const sig = secp256k1.sign(Buffer.from(hash), Buffer.from(privKey));
   const txRaw = new message.cosmos.tx.v1beta1.TxRaw({
     body_bytes: bodyBytes,
     auth_info_bytes: authInfoBytes,
@@ -567,25 +513,16 @@ const sign = (txBody, authInfo, accountNumber, privKey) => {
 
 export const test = async () => {
   try {
-    // const m = 'range inquiry notice praise heart barely dinosaur license fame family infant midnight flock symptom aerobic dinosaur whisper major hair kitchen never way combine affair';
-    const m = 'spot flush switch era payment family aerobic talk balcony ugly orient marine';
-
-    const w = createWallet(m);
-    console.log(w);
-
-    const address = converter('ethm').toBech32(w.address);
-
+    const address = converter('ethm').toBech32(wallet.address);
     const data = await fetchCosmosAccount(address);
     console.log('cosmos ac', data);
-    const privKey = ECPariPriv; // await getECPairPriv(wallet.mnemonic);
-    // const pubKeyAny = getPubKeyAny(privKey);
-    // console.log('PUB >>> ', pubKeyAny, bytesToHex(pubKeyAny.value), '>', w.publicKey);
+    const { privKey, pubKeyAny } = await getPrivAndPublic(wallet.mnemonic);
 
     // ---------------------------------- (1)txBody ----------------------------------
     const msgSend = new message.cosmos.bank.v1beta1.MsgSend({
       from_address: address,
-      to_address: address, // 'ethmvaloper1r9n7xttnufe02qyh02yjjvgzez9c0zcdyzk02h', // 'ethm1x43lhtppf0k828cm063uy2ul9xjtm79jjp5jwx',
-      amount: [{ denom: 'aphoton', amount: String('100000') }],
+      to_address: 'ethm137udu8hsrll4ps3qeyfyx9yyx42kcnv2kvd8uk',
+      amount: [{ denom: 'aphoton', amount: String('1000000') }],
     });
     const msgSendAny = new message.google.protobuf.Any({
       type_url: '/cosmos.bank.v1beta1.MsgSend',
@@ -605,7 +542,51 @@ export const test = async () => {
     });
     const authInfo = new message.cosmos.tx.v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
     // -------------------------------- sign --------------------------------
-    return success(sign(txBody, authInfo, data.account.base_account.account_number, privKey)); // signedTxBytes
+    return success(sign(txBody, authInfo, data.account.base_account.account_number, privKey)); // signedTxBytes base64
+  } catch (e) {
+    console.error('test', e);
+    return error();
+  }
+};
+
+export const delegateToValidator = async (validatorAddress, amount) => {
+  try {
+    const address = converter('ethm').toBech32(wallet.address);
+    const data = await fetchCosmosAccount(address);
+    console.log(data);
+    const { privKey, pubKeyAny } = await getPrivAndPublic(wallet.mnemonic);
+    // ---------------------------------- (1)txBody ----------------------------------
+    const msgSend = new message.cosmos.bank.v1beta1.MsgSend({
+      from_address: address,
+      to_address: 'ethmvaloper1r9n7xttnufe02qyh02yjjvgzez9c0zcdyzk02h',
+      amount: [{ denom: 'aphoton', amount: String('1839799472000000000000000000') }],
+    });
+    const msgSendAny = new message.google.protobuf.Any({
+      type_url: '/cosmos.staking.v1beta1.MsgUndelegate',
+      value: message.cosmos.bank.v1beta1.MsgSend.encode(msgSend).finish(),
+    });
+    const txBody = new message.cosmos.tx.v1beta1.TxBody({ messages: [msgSendAny], memo: '' });
+
+    // https://docs.rs/cosmos-sdk-proto/0.5.0/cosmos_sdk_proto/cosmos/staking/v1beta1/index.html
+    // type_url: '/cosmos.staking.v1beta1.MsgUndelegate',
+    // type_url: '/cosmos.staking.v1beta1.MsgDelegate',
+
+    // Сколько делегировали?
+    // https://dev-node-nyc3.workquest.co/api//cosmos/staking/v1beta1/validators/ethmvaloper1r9n7xttnufe02qyh02yjjvgzez9c0zcdyzk02h/delegations/ethm10fanzq0ksuptyfhcx3wecnekldqk2xw88yvpah
+
+    // --------------------------------- (2)authInfo ---------------------------------
+    const signerInfo = new message.cosmos.tx.v1beta1.SignerInfo({
+      public_key: pubKeyAny,
+      mode_info: { single: { mode: message.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT } },
+      sequence: data.account.base_account.sequence,
+    });
+    const feeValue = new message.cosmos.tx.v1beta1.Fee({
+      amount: [{ denom: 'aphoton', amount: String('5000') }],
+      gas_limit: 200000,
+    });
+    const authInfo = new message.cosmos.tx.v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
+    // -------------------------------- sign --------------------------------
+    return success(sign(txBody, authInfo, data.account.base_account.account_number, privKey)); // signedTxBytes base64
   } catch (e) {
     console.error('test', e);
     return error();

@@ -20,15 +20,6 @@ export default {
   },
   async broadcast({ commit }, { signedTxBytes, broadCastMode = 'BROADCAST_MODE_SYNC' }) {
     try {
-      // const options = {
-      //   method: 'POST',
-      //   url: `${this.url}/cosmos/tx/v1beta1/txs`,
-      //   headers:
-      //       { 'Content-Type': 'application/json' },
-      //   body: { tx_bytes: txBytesBase64, mode: broadCastMode },
-      //   json: true,
-      // };
-
       const nodeApi = this.$axios.create({
         baseURL: `${nodeUrl}/cosmos/tx/v1beta1/txs`,
       });

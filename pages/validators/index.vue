@@ -51,7 +51,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { test } from '~/utils/wallet';
+import { delegateToValidator, test } from '~/utils/wallet';
 
 export default {
   name: 'Validators',
@@ -123,8 +123,10 @@ export default {
   },
   methods: {
     async test() {
-      const res = await test();
-      const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: res.result });
+      // const res = await test();
+      const delegateTx = await delegateToValidator('address', 'amount');
+      console.log('base64', delegateTx);
+      const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: delegateTx.result });
       console.log('RESULT >>', broadcastRes);
     },
   },
