@@ -257,15 +257,15 @@ export default {
       if (this.isLoading) return;
       this.SetLoader(true);
       this.model.email = this.model.email.trim();
-      const { ok, result } = await this.$store.dispatch('user/signIn', {
+      const { ok, result: { userStatus, address, totpIsActive } } = await this.$store.dispatch('user/signIn', {
         ...this.model,
         isRememberMeSelected: this.isRememberMeSelected,
       });
       if (ok) {
-        this.userStatus = result.userStatus;
-        this.userWalletAddress = result.address ? result.address.toLowerCase() : '';
-        this.$cookies.set('userStatus', result.userStatus);
-        if (result.totpIsActive) {
+        this.userStatus = userStatus;
+        this.userWalletAddress = address ? address.toLowerCase() : '';
+        this.$cookies.set('userStatus', userStatus);
+        if (totpIsActive) {
           await this.ShowModal({
             key: modals.securityCheck,
             actionMethod: async () => await this.nextStepAction(),
