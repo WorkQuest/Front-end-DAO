@@ -38,6 +38,7 @@
         :items="validators"
       />
       <base-pager
+        v-if="totalPages > 1"
         v-model="currPage"
         class="validators__pagination"
         :total-pages="totalPages"
@@ -53,7 +54,7 @@ export default {
   name: 'Validators',
   data() {
     return {
-      limit: 20,
+      limit: 2,
       offset: 0,
       search: '',
       q: '',
@@ -111,7 +112,15 @@ export default {
       return mainFields;
     },
     totalPages() {
-      return 2;
+      return Math.ceil(this.validatorsCount / this.limit);
+    },
+  },
+  watch: {
+    tableType() {
+      this.getValidators();
+    },
+    currPage() {
+      this.getValidators();
     },
   },
   beforeCreate() {
@@ -119,9 +128,17 @@ export default {
   },
   async beforeMount() {
     if (!this.isWalletConnected) return;
-    this.SetLoader(true);
-    await this.$store.dispatch('validators/getValidators');
-    this.SetLoader(false);
+    await this.getValidators();
+  },
+  methods: {
+    async getValidators() {
+      this.offset = (this.currPage - 1) * this.limit;
+      await this.$store.dispatch('validators/getValidators', {
+        status: this.tableType === 'candidates' ? 'BOND_STATUS_UNBONDED' : 'BOND_STATUS_BONDED',
+        limit: this.limit,
+        offset: this.offset,
+      });
+    },
   },
 };
 </script>

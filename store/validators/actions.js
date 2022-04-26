@@ -4,21 +4,24 @@ import { getAddressFromConsensusPub } from '~/utils/wallet';
 
 const baseURL = `${process.env.WQ_PROVIDER}/api`;
 export default {
-  async getValidators({ commit, dispatch }, isBonded) {
+  async getValidators({ commit, dispatch }, { status, limit, offset }) {
     try {
       const nodeApi = this.$axios.create({ baseURL });
-      const config = isBonded ? { params: { status: 'BOND_STATUS_BONDED' } } : null;
+      const config = {
+        params: {
+          'pagination.count_total': true,
+          'pagination.limit': limit,
+          'pagination.offset': offset,
+          status,
+        },
+      };
       const res = await nodeApi.$get('/cosmos/staking/v1beta1/validators', config);
-
       const { validators } = res;
 
       // slots count & missed blocks for all validators
       const infoRes = await Promise.all([
         ...validators.map((item) => dispatch('getSlotsCount', item.operator_address)),
-        ...validators.map((item) => dispatch(
-          'getMissedBlocks',
-          converter('ethmvalcons').toBech32(getAddressFromConsensusPub(item.consensus_pubkey.key)),
-        )),
+        ...validators.map((item) => dispatch('getMissedBlocks', item.consensus_pubkey.key)),
       ]);
       for (let i = 0; i < validators.length; i += 1) {
         validators[i].slots = infoRes[i].result;
@@ -27,18 +30,18 @@ export default {
 
       commit('setValidatorsList', validators);
       commit('setValidatorsCount', Number(res.pagination.total));
-      console.log(res);
     } catch (e) {
-      console.error('validators/getValidators', e);
+      console.error('validators/getValidators');
     }
   },
-  async getMissedBlocks({ commit }, validatorAddress) {
+  async getMissedBlocks({ commit }, consensusPubKey) {
     try {
+      const validatorAddress = converter('ethmvalcons').toBech32(getAddressFromConsensusPub(consensusPubKey));
       const nodeApi = this.$axios.create({ baseURL });
       const res = await nodeApi.$get(`/cosmos/slashing/v1beta1/signing_infos/${validatorAddress}`);
       return success(res.val_signing_info.missed_blocks_counter);
     } catch (e) {
-      console.error('validators/getMissedBlocks', e);
+      console.error('validators/getMissedBlocks');
       return error();
     }
   },
@@ -52,7 +55,7 @@ export default {
       return error();
     }
   },
-  async getValidatorByAddress({ commit }, validatorAddress) {
+  async getValidatorByAddress({ commit, dispatch }, validatorAddress) {
     try {
       const nodeApi = this.$axios.create({ baseURL });
       const { validator } = await nodeApi.$get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`);
@@ -85,7 +88,7 @@ export default {
         headers: { 'Content-Type': 'application/json' },
       });
     } catch (e) {
-      console.error('wallet/broadcast', e);
+      console.error('wallet/broadcast');
       return error();
     }
   },

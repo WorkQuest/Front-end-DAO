@@ -147,6 +147,7 @@ export default {
     return {
       notFounded: false,
       slots: 0,
+      missedBlocks: 0,
     };
   },
   computed: {
@@ -160,7 +161,7 @@ export default {
       return [
         { name: this.$t('validator.commonStake'), desc: this.$tc('meta.wusdCount', this.validatorData?.tokens || 0) },
         { name: this.$t('validator.fee'), desc: `${Math.ceil(this.validatorData?.commission?.commission_rates?.rate * 100)}%` },
-        { name: this.$t('validator.missedBlocks'), desc: 0 },
+        { name: this.$t('validator.missedBlocks'), desc: this.missedBlocks },
       ];
     },
     convertedValidatorAddress() {
@@ -199,15 +200,17 @@ export default {
       if (!res.ok) this.toNotFound();
     }
 
-    // Объединить нижние
-    const slotsRes = await this.$store.dispatch('validators/getSlotsCount', validatorAddress);
+    const [slotsRes, missedBlocks] = await Promise.all([
+      this.$store.dispatch('validators/getSlotsCount', validatorAddress),
+      this.$store.dispatch('validators/getMissedBlocks', this.validatorData.consensus_pubkey.key),
+      // Данные о делегировании с аккаунта юзера этому валидатору
+      this.$store.dispatch('validators/getDelegatedDataForValidator', {
+        userWalletAddress: this.ConvertToBech32('ethm', this.userWalletAddress),
+        validatorAddress,
+      }),
+    ]);
     if (slotsRes.ok) this.slots = slotsRes.result;
-
-    // Данные о делегировании с аккаунта юзера этому валидатору
-    await this.$store.dispatch('validators/getDelegatedDataForValidator', {
-      userWalletAddress: this.ConvertToBech32('ethm', this.userWalletAddress),
-      validatorAddress,
-    });
+    if (missedBlocks.ok) this.missedBlocks = missedBlocks.result;
     this.SetLoader(false);
   },
   beforeDestroy() {
