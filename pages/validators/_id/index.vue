@@ -137,7 +137,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { sha256 } from 'ethers/lib.esm/utils';
 import { CreateSignedTxForValidator } from '~/utils/wallet';
 import { DelegateMode, ExplorerUrls, ValidatorsMethods } from '~/utils/enums';
 import modals from '~/store/modals/modals';
@@ -173,8 +172,8 @@ export default {
       return `${url}/address/${this.convertedValidatorAddress}`;
     },
   },
-  async beforeCreate() {
-    await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
+  beforeCreate() {
+    this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
   },
   async beforeMount() {
     if (!this.isWalletConnected) return;
@@ -204,17 +203,7 @@ export default {
     const slotsRes = await this.$store.dispatch('validators/getSlotsCount', validatorAddress);
     if (slotsRes.ok) this.slots = slotsRes.result;
 
-    const buffer = Buffer.from('y8IEiTveu/UBEvO2nh6kNhhhqw+xg3CApaE2usVzpDI=', 'utf8');
-    const result = Array(buffer.length);
-    for (let i = 0; i < buffer.length; i += 1) {
-      result[i] = buffer[i];
-    }
-
-    console.log(result);
-    const t = sha256(result);
-    console.log(this.ConvertToBech32('ethmvaloper', t.substr(2, 22)));
-    // ethmvaloper14mzpyw05n9zcxckfx9anhqkatp7x5a9xlqppl4
-
+    // Данные о делегировании с аккаунта юзера этому валидатору
     await this.$store.dispatch('validators/getDelegatedDataForValidator', {
       userWalletAddress: this.ConvertToBech32('ethm', this.userWalletAddress),
       validatorAddress,

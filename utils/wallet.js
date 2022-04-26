@@ -7,6 +7,7 @@ import message from '@cosmostation/cosmosjs/src/messages/proto';
 import { keccak_256 } from '@noble/hashes/sha3';
 import converter from 'bech32-converting';
 import secp256k1 from 'secp256k1';
+import { sha256 } from 'ethers/lib.esm/utils';
 import { error, success } from '~/utils/success-error';
 import { errorCodes } from '~/utils/enums';
 import { WQToken, WQVoting, ERC20 } from '~/abi/index';
@@ -458,11 +459,8 @@ export const executeVoting = async (id) => {
 
 /** VALIDATORS */
 const chainId = 'worknet_20220112-1';
-
-const fetchCosmosAccount = async (address) => {
-  const accountsApi = '/api/cosmos/auth/v1beta1/accounts/';
-  return fetch(process.env.WQ_PROVIDER + accountsApi + address).then((response) => response.json());
-};
+const fetchCosmosAccount = async (address) => fetch(`${process.env.WQ_PROVIDER}/api/cosmos/auth/v1beta1/accounts/${address}`)
+  .then((response) => response.json());
 
 const getPrivAndPublic = async (mnemonic) => {
   const seed = await bip39.mnemonicToSeed(mnemonic);
@@ -512,43 +510,43 @@ const sign = (txBody, authInfo, accountNumber, privKey) => {
   return Buffer.from(txBytes, 'binary').toString('base64'); // txBytesBase64
 };
 
-export const test = async () => {
-  try {
-    const address = converter('ethm').toBech32(wallet.address);
-    const data = await fetchCosmosAccount(address);
-    console.log('cosmos ac', data);
-    const { privKey, pubKeyAny } = await getPrivAndPublic(wallet.mnemonic);
-
-    // ---------------------------------- (1)txBody ----------------------------------
-    const msgSend = new message.cosmos.bank.v1beta1.MsgSend({
-      from_address: address,
-      to_address: 'ethm137udu8hsrll4ps3qeyfyx9yyx42kcnv2kvd8uk',
-      amount: [{ denom: 'aphoton', amount: String('1000000') }],
-    });
-    const msgSendAny = new message.google.protobuf.Any({
-      type_url: '/cosmos.bank.v1beta1.MsgSend',
-      value: message.cosmos.bank.v1beta1.MsgSend.encode(msgSend).finish(),
-    });
-    const txBody = new message.cosmos.tx.v1beta1.TxBody({ messages: [msgSendAny], memo: '' });
-
-    // --------------------------------- (2)authInfo ---------------------------------
-    const signerInfo = new message.cosmos.tx.v1beta1.SignerInfo({
-      public_key: pubKeyAny,
-      mode_info: { single: { mode: message.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT } },
-      sequence: data.account.base_account.sequence,
-    });
-    const feeValue = new message.cosmos.tx.v1beta1.Fee({
-      amount: [{ denom: 'aphoton', amount: String('5000') }],
-      gas_limit: 200000,
-    });
-    const authInfo = new message.cosmos.tx.v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
-    // -------------------------------- sign --------------------------------
-    return success(sign(txBody, authInfo, data.account.base_account.account_number, privKey)); // signedTxBytes base64
-  } catch (e) {
-    console.error('test', e);
-    return error();
-  }
-};
+// export const test = async () => {
+//   try {
+//     const address = converter('ethm').toBech32(wallet.address);
+//     const data = await fetchCosmosAccount(address);
+//     console.log('cosmos ac', data);
+//     const { privKey, pubKeyAny } = await getPrivAndPublic(wallet.mnemonic);
+//
+//     // ---------------------------------- (1)txBody ----------------------------------
+//     const msgSend = new message.cosmos.bank.v1beta1.MsgSend({
+//       from_address: address,
+//       to_address: 'ethm137udu8hsrll4ps3qeyfyx9yyx42kcnv2kvd8uk',
+//       amount: [{ denom: 'aphoton', amount: String('1000000') }],
+//     });
+//     const msgSendAny = new message.google.protobuf.Any({
+//       type_url: '/cosmos.bank.v1beta1.MsgSend',
+//       value: message.cosmos.bank.v1beta1.MsgSend.encode(msgSend).finish(),
+//     });
+//     const txBody = new message.cosmos.tx.v1beta1.TxBody({ messages: [msgSendAny], memo: '' });
+//
+//     // --------------------------------- (2)authInfo ---------------------------------
+//     const signerInfo = new message.cosmos.tx.v1beta1.SignerInfo({
+//       public_key: pubKeyAny,
+//       mode_info: { single: { mode: message.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT } },
+//       sequence: data.account.base_account.sequence,
+//     });
+//     const feeValue = new message.cosmos.tx.v1beta1.Fee({
+//       amount: [{ denom: 'aphoton', amount: String('5000') }],
+//       gas_limit: 200000,
+//     });
+//     const authInfo = new message.cosmos.tx.v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
+//     // -------------------------------- sign --------------------------------
+//     return success(sign(txBody, authInfo, data.account.base_account.account_number, privKey)); // signedTxBytes base64
+//   } catch (e) {
+//     console.error('test', e);
+//     return error();
+//   }
+// };
 
 export const CreateSignedTxForValidator = async (method, validatorAddress, amount) => {
   try {
@@ -556,7 +554,7 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
     const data = await fetchCosmosAccount(address);
     console.log(data);
     const { privKey, pubKeyAny } = await getPrivAndPublic(wallet.mnemonic);
-    // ---------------------------------- (1)txBody ----------------------------------
+    // txBody
     const msgSend = new message.cosmos.bank.v1beta1.MsgSend({
       from_address: address,
       to_address: validatorAddress,
@@ -567,12 +565,7 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
       value: message.cosmos.bank.v1beta1.MsgSend.encode(msgSend).finish(),
     });
     const txBody = new message.cosmos.tx.v1beta1.TxBody({ messages: [msgSendAny], memo: '' });
-
-    // https://docs.rs/cosmos-sdk-proto/0.5.0/cosmos_sdk_proto/cosmos/staking/v1beta1/index.html
-    // type_url: '/cosmos.staking.v1beta1.MsgUndelegate',
-    // type_url: '/cosmos.staking.v1beta1.MsgDelegate',
-
-    // --------------------------------- (2)authInfo ---------------------------------
+    // authInfo
     const signerInfo = new message.cosmos.tx.v1beta1.SignerInfo({
       public_key: pubKeyAny,
       mode_info: { single: { mode: message.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT } },
@@ -583,10 +576,15 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
       gas_limit: 200000,
     });
     const authInfo = new message.cosmos.tx.v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
-    // -------------------------------- sign --------------------------------
+    // sign
     return success(sign(txBody, authInfo, data.account.base_account.account_number, privKey)); // signedTxBytes base64
   } catch (e) {
     console.error('test', e);
     return error();
   }
+};
+
+export const getAddressFromConsensusPub = (pub) => {
+  const foo = Buffer.from(pub, 'base64');
+  return sha256(foo).substr(2, 40);
 };

@@ -79,6 +79,9 @@ export default {
           id: address,
           fee: `${Math.ceil(item.commission.commission_rates.rate * 100)}%`,
           minStake: item.min_self_delegation,
+          slots: item.slots,
+          missedBlocks: item.missedBlocks,
+          stake: item.tokens,
         });
       }
       return res;
@@ -115,6 +118,7 @@ export default {
     this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
   },
   async beforeMount() {
+    if (!this.isWalletConnected) return;
     this.SetLoader(true);
     await this.$store.dispatch('validators/getValidators');
     this.SetLoader(false);
