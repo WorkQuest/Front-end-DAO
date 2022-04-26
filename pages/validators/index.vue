@@ -24,14 +24,6 @@
           </button>
         </div>
       </div>
-      <base-field
-        v-model="search"
-        class="validators__search"
-        is-search
-        :placeholder="$t(`validators.${tableType === 'validators' ? 'searchValidator' : 'searchCandidates'}`)"
-        mode="icon"
-        data-selector="SEARCH"
-      />
       <base-table
         class="validators__table"
         :fields="tableFields"
@@ -54,10 +46,8 @@ export default {
   name: 'Validators',
   data() {
     return {
-      limit: 2,
+      limit: 10,
       offset: 0,
-      search: '',
-      q: '',
       currPage: 1,
       tableType: 'validators',
     };
@@ -154,18 +144,12 @@ export default {
   }
   &__table{
     overflow: auto;
-    margin-bottom: 15px;
+    margin: 15px 0 15px 0;
     position: relative;
   }
   &__head {
     display: flex;
     justify-content: space-between;
-  }
-  &__search{
-    margin: 20px 0 20px 0;
-    background-color: #FFFFFF;
-    height: 43px;
-    border-radius: 6px;
   }
 }
 .table__link {
