@@ -342,8 +342,7 @@ export default {
       await this.$store.dispatch('discussions/sendCommentOnDiscussion', { id: this.currentDiscussion.id, payload });
       this.isAddComment = false;
       this.opinion = '';
-      await this.getRootComments();
-      await this.getCurrentDiscussion();
+      await Promise.all([this.getRootComments(), this.getCurrentDiscussion()]);
       this.SetLoader(false);
     },
     async getCurrentDiscussion() {
