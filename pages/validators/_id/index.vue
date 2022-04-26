@@ -90,7 +90,7 @@
                 </div>
               </div>
               <progress-bar
-                :value="slots / 1000"
+                :value="slots / 10"
                 mode="blue"
               />
             </div>
@@ -116,12 +116,14 @@
               <base-btn
                 mode="lightRed"
                 class="right__button"
+                @click="undelegate"
               >
                 {{ $t('modals.undelegate') }}
               </base-btn>
               <base-btn
                 mode="lightBlue"
                 class="right__button"
+                @click="delegate"
               >
                 {{ $t('modals.delegate') }}
               </base-btn>
@@ -135,7 +137,10 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { ExplorerUrls } from '~/utils/enums';
+import { sha256 } from 'ethers/lib.esm/utils';
+import { CreateSignedTxForValidator } from '~/utils/wallet';
+import { DelegateMode, ExplorerUrls, ValidatorsMethods } from '~/utils/enums';
+import modals from '~/store/modals/modals';
 
 export default {
   name: 'Validator',
@@ -149,12 +154,14 @@ export default {
     ...mapGetters({
       validatorData: 'validators/getValidatorData',
       validatorsList: 'validators/getValidatorsList',
+      userWalletAddress: 'user/getUserWalletAddress',
+      isWalletConnected: 'wallet/getIsWalletConnected',
     }),
     leftColumn() {
       return [
-        { name: this.$t('validator.commonStake'), desc: this.$tc('meta.wusdCount', 1000000) },
-        { name: this.$t('validator.fee'), desc: '5%' },
-        { name: this.$t('validator.missedBlocks'), desc: 1000 },
+        { name: this.$t('validator.commonStake'), desc: this.$tc('meta.wusdCount', this.validatorData?.tokens || 0) },
+        { name: this.$t('validator.fee'), desc: `${Math.ceil(this.validatorData?.commission?.commission_rates?.rate * 100)}%` },
+        { name: this.$t('validator.missedBlocks'), desc: 0 },
       ];
     },
     convertedValidatorAddress() {
@@ -166,7 +173,12 @@ export default {
       return `${url}/address/${this.convertedValidatorAddress}`;
     },
   },
+  async beforeCreate() {
+    await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
+  },
   async beforeMount() {
+    if (!this.isWalletConnected) return;
+    this.SetLoader(true);
     const { id } = this.$route.params;
     let validatorAddress = null;
     try {
@@ -181,27 +193,57 @@ export default {
     for (const item of this.validatorsList) {
       if (item.operator_address === validatorAddress) {
         this.$store.commit('validators/setValidatorData', item);
-        return;
       }
     }
-    const res = await this.$store.dispatch('validators/getValidatorByAddress', validatorAddress);
-    if (!res.ok) this.toNotFound();
+    if (!this.validatorData) {
+      const res = await this.$store.dispatch('validators/getValidatorByAddress', validatorAddress);
+      if (!res.ok) this.toNotFound();
+    }
 
+    // Объединить нижние
     const slotsRes = await this.$store.dispatch('validators/getSlotsCount', validatorAddress);
     if (slotsRes.ok) this.slots = slotsRes.result;
+
+    const buffer = Buffer.from('y8IEiTveu/UBEvO2nh6kNhhhqw+xg3CApaE2usVzpDI=', 'utf8');
+    const result = Array(buffer.length);
+    for (let i = 0; i < buffer.length; i += 1) {
+      result[i] = buffer[i];
+    }
+
+    console.log(result);
+    const t = sha256(result);
+    console.log(this.ConvertToBech32('ethmvaloper', t.substr(2, 22)));
+    // ethmvaloper14mzpyw05n9zcxckfx9anhqkatp7x5a9xlqppl4
+
+    await this.$store.dispatch('validators/getDelegatedDataForValidator', {
+      userWalletAddress: this.ConvertToBech32('ethm', this.userWalletAddress),
+      validatorAddress,
+    });
+    this.SetLoader(false);
+  },
+  beforeDestroy() {
+    this.$store.commit('validators/setValidatorData', null);
   },
   methods: {
     toNotFound() {
       this.notFounded = true;
       this.ShowToast('not found');
     },
-    delegate() {
-      // import { delegateToValidator } from '~/utils/wallet';
-      // const delegateTx = await delegateToValidator('address', 'amount');
-      // const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: delegateTx.result });
+    async delegate() {
+      this.ShowModal({
+        key: modals.delegate,
+        delegateMode: DelegateMode.VALIDATORS,
+        investorAddress: this.validatorData.operator_address,
+      });
+      const delegateTx = await CreateSignedTxForValidator(ValidatorsMethods.DELEGATE, this.validatorData.operator_address, 'amount');
+      const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: delegateTx.result });
+      console.log(broadcastRes);
     },
     undelegate() {
-
+      this.ShowModal({
+        key: modals.undelegate,
+        delegateMode: DelegateMode.VALIDATORS,
+      });
     },
   },
 };

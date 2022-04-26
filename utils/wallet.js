@@ -559,11 +559,11 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
     // ---------------------------------- (1)txBody ----------------------------------
     const msgSend = new message.cosmos.bank.v1beta1.MsgSend({
       from_address: address,
-      to_address: 'ethmvaloper1r9n7xttnufe02qyh02yjjvgzez9c0zcdyzk02h',
+      to_address: validatorAddress,
       amount: [{ denom: 'aphoton', amount: String('1839909472') }],
     });
     const msgSendAny = new message.google.protobuf.Any({
-      type_url: method, // '/cosmos.staking.v1beta1.MsgUndelegate',
+      type_url: method,
       value: message.cosmos.bank.v1beta1.MsgSend.encode(msgSend).finish(),
     });
     const txBody = new message.cosmos.tx.v1beta1.TxBody({ messages: [msgSendAny], memo: '' });

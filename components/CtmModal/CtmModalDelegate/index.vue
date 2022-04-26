@@ -29,7 +29,7 @@
             <base-field
               v-model="tokensAmount"
               class="footer__body"
-              placeholder="10000 WQT"
+              :placeholder="`10000 ${options.delegateMode === $options.DelegateMode.INVESTORS ? 'WQT' : 'WUSD'}`"
               data-selector="AMOUNT"
               :name="$tc('modals.tokensNumber')"
               :rules="`required${min}|max_bn:${balance}|min_value:1|decimalPlaces:18`"
@@ -60,7 +60,7 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
-import { TokenSymbols } from '~/utils/enums';
+import { TokenSymbols, DelegateMode } from '~/utils/enums';
 import { WQToken } from '~/abi/index';
 
 export default {
@@ -73,6 +73,7 @@ export default {
       windowSize: window.innerWidth,
     };
   },
+  DelegateMode,
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
