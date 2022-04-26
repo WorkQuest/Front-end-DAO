@@ -116,7 +116,7 @@
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
 import {
-  Path, UserRole, UserStatuses, WalletState,
+  Path, UserStatuses, WalletState,
 } from '~/utils/enums';
 import CreateWallet from '~/components/ui/CreateWallet';
 import {
@@ -185,7 +185,6 @@ export default {
       this.$cookies.remove('refresh');
       this.$cookies.remove('userLogin');
       this.$cookies.remove('userStatus');
-      this.$cookies.remove('confirmToken');
     },
     toSign() {
       this.$store.dispatch('user/logout');

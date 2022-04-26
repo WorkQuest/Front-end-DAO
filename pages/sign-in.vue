@@ -182,7 +182,7 @@ export default {
     const { token } = this.$route.query;
     window.addEventListener('beforeunload', this.unloadHandler);
     if (token) {
-      this.$cookies.set('confirmToken', String(token));
+      sessionStorage.setItem('confirmToken', String(token));
     }
   },
   async mounted() {
@@ -244,7 +244,7 @@ export default {
       this.addressAssigned = true;
       this.$cookies.set('userLogin', true, { path: '/' });
       // redirect to confirm access if token exists & unconfirmed account
-      const confirmToken = this.$cookies.get('confirmToken');
+      const confirmToken = sessionStorage.getItem('confirmToken');
       if (this.userStatus === UserStatuses.Unconfirmed && confirmToken) {
         this.$router.push(`${Path.ROLE}/?token=${confirmToken}`);
         return;
@@ -277,7 +277,7 @@ export default {
       this.SetLoader(false);
     },
     async nextStepAction() {
-      const confirmToken = this.$cookies.get('confirmToken');
+      const confirmToken = sessionStorage.getItem('confirmToken');
       // Unconfirmed account w/o confirm token
       if (this.userStatus === UserStatuses.Unconfirmed && !confirmToken) {
         await this.$store.dispatch('main/showToast', {

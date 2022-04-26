@@ -77,17 +77,17 @@ export default {
   },
   methods: {
     async onSubmit() {
-      const payload = {
-        confirmCode: this.$cookies.get('confirmToken'),
+      const response = await this.$store.dispatch('user/confirm', {
+        confirmCode: sessionStorage.getItem('confirmToken'),
         role: this.options.role,
-      };
-      const response = await this.$store.dispatch('user/confirm', payload);
+      });
       if (response?.ok) {
-        this.$cookies.set('role', this.options.role, { path: '/' });
-        this.$cookies.set('userStatus', 1, { path: '/' });
-        this.$cookies.remove('confirmToken');
+        const { callback, role } = this.options;
+        this.$cookies.set('role', role, { path: '/' });
+        this.$cookies.set('userStatus', UserStatuses.Confirmed, { path: '/' });
+        sessionStorage.removeItem('confirmToken');
         this.ShowToast(this.$t('modals.yourAccountVerified'), this.$t('modals.success'));
-        await this.options.callback();
+        await callback();
         await this.$router.push(Path.ROLE);
       } else {
         // Wrong confirm token
