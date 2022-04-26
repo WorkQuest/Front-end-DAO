@@ -73,7 +73,7 @@ export default {
   },
   methods: {
     async undelegate() {
-      const { userWalletAddress, frozenBalance, convertToBech32 } = this;
+      const { userWalletAddress, frozenBalance } = this;
       const { callback } = this.options;
       this.CloseModal();
       this.SetLoader(true);
@@ -88,8 +88,8 @@ export default {
         key: modals.transactionReceipt,
         title: this.$t('modals.undelegate'),
         fields: {
-          from: { name: this.$t('modals.fromAddress'), value: convertToBech32('wq', userWalletAddress) },
-          to: { name: this.$t('modals.toAddress'), value: convertToBech32('wq', process.env.WORKNET_WQT_TOKEN) },
+          from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', userWalletAddress) },
+          to: { name: this.$t('modals.toAddress'), value: this.ConvertToBech32('wq', process.env.WORKNET_WQT_TOKEN) },
           fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
         },
         submitMethod: async () => {

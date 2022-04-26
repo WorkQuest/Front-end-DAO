@@ -550,7 +550,7 @@ export const test = async () => {
   }
 };
 
-export const delegateToValidator = async (validatorAddress, amount) => {
+export const CreateSignedTxForValidator = async (method, validatorAddress, amount) => {
   try {
     const address = converter('ethm').toBech32(wallet.address);
     const data = await fetchCosmosAccount(address);
@@ -560,10 +560,10 @@ export const delegateToValidator = async (validatorAddress, amount) => {
     const msgSend = new message.cosmos.bank.v1beta1.MsgSend({
       from_address: address,
       to_address: 'ethmvaloper1r9n7xttnufe02qyh02yjjvgzez9c0zcdyzk02h',
-      amount: [{ denom: 'aphoton', amount: String('1839799472000000000000000000') }],
+      amount: [{ denom: 'aphoton', amount: String('1839909472') }],
     });
     const msgSendAny = new message.google.protobuf.Any({
-      type_url: '/cosmos.staking.v1beta1.MsgUndelegate',
+      type_url: method, // '/cosmos.staking.v1beta1.MsgUndelegate',
       value: message.cosmos.bank.v1beta1.MsgSend.encode(msgSend).finish(),
     });
     const txBody = new message.cosmos.tx.v1beta1.TxBody({ messages: [msgSendAny], memo: '' });
@@ -571,9 +571,6 @@ export const delegateToValidator = async (validatorAddress, amount) => {
     // https://docs.rs/cosmos-sdk-proto/0.5.0/cosmos_sdk_proto/cosmos/staking/v1beta1/index.html
     // type_url: '/cosmos.staking.v1beta1.MsgUndelegate',
     // type_url: '/cosmos.staking.v1beta1.MsgDelegate',
-
-    // Сколько делегировали?
-    // https://dev-node-nyc3.workquest.co/api//cosmos/staking/v1beta1/validators/ethmvaloper1r9n7xttnufe02qyh02yjjvgzez9c0zcdyzk02h/delegations/ethm10fanzq0ksuptyfhcx3wecnekldqk2xw88yvpah
 
     // --------------------------------- (2)authInfo ---------------------------------
     const signerInfo = new message.cosmos.tx.v1beta1.SignerInfo({

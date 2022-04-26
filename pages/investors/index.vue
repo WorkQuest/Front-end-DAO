@@ -81,6 +81,7 @@ export default {
       if (this.delegatedToUser) {
         users.push({
           ...this.delegatedToUser,
+          investorAddress: this.delegatedToUser.investorAddress,
           voting: this.$tc('meta.wqtCount', this.delegatedToUser.voting),
           callback: this.getInvestors,
         });
@@ -90,6 +91,7 @@ export default {
             || (this.delegatedToUser && user.investorAddress !== this.delegatedToUser?.wallet?.address)) {
           users.push({
             ...user,
+            investorAddress: this.ConvertToBech32('wq', user.investorAddress),
             voting: this.$tc('meta.wqtCount', user.voting),
             callback: this.getInvestors,
           });

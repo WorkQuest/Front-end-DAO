@@ -5,9 +5,9 @@
         <div class="wallet__nav">
           <span class="wallet__title">{{ $t('wallet.wallet') }}</span>
           <div class="wallet__address">
-            <span class="user__wallet">{{ CutTxn(convertToBech32('wq', userWalletAddress), 8, 8) }}</span>
+            <span class="user__wallet">{{ CutTxn(ConvertToBech32('wq', userWalletAddress), 8, 8) }}</span>
             <button
-              v-clipboard:copy="convertToBech32('wq', userWalletAddress)"
+              v-clipboard:copy="ConvertToBech32('wq', userWalletAddress)"
               v-clipboard:success="ClipboardSuccessHandler"
               v-clipboard:error="ClipboardErrorHandler"
               type="button"
@@ -178,8 +178,8 @@ export default {
           status: !!t.status,
           value: `${getStyledAmount(t.tokenTransfers[0]?.amount || t.value)} ${symbol}`,
           transaction_fee: new BigNumber(t.gas_price).multipliedBy(t.gas_used),
-          from_address: t.from_address_hash.hex,
-          to_address: t.to_address_hash.hex,
+          from_address: t.from_address_hash.bech32,
+          to_address: t.to_address_hash.bech32,
         });
       }
       return res;

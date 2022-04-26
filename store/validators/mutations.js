@@ -5,4 +5,7 @@ export default {
   setValidatorsCount(state, count) {
     state.validatorsCount = count;
   },
+  setValidatorData(state, data) {
+    state.validatorData = data;
+  },
 };

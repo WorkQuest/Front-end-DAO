@@ -438,7 +438,7 @@ export default {
           number: id,
           tx_hash: vote.transactionHash,
           date: new Date(vote.timestamp * 1000),
-          investorAddress: vote.voter,
+          investorAddress: this.ConvertToBech32('wq', vote.voter),
           vote: vote.support,
         });
         id += 1;

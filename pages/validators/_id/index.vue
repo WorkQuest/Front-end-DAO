@@ -15,7 +15,14 @@
           {{ $t('validator.title') }}
         </div>
       </div>
-      <div class="validator__block">
+      <empty-data
+        v-if="notFounded"
+        :description="$t('validators.notFounded')"
+      />
+      <div
+        v-else
+        class="validator__block"
+      >
         <div class="validator__profile profile">
           <div class="profile__left">
             <img
@@ -24,17 +31,32 @@
               alt="empty avatar"
             >
             <div class="left__info">
-              <div class="left__user">
+              <div
+                v-if="validatorData"
+                class="left__user"
+              >
                 <div class="left__text left__text_name">
-                  Вовоже_CrS Вовожевич_CrS444444444444444444444444444444444
+                  {{ validatorData.description.moniker }}
                 </div>
                 <div class="left__date">
-                  Created on 22 Aug, 2021
+                  {{ $t('validators.createdAt', { date: $moment(validatorData.commission.update_time).format('LLL') }) }}
                 </div>
               </div>
             </div>
           </div>
           <div class="profile__left profile__left_data">
+            <div class="left__user">
+              <div class="left__text">
+                {{ this.$t('modals.address') }}
+              </div>
+              <a
+                :href="explorerAddressUrl"
+                target="_blank"
+                class="left__date"
+              >
+                {{ CutTxn(convertedValidatorAddress, 6, 6) }}
+              </a>
+            </div>
             <div
               v-for="(item, key) in leftColumn"
               :key="key"
@@ -63,12 +85,12 @@
                     {{ `${$t('validator.occupied')}:` }}
                   </div>
                   <div class="bar__text bar__text_small">
-                    {{ `395 ${$t('validator.outOf')} 1000` }}
+                    {{ `${slots} ${$t('validator.outOf')} 1000` }}
                   </div>
                 </div>
               </div>
               <progress-bar
-                :value="75"
+                :value="slots / 1000"
                 mode="blue"
               />
             </div>
@@ -78,7 +100,7 @@
                   {{ $t('validator.delegators') }}
                 </div>
                 <div class="right__data-desc">
-                  337
+                  {{ slots }}
                 </div>
               </div>
               <div class="right__info">
@@ -86,17 +108,23 @@
                   {{ $t('validator.minimalStake') }}
                 </div>
                 <div class="right__data-desc">
-                  {{ $tc('meta.wusdCount', 0) }}
+                  {{ $tc('meta.wusdCount', validatorData ? validatorData.min_self_delegation : '') }}
                 </div>
               </div>
             </div>
             <div class="right__block">
-              <button class="right__button right__button_red">
+              <base-btn
+                mode="lightRed"
+                class="right__button"
+              >
                 {{ $t('modals.undelegate') }}
-              </button>
-              <button class="right__button right__button_blue">
+              </base-btn>
+              <base-btn
+                mode="lightBlue"
+                class="right__button"
+              >
                 {{ $t('modals.delegate') }}
-              </button>
+              </base-btn>
             </div>
           </div>
         </div>
@@ -106,16 +134,74 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+import { ExplorerUrls } from '~/utils/enums';
+
 export default {
   name: 'Validator',
+  data() {
+    return {
+      notFounded: false,
+      slots: 0,
+    };
+  },
   computed: {
+    ...mapGetters({
+      validatorData: 'validators/getValidatorData',
+      validatorsList: 'validators/getValidatorsList',
+    }),
     leftColumn() {
       return [
-        { name: this.$t('modals.address'), desc: '0xnf…thb3' },
         { name: this.$t('validator.commonStake'), desc: this.$tc('meta.wusdCount', 1000000) },
         { name: this.$t('validator.fee'), desc: '5%' },
         { name: this.$t('validator.missedBlocks'), desc: 1000 },
       ];
+    },
+    convertedValidatorAddress() {
+      if (!this.validatorData) return '';
+      return this.ConvertToBech32('wq', this.ConvertToHex('ethmvaloper', this.validatorData.operator_address));
+    },
+    explorerAddressUrl() {
+      const url = process.env.PROD === 'true' ? ExplorerUrls.PROD : ExplorerUrls.DEV;
+      return `${url}/address/${this.convertedValidatorAddress}`;
+    },
+  },
+  async beforeMount() {
+    const { id } = this.$route.params;
+    let validatorAddress = null;
+    try {
+      validatorAddress = this.ConvertToHex('wq', id);
+      validatorAddress = this.ConvertToBech32('ethmvaloper', validatorAddress);
+      // eslint-disable-next-line no-empty
+    } catch (e) {
+      this.toNotFound();
+      return;
+    }
+    // eslint-disable-next-line no-restricted-syntax
+    for (const item of this.validatorsList) {
+      if (item.operator_address === validatorAddress) {
+        this.$store.commit('validators/setValidatorData', item);
+        return;
+      }
+    }
+    const res = await this.$store.dispatch('validators/getValidatorByAddress', validatorAddress);
+    if (!res.ok) this.toNotFound();
+
+    const slotsRes = await this.$store.dispatch('validators/getSlotsCount', validatorAddress);
+    if (slotsRes.ok) this.slots = slotsRes.result;
+  },
+  methods: {
+    toNotFound() {
+      this.notFounded = true;
+      this.ShowToast('not found');
+    },
+    delegate() {
+      // import { delegateToValidator } from '~/utils/wallet';
+      // const delegateTx = await delegateToValidator('address', 'amount');
+      // const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: delegateTx.result });
+    },
+    undelegate() {
+
     },
   },
 };
@@ -306,9 +392,21 @@ export default {
       }
     }
   }
+  .validator {
+    &__profile {
+      max-height: none;
+    }
+    &__block {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+  .right__block {
+    grid-template-columns: 1fr;
+  }
 }
 
-@include _380 {
+@include _480 {
   .validator {
     &__profile {
       max-height: 100%;
@@ -317,6 +415,9 @@ export default {
       grid-template-columns: auto;
       grid-template-rows: repeat(2, 340px);
     }
+  }
+  .profile__left_data {
+    grid-template-columns: 1fr;
   }
   .bar {
     &__data {

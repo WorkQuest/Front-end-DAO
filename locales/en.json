@@ -757,6 +757,8 @@
   },
   "validators": {
     "title": "Validators",
+    "createdAt": "Created at {date}",
+    "notFounded": "Validator not founded",
     "candidates": "Candidates",
     "searchValidator": "Search validator or candidate",
     "searchCandidates": "Search proposal",

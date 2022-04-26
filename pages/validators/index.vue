@@ -1,9 +1,6 @@
 <template>
   <div class="validators">
     <div class="validators__body">
-      <button @click="test">
-        test
-      </button>
       <div class="validators__head head">
         <div class="head__title">
           {{ $t('validators.title') }}
@@ -51,7 +48,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { delegateToValidator, test } from '~/utils/wallet';
 
 export default {
   name: 'Validators',
@@ -67,7 +63,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isWalletConnected: 'web3/getWalletIsConnected',
+      isWalletConnected: 'wallet/getIsWalletConnected',
       userData: 'user/getUserData',
       validatorsList: 'validators/getValidatorsList',
       validatorsCount: 'validators/getValidatorsCount',
@@ -76,18 +72,20 @@ export default {
       const res = [];
       // eslint-disable-next-line no-restricted-syntax
       for (const item of this.validatorsList) {
+        const address = this.ConvertToBech32('wq', this.ConvertToHex('ethmvaloper', item.operator_address));
         res.push({
-          fullName: item.description.moniker,
-          investorAddress: item.operator_address,
-          fee: item.commission.commission_rates.rate,
+          validatorName: item.description.moniker,
+          investorAddress: address,
+          id: address,
+          fee: `${Math.ceil(item.commission.commission_rates.rate * 100)}%`,
+          minStake: item.min_self_delegation,
         });
       }
       return res;
     },
     tableFields() {
       const mainFields = [
-        { key: 'avatar', label: this.$t('validators.table.name') },
-        { key: 'fullName', label: '', sortable: true },
+        { key: 'validatorName', label: this.$t('validators.table.name') },
         { key: 'investorAddress', label: this.$t('validators.table.address') },
         { key: 'copy', label: '', sortable: true },
       ];
@@ -117,18 +115,9 @@ export default {
     this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
   },
   async beforeMount() {
-    await Promise.all([
-      this.$store.dispatch('validators/getValidators'),
-    ]);
-  },
-  methods: {
-    async test() {
-      // const res = await test();
-      const delegateTx = await delegateToValidator('address', 'amount');
-      console.log('base64', delegateTx);
-      const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: delegateTx.result });
-      console.log('RESULT >>', broadcastRes);
-    },
+    this.SetLoader(true);
+    await this.$store.dispatch('validators/getValidators');
+    this.SetLoader(false);
   },
 };
 </script>
@@ -158,6 +147,11 @@ export default {
     border-radius: 6px;
   }
 }
+.table__link {
+  color: $black800 !important;
+  text-decoration: none !important;
+}
+
 .head {
   &__navigation {
     display: grid;

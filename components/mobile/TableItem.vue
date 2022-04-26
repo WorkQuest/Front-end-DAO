@@ -110,7 +110,7 @@
       class="item__subtitle"
     >
       {{ $t('proposal.table.address') }}
-      <span class="item__info">
+      <a class="item__info">
         {{ CutTxn(item.address || item.investorAddress, 9, 6) }}
         <base-btn
           v-if="item.investorAddress"
@@ -120,7 +120,7 @@
           mode="copy"
           class="item__copy"
         />
-      </span>
+      </a>
     </div>
     <div
       v-if="item.vote"

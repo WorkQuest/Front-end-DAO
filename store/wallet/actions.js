@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import converter from 'bech32-converting';
 import {
   disconnect,
   getBalance,
@@ -190,7 +191,7 @@ export default {
       }
       const delegatedData = user ? {
         ...user,
-        investorAddress: address,
+        investorAddress: converter('wq').toBech32(address),
         voting: votingPowerArray ? getStyledAmount(votingPowerArray.result[0]) : null,
         fullName: `${user.firstName || ''} ${user.lastName || ''}`,
       } : null;

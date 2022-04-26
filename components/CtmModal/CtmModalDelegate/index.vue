@@ -84,14 +84,13 @@ export default {
       return this.options?.min ? `|min_value:${this.options.min}` : '';
     },
     convertValue() {
-      const { windowSize, convertToBech32, investorAddress } = this;
-      const convertedValue = convertToBech32('wq', investorAddress);
-      if (windowSize > 480) return convertedValue;
+      const { windowSize, investorAddress } = this;
+      if (windowSize > 480) return investorAddress;
       let a = 10;
       if (windowSize > 450) a = 17;
       else if (windowSize > 380) a = 15;
       else if (windowSize > 350) a = 13;
-      return this.CutTxn(convertedValue, a, a);
+      return this.CutTxn(investorAddress, a, a);
     },
   },
   async beforeMount() {
@@ -121,10 +120,10 @@ export default {
     async delegate() {
       const { callback } = this.options;
       const {
-        tokensAmount, userWalletAddress, convertToHex, convertToBech32,
+        tokensAmount, userWalletAddress,
       } = this;
       let { investorAddress } = this;
-      investorAddress = convertToHex('wq', investorAddress);
+      investorAddress = this.ConvertToHex('wq', investorAddress);
       this.CloseModal();
       this.SetLoader(true);
       const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
@@ -138,8 +137,8 @@ export default {
         key: modals.transactionReceipt,
         title: this.$t('modals.delegate'),
         fields: {
-          from: { name: this.$t('modals.fromAddress'), value: convertToBech32('wq', userWalletAddress) },
-          to: { name: this.$t('modals.toAddress'), value: convertToBech32('wq', process.env.WORKNET_WQT_TOKEN) },
+          from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', userWalletAddress) },
+          to: { name: this.$t('modals.toAddress'), value: this.ConvertToBech32('wq', process.env.WORKNET_WQT_TOKEN) },
           amount: { name: this.$t('modals.amount'), value: tokensAmount, symbol: TokenSymbols.WQT },
           fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
         },

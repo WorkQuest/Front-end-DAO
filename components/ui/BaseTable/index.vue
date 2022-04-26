@@ -45,8 +45,8 @@
     </template>
     <template #cell(avatar)="el">
       <nuxt-link
-        :to="`/investors/${el.item.id}`"
-        class=" table__link"
+        :to="`${$options.Path.INVESTORS}/${el.item.id}`"
+        class="table__link"
       >
         <img
           :src="(el.item.avatar && el.item.avatar.url) ? el.item.avatar.url : require('~/assets/img/app/avatar_empty.png')"
@@ -75,7 +75,7 @@
     </template>
     <template #cell(undelegate)="el">
       <base-btn
-        v-if="delegatedToUser && el.item.investorAddress === delegatedToUser.wallet.address"
+        v-if="delegatedToUser && el.item.investorAddress === delegatedToUser.investorAddress"
         mode="lightRed"
         class="btn__delegate"
         :class="delegateClass(el)"
@@ -101,7 +101,7 @@
         :href="getAddressUrl(el.item.investorAddress)"
         target="_blank"
       >
-        {{ CutTxn(convertToBech32('wq', el.item.investorAddress), 8, 8) }}
+        {{ CutTxn(el.item.investorAddress, 8, 8) }}
       </a>
       <span
         v-else
@@ -116,7 +116,7 @@
         target="_blank"
         class="table__url"
       >
-        {{ CutTxn(convertToBech32('wq', el.item.from_address), 4, 4) }}
+        {{ CutTxn( el.item.from_address, 4, 4) }}
       </a>
     </template>
     <template #cell(to_address)="el">
@@ -125,15 +125,22 @@
         target="_blank"
         class="table__url"
       >
-        {{ CutTxn(convertToBech32('wq', el.item.to_address), 4, 4) }}
+        {{ CutTxn(el.item.to_address, 4, 4) }}
       </a>
     </template>
     <template #cell(fullName)="el">
       <nuxt-link
-        :to="`/investors/${el.item.id}`"
+        :to="`${$options.Path.INVESTORS}/${el.item.id}`"
         class="table__link"
       >
         <span>{{ cropTxt(el.item.fullName, 15) }}</span>
+      </nuxt-link>
+    </template>
+    <template #cell(validatorName)="el">
+      <nuxt-link
+        :to="`${$options.Path.VALIDATORS}/${el.item.investorAddress}`"
+      >
+        <span>{{ el.item.validatorName }}</span>
       </nuxt-link>
     </template>
   </b-table>
@@ -142,9 +149,10 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
-import { ExplorerUrls } from '~/utils/enums';
+import { ExplorerUrls, Path } from '~/utils/enums';
 
 export default {
+  Path,
   props: {
     title: {
       type: String,

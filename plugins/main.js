@@ -9,10 +9,10 @@ Vue.component('tippy', TippyComponent);
 
 Vue.mixin({
   methods: {
-    convertToBech32(prefix, address) {
+    ConvertToBech32(prefix, address) {
       return converter(prefix).toBech32(address);
     },
-    convertToHex(prefix, address) {
+    ConvertToHex(prefix, address) {
       if (address.startsWith(prefix)) return converter(prefix).toHex(address);
       return address;
     },

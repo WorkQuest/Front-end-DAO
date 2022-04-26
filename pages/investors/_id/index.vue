@@ -24,11 +24,11 @@
           class="title__panel panel"
         >
           <div class="panel__address">
-            {{ CutTxn(convertToBech32('wq', investorAddress), 8, 8) }}
+            {{ CutTxn(ConvertToBech32('wq', investorAddress), 8, 8) }}
           </div>
           <div class="panel__picture">
             <base-btn
-              v-clipboard:copy="convertToBech32('wq', investorAddress)"
+              v-clipboard:copy="ConvertToBech32('wq', investorAddress)"
               v-clipboard:success="ClipboardSuccessHandler"
               v-clipboard:error="ClipboardErrorHandler"
               mode="copy"
