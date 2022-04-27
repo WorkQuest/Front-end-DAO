@@ -23,7 +23,7 @@
       </div>
       <div class="undelegate__tokens tokens">
         <div class="tokens__footer footer">
-          {{ $tc('modals.willBeUndelegate', Floor(frozenBalance)) }}
+          {{ $tc('modals.willBeUndelegate', willBeUndelegate) }}
         </div>
       </div>
       <div class="undelegate__bottom bottom">
@@ -48,31 +48,33 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { TokenSymbols } from '~/utils/enums';
+import { DelegateMode, TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import { WQToken } from '~/abi/index';
 
 export default {
   name: 'Undelegate',
-  data() {
-    return {
-      tokensAmount: '',
-      accountAddress: '',
-    };
-  },
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
       userWalletAddress: 'user/getUserWalletAddress',
       frozenBalance: 'user/getFrozenBalance',
     }),
+    willBeUndelegate() {
+      return this.options.delegateMode === DelegateMode.INVESTORS
+        ? this.Floor(this.frozenBalance) : this.Floor(this.options.tokensAmount);
+    },
   },
   beforeMount() {
-    this.tokensAmount = this.options.tokensAmount;
     this.$store.dispatch('wallet/frozenBalance', { address: this.userWalletAddress });
   },
   methods: {
     async undelegate() {
+      if (this.options.delegateMode === DelegateMode.VALIDATORS) {
+        this.options.submitMethod();
+        return;
+      }
+
       const { userWalletAddress, frozenBalance } = this;
       const { callback } = this.options;
       this.CloseModal();

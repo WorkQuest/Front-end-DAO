@@ -266,6 +266,7 @@
       "subtitle": "Please open site from Metamask app"
     },
     "txInfo": "Transaction info",
+    "gasLimit": "Gas limit",
     "textCopy": "Text has been copied",
     "textCopyError": "Copy error",
     "success": "Success",

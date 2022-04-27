@@ -116,6 +116,7 @@
               <base-btn
                 mode="lightRed"
                 class="right__button"
+                :disabled="!delegatedData"
                 @click="toUndelegateModal"
               >
                 {{ $t('modals.undelegate') }}
@@ -143,6 +144,7 @@ import {
   DelegateMode, ExplorerUrls, TokenSymbols, ValidatorsMethods,
 } from '~/utils/enums';
 import modals from '~/store/modals/modals';
+import { success } from '~/utils/success-error';
 
 export default {
   name: 'Validator',
@@ -151,6 +153,7 @@ export default {
       notFounded: false,
       slots: 0,
       missedBlocks: 0,
+      delegatedData: null,
     };
   },
   computed: {
@@ -203,23 +206,32 @@ export default {
       if (!res.ok) this.toNotFound();
     }
 
-    const [slotsRes, missedBlocks] = await Promise.all([
+    const [slotsRes, missedBlocksRes, delegatedRes] = await Promise.all([
       this.$store.dispatch('validators/getSlotsCount', validatorAddress),
       this.$store.dispatch('validators/getMissedBlocks', this.validatorData.consensus_pubkey.key),
-      // Данные о делегировании с аккаунта юзера этому валидатору
-      this.$store.dispatch('validators/getDelegatedDataForValidator', {
-        userWalletAddress: this.ConvertToBech32('ethm', this.userWalletAddress),
-        validatorAddress,
-      }),
+      this.updateDelegatedAmount(),
     ]);
     if (slotsRes.ok) this.slots = slotsRes.result;
-    if (missedBlocks.ok) this.missedBlocks = missedBlocks.result;
+    if (missedBlocksRes.ok) this.missedBlocks = missedBlocksRes.result;
     this.SetLoader(false);
   },
   beforeDestroy() {
     this.$store.commit('validators/setValidatorData', null);
   },
   methods: {
+    async updateDelegatedAmount() {
+      // Данные о делегировании с аккаунта юзера этому валидатору
+      const res = await this.$store.dispatch('validators/getDelegatedDataForValidator', {
+        userWalletAddress: this.ConvertToBech32('ethm', this.userWalletAddress),
+        validatorAddress: this.validatorData.operator_address,
+      });
+      if (res.ok) {
+        this.delegatedData = {
+          amount: res.result.delegation_response.balance.amount,
+          shares: res.result.delegation_response.delegation.shares,
+        };
+      }
+    },
     toNotFound() {
       this.notFounded = true;
       this.SetLoader(false);
@@ -234,19 +246,26 @@ export default {
           this.ShowModal({
             key: modals.transactionReceipt,
             title: this.$t('modals.delegate'),
+            isShowSuccess: true,
             fields: {
               from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
               to: { name: this.$t('modals.toAddress'), value: this.convertedValidatorAddress },
               amount: { name: this.$t('modals.amount'), value: amount, symbol: TokenSymbols.WUSD },
-              fee: { name: this.$t('modals.gasLimit'), value: 200000 },
+              gasLimit: { name: this.$t('modals.gasLimit'), value: 200000 },
             },
+            callback: async () => await this.updateDelegatedAmount(),
             submitMethod: async () => {
-              const delegateTx = await CreateSignedTxForValidator(ValidatorsMethods.DELEGATE, this.validatorData.operator_address, amount);
+              const delegateTx = await CreateSignedTxForValidator(
+                ValidatorsMethods.DELEGATE,
+                this.validatorData.operator_address,
+                new BigNumber(amount).shiftedBy(18).toString(),
+              );
               const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: delegateTx.result });
-              console.log(broadcastRes);
-              if (broadcastRes.tx_response.raw_log) {
+              if (broadcastRes.tx_response.raw_log !== '[]') {
                 this.ShowToast(broadcastRes.tx_response.raw_log);
+                return error();
               }
+              return success();
             },
           });
         },
@@ -255,7 +274,33 @@ export default {
     toUndelegateModal() {
       this.ShowModal({
         key: modals.undelegate,
+        title: this.$t('modals.undelegate'),
         delegateMode: DelegateMode.VALIDATORS,
+        tokensAmount: this.delegatedData.amount,
+        isShowSuccess: true,
+        submitMethod: () => {
+          this.ShowModal({
+            key: modals.transactionReceipt,
+            isShowSuccess: true,
+            fields: {
+              from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
+              to: { name: this.$t('modals.toAddress'), value: this.convertedValidatorAddress },
+              gasLimit: { name: this.$t('modals.gasLimit'), value: 200000 },
+            },
+            callback: async () => await this.updateDelegatedAmount(),
+            submitMethod: async () => {
+              const undelegateTx = await CreateSignedTxForValidator(
+                ValidatorsMethods.UNDELEGATE,
+                this.validatorData.operator_address,
+                this.delegatedData.amount,
+              );
+              const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: undelegateTx.result });
+              if (broadcastRes.tx_response.raw_log !== '[]') {
+                this.ShowToast(broadcastRes.tx_response.raw_log);
+              }
+            },
+          });
+        },
       });
     },
   },

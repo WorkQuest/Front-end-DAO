@@ -66,7 +66,8 @@ export default {
       return error();
     }
   },
-  async getDelegatedDataForValidator({ commit, root }, { validatorAddress, userWalletAddress }) {
+  // Информация о моих делегированиях валидатору
+  async getDelegatedDataForValidator({ _ }, { validatorAddress, userWalletAddress }) {
     try {
       const nodeApi = this.$axios.create({ baseURL });
       const res = await nodeApi.$get(`/cosmos/staking/v1beta1/validators/${validatorAddress}/delegations/${userWalletAddress}`);

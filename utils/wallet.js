@@ -552,13 +552,12 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
   try {
     const address = converter('ethm').toBech32(wallet.address);
     const data = await fetchCosmosAccount(address);
-    console.log(data);
     const { privKey, pubKeyAny } = await getPrivAndPublic(wallet.mnemonic);
     // txBody
     const msgSend = new message.cosmos.bank.v1beta1.MsgSend({
       from_address: address,
       to_address: validatorAddress,
-      amount: [{ denom: 'aphoton', amount: new BigNumber(amount).shiftedBy(18).toString() }],
+      amount: [{ denom: 'aphoton', amount }],
     });
     const msgSendAny = new message.google.protobuf.Any({
       type_url: method,
@@ -569,7 +568,7 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
     const signerInfo = new message.cosmos.tx.v1beta1.SignerInfo({
       public_key: pubKeyAny,
       mode_info: { single: { mode: message.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT } },
-      sequence: data.account.base_account.sequence,
+      sequence: +data.account.base_account.sequence,
     });
     const feeValue = new message.cosmos.tx.v1beta1.Fee({
       amount: [{ denom: 'aphoton', amount: String('5000') }],

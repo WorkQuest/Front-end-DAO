@@ -485,6 +485,7 @@ export default {
     &-text {
       overflow: hidden;
       text-overflow: ellipsis;
+      overflow-wrap: anywhere;
       max-width: 1000px;
       padding-right: 20px;
     }
