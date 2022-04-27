@@ -82,13 +82,12 @@ export default {
         role: this.options.role,
       });
       if (response?.ok) {
-        const { callback, role } = this.options;
-        this.$cookies.set('role', role, { path: '/' });
-        this.$cookies.set('userStatus', UserStatuses.Confirmed, { path: '/' });
+        const { callback } = this.options;
+        this.$cookies.set('userLogin', true, { path: Path.ROOT });
+        this.$cookies.set('userStatus', UserStatuses.Confirmed, { path: Path.ROOT });
         sessionStorage.removeItem('confirmToken');
         this.ShowToast(this.$t('modals.yourAccountVerified'), this.$t('modals.success'));
         await callback();
-        await this.$router.push(Path.ROLE);
       } else {
         // Wrong confirm token
         await this.$store.dispatch('user/logout');
