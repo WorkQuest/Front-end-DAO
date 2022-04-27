@@ -109,7 +109,8 @@ export default {
       this.$store.dispatch('wallet/getBalance'),
       this.$store.dispatch('wallet/getBalanceWQT', this.userWalletAddress),
     ]);
-    this.balance = this.balanceData.WQT.fullBalance;
+    this.balance = this.options.delegateMode === DelegateMode.INVESTORS
+      ? this.balanceData.WQT.fullBalance : this.balanceData.WUSD.fullBalance;
   },
   methods: {
     replaceDot() {
@@ -119,6 +120,11 @@ export default {
       this.tokensAmount = this.balance;
     },
     async delegate() {
+      if (this.options.delegateMode === DelegateMode.VALIDATORS) {
+        await this.options.submitMethod(this.tokensAmount);
+        return;
+      }
+
       const { callback } = this.options;
       const {
         tokensAmount, userWalletAddress,

@@ -558,7 +558,7 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
     const msgSend = new message.cosmos.bank.v1beta1.MsgSend({
       from_address: address,
       to_address: validatorAddress,
-      amount: [{ denom: 'aphoton', amount: String('1839909472') }],
+      amount: [{ denom: 'aphoton', amount: new BigNumber(amount).shiftedBy(18).toString() }],
     });
     const msgSendAny = new message.google.protobuf.Any({
       type_url: method,

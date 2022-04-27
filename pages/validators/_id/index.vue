@@ -116,14 +116,14 @@
               <base-btn
                 mode="lightRed"
                 class="right__button"
-                @click="undelegate"
+                @click="toUndelegateModal"
               >
                 {{ $t('modals.undelegate') }}
               </base-btn>
               <base-btn
                 mode="lightBlue"
                 class="right__button"
-                @click="delegate"
+                @click="toDelegateModal"
               >
                 {{ $t('modals.delegate') }}
               </base-btn>
@@ -137,8 +137,11 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import BigNumber from 'bignumber.js';
 import { CreateSignedTxForValidator } from '~/utils/wallet';
-import { DelegateMode, ExplorerUrls, ValidatorsMethods } from '~/utils/enums';
+import {
+  DelegateMode, ExplorerUrls, TokenSymbols, ValidatorsMethods,
+} from '~/utils/enums';
 import modals from '~/store/modals/modals';
 
 export default {
@@ -219,19 +222,37 @@ export default {
   methods: {
     toNotFound() {
       this.notFounded = true;
-      this.ShowToast('not found');
+      this.SetLoader(false);
     },
-    async delegate() {
+    async toDelegateModal() {
       this.ShowModal({
         key: modals.delegate,
         delegateMode: DelegateMode.VALIDATORS,
         investorAddress: this.validatorData.operator_address,
+        min: this.validatorData.min_self_delegation,
+        submitMethod: async (amount) => {
+          this.ShowModal({
+            key: modals.transactionReceipt,
+            title: this.$t('modals.delegate'),
+            fields: {
+              from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
+              to: { name: this.$t('modals.toAddress'), value: this.convertedValidatorAddress },
+              amount: { name: this.$t('modals.amount'), value: amount, symbol: TokenSymbols.WUSD },
+              fee: { name: this.$t('modals.gasLimit'), value: 200000 },
+            },
+            submitMethod: async () => {
+              const delegateTx = await CreateSignedTxForValidator(ValidatorsMethods.DELEGATE, this.validatorData.operator_address, amount);
+              const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: delegateTx.result });
+              console.log(broadcastRes);
+              if (broadcastRes.tx_response.raw_log) {
+                this.ShowToast(broadcastRes.tx_response.raw_log);
+              }
+            },
+          });
+        },
       });
-      const delegateTx = await CreateSignedTxForValidator(ValidatorsMethods.DELEGATE, this.validatorData.operator_address, 'amount');
-      const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: delegateTx.result });
-      console.log(broadcastRes);
     },
-    undelegate() {
+    toUndelegateModal() {
       this.ShowModal({
         key: modals.undelegate,
         delegateMode: DelegateMode.VALIDATORS,
