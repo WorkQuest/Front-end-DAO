@@ -232,7 +232,7 @@ export default {
   justify-content: flex-start;
   align-items: center;
   &__avatar {
-    flex: 0 0 0 32px;
+    flex: 0 0 32px;
     width: 32px;
     height: 32px;
     left: 0;
