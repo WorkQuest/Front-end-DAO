@@ -90,7 +90,7 @@
       class="wallet-step"
     >
       <div
-        v-if="step !== walletState.ImportOrCreate || step === walletState.Default"
+        v-if="step !== walletState.ImportOrCreate && step !== walletState.Default"
         class="wallet-step__back"
         @click="stepBack"
       >
@@ -116,7 +116,7 @@
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
 import {
-  Path, UserRole, UserStatuses, WalletState,
+  Path, UserStatuses, WalletState,
 } from '~/utils/enums';
 import CreateWallet from '~/components/ui/CreateWallet';
 import {
@@ -137,7 +137,7 @@ export default {
       showRightChoose: false,
       isLoginWithSocialNetwork: this.$cookies.get('socialNetwork'),
       isWalletAssigned: false,
-      isConfirmingPass: false,
+      isClearOnDestroy: true,
     };
   },
   computed: {
@@ -153,23 +153,18 @@ export default {
     window.addEventListener('beforeunload', this.clearCookies);
   },
   async beforeMount() {
-    const access = this.$cookies.get('access');
-    const refresh = this.$cookies.get('refresh');
     const userStatus = this.$cookies.get('userStatus');
-    if (!access || !userStatus) {
-      await this.$router.push(Path.SIGN_IN);
-      return;
-    }
-    if (!this.userData.id) await this.$store.dispatch('user/getUserData');
+    if (!this.userData.id && +userStatus === UserStatuses.Confirmed) await this.$store.dispatch('user/getUserData');
     if (this.userData.wallet?.address && userStatus === UserStatuses.Confirmed) {
-      this.isConfirmingPass = true;
+      this.isWalletAssigned = true;
+      this.isClearOnDestroy = false;
       await this.redirectUser();
       return;
     }
-    if (userStatus === UserStatuses.Confirmed && !this.userData?.wallet?.address) {
+    if (+userStatus === UserStatuses.Confirmed && !this.userData?.wallet?.address) {
       this.step = WalletState.ImportOrCreate;
       if (getCipherKey() == null && !this.isLoginWithSocialNetwork) {
-        this.isConfirmingPass = true;
+        this.isClearOnDestroy = false;
         await this.$store.dispatch('wallet/confirmPassword', { nuxt: this.$nuxt, callbackLayout: 'role' });
       }
     }
@@ -219,7 +214,7 @@ export default {
       await this.$router.push(Path.PROPOSALS);
     },
     async assignWallet(wallet) {
-      this.isConfirmingPass = false;
+      this.isClearOnDestroy = false;
       this.SetLoader(true);
       const res = await this.$store.dispatch('user/registerWallet', {
         address: wallet.address.toLowerCase(),

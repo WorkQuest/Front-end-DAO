@@ -30,6 +30,7 @@ export const errorCodes = Object.freeze({
 export const SumSubStatuses = { NOT_VERIFIED: 0, VERIFIED: 1 };
 
 export const Path = Object.freeze({
+  ROOT: '/',
   SIGN_IN: '/sign-in',
   SIGN_UP: '/sign-up',
   ROLE: '/role',

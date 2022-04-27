@@ -179,14 +179,18 @@ export default {
     }),
   },
   created() {
-    if (this.$cookies.get('access')) this.$router.push(Path.PROPOSALS);
+    const { token } = this.$route.query;
     window.addEventListener('beforeunload', this.unloadHandler);
+    if (token) {
+      sessionStorage.setItem('confirmToken', String(token));
+    }
   },
   async mounted() {
     this.isLoginWithSocial = this.$cookies.get('socialNetwork');
     const access = this.$cookies.get('access');
     const refresh = this.$cookies.get('refresh');
     const userStatus = this.$cookies.get('userStatus');
+    if (access && +userStatus === UserStatuses.Confirmed) await this.$router.push(Path.PROPOSALS);
     if (this.isLoginWithSocial && access && +userStatus === UserStatuses.Confirmed) {
       this.SetLoader(true);
       await this.$store.dispatch('user/getUserData');
@@ -240,9 +244,9 @@ export default {
       this.addressAssigned = true;
       this.$cookies.set('userLogin', true, { path: '/' });
       // redirect to confirm access if token exists & unconfirmed account
-      const confirmToken = JSON.parse(sessionStorage.getItem('confirmToken'));
+      const confirmToken = sessionStorage.getItem('confirmToken');
       if (this.userStatus === UserStatuses.Unconfirmed && confirmToken) {
-        this.$router.push(`/confirm/?token=${confirmToken}`);
+        this.$router.push(`${Path.ROLE}/?token=${confirmToken}`);
         return;
       }
       sessionStorage.removeItem('confirmToken');
@@ -253,14 +257,15 @@ export default {
       if (this.isLoading) return;
       this.SetLoader(true);
       this.model.email = this.model.email.trim();
-      const { ok, result } = await this.$store.dispatch('user/signIn', {
+      const { ok, result: { userStatus, address, totpIsActive } } = await this.$store.dispatch('user/signIn', {
         ...this.model,
         isRememberMeSelected: this.isRememberMeSelected,
       });
       if (ok) {
-        this.userStatus = result.userStatus;
-        this.userWalletAddress = result.address ? result.address.toLowerCase() : '';
-        if (result.totpIsActive) {
+        this.userStatus = userStatus;
+        this.userWalletAddress = address ? address.toLowerCase() : '';
+        this.$cookies.set('userStatus', userStatus);
+        if (totpIsActive) {
           await this.ShowModal({
             key: modals.securityCheck,
             actionMethod: async () => await this.nextStepAction(),
