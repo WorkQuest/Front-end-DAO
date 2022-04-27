@@ -510,44 +510,6 @@ const sign = (txBody, authInfo, accountNumber, privKey) => {
   return Buffer.from(txBytes, 'binary').toString('base64'); // txBytesBase64
 };
 
-// export const test = async () => {
-//   try {
-//     const address = converter('ethm').toBech32(wallet.address);
-//     const data = await fetchCosmosAccount(address);
-//     console.log('cosmos ac', data);
-//     const { privKey, pubKeyAny } = await getPrivAndPublic(wallet.mnemonic);
-//
-//     // ---------------------------------- (1)txBody ----------------------------------
-//     const msgSend = new message.cosmos.bank.v1beta1.MsgSend({
-//       from_address: address,
-//       to_address: 'ethm137udu8hsrll4ps3qeyfyx9yyx42kcnv2kvd8uk',
-//       amount: [{ denom: 'aphoton', amount: String('1000000') }],
-//     });
-//     const msgSendAny = new message.google.protobuf.Any({
-//       type_url: '/cosmos.bank.v1beta1.MsgSend',
-//       value: message.cosmos.bank.v1beta1.MsgSend.encode(msgSend).finish(),
-//     });
-//     const txBody = new message.cosmos.tx.v1beta1.TxBody({ messages: [msgSendAny], memo: '' });
-//
-//     // --------------------------------- (2)authInfo ---------------------------------
-//     const signerInfo = new message.cosmos.tx.v1beta1.SignerInfo({
-//       public_key: pubKeyAny,
-//       mode_info: { single: { mode: message.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT } },
-//       sequence: data.account.base_account.sequence,
-//     });
-//     const feeValue = new message.cosmos.tx.v1beta1.Fee({
-//       amount: [{ denom: 'aphoton', amount: String('5000') }],
-//       gas_limit: 200000,
-//     });
-//     const authInfo = new message.cosmos.tx.v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
-//     // -------------------------------- sign --------------------------------
-//     return success(sign(txBody, authInfo, data.account.base_account.account_number, privKey)); // signedTxBytes base64
-//   } catch (e) {
-//     console.error('test', e);
-//     return error();
-//   }
-// };
-
 export const CreateSignedTxForValidator = async (method, validatorAddress, amount) => {
   try {
     const address = converter('ethm').toBech32(wallet.address);
