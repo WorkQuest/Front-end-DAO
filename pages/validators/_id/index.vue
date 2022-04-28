@@ -144,7 +144,7 @@ import {
   DelegateMode, ExplorerUrls, TokenSymbols, ValidatorsMethods,
 } from '~/utils/enums';
 import modals from '~/store/modals/modals';
-import { success } from '~/utils/success-error';
+import { error, success } from '~/utils/success-error';
 
 export default {
   name: 'Validator',
@@ -172,7 +172,7 @@ export default {
     },
     convertedValidatorAddress() {
       if (!this.validatorData) return '';
-      return this.ConvertToBech32('wq', this.ConvertToHex('ethmvaloper', this.validatorData.operator_address));
+      return this.ConvertToBech32('wq', this.ConvertToHex('wqvaloper', this.validatorData.operator_address));
     },
     explorerAddressUrl() {
       const url = process.env.PROD === 'true' ? ExplorerUrls.PROD : ExplorerUrls.DEV;
@@ -189,7 +189,7 @@ export default {
     let validatorAddress = null;
     try {
       validatorAddress = this.ConvertToHex('wq', id);
-      validatorAddress = this.ConvertToBech32('ethmvaloper', validatorAddress);
+      validatorAddress = this.ConvertToBech32('wqvaloper', validatorAddress);
       // eslint-disable-next-line no-empty
     } catch (e) {
       this.toNotFound();
@@ -206,7 +206,7 @@ export default {
       if (!res.ok) this.toNotFound();
     }
 
-    const [slotsRes, missedBlocksRes, delegatedRes] = await Promise.all([
+    const [slotsRes, missedBlocksRes] = await Promise.all([
       this.$store.dispatch('validators/getSlotsCount', validatorAddress),
       this.$store.dispatch('validators/getMissedBlocks', this.validatorData.consensus_pubkey.key),
       this.updateDelegatedAmount(),
@@ -222,7 +222,7 @@ export default {
     async updateDelegatedAmount() {
       // Данные о делегировании с аккаунта юзера этому валидатору
       const res = await this.$store.dispatch('validators/getDelegatedDataForValidator', {
-        userWalletAddress: this.ConvertToBech32('ethm', this.userWalletAddress),
+        userWalletAddress: this.ConvertToBech32('wq', this.userWalletAddress),
         validatorAddress: this.validatorData.operator_address,
       });
       if (res.ok) {

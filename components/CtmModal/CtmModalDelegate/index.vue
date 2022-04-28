@@ -29,7 +29,7 @@
             <base-field
               v-model="tokensAmount"
               class="footer__body"
-              :placeholder="`10000 ${options.delegateMode === $options.DelegateMode.INVESTORS ? 'WQT' : 'WUSD'}`"
+              :placeholder="`10000 ${options.delegateMode === $options.DelegateMode.INVESTORS ? 'WUSD' : 'WQT'}`"
               data-selector="AMOUNT"
               :name="$tc('modals.tokensNumber')"
               :rules="`required${min}|max_bn:${balance}|min_value:1|decimalPlaces:18`"

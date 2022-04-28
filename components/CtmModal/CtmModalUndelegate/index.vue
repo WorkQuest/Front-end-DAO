@@ -48,6 +48,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import BigNumber from 'bignumber.js';
 import { DelegateMode, TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import { WQToken } from '~/abi/index';
@@ -62,7 +63,7 @@ export default {
     }),
     willBeUndelegate() {
       return this.options.delegateMode === DelegateMode.INVESTORS
-        ? this.Floor(this.frozenBalance) : this.Floor(this.options.tokensAmount);
+        ? this.Floor(this.frozenBalance) : new BigNumber(this.options.tokensAmount).shiftedBy(-18).toString();
     },
   },
   beforeMount() {

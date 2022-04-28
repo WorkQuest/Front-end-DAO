@@ -36,7 +36,7 @@ export default {
   },
   async getMissedBlocks({ commit }, consensusPubKey) {
     try {
-      const validatorAddress = converter('ethmvalcons').toBech32(getAddressFromConsensusPub(consensusPubKey));
+      const validatorAddress = converter('wqvalcons').toBech32(getAddressFromConsensusPub(consensusPubKey));
       const nodeApi = this.$axios.create({ baseURL });
       const res = await nodeApi.$get(`/cosmos/slashing/v1beta1/signing_infos/${validatorAddress}`);
       return success(res.val_signing_info.missed_blocks_counter);
@@ -66,7 +66,7 @@ export default {
       return error();
     }
   },
-  // Информация о моих делегированиях валидатору
+  // Сколько делегировали
   async getDelegatedDataForValidator({ _ }, { validatorAddress, userWalletAddress }) {
     try {
       const nodeApi = this.$axios.create({ baseURL });

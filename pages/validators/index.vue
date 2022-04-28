@@ -63,7 +63,7 @@ export default {
       const res = [];
       // eslint-disable-next-line no-restricted-syntax
       for (const item of this.validatorsList) {
-        const address = this.ConvertToBech32('wq', this.ConvertToHex('ethmvaloper', item.operator_address));
+        const address = this.ConvertToBech32('wq', this.ConvertToHex('wqvaloper', item.operator_address));
         res.push({
           validatorName: item.description.moniker,
           investorAddress: address,
