@@ -77,33 +77,21 @@ export default {
   },
   methods: {
     async onSubmit() {
-      // Role page & select role
-      if (this.$cookies.get('userStatus') === UserStatuses.NeedSetRole) {
-        const response = await this.$store.dispatch('user/setUserRole', { role: this.options.role });
-        if (response?.ok) {
-          this.$cookies.set('role', this.options.role, { path: '/' });
-          this.$cookies.set('userStatus', 1, { path: '/' });
-          this.options.callback();
-          this.CloseModal();
-          return;
-        }
-      } else { // Confirm account page
-        const payload = {
-          confirmCode: this.options.confirmCode,
-          role: this.options.role,
-        };
-        const response = await this.$store.dispatch('user/confirm', payload);
-        if (response?.ok) {
-          this.$cookies.set('role', this.options.role, { path: '/' });
-          this.$cookies.set('userStatus', 1, { path: '/' });
-          sessionStorage.removeItem('confirmToken');
-          this.ShowToast(this.$t('modals.yourAccountVerified'), this.$t('modals.success'));
-          await this.$router.push(Path.ROLE);
-        } else {
-          // Wrong confirm token
-          await this.$store.dispatch('user/logout');
-          await this.$router.push(Path.SIGN_IN);
-        }
+      const response = await this.$store.dispatch('user/confirm', {
+        confirmCode: sessionStorage.getItem('confirmToken'),
+        role: this.options.role,
+      });
+      if (response?.ok) {
+        const { callback } = this.options;
+        this.$cookies.set('userLogin', true, { path: Path.ROOT });
+        this.$cookies.set('userStatus', UserStatuses.Confirmed, { path: Path.ROOT });
+        sessionStorage.removeItem('confirmToken');
+        this.ShowToast(this.$t('modals.yourAccountVerified'), this.$t('modals.success'));
+        await callback();
+      } else {
+        // Wrong confirm token
+        await this.$store.dispatch('user/logout');
+        await this.$router.push(Path.SIGN_IN);
       }
       this.CloseModal();
     },

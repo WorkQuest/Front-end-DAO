@@ -15,6 +15,7 @@
       </span>
       <button class="user__star">
         <img
+          class="star"
           :src="require(`~/assets/img/ui/star_${isFavorite ? 'checked' : 'simple'}.svg`)"
           alt="favorite"
           @click="toggleFavorite(item.id)"
@@ -176,7 +177,7 @@ export default {
   }
 
   &__avatar {
-    flex: 0 0 0 32px;
+    flex: 0 0 32px;
     width: 32px;
     height: 32px;
     left: 0;
@@ -187,10 +188,17 @@ export default {
   }
 
   &__star {
+    min-width: 25px;
+    min-height: 25px;
     margin-left: auto;
-    width: 20px;
-    height: 20px;
   }
+}
+
+.star {
+  margin-left: 5px;
+  margin-right: 5px;
+  width: 25px;
+  height: 25px;
 }
 
 .description {
