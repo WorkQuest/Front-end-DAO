@@ -73,7 +73,6 @@ export default {
       const res = await nodeApi.$get(`/cosmos/staking/v1beta1/validators/${validatorAddress}/delegations/${userWalletAddress}`);
       return success(res);
     } catch (e) {
-      console.error('validators/getDelegatedDataForValidator');
       return error();
     }
   },

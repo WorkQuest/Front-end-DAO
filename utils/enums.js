@@ -80,7 +80,7 @@ export const TokenSymbols = Object.freeze({
 });
 
 export const TokenSymbolByContract = Object.freeze({
-  [process.env.WORKNET_WQT_TOKEN.toLowerCase()]: TokenSymbols.WQT,
+  [process.env.WORKNET_WUSD_TOKEN.toLowerCase()]: TokenSymbols.WUSD,
 });
 
 export const tokenMap = {

@@ -243,7 +243,7 @@ export default {
       this.SetLoader(true);
       await Promise.all([
         this.$store.dispatch('wallet/frozenBalance', { address: this.userWalletAddress }),
-        this.$store.dispatch('wallet/getBalanceWQT', this.userWalletAddress),
+        this.$store.dispatch('wallet/getBalanceWUSD', this.userWalletAddress),
         this.$store.dispatch('wallet/getBalance'),
         this.getTransactions(),
       ]);
@@ -266,7 +266,7 @@ export default {
           recipient = convertToHex('wq', recipient);
           const value = new BigNumber(amount).shiftedBy(18).toString();
           let feeRes;
-          if (selectedToken === TokenSymbols.WUSD) {
+          if (selectedToken === TokenSymbols.WQT) {
             feeRes = await this.$store.dispatch('wallet/getTransferFeeData', {
               recipient,
               value: amount,
@@ -275,7 +275,7 @@ export default {
             feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
               method: 'transfer',
               abi: ERC20,
-              contractAddress: process.env.WORKNET_WQT_TOKEN,
+              contractAddress: process.env.WORKNET_WUSD_TOKEN,
               data: [recipient, value],
             });
           }

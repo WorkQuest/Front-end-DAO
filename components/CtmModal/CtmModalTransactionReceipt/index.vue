@@ -79,10 +79,10 @@ export default {
     const amount = fields?.amount?.value;
     const symbol = fields?.amount?.symbol;
     const fee = fields?.fee?.value;
-    const wusdBalance = this.balance.WUSD.fullBalance;
+    const wusdBalance = this.balance.WQT.fullBalance;
 
     // If we send WUSD
-    if (fee && amount && symbol === TokenSymbols.WUSD) {
+    if (fee && amount && symbol === TokenSymbols.WQT) {
       this.canSend = new BigNumber(amount).plus(fee).isLessThanOrEqualTo(wusdBalance);
     } else if (fee) {
       // Only need check transaction fee with user balance

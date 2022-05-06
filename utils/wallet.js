@@ -263,7 +263,7 @@ export const fetchWalletContractData = async (_method, _abi, _address, _params) 
 export const transferToken = async (recipient, value) => {
   try {
     value = new BigNumber(value).shiftedBy(18).toString();
-    const inst = new web3.eth.Contract(ERC20, process.env.WORKNET_WQT_TOKEN);
+    const inst = new web3.eth.Contract(ERC20, process.env.WORKNET_WUSD_TOKEN);
     const [gasPrice, gasEstimate] = await Promise.all([
       web3.eth.getGasPrice(),
       inst.methods.transfer.apply(null, [recipient, value]).estimateGas({ from: wallet.address }),
@@ -326,7 +326,7 @@ export const getDelegates = async () => {
     const res = await fetchWalletContractData(
       'delegates',
       WQToken,
-      process.env.WORKNET_WQT_TOKEN,
+      process.env.WORKNET_WUSD_TOKEN,
       [wallet.address],
     );
     return success(res);
@@ -519,7 +519,7 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
     const msgSend = new message.cosmos.bank.v1beta1.MsgSend({
       from_address: address,
       to_address: validatorAddress,
-      amount: [{ denom: 'wqt', amount }],
+      amount: [{ denom: 'awqt', amount }],
     });
     const msgSendAny = new message.google.protobuf.Any({
       type_url: method,
@@ -533,7 +533,7 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
       sequence: +data.account.base_account.sequence,
     });
     const feeValue = new message.cosmos.tx.v1beta1.Fee({
-      amount: [{ denom: 'wqt', amount: String('5000') }],
+      amount: [{ denom: 'awqt', amount: String('2000000000000') }],
       gas_limit: 200000,
     });
     const authInfo = new message.cosmos.tx.v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });

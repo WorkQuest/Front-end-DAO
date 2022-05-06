@@ -107,7 +107,7 @@ export default {
   async mounted() {
     await Promise.all([
       this.$store.dispatch('wallet/getBalance'),
-      this.$store.dispatch('wallet/getBalanceWQT', this.userWalletAddress),
+      this.$store.dispatch('wallet/getBalanceWUSD', this.userWalletAddress),
     ]);
     this.balance = this.options.delegateMode === DelegateMode.INVESTORS
       ? this.balanceData.WQT.fullBalance : this.balanceData.WUSD.fullBalance;

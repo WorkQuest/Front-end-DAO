@@ -93,20 +93,20 @@ export default {
   async getBalance({ commit }) {
     const res = await getBalance();
     commit('setBalance', {
-      symbol: TokenSymbols.WUSD,
+      symbol: TokenSymbols.WQT,
       balance: res.ok ? res.result.balance : 0,
       fullBalance: res.ok ? res.result.fullBalance : 0,
     });
   },
-  async getBalanceWQT({ commit }, userAddress) {
+  async getBalanceWUSD({ commit }, userAddress) {
     const res = await fetchWalletContractData(
       'balanceOf',
       ERC20,
-      process.env.WORKNET_WQT_TOKEN,
+      process.env.WORKNET_WUSD_TOKEN,
       [userAddress],
     );
     commit('setBalance', {
-      symbol: TokenSymbols.WQT,
+      symbol: TokenSymbols.WUSD,
       balance: res ? getStyledAmount(res) : 0,
       fullBalance: res ? getStyledAmount(res, true) : 0,
     });

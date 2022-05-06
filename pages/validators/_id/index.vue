@@ -108,7 +108,7 @@
                   {{ $t('validator.minimalStake') }}
                 </div>
                 <div class="right__data-desc">
-                  {{ $tc('meta.wusdCount', validatorData ? validatorData.min_self_delegation : '') }}
+                  {{ $tc('meta.wqtCount', validatorData ? validatorData.min_self_delegation : '') }}
                 </div>
               </div>
             </div>
@@ -165,7 +165,7 @@ export default {
     }),
     leftColumn() {
       return [
-        { name: this.$t('validator.commonStake'), desc: this.$tc('meta.wusdCount', this.validatorData?.tokens || 0) },
+        { name: this.$t('validator.commonStake'), desc: this.$tc('meta.wqtCount', this.validatorData?.tokens || 0) },
         { name: this.$t('validator.fee'), desc: `${Math.ceil(this.validatorData?.commission?.commission_rates?.rate * 100)}%` },
         { name: this.$t('validator.missedBlocks'), desc: this.missedBlocks },
       ];
@@ -250,7 +250,7 @@ export default {
             fields: {
               from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
               to: { name: this.$t('modals.toAddress'), value: this.convertedValidatorAddress },
-              amount: { name: this.$t('modals.amount'), value: amount, symbol: TokenSymbols.WUSD },
+              amount: { name: this.$t('modals.amount'), value: amount, symbol: TokenSymbols.WQT },
               gasLimit: { name: this.$t('modals.gasLimit'), value: 200000 },
             },
             callback: async () => await this.updateDelegatedAmount(),
@@ -277,7 +277,6 @@ export default {
         title: this.$t('modals.undelegate'),
         delegateMode: DelegateMode.VALIDATORS,
         tokensAmount: this.delegatedData.amount,
-        isShowSuccess: true,
         submitMethod: () => {
           this.ShowModal({
             key: modals.transactionReceipt,
@@ -297,7 +296,9 @@ export default {
               const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: undelegateTx.result });
               if (broadcastRes.tx_response.raw_log !== '[]') {
                 this.ShowToast(broadcastRes.tx_response.raw_log);
+                return error();
               }
+              return success();
             },
           });
         },

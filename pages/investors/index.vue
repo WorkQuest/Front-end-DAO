@@ -127,7 +127,7 @@ export default {
     if (!this.isWalletConnected) return;
     await Promise.all([
       this.getInvestors(),
-      this.$store.dispatch('wallet/getBalanceWQT', this.userWalletAddress),
+      this.$store.dispatch('wallet/getBalanceWUSD', this.userWalletAddress),
       this.$store.dispatch('wallet/frozenBalance', { address: this.userWalletAddress }),
     ]);
   },
