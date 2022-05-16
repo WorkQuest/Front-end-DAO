@@ -6,7 +6,7 @@ export default () => ({
   isWalletConnected: false,
   callbackLayout: 'default',
   isOnlyConfirm: false, // for confirm password layout
-  selectedToken: TokenSymbols.WUSD,
+  selectedToken: TokenSymbols.WQT,
   balance: {
     WQT: {
       balance: 0, // Display balance

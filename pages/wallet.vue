@@ -24,17 +24,20 @@
             <div class="balance__top">
               <span class="balance__title">{{ $t('wallet.balance') }}</span>
               <span class="balance__currency">
-                <span class="balance__currency-text">
+                <span
+                  class="balance__currency-text"
+                  :class="{'balance__currency-text_light': isFetchingBalance}"
+                >
                   {{ balance[selectedToken].balance + ' ' + selectedToken }}
                 </span>
                 <span
-                  v-if="selectedToken === tokenSymbols.WQT"
+                  v-if="selectedToken === $options.TokenSymbols.WQT"
                   class="balance__usd-mobile"
                 >
                   <span class="balance__usd-mobile_blue">
                     {{ $t('wallet.frozen') }}
                   </span>
-                  {{ Floor(frozenBalance) }} {{ tokenSymbols.WQT }}
+                  {{ Floor(frozenBalance) }} {{ $options.TokenSymbols.WQT }}
                 </span>
                 <base-dd
                   v-model="ddValue"
@@ -42,15 +45,15 @@
                   :items="tokenSymbolsDd"
                 />
               </span>
-              <span :class="[{'balance__currency__margin-bottom' : selectedToken !== tokenSymbols.WQT}]">
+              <span :class="[{'balance__currency__margin-bottom' : selectedToken !== $options.TokenSymbols.WQT}]">
                 <span
-                  v-if="selectedToken === tokenSymbols.WQT"
+                  v-if="selectedToken === $options.TokenSymbols.WQT"
                   class="balance__usd balance__usd_blue"
                 >
                   <span class="balance__usd">
                     {{ $t('wallet.frozen') }}
                   </span>
-                  {{ Floor(frozenBalance) }} {{ tokenSymbols.WQT }}
+                  {{ Floor(frozenBalance) }} {{ $options.TokenSymbols.WQT }}
                 </span>
               </span>
             </div>
@@ -74,6 +77,7 @@
                 {{ $t('wallet.withdraw') }}
               </base-btn>
               <base-btn
+                :disabled="isFetchingBalance"
                 selector="SHOW-TRANSFER-MODAL"
                 class="balance__btn"
                 @click="showTransferModal()"
@@ -140,6 +144,7 @@ export default {
   name: 'Wallet',
   middleware: 'auth',
   components: { EmptyData },
+  TokenSymbols,
   data() {
     return {
       cardClosed: false,
@@ -147,6 +152,7 @@ export default {
       txsPerPage: 10,
       currentPage: 1,
       selectedWalletTable: WalletTables.TXS,
+      isFetchingBalance: false,
     };
   },
   computed: {
@@ -170,7 +176,7 @@ export default {
       const res = [];
       // eslint-disable-next-line no-restricted-syntax
       for (const t of txs) {
-        const symbol = TokenSymbolByContract[t.to_address_hash.hex] || TokenSymbols.WUSD;
+        const symbol = TokenSymbolByContract[t.to_address_hash.hex] || TokenSymbols.WQT;
         res.push({
           tx_hash: t.hash,
           block: t.block_number,
@@ -185,10 +191,7 @@ export default {
       return res;
     },
     tokenSymbolsDd() {
-      return Object.keys(TokenSymbols);
-    },
-    tokenSymbols() {
-      return TokenSymbols;
+      return [TokenSymbols.WQT, TokenSymbols.WUSD];
     },
     walletTableFields() {
       return [
@@ -213,11 +216,8 @@ export default {
       await this.loadData();
     },
     isConnected(newVal) {
-      if (!newVal) {
-        this.$store.dispatch('wallet/checkWalletConnected', {
-          nuxt: this.$nuxt,
-        });
-      }
+      if (newVal) return;
+      this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
     },
     currentPage() {
       this.getTransactions();
@@ -240,14 +240,14 @@ export default {
       });
     },
     async loadData() {
-      this.SetLoader(true);
+      this.isFetchingBalance = true;
       await Promise.all([
         this.$store.dispatch('wallet/frozenBalance', { address: this.userWalletAddress }),
-        this.$store.dispatch('wallet/getBalanceWQT', this.userWalletAddress),
+        this.$store.dispatch('wallet/getBalanceWUSD', this.userWalletAddress),
         this.$store.dispatch('wallet/getBalance'),
         this.getTransactions(),
       ]);
-      this.SetLoader(false);
+      this.isFetchingBalance = false;
     },
     closeCard() {
       this.cardClosed = true;
@@ -259,6 +259,7 @@ export default {
       });
     },
     showTransferModal() {
+      if (this.isFetchingBalance) return;
       this.ShowModal({
         key: modals.giveTransfer,
         submit: async ({ recipient, amount, selectedToken }) => {
@@ -266,7 +267,7 @@ export default {
           recipient = convertToHex('wq', recipient);
           const value = new BigNumber(amount).shiftedBy(18).toString();
           let feeRes;
-          if (selectedToken === TokenSymbols.WUSD) {
+          if (selectedToken === TokenSymbols.WQT) {
             feeRes = await this.$store.dispatch('wallet/getTransferFeeData', {
               recipient,
               value: amount,
@@ -275,7 +276,7 @@ export default {
             feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
               method: 'transfer',
               abi: ERC20,
-              contractAddress: process.env.WORKNET_WQT_TOKEN,
+              contractAddress: process.env.WORKNET_WUSD_TOKEN,
               data: [recipient, value],
             });
           }
@@ -289,12 +290,12 @@ export default {
                 value: amount,
                 symbol: selectedToken, // REQUIRED!
               },
-              fee: { name: this.$t('wallet.table.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
+              fee: { name: this.$t('wallet.table.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WQT },
             },
             submitMethod: async () => {
               this.CloseModal();
               this.SetLoader(true);
-              const action = selectedToken === TokenSymbols.WUSD ? 'transfer' : 'transferWQT';
+              const action = selectedToken === TokenSymbols.WQT ? 'transfer' : 'transferWUSD';
               const res = await this.$store.dispatch(`wallet/${action}`, {
                 recipient,
                 value: amount,
@@ -487,6 +488,9 @@ export default {
       text-overflow: ellipsis;
       max-width: 1000px;
       padding-right: 20px;
+      &_light {
+        color: $black500;
+      }
     }
   }
 

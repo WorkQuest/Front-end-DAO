@@ -118,6 +118,7 @@ export default {
         { dd__btn_dark: type === 'dark' },
         { dd__btn_gray: type === 'gray' },
         { dd__btn_light: type === 'light' },
+        { dd__btn_border: type === 'border' },
       ];
     },
     titleClass() {
@@ -246,6 +247,9 @@ export default {
       &:hover {
         border: 1px solid rgba(0, 0, 0, 0.1);
       }
+    }
+    &_border {
+      border: 1px solid $black0;
     }
   }
 }
