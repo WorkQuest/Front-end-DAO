@@ -173,23 +173,20 @@ export default {
       return Math.ceil(this.transactionsCount / this.txsPerPage);
     },
     styledTransactions() {
-      const txs = this.transactions;
-      const res = [];
-      // eslint-disable-next-line no-restricted-syntax
-      for (const t of txs) {
+      return this.transactions.map((t) => {
         const symbol = TokenSymbolByContract[t.to_address_hash.hex] || TokenSymbols.WQT;
-        res.push({
+        const decimals = this.balance[symbol]?.decimals || 18;
+        return {
           tx_hash: t.hash,
           block: t.block_number,
           timestamp: this.$moment(t.block.timestamp).format('lll'),
           status: !!t.status,
-          value: `${getStyledAmount(t.tokenTransfers[0]?.amount || t.value)} ${symbol}`,
+          value: `${getStyledAmount(t.tokenTransfers[0]?.amount || t.value, false, decimals)} ${symbol}`,
           transaction_fee: new BigNumber(t.gas_price).multipliedBy(t.gas_used),
           from_address: t.from_address_hash.hex,
           to_address: t.to_address_hash.hex,
-        });
-      }
-      return res;
+        };
+      });
     },
     tokenSymbolsDd() {
       return [TokenSymbols.WQT, TokenSymbols.WUSD];
@@ -243,8 +240,8 @@ export default {
     async loadData() {
       this.isFetchingBalance = true;
       await Promise.all([
+        this.$store.dispatch('wallet/getTokenBalance', TokenSymbols.WUSD),
         this.$store.dispatch('wallet/updateFrozenBalance'),
-        this.$store.dispatch('wallet/getBalanceWUSD', this.userWalletAddress),
         this.$store.dispatch('wallet/getBalance'),
         this.getTransactions(),
       ]);

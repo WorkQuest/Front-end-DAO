@@ -25,7 +25,9 @@ import {
   getProposalThreshold,
   connectWallet,
 } from '~/utils/wallet';
-import { errorCodes, TokenSymbols } from '~/utils/enums';
+import {
+  errorCodes, TokenSymbols,
+} from '~/utils/enums';
 import { error, success } from '~/utils/success-error';
 import { ERC20, WQToken, WQVoting } from '~/abi/index';
 
@@ -85,10 +87,20 @@ export default {
   disconnect() {
     disconnect();
   },
+  async fetchCommonTokenInfo({ commit }) {
+    try {
+      const tokens = await Promise.all(WorknetTokenAddresses.map(async (address) => await Promise.all([
+        fetchWalletContractData('symbol', ERC20, address),
+        fetchWalletContractData('decimals', ERC20, address),
+      ])));
+      tokens.forEach((item) => commit('setCommonTokenData', item));
+    } catch (e) {
+      console.error('wallet/fetchCommonTokenInfo');
+    }
+  },
   setSelectedToken({ commit }, token) {
     commit('setSelectedToken', token);
   },
-
   async getBalance({ commit }) {
     const res = await getBalance();
     commit('setBalance', {
@@ -97,17 +109,18 @@ export default {
       fullBalance: res.ok ? res.result.fullBalance : 0,
     });
   },
-  async getBalanceWUSD({ commit }, userAddress) {
+  async getTokenBalance({ commit, getters }, tokenSymbol) {
     const res = await fetchWalletContractData(
       'balanceOf',
       ERC20,
-      process.env.WORKNET_WUSD_TOKEN,
-      [userAddress],
+      TokenMap[tokenSymbol],
+      [getWalletAddress()],
     );
+    const { decimals } = getters.getBalanceData[tokenSymbol];
     commit('setBalance', {
-      symbol: TokenSymbols.WUSD,
-      balance: res ? getStyledAmount(res) : 0,
-      fullBalance: res ? getStyledAmount(res, true) : 0,
+      symbol: tokenSymbol,
+      balance: res ? getStyledAmount(res, false, decimals) : 0,
+      fullBalance: res ? getStyledAmount(res, true, decimals) : 0,
     });
   },
   /**
@@ -172,7 +185,7 @@ export default {
         [getWalletAddress()],
       );
       commit('user/setFrozenBalance', res
-        ? new BigNumber(res).shiftedBy(-18).toString()
+        ? new BigNumber(res).shiftedBy(-getters.getBalanceData.WQT.decimals).toString()
         : '0', { root: true });
       return success(res);
     } catch (e) {

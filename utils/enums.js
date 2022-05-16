@@ -95,6 +95,8 @@ export const TokenMap = {
   [TokenSymbols.WETH]: process.env.WORKNET_WETH_TOKEN,
 };
 
+export const WorknetTokenAddresses = [process.env.WORKNET_WUSD_TOKEN];
+
 export const WalletTables = Object.freeze({
   TXS: 'TXS',
   COLLATERAL: 'COLLATERAL',
