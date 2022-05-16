@@ -331,7 +331,7 @@ export const getDelegates = async () => {
   try {
     const res = await fetchWalletContractData(
       'delegates',
-      WQToken,
+      WQVoting,
       process.env.WORKNET_VOTING,
       [wallet.address],
     );
@@ -345,7 +345,7 @@ export const delegate = async (toAddress, amount) => {
   try {
     amount = new BigNumber(amount).shiftedBy(+18).toString();
     const res = await sendWalletTransaction('delegate', {
-      abi: WQToken,
+      abi: WQVoting,
       address: process.env.WORKNET_VOTING,
       data: [toAddress],
       value: amount,
@@ -359,7 +359,7 @@ export const delegate = async (toAddress, amount) => {
 export const undelegate = async () => {
   try {
     const res = await sendWalletTransaction('undelegate', {
-      abi: WQToken,
+      abi: WQVoting,
       address: process.env.WORKNET_VOTING,
     });
     return success(res);

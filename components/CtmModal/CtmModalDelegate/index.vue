@@ -71,6 +71,7 @@ export default {
       balance: 0,
       investorAddress: '',
       windowSize: window.innerWidth,
+      maxFee: 0,
     };
   },
   computed: {
@@ -103,6 +104,20 @@ export default {
     window.addEventListener('resize', () => {
       this.windowSize = window.innerWidth;
     });
+    // max fee calc
+    const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
+      method: 'delegate',
+      abi: WQVoting,
+      contractAddress: process.env.WORKNET_VOTING,
+      data: [this.investorAddress],
+      amount: this.balanceData.WQT.fullBalance,
+    });
+    if (feeRes.ok) {
+      this.maxFee = feeRes.result.fee;
+    } else {
+      this.ShowToast(feeRes.msg);
+      this.CloseModal();
+    }
   },
   async mounted() {
     await this.$store.dispatch('wallet/getBalance');
@@ -113,13 +128,14 @@ export default {
       this.tokensAmount.replace(/,/g, '.');
     },
     maxDelegate() {
-      this.tokensAmount = this.balance;
+      this.tokensAmount = this.balance - this.maxFee;
     },
     async delegate() {
       const { callback } = this.options;
       const {
         tokensAmount, userWalletAddress, convertToHex, convertToBech32,
       } = this;
+
       let { investorAddress } = this;
       investorAddress = convertToHex('wq', investorAddress);
       this.CloseModal();
@@ -129,9 +145,8 @@ export default {
         abi: WQVoting,
         contractAddress: process.env.WORKNET_VOTING,
         data: [investorAddress],
-        amount: new BigNumber(tokensAmount).shiftedBy(18).toString(),
+        amount: tokensAmount,
       });
-      console.log('fee for delegagte', feeRes); // todo del
       this.SetLoader(false);
       if (!feeRes.ok) {
         this.ShowToast(feeRes.msg);
