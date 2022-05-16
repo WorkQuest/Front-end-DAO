@@ -176,7 +176,7 @@ export default {
       return error(errorCodes.GetVotes, e.message, e);
     }
   },
-  async frozenBalance({ commit }, { address }) {
+  async frozenBalance({ commit, getters }, { address }) {
     try {
       const res = await fetchWalletContractData(
         'frozed',
@@ -185,7 +185,7 @@ export default {
         [address],
       );
       commit('user/setFrozenBalance', res
-        ? new BigNumber(res).shiftedBy(-18).toString()
+        ? new BigNumber(res).shiftedBy(-getters.getBalanceData.WQT.decimals).toString()
         : '0', { root: true });
       return success(res);
     } catch (e) {
