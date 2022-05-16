@@ -248,7 +248,7 @@ export const fetchWalletContractData = async (_method, _abi, _address, _params) 
 export const transferToken = async (recipient, value) => {
   try {
     value = new BigNumber(value).shiftedBy(18).toString();
-    const inst = new web3.eth.Contract(ERC20, process.env.WORKNET_WQT_TOKEN);
+    const inst = new web3.eth.Contract(ERC20, process.env.WORKNET_WUSD_TOKEN);
     const [gasPrice, gasEstimate] = await Promise.all([
       web3.eth.getGasPrice(),
       inst.methods.transfer.apply(null, [recipient, value]).estimateGas({ from: wallet.address }),
@@ -271,7 +271,7 @@ export const transferToken = async (recipient, value) => {
  * @param contractAddress
  * @param data - array
  * @param recipient
- * @param amount - WUSD
+ * @param amount - NativeToken
  * @returns {Promise<{msg: string, code: number, data: null, ok: boolean}|{result: *, ok: boolean}>}
  */
 export const getContractFeeData = async (method, abi, contractAddress, data, recipient = null, amount = 0) => {

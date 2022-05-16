@@ -25,9 +25,11 @@ import {
   getProposalThreshold,
   connectWallet,
 } from '~/utils/wallet';
-import { errorCodes, TokenSymbols } from '~/utils/enums';
+import {
+  errorCodes, TokenMap, TokenSymbols, WorknetTokenAddresses,
+} from '~/utils/enums';
 import { error, success } from '~/utils/success-error';
-import { ERC20, WQToken } from '~/abi/index';
+import { ERC20, WQToken, WQVoting } from '~/abi/index';
 
 export default {
   async getTransactions({ commit }, params) {
@@ -85,29 +87,40 @@ export default {
   disconnect() {
     disconnect();
   },
+  async fetchCommonTokenInfo({ commit }) {
+    try {
+      const tokens = await Promise.all(WorknetTokenAddresses.map(async (address) => await Promise.all([
+        fetchWalletContractData('symbol', ERC20, address),
+        fetchWalletContractData('decimals', ERC20, address),
+      ])));
+      tokens.forEach((item) => commit('setCommonTokenData', item));
+    } catch (e) {
+      console.error('wallet/fetchCommonTokenInfo');
+    }
+  },
   setSelectedToken({ commit }, token) {
     commit('setSelectedToken', token);
   },
-
   async getBalance({ commit }) {
     const res = await getBalance();
     commit('setBalance', {
-      symbol: TokenSymbols.WUSD,
+      symbol: TokenSymbols.WQT,
       balance: res.ok ? res.result.balance : 0,
       fullBalance: res.ok ? res.result.fullBalance : 0,
     });
   },
-  async getBalanceWQT({ commit }, userAddress) {
+  async getTokenBalance({ commit, getters }, tokenSymbol) {
     const res = await fetchWalletContractData(
       'balanceOf',
       ERC20,
-      process.env.WORKNET_WQT_TOKEN,
-      [userAddress],
+      TokenMap[tokenSymbol],
+      [getWalletAddress()],
     );
+    const { decimals } = getters.getBalanceData[tokenSymbol];
     commit('setBalance', {
-      symbol: TokenSymbols.WQT,
-      balance: res ? getStyledAmount(res) : 0,
-      fullBalance: res ? getStyledAmount(res, true) : 0,
+      symbol: tokenSymbol,
+      balance: res ? getStyledAmount(res, false, decimals) : 0,
+      fullBalance: res ? getStyledAmount(res, true, decimals) : 0,
     });
   },
   /**
@@ -122,12 +135,12 @@ export default {
     return await getTransferFeeData(recipient, value);
   },
   /**
-     * Send transfer for WQT token
+     * Send transfer for WUSD token
      * @param commit
      * @param recipient
      * @param value
      */
-  async transferWQT({ commit }, { recipient, value }) {
+  async transferWUSD({ commit }, { recipient, value }) {
     return await transferToken(recipient, value);
   },
   /**
@@ -163,15 +176,17 @@ export default {
       return error(errorCodes.GetVotes, e.message, e);
     }
   },
-  async frozenBalance({ commit }, { address }) {
+  async frozenBalance({ commit, getters }, { address }) {
     try {
       const res = await fetchWalletContractData(
-        'freezed',
-        WQToken,
-        process.env.WORKNET_WQT_TOKEN,
+        'frozed',
+        WQVoting,
+        process.env.WORKNET_VOTING,
         [address],
       );
-      commit('user/setFrozenBalance', new BigNumber(res).shiftedBy(-18).toString(), { root: true });
+      commit('user/setFrozenBalance', res
+        ? new BigNumber(res).shiftedBy(-getters.getBalanceData.WQT.decimals).toString()
+        : '0', { root: true });
       return success(res);
     } catch (e) {
       return error(errorCodes.Undelegate, e.message, e);
@@ -204,7 +219,7 @@ export default {
   async delegate({ commit }, { toAddress, amount }) {
     return await delegate(toAddress, amount);
   },
-  async undelegate({ commit }) {
+  async undelegate({ _ }) {
     return await undelegate();
   },
 
