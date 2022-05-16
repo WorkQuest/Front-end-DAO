@@ -84,8 +84,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
-import { TokenMap, TokenSymbols } from '~/utils/enums';
-import { ERC20 } from '~/abi/index';
+import { TokenSymbols } from '~/utils/enums';
 
 export default {
   name: 'ModalTakeTransfer',
@@ -107,18 +106,17 @@ export default {
       selectedToken: 'wallet/getSelectedToken',
       userData: 'user/getUserData',
       isConnected: 'wallet/getIsWalletConnected',
-      frozenBalance: 'user/getFrozenBalance',
     }),
     tokenSymbolsDd() {
       return [TokenSymbols.WQT, TokenSymbols.WUSD];
     },
     maxAmount() {
       const {
-        selectedToken, balance, maxFeeNativeToken, frozenBalance,
+        selectedToken, balance, maxFeeNativeToken,
       } = this;
       const fullBalance = new BigNumber(balance[selectedToken].fullBalance);
       if (selectedToken === TokenSymbols.WQT) {
-        return fullBalance.minus(maxFeeNativeToken).minus(frozenBalance).toString();
+        return fullBalance.minus(maxFeeNativeToken).toString();
       }
       return fullBalance.toString();
     },
