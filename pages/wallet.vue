@@ -178,12 +178,13 @@ export default {
       // eslint-disable-next-line no-restricted-syntax
       for (const t of txs) {
         const symbol = TokenSymbolByContract[t.to_address_hash.hex] || TokenSymbols.WQT;
+        const decimals = this.balance[symbol]?.decimals || 18;
         res.push({
           tx_hash: t.hash,
           block: t.block_number,
           timestamp: this.$moment(t.block.timestamp).format('lll'),
           status: !!t.status,
-          value: `${getStyledAmount(t.tokenTransfers[0]?.amount || t.value)} ${symbol}`,
+          value: `${getStyledAmount(t.tokenTransfers[0]?.amount || t.value, false, decimals)} ${symbol}`,
           transaction_fee: new BigNumber(t.gas_price).multipliedBy(t.gas_used),
           from_address: t.from_address_hash.hex,
           to_address: t.to_address_hash.hex,
@@ -244,7 +245,7 @@ export default {
       this.isFetchingBalance = true;
       await Promise.all([
         this.$store.dispatch('wallet/frozenBalance', { address: this.userWalletAddress }),
-        this.$store.dispatch('wallet/getBalanceWUSD', this.userWalletAddress),
+        this.$store.dispatch('wallet/getTokenBalance', TokenSymbols.WUSD),
         this.$store.dispatch('wallet/getBalance'),
         this.getTransactions(),
       ]);

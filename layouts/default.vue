@@ -413,6 +413,7 @@ export default {
       imageData: 'user/getImageData',
       userRole: 'user/getUserRole',
       currentLocale: 'user/getCurrentLang',
+      isWalletConnected: 'wallet/getIsWalletConnected',
     }),
     locales() {
       return this.$i18n.locales.map((item) => ({
@@ -431,6 +432,9 @@ export default {
     $route() {
       this.$refs.templateScroll.scrollTop = 0;
     },
+  },
+  async beforeCreate() {
+    await this.$store.dispatch('wallet/fetchCommonTokenInfo');
   },
   async mounted() {
     this.GetLocation();
