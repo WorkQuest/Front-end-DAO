@@ -43,6 +43,7 @@
                   v-model="ddValue"
                   class="balance__token"
                   :items="tokenSymbolsDd"
+                  type="border"
                 />
               </span>
               <span :class="[{'balance__currency__margin-bottom' : selectedToken !== $options.TokenSymbols.WQT}]">
@@ -496,9 +497,6 @@ export default {
 
   &__token {
     height: 49px;
-    border: 1px solid $black100;
-    border-radius: 6px;
-    box-sizing: border-box;
   }
 
   &__usd {
