@@ -61,7 +61,7 @@ import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
 import { TokenSymbols } from '~/utils/enums';
-import { WQToken } from '~/abi/index';
+import { WQVoting } from '~/abi/index';
 
 export default {
   name: 'Delegate',
@@ -105,10 +105,7 @@ export default {
     });
   },
   async mounted() {
-    await Promise.all([
-      this.$store.dispatch('wallet/getBalance'),
-      this.$store.dispatch('wallet/getBalanceWQT', this.userWalletAddress),
-    ]);
+    await this.$store.dispatch('wallet/getBalance');
     this.balance = this.balanceData.WQT.fullBalance;
   },
   methods: {
@@ -129,9 +126,10 @@ export default {
       this.SetLoader(true);
       const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
         method: 'delegate',
-        abi: WQToken,
-        contractAddress: process.env.WORKNET_WQT_TOKEN,
-        data: [investorAddress, new BigNumber(tokensAmount).shiftedBy(18).toString()],
+        abi: WQVoting,
+        contractAddress: process.env.WORKNET_VOTING,
+        data: [investorAddress],
+        amount: new BigNumber(tokensAmount).shiftedBy(18).toString(),
       });
       this.SetLoader(false);
       this.ShowModal({
@@ -141,7 +139,7 @@ export default {
           from: { name: this.$t('modals.fromAddress'), value: convertToBech32('wq', userWalletAddress) },
           to: { name: this.$t('modals.toAddress'), value: convertToBech32('wq', process.env.WORKNET_WQT_TOKEN) },
           amount: { name: this.$t('modals.amount'), value: tokensAmount, symbol: TokenSymbols.WQT },
-          fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
+          fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WQT },
         },
         submitMethod: async () => {
           this.SetLoader(true);

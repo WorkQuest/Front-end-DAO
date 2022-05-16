@@ -243,7 +243,7 @@ export default {
     async loadData() {
       this.isFetchingBalance = true;
       await Promise.all([
-        this.$store.dispatch('wallet/frozenBalance', { address: this.userWalletAddress }),
+        this.$store.dispatch('wallet/updateFrozenBalance'),
         this.$store.dispatch('wallet/getBalanceWUSD', this.userWalletAddress),
         this.$store.dispatch('wallet/getBalance'),
         this.getTransactions(),

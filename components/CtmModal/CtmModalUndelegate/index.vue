@@ -69,7 +69,7 @@ export default {
   },
   beforeMount() {
     this.tokensAmount = this.options.tokensAmount;
-    this.$store.dispatch('wallet/frozenBalance', { address: this.userWalletAddress });
+    this.$store.dispatch('wallet/updateFrozenBalance');
   },
   methods: {
     async undelegate() {

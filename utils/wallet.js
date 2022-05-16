@@ -325,7 +325,7 @@ export const delegate = async (toAddress, amount) => {
     amount = new BigNumber(amount).shiftedBy(+18).toString();
     const res = await sendWalletTransaction('delegate', {
       abi: WQToken,
-      address: process.env.WORKNET_WQT_TOKEN,
+      address: process.env.WORKNET_VOTING,
       data: [toAddress, amount],
     });
     return success(res);
@@ -338,7 +338,7 @@ export const undelegate = async () => {
   try {
     const res = await sendWalletTransaction('undelegate', {
       abi: WQToken,
-      address: process.env.WORKNET_WQT_TOKEN,
+      address: process.env.WORKNET_VOTING,
     });
     return success(res);
   } catch (e) {

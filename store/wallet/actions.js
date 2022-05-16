@@ -156,20 +156,20 @@ export default {
      */
   async getVotesByAddresses({ commit }, addresses) {
     try {
-      const res = await fetchWalletContractData('getVotes', WQToken, process.env.WORKNET_WQT_TOKEN, [addresses]);
+      const res = await fetchWalletContractData('getVotes', WQToken, process.env.WORKNET_VOTING, [addresses]);
       return success(res);
     } catch (e) {
       console.error('getVotes');
       return error(errorCodes.GetVotes, e.message, e);
     }
   },
-  async frozenBalance({ commit }, { address }) {
+  async updateFrozenBalance({ commit }) {
     try {
       const res = await fetchWalletContractData(
         'frozed',
         WQVoting,
         process.env.WORKNET_VOTING,
-        [address],
+        [getWalletAddress()],
       );
       commit('user/setFrozenBalance', res
         ? new BigNumber(res).shiftedBy(-18).toString()
