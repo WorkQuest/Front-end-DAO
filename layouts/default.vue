@@ -413,7 +413,6 @@ export default {
       imageData: 'user/getImageData',
       userRole: 'user/getUserRole',
       currentLocale: 'user/getCurrentLang',
-      isWalletConnected: 'wallet/getIsWalletConnected',
     }),
     locales() {
       return this.$i18n.locales.map((item) => ({
