@@ -79,11 +79,11 @@ export const TokenSymbols = Object.freeze({
 });
 
 export const TokenSymbolByContract = Object.freeze({
-  [process.env.WORKNET_WQT_TOKEN.toLowerCase()]: TokenSymbols.WQT,
+  [process.env.WORKNET_WUSD_TOKEN.toLowerCase()]: TokenSymbols.WUSD,
 });
 
 export const tokenMap = {
-  [TokenSymbols.WQT]: process.env.WORKNET_WQT_TOKEN,
+  [TokenSymbols.WUSD]: process.env.WORKNET_WUSD_TOKEN,
 };
 
 export const WalletTables = Object.freeze({

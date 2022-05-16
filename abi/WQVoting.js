@@ -40,6 +40,62 @@ export default [
     anonymous: false,
     inputs: [
       {
+        indexed: true,
+        internalType: 'address',
+        name: 'delegator',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'fromDelegate',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'toDelegate',
+        type: 'address',
+      },
+    ],
+    name: 'DelegateChanged',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'delegator',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'delegatee',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'previousBalance',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'newBalance',
+        type: 'uint256',
+      },
+    ],
+    name: 'DelegateVotesChanged',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: false,
         internalType: 'uint256',
         name: 'id',
@@ -301,13 +357,7 @@ export default [
       },
     ],
     name: 'addProposal',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
@@ -327,6 +377,74 @@ export default [
     name: 'changeVotingRules',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+      {
+        internalType: 'uint32',
+        name: 'pos',
+        type: 'uint32',
+      },
+    ],
+    name: 'checkpoints',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'uint32',
+            name: 'fromBlock',
+            type: 'uint32',
+          },
+          {
+            internalType: 'uint224',
+            name: 'votes',
+            type: 'uint224',
+          },
+        ],
+        internalType: 'struct WQDAOVoting.Checkpoint',
+        name: '',
+        type: 'tuple',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'delegatee',
+        type: 'address',
+      },
+    ],
+    name: 'delegate',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+    ],
+    name: 'delegates',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -358,6 +476,49 @@ export default [
     name: 'executeVoting',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+    ],
+    name: 'frozed',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'blockNumber',
+        type: 'uint256',
+      },
+    ],
+    name: 'getPastVotes',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -536,6 +697,25 @@ export default [
   {
     inputs: [
       {
+        internalType: 'address[]',
+        name: 'accounts',
+        type: 'address[]',
+      },
+    ],
+    name: 'getVotes',
+    outputs: [
+      {
+        internalType: 'uint256[]',
+        name: '_delegatee',
+        type: 'uint256[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
         internalType: 'bytes32',
         name: 'role',
         type: 'bytes32',
@@ -583,11 +763,6 @@ export default [
         type: 'address',
       },
       {
-        internalType: 'address',
-        name: '_voteToken',
-        type: 'address',
-      },
-      {
         internalType: 'uint256',
         name: '_minimumQuorum',
         type: 'uint256',
@@ -595,6 +770,16 @@ export default [
       {
         internalType: 'uint256',
         name: '_votingPeriod',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_proposalThreshold',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_voteThreshold',
         type: 'uint256',
       },
     ],
@@ -617,13 +802,19 @@ export default [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'name',
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+    ],
+    name: 'numCheckpoints',
     outputs: [
       {
-        internalType: 'string',
+        internalType: 'uint32',
         name: '',
-        type: 'string',
+        type: 'uint32',
       },
     ],
     stateMutability: 'view',
@@ -719,6 +910,29 @@ export default [
         internalType: 'string',
         name: 'description',
         type: 'string',
+      },
+      {
+        internalType: 'bool',
+        name: 'succeded',
+        type: 'bool',
+      },
+      {
+        internalType: 'bool',
+        name: 'defeated',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'proxiableUUID',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
       },
     ],
     stateMutability: 'view',
@@ -839,15 +1053,9 @@ export default [
   },
   {
     inputs: [],
-    name: 'token',
-    outputs: [
-      {
-        internalType: 'contract WQTInterface',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
+    name: 'undelegate',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -879,30 +1087,6 @@ export default [
     name: 'upgradeToAndCall',
     outputs: [],
     stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    name: 'voteResults',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: 'succeded',
-        type: 'bool',
-      },
-      {
-        internalType: 'bool',
-        name: 'defeated',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
     type: 'function',
   },
   {
