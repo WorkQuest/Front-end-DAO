@@ -211,26 +211,51 @@ export const getTransferFeeData = async (recipient, value) => {
 };
 
 /** CONTRACTS */
-export const sendWalletTransaction = async (_method, payload) => {
+export const sendWalletTransaction = async (_method, {
+  abi, address, data, value,
+}) => {
   if (!web3) {
     console.error('web3 is undefined');
     return false;
   }
-  const inst = new web3.eth.Contract(payload.abi, payload.address);
-  const gasPrice = await web3.eth.getGasPrice();
-  const accountAddress = getWalletAddress();
-  const data = inst.methods[_method].apply(null, payload.data).encodeABI();
-  const gasEstimate = await inst.methods[_method].apply(null, payload.data).estimateGas({ from: accountAddress });
-  const transactionData = {
-    to: payload.address,
-    from: accountAddress,
-    data,
-    gasPrice,
-    gas: gasEstimate,
-  };
+  try {
+    const inst = new web3.eth.Contract(abi, address);
+    const gasPrice = await web3.eth.getGasPrice();
+    const accountAddress = getWalletAddress();
+    const txData = inst.methods[_method].apply(null, data).encodeABI();
+
+    if (value) {
+      const gas = await inst.methods[_method].apply(null, data).estimateGas({
+        from: accountAddress,
+        value,
+      });
+      return await inst.methods[_method](...data).send({
+        from: accountAddress,
+        to: address,
+        data: txData,
+        gasPrice,
+        gas,
+        value,
+      });
+    }
+    const gas = await inst.methods[_method].apply(null, data).estimateGas({
+      from: accountAddress,
+    });
+    const transactionData = {
+      from: accountAddress,
+      to: address,
+      data: txData,
+      gasPrice,
+      gas,
+    };
     // noinspection ES6RedundantAwait
-  return await web3.eth.sendTransaction(transactionData);
+    return await web3.eth.sendTransaction(transactionData);
+  } catch (e) {
+    console.error('wallet: sendWalletTransaction', e);
+    return error(e.code, e.message, e);
+  }
 };
+
 export const fetchWalletContractData = async (_method, _abi, _address, _params) => {
   try {
     if (!web3) {
@@ -266,21 +291,17 @@ export const transferToken = async (recipient, value) => {
 };
 /**
  * Get fee from contract
- * @param method
- * @param abi
- * @param contractAddress
+ * @param _method
+ * @param _abi
+ * @param _contractAddress
  * @param data - array
  * @param recipient
  * @param amount - NativeToken
  * @returns {Promise<{msg: string, code: number, data: null, ok: boolean}|{result: *, ok: boolean}>}
  */
-export const getContractFeeData = async (method, abi, contractAddress, data, recipient = null, amount = 0) => {
+export const getContractFeeData = async (_method, _abi, _contractAddress, data, recipient = null, amount = 0) => {
   try {
-    if (!web3) {
-      console.error('fetchWalletData: web3 is undefined!');
-      return error(errorCodes.ProviderIsNull, 'provider is null');
-    }
-    const inst = new web3.eth.Contract(abi, contractAddress);
+    const inst = new web3.eth.Contract(_abi, _contractAddress);
     const tx = {
       from: wallet.address,
     };
@@ -291,7 +312,7 @@ export const getContractFeeData = async (method, abi, contractAddress, data, rec
     }
     const [gasPrice, gasEstimate] = await Promise.all([
       web3.eth.getGasPrice(),
-      inst.methods[method].apply(null, data).estimateGas(tx),
+      inst.methods[_method].apply(null, data).estimateGas(tx),
     ]);
     return success({
       gasPrice,
@@ -299,7 +320,7 @@ export const getContractFeeData = async (method, abi, contractAddress, data, rec
       fee: new BigNumber(gasPrice * gasEstimate).shiftedBy(-18).toString(),
     });
   } catch (e) {
-    console.error(`Get contract fee data error: ${method}.`, e.message);
+    console.error(`Get contract fee data error: ${_method}.`, e.message);
     return error(1000, e.message);
   }
 };
@@ -311,7 +332,7 @@ export const getDelegates = async () => {
     const res = await fetchWalletContractData(
       'delegates',
       WQToken,
-      process.env.WORKNET_WQT_TOKEN,
+      process.env.WORKNET_VOTING,
       [wallet.address],
     );
     return success(res);
@@ -326,7 +347,8 @@ export const delegate = async (toAddress, amount) => {
     const res = await sendWalletTransaction('delegate', {
       abi: WQToken,
       address: process.env.WORKNET_VOTING,
-      data: [toAddress, amount],
+      data: [toAddress],
+      value: amount,
     });
     return success(res);
   } catch (e) {

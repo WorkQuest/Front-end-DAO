@@ -131,13 +131,18 @@ export default {
         data: [investorAddress],
         amount: new BigNumber(tokensAmount).shiftedBy(18).toString(),
       });
+      console.log('fee for delegagte', feeRes); // todo del
       this.SetLoader(false);
+      if (!feeRes.ok) {
+        this.ShowToast(feeRes.msg);
+        return;
+      }
       this.ShowModal({
         key: modals.transactionReceipt,
         title: this.$t('modals.delegate'),
         fields: {
           from: { name: this.$t('modals.fromAddress'), value: convertToBech32('wq', userWalletAddress) },
-          to: { name: this.$t('modals.toAddress'), value: convertToBech32('wq', process.env.WORKNET_WQT_TOKEN) },
+          to: { name: this.$t('modals.toAddress'), value: convertToBech32('wq', process.env.WORKNET_VOTING) },
           amount: { name: this.$t('modals.amount'), value: tokensAmount, symbol: TokenSymbols.WQT },
           fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WQT },
         },
