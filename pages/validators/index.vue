@@ -75,23 +75,6 @@ export default {
           stake: new BigNumber(item.tokens).shiftedBy(-this.balanceData.WQT.decimals).toString(),
         };
       });
-
-      // const res = [];
-      // // eslint-disable-next-line no-restricted-syntax
-      // for (const item of this.validatorsList) {
-      //   const address = this.ConvertToBech32('wq', this.ConvertToHex('wqvaloper', item.operator_address));
-      //   res.push({
-      //     validatorName: item.description.moniker,
-      //     investorAddress: address,
-      //     id: address,
-      //     fee: `${Math.ceil(item.commission.commission_rates.rate * 100)}%`,
-      //     minStake: item.min_self_delegation,
-      //     slots: item.slots,
-      //     missedBlocks: item.missedBlocks,
-      //     stake: item.tokens,
-      //   });
-      // }
-      // return res;
     },
     tableFields() {
       const mainFields = [
