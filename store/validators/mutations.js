@@ -8,4 +8,7 @@ export default {
   setValidatorData(state, data) {
     state.validatorData = data;
   },
+  setStakingParams(state, stakingParams) {
+    state.stakingParams = stakingParams;
+  },
 };

@@ -34,7 +34,7 @@ export default {
       console.error('validators/getValidators');
     }
   },
-  async getMissedBlocks({ commit }, consensusPubKey) {
+  async getMissedBlocks({ _ }, consensusPubKey) {
     try {
       const validatorAddress = converter('wqvalcons').toBech32(getAddressFromConsensusPub(consensusPubKey));
       const nodeApi = this.$axios.create({ baseURL });
@@ -45,7 +45,16 @@ export default {
       return error();
     }
   },
-  async getSlotsCount({ commit }, validatorAddress) {
+  async getStakingParams({ commit }) {
+    try {
+      const nodeApi = this.$axios.create({ baseURL });
+      const res = await nodeApi.$get('/cosmos/staking/v1beta1/params');
+      commit('setStakingParams', res.params);
+    } catch (e) {
+      console.error('validators/getMissedBlocks');
+    }
+  },
+  async getSlotsCount({ _ }, validatorAddress) {
     try {
       const nodeApi = this.$axios.create({ baseURL });
       const { pagination } = await nodeApi.$get(`/cosmos/staking/v1beta1/validators/${validatorAddress}/delegations`);
@@ -78,7 +87,7 @@ export default {
   },
 
   // Send tx
-  async broadcast({ commit }, { signedTxBytes, broadCastMode = 'BROADCAST_MODE_SYNC' }) {
+  async broadcast({ _ }, { signedTxBytes, broadCastMode = 'BROADCAST_MODE_SYNC' }) {
     try {
       const nodeApi = this.$axios.create({ baseURL: `${baseURL}/cosmos/tx/v1beta1/txs` });
       return await nodeApi.$post('', {

@@ -47,7 +47,7 @@
           <div class="profile__left profile__left_data">
             <div class="left__user">
               <div class="left__text">
-                {{ this.$t('modals.address') }}
+                {{ $t('modals.address') }}
               </div>
               <a
                 :href="explorerAddressUrl"
@@ -160,11 +160,16 @@ export default {
   computed: {
     ...mapGetters({
       balanceData: 'wallet/getBalanceData',
+      stakingParams: 'validators/getStakingParams',
       validatorData: 'validators/getValidatorData',
       validatorsList: 'validators/getValidatorsList',
       userWalletAddress: 'user/getUserWalletAddress',
       isWalletConnected: 'wallet/getIsWalletConnected',
     }),
+    unbondingDays() {
+      // Через N дней юзеру вернутся WQT после undelegate
+      return Number(this.stakingParams.unbonding_time.slice(0, -1)) / 60 / 60 / 24;
+    },
     leftColumn() {
       const stake = this.validatorData?.tokens
         ? new BigNumber(this.validatorData.tokens).shiftedBy(-this.balanceData.WQT.decimals).toString() : 0;
@@ -213,6 +218,7 @@ export default {
     const [slotsRes, missedBlocksRes] = await Promise.all([
       this.$store.dispatch('validators/getSlotsCount', validatorAddress),
       this.$store.dispatch('validators/getMissedBlocks', this.validatorData.consensus_pubkey.key),
+      this.$store.dispatch('validators/getStakingParams'),
       this.updateDelegatedAmount(),
     ]);
     if (slotsRes.ok) this.slots = slotsRes.result;
@@ -247,7 +253,8 @@ export default {
       this.ShowModal({
         key: modals.delegate,
         delegateMode: DelegateMode.VALIDATORS,
-        investorAddress: this.validatorData.operator_address,
+        unbondingDays: this.unbondingDays,
+        investorAddress: this.ConvertToHex('wqvaloper', this.validatorData.operator_address),
         min: this.validatorData.min_self_delegation,
         submitMethod: async (amount) => {
           this.ShowModal({
@@ -292,6 +299,7 @@ export default {
         key: modals.undelegate,
         title: this.$t('modals.undelegate'),
         delegateMode: DelegateMode.VALIDATORS,
+        unbondingDays: this.unbondingDays,
         tokensAmount: this.delegatedData.amount,
         submitMethod: () => {
           this.ShowModal({

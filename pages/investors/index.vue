@@ -40,6 +40,7 @@
 
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
+import { DelegateMode } from '~/utils/enums';
 
 export default {
   name: 'Investors',
@@ -138,6 +139,7 @@ export default {
     openModalUndelegate() {
       this.ShowModal({
         key: modals.undelegate,
+        delegateMode: DelegateMode.INVESTORS,
         tokensAmount: this.delegatedToUser.tokensAmount,
         callback: async () => await this.getInvestors(),
       });

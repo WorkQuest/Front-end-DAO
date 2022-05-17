@@ -147,7 +147,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
-import { ExplorerUrls, Path } from '~/utils/enums';
+import { DelegateMode, ExplorerUrls, Path } from '~/utils/enums';
 
 export default {
   Path,
@@ -205,6 +205,7 @@ export default {
     openModalDelegate(el) {
       this.ShowModal({
         key: modals.delegate,
+        delegateMode: DelegateMode.INVESTORS,
         stake: el.item.stake,
         investorAddress: el.item.investorAddress,
         callback: el.item.callback,
@@ -213,6 +214,7 @@ export default {
     openModalUndelegate(el) {
       this.ShowModal({
         key: modals.undelegate,
+        delegateMode: DelegateMode.INVESTORS,
         stake: el.item.stake,
         name: el.item.fullName,
         tokensAmount: el.item.voting,

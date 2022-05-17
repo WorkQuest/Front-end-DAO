@@ -763,6 +763,7 @@
     "candidates": "Candidates",
     "searchValidator": "Search validator or candidate",
     "searchCandidates": "Search proposal",
+    "undelegateAfterDays": "Your tokens will be undelegate after {n} days",
     "table": {
       "name": "Name",
       "address": "Address",

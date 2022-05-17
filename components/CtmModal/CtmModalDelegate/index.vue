@@ -22,7 +22,16 @@
           <div class="tokens__title">
             {{ $t('modals.tokensNumber') }}
           </div>
-          <label class="tokens__title_grey">
+          <label
+            v-if="options.unbondingDays"
+            class="tokens__title_grey"
+          >
+            {{ $t('validators.undelegateAfterDays', { n: options.unbondingDays } ) }}
+          </label>
+          <label
+            v-else
+            class="tokens__title_grey"
+          >
             {{ $t('modals.tokensDelegated') }}
           </label>
           <div class="tokens__footer footer">
@@ -64,7 +73,6 @@ import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
 import { WQVoting } from '~/abi/index';
 import { TokenSymbols, DelegateMode } from '~/utils/enums';
-import { WQToken } from '~/abi/index';
 
 export default {
   name: 'Delegate',
@@ -89,17 +97,21 @@ export default {
       return this.options?.min ? `|min_value:${this.options.min}` : '|min_value:1';
     },
     maxValue() {
-      const max = new BigNumber(this.balance).minus(this.maxFee);
-      return max.isGreaterThan(0) ? max.toString() : '0';
+      if (this.options.delegateMode === DelegateMode.INVESTORS) {
+        const max = new BigNumber(this.balance).minus(this.maxFee);
+        return max.isGreaterThan(0) ? max.toString() : '0';
+      }
+      return new BigNumber(this.balance).minus(0.01).toString();
     },
     convertValue() {
       const { windowSize, investorAddress } = this;
-      if (windowSize > 480) return investorAddress;
+      const convertedValue = this.ConvertToBech32('wq', investorAddress);
+      if (windowSize > 480) return convertedValue;
       let a = 10;
       if (windowSize > 450) a = 17;
       else if (windowSize > 380) a = 15;
       else if (windowSize > 350) a = 13;
-      return this.CutTxn(investorAddress, a, a);
+      return this.CutTxn(convertedValue, a, a);
     },
   },
   async beforeMount() {
@@ -107,12 +119,20 @@ export default {
       await this.$store.dispatch('wallet/checkWalletConnected');
       this.CloseModal();
     }
-    this.investorAddress = this.options.investorAddress;
     window.addEventListener('resize', () => {
       this.windowSize = window.innerWidth;
     });
-    // max fee calc
+    this.investorAddress = this.ConvertToHex('wq', this.options.investorAddress);
     await this.$store.dispatch('wallet/getBalance');
+    if (this.options.delegateMode === DelegateMode.VALIDATORS) {
+      this.balance = this.balanceData.WQT.fullBalance;
+      if (new BigNumber(this.balance).minus(0.01).isLessThan(0)) {
+        this.ShowToast(this.$t('proposal.errors.transaction.notEnoughFunds'));
+        this.balance = 0;
+      }
+      return;
+    }
+    // max fee calc
     const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
       method: 'delegate',
       abi: WQVoting,
@@ -126,7 +146,6 @@ export default {
       this.ShowToast(feeRes.msg);
       this.CloseModal();
     }
-
     if (new BigNumber(this.balanceData.WQT.fullBalance).isLessThan(this.maxFee)) {
       this.balance = 0;
       this.ShowToast(this.$t('proposal.errors.transaction.notEnoughFunds'));
@@ -172,7 +191,7 @@ export default {
         title: this.$t('modals.delegate'),
         fields: {
           from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', userWalletAddress) },
-          to: { name: this.$t('modals.toAddress'), value: this.ConvertToBech32('wq', process.env.WORKNET_WQT_TOKEN) },
+          to: { name: this.$t('modals.toAddress'), value: this.ConvertToBech32('wq', process.env.WORKNET_VOTING) },
           amount: { name: this.$t('modals.amount'), value: tokensAmount, symbol: TokenSymbols.WQT },
           fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WQT },
         },
@@ -257,7 +276,7 @@ export default {
     margin-bottom: 5px;
 
     &_grey {
-      color: $black400;
+      color: $black500;
       margin-bottom: 10px !important;
     }
   }
