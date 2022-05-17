@@ -32,7 +32,7 @@
               placeholder="10000 WQT"
               data-selector="AMOUNT"
               :name="$tc('modals.tokensNumber')"
-              :rules="`required${min}|max_bn:${balance}|min_value:1|decimalPlaces:18`"
+              :rules="`required${min}|max_bn:${maxValue}|min_value:1|decimalPlaces:18`"
               @input="replaceDot"
             />
             <base-btn
@@ -84,6 +84,9 @@ export default {
     min() {
       return this.options?.min ? `|min_value:${this.options.min}` : '';
     },
+    maxValue() {
+      return new BigNumber(this.balance).minus(this.maxFee).toString();
+    },
     convertValue() {
       const { windowSize, convertToBech32, investorAddress } = this;
       const convertedValue = convertToBech32('wq', investorAddress);
@@ -128,7 +131,7 @@ export default {
       this.tokensAmount.replace(/,/g, '.');
     },
     maxDelegate() {
-      this.tokensAmount = this.balance - this.maxFee;
+      this.tokensAmount = this.maxValue;
     },
     async delegate() {
       const { callback } = this.options;
@@ -198,7 +201,7 @@ export default {
   }
 
   &__done {
-    margin-top: 25px;
+    margin-top: 35px;
   }
 
   &__input {
