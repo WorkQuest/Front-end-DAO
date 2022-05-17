@@ -154,6 +154,7 @@ export default {
       slots: 0,
       missedBlocks: 0,
       delegatedData: null,
+      validatorAddress: null,
     };
   },
   computed: {
@@ -216,6 +217,7 @@ export default {
     ]);
     if (slotsRes.ok) this.slots = slotsRes.result;
     if (missedBlocksRes.ok) this.missedBlocks = missedBlocksRes.result;
+    this.validatorAddress = validatorAddress;
     this.SetLoader(false);
   },
   beforeDestroy() {
@@ -228,7 +230,10 @@ export default {
         userWalletAddress: this.ConvertToBech32('wq', this.userWalletAddress),
         validatorAddress: this.validatorData.operator_address,
       });
-      if (!res.ok) return;
+      if (!res.ok) {
+        this.delegatedData = null;
+        return;
+      }
       this.delegatedData = {
         amount: res.result.delegation_response.balance.amount,
         shares: res.result.delegation_response.delegation.shares,
@@ -255,7 +260,16 @@ export default {
               amount: { name: this.$t('modals.amount'), value: amount, symbol: TokenSymbols.WQT },
               gasLimit: { name: this.$t('modals.gasLimit'), value: 200000 },
             },
-            callback: async () => await this.updateDelegatedAmount(),
+            callback: async () => await new Promise((resolve) => {
+              setTimeout(async () => {
+                await Promise.all([
+                  this.$store.dispatch('validators/getSlotsCount', this.validatorAddress),
+                  this.$store.dispatch('validators/getValidatorByAddress', this.validatorAddress),
+                  this.updateDelegatedAmount(),
+                ]);
+                resolve();
+              }, 7000);
+            }),
             submitMethod: async () => {
               const delegateTx = await CreateSignedTxForValidator(
                 ValidatorsMethods.DELEGATE,
@@ -288,7 +302,16 @@ export default {
               to: { name: this.$t('modals.toAddress'), value: this.convertedValidatorAddress },
               gasLimit: { name: this.$t('modals.gasLimit'), value: 200000 },
             },
-            callback: async () => await this.updateDelegatedAmount(),
+            callback: async () => await new Promise((resolve) => {
+              setTimeout(async () => {
+                await Promise.all([
+                  this.$store.dispatch('validators/getSlotsCount', this.validatorAddress),
+                  this.$store.dispatch('validators/getValidatorByAddress', this.validatorAddress),
+                  this.updateDelegatedAmount(),
+                ]);
+                resolve();
+              }, 7000);
+            }),
             submitMethod: async () => {
               const undelegateTx = await CreateSignedTxForValidator(
                 ValidatorsMethods.UNDELEGATE,
