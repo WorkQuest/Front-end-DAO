@@ -358,14 +358,6 @@ export const doVote = async (id, value) => {
     return error(errorCodes.VoteProposal, e.message, e);
   }
 };
-export const getProposalThreshold = async () => {
-  try {
-    const result = await fetchWalletContractData('proposalThreshold', WQVoting, process.env.WORKNET_VOTING);
-    return success(new BigNumber(result.toString()).shiftedBy(-18).toString());
-  } catch (e) {
-    return error(errorCodes.GetProposalThreshold, e.message, e);
-  }
-};
 export const getVoteThreshold = async () => {
   try {
     const result = await fetchWalletContractData('voteThreshold', WQVoting, process.env.WORKNET_VOTING);

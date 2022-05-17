@@ -43,6 +43,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import BigNumber from 'bignumber.js';
 import proposalCards from '~/components/app/Cards/proposalCards';
 import modals from '~/store/modals/modals';
 
@@ -68,16 +69,19 @@ export default {
   },
   async beforeCreate() {
     await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
-    await this.$store.dispatch('wallet/updateFrozenBalance');
   },
   methods: {
     async addProposalModal() {
       this.SetLoader(true);
-      const { frozenBalance, proposalThreshold, Floor } = this;
-      if (!proposalThreshold) await this.$store.dispatch('wallet/getProposalThreshold');
+      await Promise.all([
+        this.$store.dispatch('proposals/getProposalThreshold'),
+        this.$store.dispatch('wallet/updateFrozenBalance'),
+      ]);
       this.SetLoader(false);
-      if (+frozenBalance < +proposalThreshold) {
-        this.ShowToast(this.$t('proposal.errors.notEnoughFunds', { a: proposalThreshold, b: Floor(frozenBalance) }),
+      console.log(this.frozenBalance);
+      const minFrozenToCreateProposal = new BigNumber(this.proposalThreshold).shiftedBy(-18);
+      if (new BigNumber(this.frozenBalance).isLessThan(minFrozenToCreateProposal)) {
+        this.ShowToast(this.$t('proposal.errors.notEnoughFunds', { a: minFrozenToCreateProposal, b: this.Floor(this.frozenBalance) }),
           this.$t('proposal.errors.addProposal'));
       } else {
         this.ShowModal({
