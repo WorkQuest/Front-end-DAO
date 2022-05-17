@@ -3,4 +3,7 @@ export default {
   cards: (state) => state.cards,
   cardsCount: (state) => state.cardsCount,
   filters: (state) => state.filters,
+
+  isChairpersonRole: (state) => state.isChairpersonRole,
+  chairpersonRoleHash: (state) => state.chairpersonRoleHash,
 };

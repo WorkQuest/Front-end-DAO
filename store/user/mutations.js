@@ -14,9 +14,7 @@ export default {
     state.tokens.refresh = refresh || '';
     const opts = { path: '/' };
     if (refresh) {
-      const expireRefreshTokenInSeconds = JSON.parse(atob(refresh
-        .split('.')[1])).exp - new Date().getTime() / 1000 || 86400 * 30;
-      opts.maxAge = expireRefreshTokenInSeconds;
+      opts.maxAge = JSON.parse(atob(refresh.split('.')[1])).exp - new Date().getTime() / 1000 || 86400 * 30;
       this.$cookies.set('refresh', refresh, opts);
     }
     this.$cookies.set('socialNetwork', social, opts);

@@ -326,26 +326,6 @@ export const getContractFeeData = async (method, abi, contractAddress, data, rec
 };
 
 /* Proposals */
-export const addProposal = async (description, nonce) => {
-  try {
-    const res = await sendWalletTransaction('addProposal', {
-      abi: WQVoting,
-      address: process.env.WORKNET_VOTING,
-      data: [nonce, description.toString()],
-    });
-    return success(res);
-  } catch (e) {
-    return error(errorCodes.AddProposal, e.message, e);
-  }
-};
-export const getProposalInfoById = async (id) => {
-  try {
-    const res = await fetchWalletContractData('proposals', WQVoting, process.env.WORKNET_VOTING, [id]);
-    return success(res);
-  } catch (e) {
-    return error(errorCodes.GetProposal, e.message, e);
-  }
-};
 export const doVote = async (id, value) => {
   try {
     const res = await sendWalletTransaction('doVote', {
@@ -356,14 +336,6 @@ export const doVote = async (id, value) => {
     return success(res);
   } catch (e) {
     return error(errorCodes.VoteProposal, e.message, e);
-  }
-};
-export const getProposalThreshold = async () => {
-  try {
-    const result = await fetchWalletContractData('proposalThreshold', WQVoting, process.env.WORKNET_VOTING);
-    return success(new BigNumber(result.toString()).shiftedBy(-18).toString());
-  } catch (e) {
-    return error(errorCodes.GetProposalThreshold, e.message, e);
   }
 };
 export const getVoteThreshold = async () => {
@@ -387,35 +359,5 @@ export const voteResults = async (id) => {
     return await fetchWalletContractData('voteResults', WQVoting, process.env.WORKNET_VOTING, [id]);
   } catch (e) {
     return error(errorCodes.VoteResults, e.message, e);
-  }
-};
-
-// Chairperson TODO: remove and move to admin panel
-export const getChairpersonHash = async () => {
-  try {
-    const result = await fetchWalletContractData('CHAIRPERSON_ROLE', WQVoting, process.env.WORKNET_VOTING);
-    return success(result);
-  } catch (e) {
-    return error(errorCodes.GetChairpersonHash, e.message, e);
-  }
-};
-export const hasRole = async (roleHash) => {
-  try {
-    const result = await fetchWalletContractData('hasRole', WQVoting, process.env.WORKNET_VOTING, [roleHash, wallet.address]);
-    return success(result);
-  } catch (e) {
-    return error(errorCodes.HasRole, e.message, e);
-  }
-};
-export const executeVoting = async (id) => {
-  try {
-    const res = await sendWalletTransaction('executeVoting', {
-      abi: WQVoting,
-      address: process.env.WORKNET_VOTING,
-      data: [id],
-    });
-    return success(res);
-  } catch (e) {
-    return error(errorCodes.ExecuteVoting, e.message, e);
   }
 };

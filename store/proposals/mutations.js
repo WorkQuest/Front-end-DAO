@@ -11,4 +11,12 @@ export default {
   setFilters(state, payload) {
     state.filters = payload;
   },
+
+  // TODO: remove
+  setIsChairpersonRole(state, payload) {
+    state.isChairpersonRole = payload;
+  },
+  setChairpersonRoleHash(state, payload) {
+    state.chairpersonRoleHash = payload;
+  },
 };
