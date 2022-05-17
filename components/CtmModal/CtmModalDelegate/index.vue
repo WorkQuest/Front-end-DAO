@@ -32,7 +32,7 @@
               placeholder="10000 WQT"
               data-selector="AMOUNT"
               :name="$tc('modals.tokensNumber')"
-              :rules="`required${min}|max_bn:${maxValue}|min_value:1|decimalPlaces:18`"
+              :rules="`required${min}|max_bn:${maxValue}|decimalPlaces:18`"
               @input="replaceDot"
             />
             <base-btn
@@ -82,7 +82,7 @@ export default {
       userWalletAddress: 'user/getUserWalletAddress',
     }),
     min() {
-      return this.options?.min ? `|min_value:${this.options.min}` : '';
+      return this.options?.min ? `|min_value:${this.options.min}` : 'min_value:1';
     },
     maxValue() {
       return new BigNumber(this.balance).minus(this.maxFee).toString();
