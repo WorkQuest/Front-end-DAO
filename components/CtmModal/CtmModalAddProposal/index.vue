@@ -159,10 +159,10 @@ export default {
         method: 'addProposal',
         abi: WQVoting,
         contractAddress: process.env.WORKNET_VOTING,
-        data: [1, this.descriptionInput.toString()],
+        data: [1, this.descriptionInput.toString().trim()],
       });
-      if (!feeCheck.ok || new BigNumber(this.balanceData.WUSD.fullBalance.toString()).isLessThan(feeCheck.result.fee)) {
-        this.ShowToast(this.$t('errors.transaction.notEnoughFunds'), this.$t('errors.addProposal'));
+      if (!feeCheck.ok || new BigNumber(this.balanceData.WQT.fullBalance.toString()).isLessThan(feeCheck.result.fee)) {
+        this.ShowToast(this.$t('proposal.errors.transaction.notEnoughFunds'), this.$t('proposal.errors.addProposal'));
         this.SetLoader(false);
         return;
       }
@@ -188,23 +188,17 @@ export default {
             key: modals.transactionReceipt,
             title: this.$t('modals.addProposal'),
             fields: {
-              from: {
-                name: this.$t('modals.fromAddress'),
-                value: this.userWalletAddress,
-              },
-              to: {
-                name: this.$t('modals.toAddress'),
-                value: process.env.WORKNET_VOTING,
-              },
+              from: { name: this.$t('modals.fromAddress'), value: this.userWalletAddress },
+              to: { name: this.$t('modals.toAddress'), value: process.env.WORKNET_VOTING },
               fee: {
                 name: this.$t('modals.trxFee'),
                 value: feeRes.result.fee,
-                symbol: TokenSymbols.WUSD,
+                symbol: TokenSymbols.WQT,
               },
             },
             submitMethod: async () => {
               this.SetLoader(true);
-              await this.$store.dispatch('wallet/addProposal', {
+              await this.$store.dispatch('proposals/addProposal', {
                 description: this.descriptionInput,
                 nonce,
               });

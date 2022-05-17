@@ -55,7 +55,7 @@
                 class="hash__value"
                 target="_blank"
               >
-                {{ CutTxn(card.createdEvent.transactionHash, 6, 6) }}
+                {{ CutTxn(card.createdEvent.transactionHash, 8, 8) }}
               </a>
             </div>
             <div class="transactions__files files">
@@ -259,7 +259,9 @@
 <script>
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
-import { ExplorerUrls, proposalStatuses, TokenSymbols } from '~/utils/enums';
+import {
+  ExplorerUrls, Path, proposalStatuses, TokenSymbols,
+} from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import { WQVoting } from '~/abi/index';
 import { getStyledAmount } from '~/utils/wallet';
@@ -310,7 +312,7 @@ export default {
       userWalletAddress: 'user/getUserWalletAddress',
       proposalThreshold: 'proposals/proposalThreshold',
       isWalletConnected: 'wallet/getIsWalletConnected',
-      isChairperson: 'wallet/isChairpersonRole',
+      isChairperson: 'proposals/isChairpersonRole',
       cards: 'proposals/cards',
     }),
     docs() {
@@ -387,7 +389,7 @@ export default {
       ]);
       if (!proposalRes.ok || !votingRes) {
         this.SetLoader(false);
-        await this.$router.push('/proposals');
+        await this.$router.push(Path.PROPOSALS);
         return;
       }
       tempCard = proposalRes.result;
@@ -451,9 +453,9 @@ export default {
     async executeVoting() {
       this.SetLoader(true);
       if (!this.isChairperson) return;
-      await this.$store.dispatch('wallet/executeVoting', this.card.createdEvent.contractProposalId);
+      await this.$store.dispatch('proposals/executeVoting', this.card.createdEvent.contractProposalId);
       this.isActive = false;
-      await this.updateVoteResults();
+      await this.loadCard();
       this.SetLoader(false);
     },
     resetDataFromContract() {
@@ -470,15 +472,21 @@ export default {
     },
     async loadCard() {
       const [proposalRes] = await Promise.all([
-        this.$store.dispatch('wallet/getProposalInfoById', this.card.createdEvent.contractProposalId),
-        this.updateVoteResults(),
+        this.$store.dispatch('proposals/getProposalInfoById', this.card.createdEvent.contractProposalId),
         this.getReceipt(),
-        this.$store.dispatch('wallet/isChairpersonRole'), // TODO: remove check chairperson and move logic to admin panel
+        this.$store.dispatch('proposals/isChairpersonRole'), // TODO: remove check chairperson and move logic to admin panel
       ]);
       if (!proposalRes.ok) return;
       const {
-        forVotes, againstVotes, active,
+        forVotes, againstVotes, active, succeded, defeated,
       } = proposalRes.result;
+
+      if (!succeded && !defeated) {
+        this.card.status = 1;
+      } else if (defeated || !succeded) {
+        this.card.status = 2;
+      } else this.card.status = 3;
+
       const yes = +(new BigNumber(forVotes).shiftedBy(-18));
       const no = +(new BigNumber(againstVotes).shiftedBy(-18));
       this.results.votes.yes = yes;
@@ -503,18 +511,8 @@ export default {
       }
       this.isActive = active;
     },
-    async updateVoteResults() {
-      const res = await this.$store.dispatch('wallet/voteResults', this.card.createdEvent.contractProposalId);
-      if (!res.ok) return;
-      const { succeded, defeated } = res.result;
-      if (!succeded && !defeated) {
-        this.card.status = 1;
-      } else if (defeated || !succeded) {
-        this.card.status = 2;
-      } else this.card.status = 3;
-    },
     async getReceipt() {
-      const res = await this.$store.dispatch('wallet/getReceipt', {
+      const res = await this.$store.dispatch('proposals/getReceipt', {
         id: this.card.createdEvent.contractProposalId,
         accountAddress: this.userWalletAddress,
       });
@@ -543,8 +541,8 @@ export default {
     },
     async doVote(value) {
       const [delegatedRes, voteThreshold] = await Promise.all([
-        this.$store.dispatch('wallet/getVotesByAddresses', [this.userWalletAddress]),
-        this.$store.dispatch('wallet/getVoteThreshold'),
+        this.$store.dispatch('proposals/getVotesByAddresses', [this.userWalletAddress]),
+        this.$store.dispatch('proposals/getVoteThreshold'),
         this.$store.dispatch('wallet/getBalance'),
       ]);
       const delegated = getStyledAmount(delegatedRes.result[0]);
@@ -581,11 +579,11 @@ export default {
         fields: {
           from: { name: this.$t('modals.fromAddress'), value: this.userWalletAddress },
           to: { name: this.$t('modals.toAddress'), value: process.env.WORKNET_VOTING },
-          fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
+          fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WQT },
         },
         submitMethod: async () => {
           this.SetLoader(true);
-          const res = await this.$store.dispatch('wallet/doVote', {
+          const res = await this.$store.dispatch('proposals/doVote', {
             id: this.card.createdEvent.contractProposalId,
             value,
           });
@@ -827,9 +825,8 @@ export default {
     color: #7C838D;
     margin: 10px 0;
     min-width: 0;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+    word-break: break-all;
+    white-space: normal;
   }
 }
 

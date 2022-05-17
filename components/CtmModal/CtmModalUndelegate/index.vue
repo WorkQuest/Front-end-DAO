@@ -51,7 +51,7 @@ import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import { DelegateMode, TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
-import { WQToken } from '~/abi/index';
+import { WQVoting } from '~/abi/index';
 
 export default {
   name: 'Undelegate',
@@ -67,7 +67,8 @@ export default {
     },
   },
   beforeMount() {
-    this.$store.dispatch('wallet/frozenBalance', { address: this.userWalletAddress });
+    this.tokensAmount = this.options.tokensAmount;
+    this.$store.dispatch('wallet/updateFrozenBalance');
   },
   methods: {
     async undelegate() {
@@ -82,18 +83,22 @@ export default {
       this.SetLoader(true);
       const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
         method: 'undelegate',
-        abi: WQToken,
-        contractAddress: process.env.WORKNET_WQT_TOKEN,
+        abi: WQVoting,
+        contractAddress: process.env.WORKNET_VOTING,
         data: [],
       });
       this.SetLoader(false);
+      if (!feeRes.ok) {
+        this.ShowToast(feeRes.msg);
+        return;
+      }
       this.ShowModal({
         key: modals.transactionReceipt,
         title: this.$t('modals.undelegate'),
         fields: {
           from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', userWalletAddress) },
           to: { name: this.$t('modals.toAddress'), value: this.ConvertToBech32('wq', process.env.WORKNET_WQT_TOKEN) },
-          fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
+          fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WQT },
         },
         submitMethod: async () => {
           this.SetLoader(true);

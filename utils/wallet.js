@@ -10,7 +10,7 @@ import secp256k1 from 'secp256k1';
 import { sha256 } from 'ethers/lib.esm/utils';
 import { error, success } from '~/utils/success-error';
 import { errorCodes } from '~/utils/enums';
-import { WQToken, WQVoting, ERC20 } from '~/abi/index';
+import { WQVoting, ERC20 } from '~/abi/index';
 
 const bip39 = require('bip39');
 
@@ -226,26 +226,51 @@ export const getTransferFeeData = async (recipient, value) => {
 };
 
 /** CONTRACTS */
-export const sendWalletTransaction = async (_method, payload) => {
+export const sendWalletTransaction = async (_method, {
+  abi, address, data, value,
+}) => {
   if (!web3) {
     console.error('web3 is undefined');
     return false;
   }
-  const inst = new web3.eth.Contract(payload.abi, payload.address);
-  const gasPrice = await web3.eth.getGasPrice();
-  const accountAddress = getWalletAddress();
-  const data = inst.methods[_method].apply(null, payload.data).encodeABI();
-  const gasEstimate = await inst.methods[_method].apply(null, payload.data).estimateGas({ from: accountAddress });
-  const transactionData = {
-    to: payload.address,
-    from: accountAddress,
-    data,
-    gasPrice,
-    gas: gasEstimate,
-  };
+  try {
+    const inst = new web3.eth.Contract(abi, address);
+    const gasPrice = await web3.eth.getGasPrice();
+    const accountAddress = getWalletAddress();
+    const txData = inst.methods[_method].apply(null, data).encodeABI();
+
+    if (value) {
+      const gas = await inst.methods[_method].apply(null, data).estimateGas({
+        from: accountAddress,
+        value,
+      });
+      return await inst.methods[_method](...data).send({
+        from: accountAddress,
+        to: address,
+        data: txData,
+        gasPrice,
+        gas,
+        value,
+      });
+    }
+    const gas = await inst.methods[_method].apply(null, data).estimateGas({
+      from: accountAddress,
+    });
+    const transactionData = {
+      from: accountAddress,
+      to: address,
+      data: txData,
+      gasPrice,
+      gas,
+    };
     // noinspection ES6RedundantAwait
-  return await web3.eth.sendTransaction(transactionData);
+    return await web3.eth.sendTransaction(transactionData);
+  } catch (e) {
+    console.error('wallet: sendWalletTransaction', e);
+    throw error(-1, e.msg, e);
+  }
 };
+
 export const fetchWalletContractData = async (_method, _abi, _address, _params) => {
   try {
     if (!web3) {
@@ -291,10 +316,6 @@ export const transferToken = async (recipient, value) => {
  */
 export const getContractFeeData = async (method, abi, contractAddress, data, recipient = null, amount = 0) => {
   try {
-    if (!web3) {
-      console.error('fetchWalletData: web3 is undefined!');
-      return error(errorCodes.ProviderIsNull, 'provider is null');
-    }
     const inst = new web3.eth.Contract(abi, contractAddress);
     const tx = {
       from: wallet.address,
@@ -319,144 +340,6 @@ export const getContractFeeData = async (method, abi, contractAddress, data, rec
   }
 };
 
-/* Investors */
-
-export const getDelegates = async () => {
-  try {
-    const res = await fetchWalletContractData(
-      'delegates',
-      WQToken,
-      process.env.WORKNET_WUSD_TOKEN,
-      [wallet.address],
-    );
-    return success(res);
-  } catch (e) {
-    console.error('getDelegates; ', e);
-    return error(errorCodes.Undelegate, e.message, e);
-  }
-};
-export const delegate = async (toAddress, amount) => {
-  try {
-    amount = new BigNumber(amount).shiftedBy(+18).toString();
-    const res = await sendWalletTransaction('delegate', {
-      abi: WQToken,
-      address: process.env.WORKNET_WQT_TOKEN,
-      data: [toAddress, amount],
-    });
-    return success(res);
-  } catch (e) {
-    console.error('delegate:', e);
-    return error(errorCodes.Delegate, e.message, e);
-  }
-};
-export const undelegate = async () => {
-  try {
-    const res = await sendWalletTransaction('undelegate', {
-      abi: WQToken,
-      address: process.env.WORKNET_WQT_TOKEN,
-    });
-    return success(res);
-  } catch (e) {
-    console.error('undelegate: ', e);
-    return error(errorCodes.Undelegate, e.message, e);
-  }
-};
-
-/* Proposals */
-export const addProposal = async (description, nonce) => {
-  try {
-    const res = await sendWalletTransaction('addProposal', {
-      abi: WQVoting,
-      address: process.env.WORKNET_VOTING,
-      data: [nonce, description.toString()],
-    });
-    return success(res);
-  } catch (e) {
-    return error(errorCodes.AddProposal, e.message, e);
-  }
-};
-export const getProposalInfoById = async (id) => {
-  try {
-    const res = await fetchWalletContractData('proposals', WQVoting, process.env.WORKNET_VOTING, [id]);
-    return success(res);
-  } catch (e) {
-    return error(errorCodes.GetProposal, e.message, e);
-  }
-};
-export const doVote = async (id, value) => {
-  try {
-    const res = await sendWalletTransaction('doVote', {
-      abi: WQVoting,
-      address: process.env.WORKNET_VOTING,
-      data: [id, value],
-    });
-    return success(res);
-  } catch (e) {
-    return error(errorCodes.VoteProposal, e.message, e);
-  }
-};
-export const getProposalThreshold = async () => {
-  try {
-    const result = await fetchWalletContractData('proposalThreshold', WQVoting, process.env.WORKNET_VOTING);
-    return success(new BigNumber(result.toString()).shiftedBy(-18).toString());
-  } catch (e) {
-    return error(errorCodes.GetProposalThreshold, e.message, e);
-  }
-};
-export const getVoteThreshold = async () => {
-  try {
-    const result = await fetchWalletContractData('voteThreshold', WQVoting, process.env.WORKNET_VOTING);
-    return success(new BigNumber(result.toString()).shiftedBy(-18).toString());
-  } catch (e) {
-    return error(errorCodes.GetVoteThreshold, e.message, e);
-  }
-};
-export const getReceipt = async (id, accountAddress) => {
-  try {
-    const result = await fetchWalletContractData('getReceipt', WQVoting, process.env.WORKNET_VOTING, [+id, accountAddress]);
-    return success(result);
-  } catch (e) {
-    return error(errorCodes.GetReceipt, e.message, e);
-  }
-};
-export const voteResults = async (id) => {
-  try {
-    return await fetchWalletContractData('voteResults', WQVoting, process.env.WORKNET_VOTING, [id]);
-  } catch (e) {
-    return error(errorCodes.VoteResults, e.message, e);
-  }
-};
-
-// Chairperson TODO: remove and move to admin panel
-export const getChairpersonHash = async () => {
-  try {
-    const result = await fetchWalletContractData('CHAIRPERSON_ROLE', WQVoting, process.env.WORKNET_VOTING);
-    return success(result);
-  } catch (e) {
-    return error(errorCodes.GetChairpersonHash, e.message, e);
-  }
-};
-export const hasRole = async (roleHash) => {
-  try {
-    const result = await fetchWalletContractData('hasRole', WQVoting, process.env.WORKNET_VOTING, [roleHash, wallet.address]);
-    return success(result);
-  } catch (e) {
-    return error(errorCodes.HasRole, e.message, e);
-  }
-};
-export const executeVoting = async (id) => {
-  try {
-    const res = await sendWalletTransaction('executeVoting', {
-      abi: WQVoting,
-      address: process.env.WORKNET_VOTING,
-      data: [id],
-    });
-    return success(res);
-  } catch (e) {
-    return error(errorCodes.ExecuteVoting, e.message, e);
-  }
-};
-
 /** VALIDATORS */
 const chainId = 'worknet_20220112-1';
 const fetchCosmosAccount = async (address) => fetch(`${process.env.WQ_PROVIDER}/api/cosmos/auth/v1beta1/accounts/${address}`)
@@ -465,7 +348,7 @@ const fetchCosmosAccount = async (address) => fetch(`${process.env.WQ_PROVIDER}/
 const getPrivAndPublic = async (mnemonic) => {
   const seed = await bip39.mnemonicToSeed(mnemonic);
   const node = bip32Lib.fromSeed(seed);
-  const child = node.derivePath("m/44'/60'/0'/0/0");
+  const child = node.derivePath(path);
 
   const ECPariPriv = child.privateKey;
 

@@ -28,14 +28,16 @@
           <div class="tokens__footer footer">
             <base-field
               v-model="tokensAmount"
+              :disabled="!+maxValue"
               class="footer__body"
-              :placeholder="`10000 ${options.delegateMode === $options.DelegateMode.INVESTORS ? 'WUSD' : 'WQT'}`"
+              placeholder="10000 WQT"
               data-selector="AMOUNT"
               :name="$tc('modals.tokensNumber')"
-              :rules="`required${min}|max_bn:${balance}|min_value:1|decimalPlaces:18`"
+              :rules="`required${min}|max_bn:${maxValue}|decimalPlaces:18`"
               @input="replaceDot"
             />
             <base-btn
+              :disabled="!+maxValue"
               class="footer__maximum"
               mode="lightBlue"
               @click="maxDelegate"
@@ -60,6 +62,7 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
+import { WQVoting } from '~/abi/index';
 import { TokenSymbols, DelegateMode } from '~/utils/enums';
 import { WQToken } from '~/abi/index';
 
@@ -71,6 +74,7 @@ export default {
       balance: 0,
       investorAddress: '',
       windowSize: window.innerWidth,
+      maxFee: 0,
     };
   },
   DelegateMode,
@@ -82,7 +86,11 @@ export default {
       userWalletAddress: 'user/getUserWalletAddress',
     }),
     min() {
-      return this.options?.min ? `|min_value:${this.options.min}` : '';
+      return this.options?.min ? `|min_value:${this.options.min}` : '|min_value:1';
+    },
+    maxValue() {
+      const max = new BigNumber(this.balance).minus(this.maxFee);
+      return max.isGreaterThan(0) ? max.toString() : '0';
     },
     convertValue() {
       const { windowSize, investorAddress } = this;
@@ -103,39 +111,62 @@ export default {
     window.addEventListener('resize', () => {
       this.windowSize = window.innerWidth;
     });
-  },
-  async mounted() {
+    // max fee calc
     await this.$store.dispatch('wallet/getBalance');
-    this.balance = this.balanceData.WQT.fullBalance;
+    const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
+      method: 'delegate',
+      abi: WQVoting,
+      contractAddress: process.env.WORKNET_VOTING,
+      data: [this.investorAddress],
+      amount: this.balanceData.WQT.fullBalance,
+    });
+    if (feeRes.ok) {
+      this.maxFee = feeRes.result.fee;
+    } else {
+      this.ShowToast(feeRes.msg);
+      this.CloseModal();
+    }
+
+    if (new BigNumber(this.balanceData.WQT.fullBalance).isLessThan(this.maxFee)) {
+      this.balance = 0;
+      this.ShowToast(this.$t('proposal.errors.transaction.notEnoughFunds'));
+    } else this.balance = this.balanceData.WQT.fullBalance;
   },
   methods: {
     replaceDot() {
       this.tokensAmount.replace(/,/g, '.');
     },
     maxDelegate() {
-      this.tokensAmount = this.balance;
+      this.tokensAmount = this.maxValue;
     },
     async delegate() {
       if (this.options.delegateMode === DelegateMode.VALIDATORS) {
         await this.options.submitMethod(this.tokensAmount);
         return;
       }
+      if (!+this.balance) return;
 
       const { callback } = this.options;
       const {
         tokensAmount, userWalletAddress,
       } = this;
+
       let { investorAddress } = this;
       investorAddress = this.ConvertToHex('wq', investorAddress);
       this.CloseModal();
       this.SetLoader(true);
       const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
         method: 'delegate',
-        abi: WQToken,
-        contractAddress: process.env.WORKNET_WQT_TOKEN,
-        data: [investorAddress, new BigNumber(tokensAmount).shiftedBy(18).toString()],
+        abi: WQVoting,
+        contractAddress: process.env.WORKNET_VOTING,
+        data: [investorAddress],
+        amount: tokensAmount,
       });
       this.SetLoader(false);
+      if (!feeRes.ok) {
+        this.ShowToast(feeRes.msg);
+        return;
+      }
       this.ShowModal({
         key: modals.transactionReceipt,
         title: this.$t('modals.delegate'),
@@ -143,7 +174,7 @@ export default {
           from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', userWalletAddress) },
           to: { name: this.$t('modals.toAddress'), value: this.ConvertToBech32('wq', process.env.WORKNET_WQT_TOKEN) },
           amount: { name: this.$t('modals.amount'), value: tokensAmount, symbol: TokenSymbols.WQT },
-          fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
+          fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WQT },
         },
         submitMethod: async () => {
           this.SetLoader(true);
@@ -182,7 +213,7 @@ export default {
   }
 
   &__done {
-    margin-top: 25px;
+    margin-top: 35px;
   }
 
   &__input {

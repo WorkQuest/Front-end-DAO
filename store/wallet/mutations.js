@@ -33,11 +33,4 @@ export default {
   setSelectedToken(state, token) {
     state.selectedToken = token;
   },
-
-  setIsChairpersonRole(state, payload) {
-    state.isChairpersonRole = payload;
-  },
-  setChairpersonRoleHash(state, payload) {
-    state.chairpersonRoleHash = payload;
-  },
 };
