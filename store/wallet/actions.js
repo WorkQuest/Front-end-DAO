@@ -10,9 +10,6 @@ import {
   transfer,
   transferToken,
   fetchWalletContractData,
-  delegate,
-  undelegate,
-  getDelegates,
   addProposal,
   getProposalInfoById,
   doVote,
@@ -23,7 +20,8 @@ import {
   getChairpersonHash,
   hasRole,
   getProposalThreshold,
-  connectWallet, sendWalletTransaction,
+  connectWallet,
+  sendWalletTransaction,
 } from '~/utils/wallet';
 import {
   errorCodes, TokenMap, TokenSymbols, WorknetTokenAddresses,
@@ -204,27 +202,21 @@ export default {
         process.env.WORKNET_VOTING,
         [getWalletAddress()],
       );
-      if (res) {
-        const address = !+res ? null : res.toLowerCase();
-        let votingPowerArray = null;
-        let user = null;
-        if (address) {
-          votingPowerArray = await dispatch('getVotesByAddresses', [address]);
-          if (address === rootGetters['user/getUserWalletAddress']) user = rootGetters['user/getUserData'];
-          else user = await dispatch('user/getUserByWalletAddress', address, { root: true });
-        }
-        const delegatedData = user ? {
-          ...user,
-          investorAddress: address,
-          voting: votingPowerArray ? getStyledAmount(votingPowerArray.result[0]) : null,
-          fullName: `${user.firstName || ''} ${user.lastName || ''}`,
-        } : null;
-        commit(
-          'investors/setDelegatedToUser', delegatedData, { root: true },
-        );
-      } else {
+      const address = !+res ? null : res.toLowerCase();
+      if (!res || !address) {
         commit('investors/setDelegatedToUser', null, { root: true });
+        return;
       }
+      let user = null;
+      const votingPowerArray = await dispatch('getVotesByAddresses', [address]);
+      if (address === rootGetters['user/getUserWalletAddress']) user = rootGetters['user/getUserData'];
+      else user = await dispatch('user/getUserByWalletAddress', address, { root: true });
+      commit('investors/setDelegatedToUser', {
+        ...user,
+        investorAddress: address,
+        voting: votingPowerArray ? getStyledAmount(votingPowerArray.result[0]) : null,
+        fullName: `${user.firstName || ''} ${user.lastName || ''}`,
+      }, { root: true });
     } catch (e) {
       console.error('wallet/getDelegates', e);
     }

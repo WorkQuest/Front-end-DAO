@@ -291,17 +291,17 @@ export const transferToken = async (recipient, value) => {
 };
 /**
  * Get fee from contract
- * @param _method
- * @param _abi
- * @param _contractAddress
+ * @param method
+ * @param abi
+ * @param contractAddress
  * @param data - array
  * @param recipient
  * @param amount - NativeToken
  * @returns {Promise<{msg: string, code: number, data: null, ok: boolean}|{result: *, ok: boolean}>}
  */
-export const getContractFeeData = async (_method, _abi, _contractAddress, data, recipient = null, amount = 0) => {
+export const getContractFeeData = async (method, abi, contractAddress, data, recipient = null, amount = 0) => {
   try {
-    const inst = new web3.eth.Contract(_abi, _contractAddress);
+    const inst = new web3.eth.Contract(abi, contractAddress);
     const tx = {
       from: wallet.address,
     };
@@ -312,7 +312,7 @@ export const getContractFeeData = async (_method, _abi, _contractAddress, data, 
     }
     const [gasPrice, gasEstimate] = await Promise.all([
       web3.eth.getGasPrice(),
-      inst.methods[_method].apply(null, data).estimateGas(tx),
+      inst.methods[method].apply(null, data).estimateGas(tx),
     ]);
     return success({
       gasPrice,
@@ -320,7 +320,7 @@ export const getContractFeeData = async (_method, _abi, _contractAddress, data, 
       fee: new BigNumber(gasPrice * gasEstimate).shiftedBy(-18).toString(),
     });
   } catch (e) {
-    console.error(`Get contract fee data error: ${_method}.`, e.message);
+    console.error(`Get contract fee data error: ${method}.`, e.message);
     return error(1000, e.message);
   }
 };
