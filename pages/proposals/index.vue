@@ -68,7 +68,7 @@ export default {
   },
   async beforeCreate() {
     await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
-    await this.$store.dispatch('wallet/frozenBalance', { address: this.userWalletAddress });
+    await this.$store.dispatch('wallet/updateFrozenBalance');
   },
   methods: {
     async addProposalModal() {

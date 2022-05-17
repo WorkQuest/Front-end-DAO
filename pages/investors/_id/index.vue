@@ -100,6 +100,7 @@
                 :is-hide-error="true"
                 :value="investor.additionalInfo && investor.additionalInfo.socialNetwork ? investor.additionalInfo.socialNetwork[input.key] : ''"
                 :placeholder="$t('investor.notFilled')"
+                :data-selector="`SOCIAL-${input.key}`"
               >
                 <template v-slot:left>
                   <span
@@ -114,7 +115,7 @@
               class="info__action action"
             >
               <base-btn
-                v-if="delegatedToUser && investorAddress === delegatedToUser.address"
+                v-if="isDelegatedToUser"
                 mode="lightRed"
                 class="action__undelegate"
                 @click="openModalUndelegate"
@@ -248,6 +249,9 @@ export default {
       userData: 'user/getUserData',
       isWalletConnected: 'wallet/getIsWalletConnected',
     }),
+    isDelegatedToUser() {
+      return this.delegatedToUser && this.investorAddress === this.delegatedToUser?.wallet?.address;
+    },
     mainDataArr() {
       return [
         { key: 'firstName', icon: 'icon-user', isVisible: true },
@@ -300,7 +304,13 @@ export default {
     },
     async getInvestorData() {
       if (this.isMyProfile) this.investor = this.userData;
-      else this.investor = await this.$store.dispatch('user/getSpecialUserData', this.userId);
+      else {
+        const [investor] = await Promise.all([
+          this.$store.dispatch('user/getSpecialUserData', this.userId),
+          this.$store.dispatch('wallet/getDelegates'),
+        ]);
+        this.investor = investor;
+      }
 
       if (this.investor?.wallet?.address) {
         this.investorAddress = this.investor.wallet.address;

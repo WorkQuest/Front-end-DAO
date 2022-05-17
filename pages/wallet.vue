@@ -240,9 +240,9 @@ export default {
     async loadData() {
       this.isFetchingBalance = true;
       await Promise.all([
-        this.$store.dispatch('wallet/frozenBalance', { address: this.userWalletAddress }),
         this.$store.dispatch('wallet/getTokenBalance', TokenSymbols.WUSD),
         this.$store.dispatch('wallet/getBalance'),
+        this.$store.dispatch('wallet/updateFrozenBalance'),
         this.getTransactions(),
       ]);
       this.isFetchingBalance = false;
