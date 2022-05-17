@@ -77,15 +77,26 @@ export const keyCodes = {
 export const TokenSymbols = Object.freeze({
   WQT: 'WQT',
   WUSD: 'WUSD',
+  WBNB: 'WBNB',
+  WETH: 'WETH',
+  USDT: 'USDT',
 });
 
 export const TokenSymbolByContract = Object.freeze({
   [process.env.WORKNET_WUSD_TOKEN.toLowerCase()]: TokenSymbols.WUSD,
+  [process.env.WORKNET_USDT_TOKEN.toLowerCase()]: TokenSymbols.USDT,
+  [process.env.WORKNET_WBNB_TOKEN.toLowerCase()]: TokenSymbols.WBNB,
+  [process.env.WORKNET_WETH_TOKEN.toLowerCase()]: TokenSymbols.WETH,
 });
 
-export const tokenMap = {
-  [TokenSymbols.WQT]: process.env.WORKNET_WQT_TOKEN,
+export const TokenMap = {
+  [TokenSymbols.WUSD]: process.env.WORKNET_WUSD_TOKEN,
+  [TokenSymbols.USDT]: process.env.WORKNET_USDT_TOKEN,
+  [TokenSymbols.WBNB]: process.env.WORKNET_WBNB_TOKEN,
+  [TokenSymbols.WETH]: process.env.WORKNET_WETH_TOKEN,
 };
+
+export const WorknetTokenAddresses = [process.env.WORKNET_WUSD_TOKEN];
 
 export const WalletTables = Object.freeze({
   TXS: 'TXS',

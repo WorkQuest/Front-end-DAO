@@ -432,6 +432,9 @@ export default {
       this.$refs.templateScroll.scrollTop = 0;
     },
   },
+  async beforeCreate() {
+    await this.$store.dispatch('wallet/fetchCommonTokenInfo');
+  },
   async mounted() {
     this.GetLocation();
     this.localUserData = JSON.parse(JSON.stringify(this.userData));

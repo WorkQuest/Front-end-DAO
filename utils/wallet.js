@@ -286,7 +286,7 @@ export const transferToken = async (recipient, value) => {
  * @param contractAddress
  * @param data - array
  * @param recipient
- * @param amount - WUSD
+ * @param amount - NativeToken
  * @returns {Promise<{msg: string, code: number, data: null, ok: boolean}|{result: *, ok: boolean}>}
  */
 export const getContractFeeData = async (method, abi, contractAddress, data, recipient = null, amount = 0) => {

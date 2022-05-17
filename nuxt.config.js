@@ -90,10 +90,15 @@ export default {
     PROD: process.env.PROD,
     BASE_URL: process.env.BASE_URL,
     GMAPKEY: process.env.GMAPKEY,
-
     SECRET_SUMSUB: process.env.SECRET_SUMSUB,
+
     WORKNET_WUSD_TOKEN: process.env.WORKNET_WUSD_TOKEN,
+    WORKNET_WBNB_TOKEN: process.env.WORKNET_WBNB_TOKEN,
+    WORKNET_WETH_TOKEN: process.env.WORKNET_WETH_TOKEN,
+    WORKNET_USDT_TOKEN: process.env.WORKNET_USDT_TOKEN,
+
     WORKNET_VOTING: process.env.WORKNET_VOTING,
+
     WQ_PROVIDER: process.env.WQ_PROVIDER,
     WQ_EXPLORER: process.env.WQ_EXPLORER,
   },

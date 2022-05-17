@@ -31,7 +31,10 @@ jobs:
           GMAPKEY: ${{ secrets.GMAPKEY }}
           SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
 
-          WORKNET_WUSD_TOKEN: ${{ secrets.WORKNET_WQT_TOKEN }}
+          WORKNET_WUSD_TOKEN: ${{ secrets.WORKNET_WUSD_TOKEN }}
+          WORKNET_WBNB_TOKEN: ${{ secrets.WORKNET_WBNB_TOKEN }}
+          WORKNET_WETH_TOKEN: ${{ secrets.WORKNET_WETH_TOKEN }}
+          WORKNET_USDT_TOKEN: ${{ secrets.WORKNET_USDT_TOKEN }}
           WORKNET_VOTING: ${{ secrets.WORKNET_VOTING }}
 
           WQ_PROVIDER: ${{ secrets.WQ_PROVIDER }}
@@ -73,7 +76,10 @@ jobs:
           GMAPKEY: ${{ secrets.GMAPKEY }}
           SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
 
-          WORKNET_WUSD_TOKEN: ${{ secrets.WORKNET_WQT_TOKEN }}
+          WORKNET_WUSD_TOKEN: ${{ secrets.WORKNET_WUSD_TOKEN }}
+          WORKNET_WBNB_TOKEN: ${{ secrets.WORKNET_WBNB_TOKEN }}
+          WORKNET_WETH_TOKEN: ${{ secrets.WORKNET_WETH_TOKEN }}
+          WORKNET_USDT_TOKEN: ${{ secrets.WORKNET_USDT_TOKEN }}
           WORKNET_VOTING: ${{ secrets.WORKNET_VOTING }}
 
           WQ_PROVIDER: ${{ secrets.WQ_PROVIDER }}
@@ -115,7 +121,10 @@ jobs:
           GMAPKEY: ${{ secrets.GMAPKEY }}
           SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
 
-          WORKNET_WUSD_TOKEN: ${{ secrets.WORKNET_WQT_TOKEN }}
+          WORKNET_WUSD_TOKEN: ${{ secrets.WORKNET_WUSD_TOKEN }}
+          WORKNET_WBNB_TOKEN: ${{ secrets.WORKNET_WBNB_TOKEN }}
+          WORKNET_WETH_TOKEN: ${{ secrets.WORKNET_WETH_TOKEN }}
+          WORKNET_USDT_TOKEN: ${{ secrets.WORKNET_USDT_TOKEN }}
           WORKNET_VOTING: ${{ secrets.WORKNET_VOTING }}
 
           WQ_PROVIDER: ${{ secrets.WQ_PROVIDER }}

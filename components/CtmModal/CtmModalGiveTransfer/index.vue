@@ -86,8 +86,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
-import { tokenMap, TokenSymbols } from '~/utils/enums';
-import { ERC20 } from '~/abi/index';
+import { TokenSymbols } from '~/utils/enums';
 
 export default {
   name: 'ModalTakeTransfer',
@@ -97,10 +96,7 @@ export default {
       amount: 0,
       step: 1,
       ddValue: 0,
-      maxFee: {
-        WUSD: 0,
-        WQT: 0,
-      },
+      maxFeeNativeToken: 0,
       isCanSubmit: true,
     };
   },
@@ -112,18 +108,18 @@ export default {
       selectedToken: 'wallet/getSelectedToken',
       userData: 'user/getUserData',
       isConnected: 'wallet/getIsWalletConnected',
-      frozenBalance: 'user/getFrozenBalance',
     }),
     tokenSymbolsDd() {
-      return Object.keys(TokenSymbols);
+      return [TokenSymbols.WQT, TokenSymbols.WUSD];
     },
     maxAmount() {
       const {
-        selectedToken, balance, maxFee, frozenBalance,
+        selectedToken, balance, maxFeeNativeToken,
       } = this;
       const fullBalance = new BigNumber(balance[selectedToken].fullBalance);
-      if (selectedToken === TokenSymbols.WUSD) return fullBalance.minus(maxFee[selectedToken]).toString();
-      if (selectedToken === TokenSymbols.WQT) return fullBalance.minus(frozenBalance).toString();
+      if (selectedToken === TokenSymbols.WQT) {
+        return fullBalance.minus(maxFeeNativeToken).toString();
+      }
       return fullBalance.toString();
     },
   },
@@ -156,24 +152,15 @@ export default {
       if (!this.isConnected) return;
       this.isCanSubmit = false;
       const {
-        selectedToken, amount, maxFee, userData, balance,
+        selectedToken, userData, balance,
       } = this;
-      if (selectedToken === TokenSymbols.WUSD) {
-        const feeWUSD = await this.$store.dispatch('wallet/getTransferFeeData', {
+      if (selectedToken === TokenSymbols.WQT) {
+        const feeRes = await this.$store.dispatch('wallet/getTransferFeeData', {
           recipient: userData.wallet.address,
-          value: balance.WUSD.fullBalance,
+          value: balance.WQT.fullBalance,
         });
-        if (feeWUSD?.ok) maxFee.WUSD = feeWUSD?.result?.fee ?? 0;
-        else maxFee.WUSD = 0;
-      } else {
-        const feeTokens = await this.$store.dispatch('wallet/getContractFeeData', {
-          method: 'transfer',
-          abi: ERC20,
-          contractAddress: tokenMap[selectedToken],
-          data: [tokenMap[selectedToken], amount],
-        });
-        if (feeTokens?.ok) maxFee[selectedToken] = feeTokens?.result?.fee ?? 0;
-        else maxFee[selectedToken] = 0;
+        if (feeRes?.ok) this.maxFeeNativeToken = feeRes?.result?.fee ?? 0;
+        else this.maxFeeNativeToken = 0;
       }
       this.isCanSubmit = true;
     },
