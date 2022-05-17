@@ -23,13 +23,13 @@ import {
   getChairpersonHash,
   hasRole,
   getProposalThreshold,
-  connectWallet,
+  connectWallet, sendWalletTransaction,
 } from '~/utils/wallet';
 import {
-  errorCodes, TokenSymbols,
+  errorCodes, TokenMap, TokenSymbols, WorknetTokenAddresses,
 } from '~/utils/enums';
 import { error, success } from '~/utils/success-error';
-import { ERC20, WQToken, WQVoting } from '~/abi/index';
+import { ERC20, WQVoting } from '~/abi/index';
 
 export default {
   async getTransactions({ commit }, params) {
@@ -109,13 +109,16 @@ export default {
       fullBalance: res.ok ? res.result.fullBalance : 0,
     });
   },
-  async getTokenBalance({ commit, getters }, tokenSymbol) {
+  async getTokenBalance({ commit, getters, dispatch }, tokenSymbol) {
     const res = await fetchWalletContractData(
       'balanceOf',
       ERC20,
       TokenMap[tokenSymbol],
       [getWalletAddress()],
     );
+    if (!getters.getBalanceData[tokenSymbol]) {
+      await dispatch('fetchCommonTokenInfo');
+    }
     const { decimals } = getters.getBalanceData[tokenSymbol];
     commit('setBalance', {
       symbol: tokenSymbol,
@@ -169,14 +172,14 @@ export default {
      */
   async getVotesByAddresses({ commit }, addresses) {
     try {
-      const res = await fetchWalletContractData('getVotes', WQToken, process.env.WORKNET_VOTING, [addresses]);
+      const res = await fetchWalletContractData('getVotes', WQVoting, process.env.WORKNET_VOTING, [addresses]);
       return success(res);
     } catch (e) {
       console.error('getVotes');
       return error(errorCodes.GetVotes, e.message, e);
     }
   },
-  async updateFrozenBalance({ commit }) {
+  async updateFrozenBalance({ commit, getters }) {
     try {
       const res = await fetchWalletContractData(
         'frozed',
@@ -185,42 +188,73 @@ export default {
         [getWalletAddress()],
       );
       commit('user/setFrozenBalance', res
-        ? new BigNumber(res).shiftedBy(-getters.getBalanceData.WQT.decimals).toString()
+        ? new BigNumber(res.toString()).shiftedBy(-getters.getBalanceData.WQT.decimals).toString()
         : '0', { root: true });
       return success(res);
     } catch (e) {
       return error(errorCodes.Undelegate, e.message, e);
     }
   },
+  // Кому делегированы токены юзера
   async getDelegates({ commit, dispatch, rootGetters }) {
-    const res = await getDelegates();
-    if (res.ok) {
-      const address = !+res.result ? null : res.result.toLowerCase();
-      let votingPowerArray = null;
-      let user = null;
-      if (address) {
-        votingPowerArray = await dispatch('getVotesByAddresses', [address]);
-        if (address === rootGetters['user/getUserWalletAddress']) user = rootGetters['user/getUserData'];
-        else user = await dispatch('user/getUserByWalletAddress', address, { root: true });
-      }
-      const delegatedData = user ? {
-        ...user,
-        investorAddress: address,
-        voting: votingPowerArray ? getStyledAmount(votingPowerArray.result[0]) : null,
-        fullName: `${user.firstName || ''} ${user.lastName || ''}`,
-      } : null;
-      commit(
-        'investors/setDelegatedToUser', delegatedData, { root: true },
+    try {
+      const res = await fetchWalletContractData(
+        'delegates',
+        WQVoting,
+        process.env.WORKNET_VOTING,
+        [getWalletAddress()],
       );
-    } else {
-      commit('investors/setDelegatedToUser', null, { root: true });
+      if (res) {
+        const address = !+res ? null : res.toLowerCase();
+        let votingPowerArray = null;
+        let user = null;
+        if (address) {
+          votingPowerArray = await dispatch('getVotesByAddresses', [address]);
+          if (address === rootGetters['user/getUserWalletAddress']) user = rootGetters['user/getUserData'];
+          else user = await dispatch('user/getUserByWalletAddress', address, { root: true });
+        }
+        const delegatedData = user ? {
+          ...user,
+          investorAddress: address,
+          voting: votingPowerArray ? getStyledAmount(votingPowerArray.result[0]) : null,
+          fullName: `${user.firstName || ''} ${user.lastName || ''}`,
+        } : null;
+        commit(
+          'investors/setDelegatedToUser', delegatedData, { root: true },
+        );
+      } else {
+        commit('investors/setDelegatedToUser', null, { root: true });
+      }
+    } catch (e) {
+      console.error('wallet/getDelegates', e);
     }
   },
   async delegate({ commit }, { toAddress, amount }) {
-    return await delegate(toAddress, amount);
+    try {
+      amount = new BigNumber(amount).shiftedBy(18).toString();
+      const res = await sendWalletTransaction('delegate', {
+        abi: WQVoting,
+        address: process.env.WORKNET_VOTING,
+        data: [toAddress],
+        value: amount,
+      });
+      return success(res);
+    } catch (e) {
+      console.error('wallet/delegate', e);
+      return error(errorCodes.Delegate, e.message, e);
+    }
   },
   async undelegate({ _ }) {
-    return await undelegate();
+    try {
+      const res = await sendWalletTransaction('undelegate', {
+        abi: WQVoting,
+        address: process.env.WORKNET_VOTING,
+      });
+      return success(res);
+    } catch (e) {
+      console.error('wallet/undelegate ', e);
+      return error(errorCodes.Undelegate, e.message, e);
+    }
   },
 
   /* Proposals */

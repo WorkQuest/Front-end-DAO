@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 import { error, success } from '~/utils/success-error';
 import { errorCodes } from '~/utils/enums';
-import { WQToken, WQVoting, ERC20 } from '~/abi/index';
+import { WQVoting, ERC20 } from '~/abi/index';
 
 const bip39 = require('bip39');
 
@@ -322,50 +322,6 @@ export const getContractFeeData = async (_method, _abi, _contractAddress, data, 
   } catch (e) {
     console.error(`Get contract fee data error: ${_method}.`, e.message);
     return error(1000, e.message);
-  }
-};
-
-/* Investors */
-
-export const getDelegates = async () => {
-  try {
-    const res = await fetchWalletContractData(
-      'delegates',
-      WQVoting,
-      process.env.WORKNET_VOTING,
-      [wallet.address],
-    );
-    return success(res);
-  } catch (e) {
-    console.error('getDelegates; ', e);
-    return error(errorCodes.Undelegate, e.message, e);
-  }
-};
-export const delegate = async (toAddress, amount) => {
-  try {
-    amount = new BigNumber(amount).shiftedBy(+18).toString();
-    const res = await sendWalletTransaction('delegate', {
-      abi: WQVoting,
-      address: process.env.WORKNET_VOTING,
-      data: [toAddress],
-      value: amount,
-    });
-    return success(res);
-  } catch (e) {
-    console.error('delegate:', e);
-    return error(errorCodes.Delegate, e.message, e);
-  }
-};
-export const undelegate = async () => {
-  try {
-    const res = await sendWalletTransaction('undelegate', {
-      abi: WQVoting,
-      address: process.env.WORKNET_VOTING,
-    });
-    return success(res);
-  } catch (e) {
-    console.error('undelegate: ', e);
-    return error(errorCodes.Undelegate, e.message, e);
   }
 };
 

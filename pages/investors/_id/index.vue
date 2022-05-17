@@ -100,6 +100,7 @@
                 :is-hide-error="true"
                 :value="investor.additionalInfo && investor.additionalInfo.socialNetwork ? investor.additionalInfo.socialNetwork[input.key] : ''"
                 :placeholder="$t('investor.notFilled')"
+                :data-selector="`SOCIAL-${input.key}`"
               >
                 <template v-slot:left>
                   <span
