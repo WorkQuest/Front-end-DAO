@@ -10,16 +10,6 @@ import {
   transfer,
   transferToken,
   fetchWalletContractData,
-  addProposal,
-  getProposalInfoById,
-  doVote,
-  getVoteThreshold,
-  getReceipt,
-  executeVoting,
-  voteResults,
-  getChairpersonHash,
-  hasRole,
-  getProposalThreshold,
   connectWallet,
   sendWalletTransaction,
 } from '~/utils/wallet';
@@ -247,33 +237,5 @@ export default {
       console.error('wallet/undelegate ', e);
       return error(errorCodes.Undelegate, e.message, e);
     }
-  },
-
-  /* Proposals */
-  async getProposalInfoById({ commit }, id) {
-    return await getProposalInfoById(id);
-  },
-  async doVote({ commit }, { id, value }) {
-    return await doVote(id, value);
-  },
-  async getVoteThreshold() {
-    return await getVoteThreshold();
-  },
-  async getReceipt({ commit }, { id, accountAddress }) {
-    return await getReceipt(id, accountAddress);
-  },
-  async executeVoting({ commit }, id) {
-    return await executeVoting(id);
-  },
-  async voteResults({ commit }, id) {
-    return await voteResults(id);
-  },
-  async isChairpersonRole({ commit, getters }) {
-    if (!getters.isChairpersonRole) {
-      const chairpersonHash = await getChairpersonHash();
-      commit('setChairpersonRoleHash', chairpersonHash.result);
-    }
-    const res = await hasRole(getters.chairpersonRoleHash);
-    commit('setIsChairpersonRole', res.result);
   },
 };

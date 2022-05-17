@@ -8,7 +8,4 @@ export default () => ({
   isOnlyConfirm: false, // for confirm password layout
   selectedToken: TokenSymbols.WQT,
   balance: { WQT: { balance: 0, fullBalance: 0, decimals: 18 } },
-
-  isChairpersonRole: false,
-  chairpersonRoleHash: null,
 });

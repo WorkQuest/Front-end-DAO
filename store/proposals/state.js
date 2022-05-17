@@ -8,4 +8,8 @@ export default () => ({
     sortVoteStatus: 0,
     isDescending: true,
   },
+
+  // TODO: remove
+  isChairpersonRole: false,
+  chairpersonRoleHash: null,
 });

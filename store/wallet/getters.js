@@ -7,6 +7,4 @@ export default {
   getBalanceData: (state) => state.balance,
   getBalanceWQT: (state) => state.balance.WQT.balance,
   getSelectedToken: (state) => state.selectedToken,
-  isChairpersonRole: (state) => state.isChairpersonRole,
-  chairpersonRoleHash: (state) => state.chairpersonRoleHash,
 };
