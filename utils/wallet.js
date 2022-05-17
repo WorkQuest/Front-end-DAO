@@ -252,7 +252,7 @@ export const sendWalletTransaction = async (_method, {
     return await web3.eth.sendTransaction(transactionData);
   } catch (e) {
     console.error('wallet: sendWalletTransaction', e);
-    return error(e.code, e.message, e);
+    throw error(-1, e.msg, e);
   }
 };
 

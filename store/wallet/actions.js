@@ -221,9 +221,9 @@ export default {
       console.error('wallet/getDelegates', e);
     }
   },
-  async delegate({ commit }, { toAddress, amount }) {
+  async delegate({ commit, getters }, { toAddress, amount }) {
     try {
-      amount = new BigNumber(amount).shiftedBy(18).toString();
+      amount = new BigNumber(amount).shiftedBy(getters.getBalanceData.WQT.decimals).toString();
       const res = await sendWalletTransaction('delegate', {
         abi: WQVoting,
         address: process.env.WORKNET_VOTING,
