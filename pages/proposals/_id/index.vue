@@ -581,7 +581,7 @@ export default {
         fields: {
           from: { name: this.$t('modals.fromAddress'), value: this.userWalletAddress },
           to: { name: this.$t('modals.toAddress'), value: process.env.WORKNET_VOTING },
-          fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WUSD },
+          fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WQT },
         },
         submitMethod: async () => {
           this.SetLoader(true);

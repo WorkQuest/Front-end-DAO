@@ -61,10 +61,12 @@ export default {
   },
   computed: {
     ...mapGetters({
+      balanceData: 'wallet/getBalanceData',
       isWalletConnected: 'wallet/getIsWalletConnected',
       userWalletAddress: 'user/getUserWalletAddress',
       frozenBalance: 'user/getFrozenBalance',
       proposalThreshold: 'proposals/proposalThreshold',
+      delegatedToUser: 'investors/getDelegatedToUser',
     }),
   },
   async beforeCreate() {
@@ -76,17 +78,14 @@ export default {
       await Promise.all([
         this.$store.dispatch('proposals/getProposalThreshold'),
         this.$store.dispatch('wallet/updateFrozenBalance'),
+        this.$store.dispatch('wallet/getDelegates'),
       ]);
       this.SetLoader(false);
-      console.log(this.frozenBalance);
-      const minFrozenToCreateProposal = new BigNumber(this.proposalThreshold).shiftedBy(-18);
-      if (new BigNumber(this.frozenBalance).isLessThan(minFrozenToCreateProposal)) {
-        this.ShowToast(this.$t('proposal.errors.notEnoughFunds', { a: minFrozenToCreateProposal, b: this.Floor(this.frozenBalance) }),
-          this.$t('proposal.errors.addProposal'));
+      const minFrozenToCreateProposal = new BigNumber(this.proposalThreshold).shiftedBy(-this.balanceData.WQT.decimals);
+      if (this.delegatedToUser?.wallet?.address !== this.userWalletAddress || new BigNumber(this.frozenBalance).isLessThan(minFrozenToCreateProposal)) {
+        this.ShowToast(this.$t('proposal.errors.notEnoughFunds', { a: minFrozenToCreateProposal }), this.$t('proposal.errors.addProposal'));
       } else {
-        this.ShowModal({
-          key: modals.addProposal,
-        });
+        this.ShowModal({ key: modals.addProposal });
       }
     },
   },

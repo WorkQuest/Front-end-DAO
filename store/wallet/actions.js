@@ -250,9 +250,6 @@ export default {
   },
 
   /* Proposals */
-  async addProposal({ commit }, { description, nonce }) {
-    return await addProposal(description, nonce);
-  },
   async getProposalInfoById({ commit }, id) {
     return await getProposalInfoById(id);
   },

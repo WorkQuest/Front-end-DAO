@@ -326,18 +326,6 @@ export const getContractFeeData = async (method, abi, contractAddress, data, rec
 };
 
 /* Proposals */
-export const addProposal = async (description, nonce) => {
-  try {
-    const res = await sendWalletTransaction('addProposal', {
-      abi: WQVoting,
-      address: process.env.WORKNET_VOTING,
-      data: [nonce, description.toString()],
-    });
-    return success(res);
-  } catch (e) {
-    return error(errorCodes.AddProposal, e.message, e);
-  }
-};
 export const getProposalInfoById = async (id) => {
   try {
     const res = await fetchWalletContractData('proposals', WQVoting, process.env.WORKNET_VOTING, [id]);

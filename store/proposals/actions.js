@@ -1,6 +1,6 @@
 import { error, success } from '~/utils/success-error';
 import { errorCodes } from '~/utils/enums';
-import { fetchWalletContractData } from '~/utils/wallet';
+import { fetchWalletContractData, sendWalletTransaction } from '~/utils/wallet';
 import { WQVoting } from '~/abi';
 
 export default {
@@ -48,10 +48,21 @@ export default {
   async getProposalThreshold({ commit }) {
     try {
       const res = await fetchWalletContractData('proposalThreshold', WQVoting, process.env.WORKNET_VOTING);
-      console.log('threshold', res);
       commit('setProposalThreshold', res);
     } catch (e) {
       console.error('wallet/getProposalThreshold');
+    }
+  },
+  async addProposal({ commit }, { description, nonce }) {
+    try {
+      const res = await sendWalletTransaction('addProposal', {
+        abi: WQVoting,
+        address: process.env.WORKNET_VOTING,
+        data: [nonce, description.toString()],
+      });
+      return success(res);
+    } catch (e) {
+      return error(errorCodes.AddProposal, e.message, e);
     }
   },
 };

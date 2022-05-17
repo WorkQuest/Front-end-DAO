@@ -595,7 +595,7 @@
       "addProposal": "Add proposal error",
       "voteError": "Voting error",
       "votingTimeIsExpired": "Voting time is expired",
-      "notEnoughFunds": "You must have delegated at least {a} WQT. Delegated: {b} WQT.",
+      "notEnoughFunds": "You must have at least {a} votes",
       "vote": "Vote",
       "isEmpty": "List is empty",
       "delegatedAfter": "Your votes delegated after creating voting",
