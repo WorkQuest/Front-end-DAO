@@ -13,6 +13,7 @@
   "dependencies": {
     "@chenfengyuan/vue-qrcode": "^1.0.2",
     "@cosmostation/cosmosjs": "^0.11.2",
+    "@noble/hashes": "^1.0.0",
     "@nuxtjs/axios": "^5.13.1",
     "@nuxtjs/moment": "^1.6.1",
     "bech32-converting": "^1.0.8",

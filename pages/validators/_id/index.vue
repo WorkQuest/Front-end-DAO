@@ -158,14 +158,17 @@ export default {
   },
   computed: {
     ...mapGetters({
+      balanceData: 'wallet/getBalanceData',
       validatorData: 'validators/getValidatorData',
       validatorsList: 'validators/getValidatorsList',
       userWalletAddress: 'user/getUserWalletAddress',
       isWalletConnected: 'wallet/getIsWalletConnected',
     }),
     leftColumn() {
+      const stake = this.validatorData?.tokens
+        ? new BigNumber(this.validatorData.tokens).shiftedBy(-this.balanceData.WQT.decimals).toString() : 0;
       return [
-        { name: this.$t('validator.commonStake'), desc: this.$tc('meta.wqtCount', this.validatorData?.tokens || 0) },
+        { name: this.$t('validator.commonStake'), desc: this.$tc('meta.wqtCount', stake) },
         { name: this.$t('validator.fee'), desc: `${Math.ceil(this.validatorData?.commission?.commission_rates?.rate * 100)}%` },
         { name: this.$t('validator.missedBlocks'), desc: this.missedBlocks },
       ];
@@ -225,12 +228,11 @@ export default {
         userWalletAddress: this.ConvertToBech32('wq', this.userWalletAddress),
         validatorAddress: this.validatorData.operator_address,
       });
-      if (res.ok) {
-        this.delegatedData = {
-          amount: res.result.delegation_response.balance.amount,
-          shares: res.result.delegation_response.delegation.shares,
-        };
-      }
+      if (!res.ok) return;
+      this.delegatedData = {
+        amount: res.result.delegation_response.balance.amount,
+        shares: res.result.delegation_response.delegation.shares,
+      };
     },
     toNotFound() {
       this.notFounded = true;

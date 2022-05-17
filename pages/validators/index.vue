@@ -41,6 +41,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import BigNumber from 'bignumber.js';
 
 export default {
   name: 'Validators',
@@ -54,17 +55,16 @@ export default {
   },
   computed: {
     ...mapGetters({
+      balanceData: 'wallet/getBalanceData',
       isWalletConnected: 'wallet/getIsWalletConnected',
       userData: 'user/getUserData',
       validatorsList: 'validators/getValidatorsList',
       validatorsCount: 'validators/getValidatorsCount',
     }),
     validators() {
-      const res = [];
-      // eslint-disable-next-line no-restricted-syntax
-      for (const item of this.validatorsList) {
+      return this.validatorsList.map((item) => {
         const address = this.ConvertToBech32('wq', this.ConvertToHex('wqvaloper', item.operator_address));
-        res.push({
+        return {
           validatorName: item.description.moniker,
           investorAddress: address,
           id: address,
@@ -72,10 +72,26 @@ export default {
           minStake: item.min_self_delegation,
           slots: item.slots,
           missedBlocks: item.missedBlocks,
-          stake: item.tokens,
-        });
-      }
-      return res;
+          stake: new BigNumber(item.tokens).shiftedBy(-this.balanceData.WQT.decimals).toString(),
+        };
+      });
+
+      // const res = [];
+      // // eslint-disable-next-line no-restricted-syntax
+      // for (const item of this.validatorsList) {
+      //   const address = this.ConvertToBech32('wq', this.ConvertToHex('wqvaloper', item.operator_address));
+      //   res.push({
+      //     validatorName: item.description.moniker,
+      //     investorAddress: address,
+      //     id: address,
+      //     fee: `${Math.ceil(item.commission.commission_rates.rate * 100)}%`,
+      //     minStake: item.min_self_delegation,
+      //     slots: item.slots,
+      //     missedBlocks: item.missedBlocks,
+      //     stake: item.tokens,
+      //   });
+      // }
+      // return res;
     },
     tableFields() {
       const mainFields = [
