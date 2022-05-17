@@ -31,7 +31,7 @@
         v-if="canSend === false"
         class="info__error error"
       >
-        {{ $t('errors.transaction.notEnoughFunds') }}
+        {{ $t('errors.notEnoughBalance') }}
       </div>
       <div class="content__buttons buttons">
         <div class="buttons__group">
@@ -79,14 +79,14 @@ export default {
     const amount = fields?.amount?.value;
     const symbol = fields?.amount?.symbol;
     const fee = fields?.fee?.value;
-    const wusdBalance = this.balance.WUSD.fullBalance;
+    const nativeBalance = this.balance.WQT.fullBalance;
 
-    // If we send WUSD
-    if (fee && amount && symbol === TokenSymbols.WUSD) {
-      this.canSend = new BigNumber(amount).plus(fee).isLessThanOrEqualTo(wusdBalance);
+    // If we send Native Token
+    if (fee && amount && symbol === TokenSymbols.WQT) {
+      this.canSend = new BigNumber(amount).plus(fee).isLessThanOrEqualTo(nativeBalance);
     } else if (fee) {
       // Only need check transaction fee with user balance
-      this.canSend = new BigNumber(fee).isLessThanOrEqualTo(wusdBalance).toString();
+      this.canSend = new BigNumber(fee).isLessThanOrEqualTo(nativeBalance);
     }
   },
   methods: {

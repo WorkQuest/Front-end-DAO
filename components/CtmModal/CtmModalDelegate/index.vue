@@ -28,14 +28,16 @@
           <div class="tokens__footer footer">
             <base-field
               v-model="tokensAmount"
+              :disabled="!+maxValue"
               class="footer__body"
               placeholder="10000 WQT"
               data-selector="AMOUNT"
               :name="$tc('modals.tokensNumber')"
-              :rules="`required${min}|max_bn:${maxValue}|min_value:1|decimalPlaces:18`"
+              :rules="`required${min}|max_bn:${maxValue}|decimalPlaces:18`"
               @input="replaceDot"
             />
             <base-btn
+              :disabled="!+maxValue"
               class="footer__maximum"
               mode="lightBlue"
               @click="maxDelegate"
@@ -82,10 +84,11 @@ export default {
       userWalletAddress: 'user/getUserWalletAddress',
     }),
     min() {
-      return this.options?.min ? `|min_value:${this.options.min}` : '';
+      return this.options?.min ? `|min_value:${this.options.min}` : '|min_value:1';
     },
     maxValue() {
-      return new BigNumber(this.balance).minus(this.maxFee).toString();
+      const max = new BigNumber(this.balance).minus(this.maxFee);
+      return max.isGreaterThan(0) ? max.toString() : '0';
     },
     convertValue() {
       const { windowSize, convertToBech32, investorAddress } = this;
@@ -108,6 +111,7 @@ export default {
       this.windowSize = window.innerWidth;
     });
     // max fee calc
+    await this.$store.dispatch('wallet/getBalance');
     const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
       method: 'delegate',
       abi: WQVoting,
@@ -121,10 +125,11 @@ export default {
       this.ShowToast(feeRes.msg);
       this.CloseModal();
     }
-  },
-  async mounted() {
-    await this.$store.dispatch('wallet/getBalance');
-    this.balance = this.balanceData.WQT.fullBalance;
+
+    if (new BigNumber(this.balanceData.WQT.fullBalance).isLessThan(this.maxFee)) {
+      this.balance = 0;
+      this.ShowToast(this.$t('proposal.errors.transaction.notEnoughFunds'));
+    } else this.balance = this.balanceData.WQT.fullBalance;
   },
   methods: {
     replaceDot() {
@@ -134,6 +139,7 @@ export default {
       this.tokensAmount = this.maxValue;
     },
     async delegate() {
+      if (!+this.balance) return;
       const { callback } = this.options;
       const {
         tokensAmount, userWalletAddress, convertToHex, convertToBech32,
