@@ -257,24 +257,24 @@ export default {
       if (this.isLoading) return;
       this.SetLoader(true);
       this.model.email = this.model.email.trim();
-      const { ok, result: { userStatus, address, totpIsActive } } = await this.$store.dispatch('user/signIn', {
+      const res = await this.$store.dispatch('user/signIn', {
         ...this.model,
         isRememberMeSelected: this.isRememberMeSelected,
       });
-      if (ok) {
-        this.userStatus = userStatus;
-        this.userWalletAddress = address ? address.toLowerCase() : '';
-        this.$cookies.set('userStatus', userStatus);
-        if (totpIsActive) {
-          await this.ShowModal({
-            key: modals.securityCheck,
-            actionMethod: async () => await this.nextStepAction(),
-          });
-        } else {
-          await this.nextStepAction();
-        }
-      }
       this.SetLoader(false);
+      if (!res.ok) return;
+      const { result: { userStatus, address, totpIsActive } } = res;
+      this.userStatus = userStatus;
+      this.userWalletAddress = address ? address.toLowerCase() : '';
+      this.$cookies.set('userStatus', userStatus);
+      if (totpIsActive) {
+        await this.ShowModal({
+          key: modals.securityCheck,
+          actionMethod: async () => await this.nextStepAction(),
+        });
+      } else {
+        await this.nextStepAction();
+      }
     },
     async nextStepAction() {
       const confirmToken = sessionStorage.getItem('confirmToken');
