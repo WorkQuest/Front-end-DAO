@@ -4,7 +4,7 @@ export default {
   async getInvestors({ commit, dispatch }, config) {
     try {
       if (!config.q.length) delete config.q;
-      const { result } = await this.$axios.$get('/v1/profile/users', { params: { ...config, walletRequired: true } });
+      const { result } = await this.$axios.$get('/v1/dao/profile/users', { params: { ...config, walletRequired: true } });
       const addresses = result.users.map((user) => user.wallet?.address).filter((n) => n);
       const votes = await dispatch('wallet/getVotesByAddresses', addresses, { root: true });
       result.users.forEach((user) => {

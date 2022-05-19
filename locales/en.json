@@ -596,10 +596,11 @@
       "addProposal": "Add proposal error",
       "voteError": "Voting error",
       "votingTimeIsExpired": "Voting time is expired",
-      "notEnoughFunds": "You must have at least {a} votes",
+      "notEnoughFunds": "You must have at least {a} votes. Votes now: {b}",
       "vote": "Vote",
       "isEmpty": "List is empty",
       "delegatedAfter": "Your votes delegated after creating voting",
+      "notEnoughDelegatedPastVotes": "You didn't have enough votes at the time the proposal was created ({a}). {b} votes required",
       "transaction": {
         "notEnoughFunds": "Not enough funds"
       }

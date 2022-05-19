@@ -264,7 +264,6 @@ import {
 } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import { WQVoting } from '~/abi/index';
-import { getStyledAmount } from '~/utils/wallet';
 
 export default {
   name: 'ProposalInfo',
@@ -277,6 +276,7 @@ export default {
           contractProposalId: '',
           transactionHash: '',
           votingPeriod: 0,
+          blockNumber: 0,
         },
         description: '',
         medias: [],
@@ -310,6 +310,7 @@ export default {
   computed: {
     ...mapGetters({
       userWalletAddress: 'user/getUserWalletAddress',
+      balanceData: 'wallet/getBalanceData',
       proposalThreshold: 'proposals/proposalThreshold',
       isWalletConnected: 'wallet/getIsWalletConnected',
       isChairperson: 'proposals/isChairpersonRole',
@@ -478,8 +479,9 @@ export default {
       ]);
       if (!proposalRes.ok) return;
       const {
-        forVotes, againstVotes, active, succeded, defeated,
+        forVotes, againstVotes, active, succeded, defeated, blockNumber,
       } = proposalRes.result;
+      this.card.createdEvent.blockNumber = blockNumber;
 
       if (!succeded && !defeated) {
         this.card.status = 1;
@@ -540,45 +542,49 @@ export default {
       }[index] || 'None';
     },
     async doVote(value) {
-      const [delegatedRes, voteThreshold] = await Promise.all([
-        this.$store.dispatch('proposals/getVotesByAddresses', [this.userWalletAddress]),
+      if (this.$moment().isAfter(this.$moment(this.dateEnd))) {
+        this.ShowToast(this.$t('proposal.errors.votingTimeIsExpired'), this.$t('proposal.voteError'));
+        return;
+      }
+
+      const [pastVotesRes, thresholdRes] = await Promise.all([
+        this.$store.dispatch('proposals/getPastVotes', this.card.createdEvent.blockNumber),
         this.$store.dispatch('proposals/getVoteThreshold'),
-        this.$store.dispatch('wallet/getBalance'),
       ]);
-      const delegated = getStyledAmount(delegatedRes.result[0]);
-      if (new BigNumber(delegated).isLessThan(voteThreshold.result)) {
+      // pastVotes - сколько голосов было на момент создания голосования;
+      const pastVotes = new BigNumber(pastVotesRes.result).shiftedBy(-this.balanceData.WQT.decimals);
+      const thresholdToVote = thresholdRes.result;
+      if (new BigNumber(pastVotes).isLessThan(thresholdToVote)) {
         this.ShowToast(
-          this.$tc('proposal.errors.notEnoughFunds', {
-            a: +voteThreshold.result,
-            b: +delegated,
-          },
-          this.$t('proposal.errors.voteError')),
+          this.$t('proposal.errors.notEnoughDelegatedPastVotes', { a: pastVotes.toString(), b: thresholdToVote.toString() }),
+          this.$t('proposal.errors.voteError'),
         );
         return;
       }
 
       this.SetLoader(true);
-      if (this.$moment().isAfter(this.$moment(this.dateEnd))) {
-        this.ShowToast(this.$t('proposal.errors.votingTimeIsExpired'), this.$t('proposal.voteError'));
-        this.SetLoader(false);
+      const [feeRes] = await Promise.all([
+        this.$store.dispatch('wallet/getContractFeeData', {
+          method: 'doVote',
+          abi: WQVoting,
+          contractAddress: process.env.WORKNET_VOTING,
+          data: [this.card.createdEvent.contractProposalId, value],
+        }),
+        this.$store.dispatch('wallet/getBalance'),
+      ]);
+      this.SetLoader(false);
+      if (!feeRes.ok) {
+        this.ShowToast(feeRes.msg);
         return;
       }
-
-      if (!this.isWalletConnected) return;
-      const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
-        method: 'doVote',
-        abi: WQVoting,
-        contractAddress: process.env.WORKNET_VOTING,
-        data: [this.card.createdEvent.contractProposalId, value],
-      });
-      this.SetLoader(false);
-      if (!feeRes.ok) return;
       this.ShowModal({
         key: modals.transactionReceipt,
         title: this.$t('proposal.voteForProposal'),
         fields: {
           from: { name: this.$t('modals.fromAddress'), value: this.userWalletAddress },
           to: { name: this.$t('modals.toAddress'), value: process.env.WORKNET_VOTING },
+          votingPower: { name: (this.$t('investors.table.voting')), value: pastVotes },
+          votedFor: { name: this.$t('proposal.youVoted'), value: this.$t(`proposal.${value ? 'yes' : 'no'}`) },
           fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WQT },
         },
         submitMethod: async () => {
