@@ -75,15 +75,23 @@ export default {
   methods: {
     async addProposalModal() {
       this.SetLoader(true);
-      await Promise.all([
+      const [votesRes] = await Promise.all([
+        this.$store.dispatch('wallet/getVotesByAddresses', [this.userWalletAddress]),
         this.$store.dispatch('proposals/getProposalThreshold'),
-        this.$store.dispatch('wallet/updateFrozenBalance'),
-        this.$store.dispatch('wallet/getDelegates'),
       ]);
       this.SetLoader(false);
-      const minFrozenToCreateProposal = new BigNumber(this.proposalThreshold).shiftedBy(-this.balanceData.WQT.decimals);
-      if (this.delegatedToUser?.wallet?.address !== this.userWalletAddress || new BigNumber(this.frozenBalance).isLessThan(minFrozenToCreateProposal)) {
-        this.ShowToast(this.$t('proposal.errors.notEnoughFunds', { a: minFrozenToCreateProposal }), this.$t('proposal.errors.addProposal'));
+      if (!votesRes.ok) {
+        this.ShowToast(votesRes.msg);
+        return;
+      }
+      const myVotes = new BigNumber(votesRes.result[0]).shiftedBy(-this.balanceData.WQT.decimals);
+      const minVotesToCreateProposal = new BigNumber(this.proposalThreshold).shiftedBy(-this.balanceData.WQT.decimals);
+      if (myVotes.isLessThan(minVotesToCreateProposal)) {
+        this.ShowToast(this.$t('proposal.errors.notEnoughFunds', {
+          a: minVotesToCreateProposal,
+          b: myVotes.decimalPlaces(4).toString(),
+        }),
+        this.$t('proposal.errors.addProposal'));
       } else {
         this.ShowModal({ key: modals.addProposal });
       }
