@@ -143,7 +143,7 @@ export default {
   }
   &__table{
     overflow: auto;
-    margin: 15px 0 15px 0;
+    margin: 15px 0;
     position: relative;
   }
   &__head {

@@ -139,12 +139,12 @@
 <script>
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
-import { CreateSignedTxForValidator } from '~/utils/wallet';
 import {
   DelegateMode, ExplorerUrls, TokenSymbols, ValidatorsMethods,
 } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import { error, success } from '~/utils/success-error';
+import { CreateSignedTxForValidator } from '~/utils/wallet';
 
 export default {
   name: 'Validator',

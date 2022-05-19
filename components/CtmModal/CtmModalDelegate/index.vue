@@ -119,12 +119,14 @@ export default {
       await this.$store.dispatch('wallet/checkWalletConnected');
       this.CloseModal();
     }
+    this.SetLoader(true);
     window.addEventListener('resize', () => {
       this.windowSize = window.innerWidth;
     });
     this.investorAddress = this.ConvertToHex('wq', this.options.investorAddress);
     await this.$store.dispatch('wallet/getBalance');
     if (this.options.delegateMode === DelegateMode.VALIDATORS) {
+      this.SetLoader(false);
       this.balance = this.balanceData.WQT.fullBalance;
       if (new BigNumber(this.balance).minus(0.01).isLessThan(0)) {
         this.ShowToast(this.$t('proposal.errors.transaction.notEnoughFunds'));
@@ -140,6 +142,7 @@ export default {
       data: [this.investorAddress],
       amount: this.balanceData.WQT.fullBalance,
     });
+    this.SetLoader(false);
     if (feeRes.ok) {
       this.maxFee = feeRes.result.fee;
     } else {

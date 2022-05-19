@@ -24,7 +24,7 @@
           class="title__panel panel"
         >
           <div class="panel__address">
-            {{ CutTxn(ConvertToBech32('wq', investorAddress), 8, 8) }}
+            {{ styledInvestorAddress }}
           </div>
           <div class="panel__picture">
             <base-btn
@@ -254,6 +254,9 @@ export default {
       userData: 'user/getUserData',
       isWalletConnected: 'wallet/getIsWalletConnected',
     }),
+    styledInvestorAddress() {
+      return this.CutTxn(this.ConvertToBech32('wq', this.investorAddress), 8, 8);
+    },
     isDelegatedToUser() {
       return this.delegatedToUser && this.investorAddress === this.delegatedToUser?.wallet?.address;
     },
