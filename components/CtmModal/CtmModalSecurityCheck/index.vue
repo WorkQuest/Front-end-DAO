@@ -22,6 +22,7 @@
             data-selector="SECURITY-CODE"
             rules="required|alpha_num|length:6"
             class="content__input"
+            @enter="handleSubmit(submit)"
           />
           <div class="content__body">
             {{ $t('securityCheck.confCodeDesc') }}

@@ -114,21 +114,26 @@
               v-if="investorAddress"
               class="info__action action"
             >
-              <base-btn
-                v-if="isDelegatedToUser"
-                mode="lightRed"
-                class="action__undelegate"
-                @click="openModalUndelegate"
-              >
-                {{ $t('modals.undelegate') }}
-              </base-btn>
-              <base-btn
-                mode="lightBlue"
-                class="action__delegate"
-                @click="openModalDelegate"
-              >
-                {{ $t('modals.delegate') }}
-              </base-btn>
+              <div>
+                {{ $t('investors.table.voting') }}: {{ votingPower }}
+              </div>
+              <div class="action__btns">
+                <base-btn
+                  v-if="isDelegatedToUser"
+                  mode="lightRed"
+                  class="action__button"
+                  @click="openModalUndelegate"
+                >
+                  {{ $t('modals.undelegate') }}
+                </base-btn>
+                <base-btn
+                  mode="lightBlue"
+                  class="action__button"
+                  @click="openModalDelegate"
+                >
+                  {{ $t('modals.delegate') }}
+                </base-btn>
+              </div>
             </div>
           </div>
           <!--TODO Попросила убрать роза пока не появятся данные для таблицы-->
@@ -525,15 +530,17 @@ export default {
 
 .action {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
 
-  &__undelegate {
-    max-width: 240px;
+  &__button {
+    min-width: 270px;
   }
 
-  &__delegate {
-    @extend .action__undelegate;
-    margin-left: 20px;
+  &__btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
   }
 }
 
@@ -589,22 +596,11 @@ export default {
       grid-template-columns: repeat(2, 1fr);
     }
   }
-}
-
-@include _575 {
-  .profile {
-
-    &__avatar {
-      grid-row: 1;
-      margin-bottom: 17px;
-    }
-
-    &__main-inp-cont {
-      grid-column: 1/3;
-    }
-
-    &__social {
-      grid-template-columns: 1fr;
+  .action {
+    flex-direction: column;
+    align-items: normal;
+    &__btns {
+      margin-top: 10px;
     }
   }
 }
@@ -661,21 +657,32 @@ export default {
 }
 
 @include _575 {
+  .profile {
+
+    &__avatar {
+      grid-row: 1;
+      margin-bottom: 17px;
+    }
+
+    &__main-inp-cont {
+      grid-column: 1/3;
+    }
+
+    &__social {
+      grid-template-columns: 1fr;
+    }
+  }
   .title {
     flex-direction: column;
     align-items: flex-start;
   }
-  .info__action {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 10px;
-  }
-  .action__delegate {
-    max-width: 100%
-  }
-  .action__undelegate {
-    margin: 0;
-    max-width: 100%
+  .action {
+    &__button {
+      max-width: 100%;
+    }
+    &__btns {
+      grid-template-columns: 1fr;
+    }
   }
 }
 </style>

@@ -61,6 +61,20 @@ export default {
       return error(errorCodes.GetVotes, e.message, e);
     }
   },
+  async getPastVotes({ _ }, proposalBlockNumber) {
+    try {
+      const res = await fetchWalletContractData(
+        'getPastVotes',
+        WQVoting,
+        process.env.WORKNET_VOTING,
+        [getWalletAddress(), proposalBlockNumber],
+      );
+      return success(res);
+    } catch (e) {
+      console.error('proposals/getPastVotes');
+      return error();
+    }
+  },
   async getProposalThreshold({ commit }) {
     try {
       const res = await fetchWalletContractData('proposalThreshold', WQVoting, process.env.WORKNET_VOTING);
