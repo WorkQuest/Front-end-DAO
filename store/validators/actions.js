@@ -3,8 +3,7 @@ import axios from 'axios';
 import { error, success } from '~/utils/success-error';
 import { getAddressFromConsensusPub } from '~/utils/wallet';
 
-const baseURL = `${process.env.WQ_PROVIDER}/api`;
-const nodeApi = axios.create({ baseURL });
+const nodeApi = axios.create({ baseURL: `${process.env.WQ_PROVIDER}/api` });
 
 export default {
   async getValidators({ commit, dispatch }, { status, limit, offset }) {

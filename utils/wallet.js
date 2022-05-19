@@ -373,23 +373,24 @@ function toRealUint8Array(data) {
 }
 
 const sign = (txBody, authInfo, accountNumber, privKey) => {
-  const bodyBytes = message.cosmos.tx.v1beta1.TxBody.encode(txBody).finish();
-  const authInfoBytes = message.cosmos.tx.v1beta1.AuthInfo.encode(authInfo).finish();
-  const signDoc = new message.cosmos.tx.v1beta1.SignDoc({
+  const { v1beta1 } = message.cosmos.tx;
+  const bodyBytes = v1beta1.TxBody.encode(txBody).finish();
+  const authInfoBytes = v1beta1.AuthInfo.encode(authInfo).finish();
+  const signDoc = new v1beta1.SignDoc({
     body_bytes: bodyBytes,
     auth_info_bytes: authInfoBytes,
     chain_id: chainId,
     account_number: Number(accountNumber),
   });
-  const signMessage = message.cosmos.tx.v1beta1.SignDoc.encode(signDoc).finish();
+  const signMessage = v1beta1.SignDoc.encode(signDoc).finish();
   const hash = keccak_256.create().update(toRealUint8Array(signMessage)).digest();
   const sig = secp256k1.sign(Buffer.from(hash), Buffer.from(privKey));
-  const txRaw = new message.cosmos.tx.v1beta1.TxRaw({
+  const txRaw = new v1beta1.TxRaw({
     body_bytes: bodyBytes,
     auth_info_bytes: authInfoBytes,
     signatures: [sig.signature],
   });
-  const txBytes = message.cosmos.tx.v1beta1.TxRaw.encode(txRaw).finish();
+  const txBytes = v1beta1.TxRaw.encode(txRaw).finish();
   return Buffer.from(txBytes, 'binary').toString('base64'); // txBytesBase64
 };
 
@@ -397,6 +398,7 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
   try {
     const address = converter('wq').toBech32(wallet.address);
     const data = await fetchCosmosAccount(address);
+    const { v1beta1 } = message.cosmos.tx;
     const { privKey, pubKeyAny } = await getPrivAndPublic(wallet.mnemonic);
     // txBody
     const msgSend = new message.cosmos.bank.v1beta1.MsgSend({
@@ -408,18 +410,18 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
       type_url: method,
       value: message.cosmos.bank.v1beta1.MsgSend.encode(msgSend).finish(),
     });
-    const txBody = new message.cosmos.tx.v1beta1.TxBody({ messages: [msgSendAny], memo: '' });
+    const txBody = new v1beta1.TxBody({ messages: [msgSendAny], memo: '' });
     // authInfo
-    const signerInfo = new message.cosmos.tx.v1beta1.SignerInfo({
+    const signerInfo = new v1beta1.SignerInfo({
       public_key: pubKeyAny,
       mode_info: { single: { mode: message.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT } },
       sequence: +data.account.base_account.sequence,
     });
-    const feeValue = new message.cosmos.tx.v1beta1.Fee({
+    const feeValue = new v1beta1.Fee({
       amount: [{ denom: 'awqt', amount: String('2000000000000') }],
       gas_limit: 200000,
     });
-    const authInfo = new message.cosmos.tx.v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
+    const authInfo = new v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
     // sign
     return success(sign(txBody, authInfo, data.account.base_account.account_number, privKey)); // signedTxBytes base64
   } catch (e) {
