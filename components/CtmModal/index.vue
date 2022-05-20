@@ -24,7 +24,6 @@ import CtmModalAddCard from './CtmModalAddCard';
 import CtmModalWithdraw from './CtmModalWithdraw';
 import CtmModalStatus from './CtmModalStatus';
 import CtmModalConfirmDetails from './CtmModalConfirmDetails';
-import CtmModalOpenADispute from './CtmModalOpenADispute';
 import CtmModalChangePassInSettings from './CtmModalChangePassInSettings';
 import CtmModalTwoFAAuth from './CtmModalTwoFAAuth';
 import CtmModalDisableTwoFA from './CtmModalDisableTwoFA';
@@ -51,7 +50,6 @@ export default {
     [modals.withdraw]: CtmModalWithdraw,
     [modals.status]: CtmModalStatus,
     [modals.confirmDetails]: CtmModalConfirmDetails,
-    [modals.openADispute]: CtmModalOpenADispute,
     [modals.changePassInSettings]: CtmModalChangePassInSettings,
     [modals.twoFAAuth]: CtmModalTwoFAAuth,
     [modals.disableTwoFAAuth]: CtmModalDisableTwoFA,
