@@ -223,8 +223,6 @@ export default {
 .item {
   padding: 10px;
   border-bottom: 1px solid $black100;
-  //grid-template-columns: 1fr 1fr;
-  //display: grid;
 
   &__link {
     &:hover {

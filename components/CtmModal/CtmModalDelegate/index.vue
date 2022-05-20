@@ -73,6 +73,7 @@ import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
 import { WQVoting } from '~/abi/index';
 import { TokenSymbols, DelegateMode } from '~/utils/enums';
+import { tempTxFeeValidators } from '~/utils/wallet';
 
 export default {
   name: 'Delegate',
@@ -101,7 +102,7 @@ export default {
         const max = new BigNumber(this.balance).minus(this.maxFee);
         return max.isGreaterThan(0) ? max.toString() : '0';
       }
-      return new BigNumber(this.balance).minus(0.01).toString();
+      return new BigNumber(this.balance).minus(tempTxFeeValidators).toString();
     },
     convertValue() {
       const { windowSize, investorAddress } = this;
@@ -128,8 +129,7 @@ export default {
     if (this.options.delegateMode === DelegateMode.VALIDATORS) {
       this.SetLoader(false);
       this.balance = this.balanceData.WQT.fullBalance;
-      // 0.01 - для оплаты комиссии за транзакцию
-      if (new BigNumber(this.balance).minus(0.01).isLessThan(0)) {
+      if (new BigNumber(this.balance).minus(tempTxFeeValidators).isLessThan(0)) {
         this.ShowToast(this.$t('proposal.errors.transaction.notEnoughFunds'));
         this.balance = 0;
       }

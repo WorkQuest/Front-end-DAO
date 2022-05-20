@@ -430,6 +430,7 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
     return error();
   }
 };
+export const tempTxFeeValidators = 0.01;
 
 export const getAddressFromConsensusPub = (pub) => {
   const foo = Buffer.from(pub, 'base64');
