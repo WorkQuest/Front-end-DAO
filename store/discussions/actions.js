@@ -98,7 +98,6 @@ export default {
     }
   },
 
-  // TODO: Интегрировать методы
   async getPeopleListWhoLikeDiscussion({ commit }, discussionId) {
     try {
       const response = await this.$axios.$get(`/v1/discussion/comment/${discussionId}/usersLikes`);

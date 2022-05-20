@@ -22,8 +22,10 @@ import { ERC20, WQVoting } from '~/abi/index';
 export default {
   async getTransactions({ commit }, params) {
     try {
+      const { investorAddress } = params;
+      delete params.investorAddress;
       const res = await this.$axios({
-        url: `/account/${getWalletAddress()}/transactions`,
+        url: `/account/${investorAddress ?? getWalletAddress()}/transactions`,
         baseURL: process.env.WQ_EXPLORER,
         params,
       });
