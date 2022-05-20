@@ -257,6 +257,15 @@ export default {
         investorAddress: this.ConvertToHex('wqvaloper', this.validatorData.operator_address),
         min: this.validatorData.min_self_delegation,
         submitMethod: async (amount) => {
+          this.SetLoader(true);
+          const gasUsedTx = await CreateSignedTxForValidator(
+            ValidatorsMethods.DELEGATE,
+            this.validatorData.operator_address,
+            new BigNumber(amount).shiftedBy(18).toString(),
+          );
+          const simulateRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result });
+          const { gas_used } = simulateRes.gas_info;
+          this.SetLoader(false);
           this.ShowModal({
             key: modals.transactionReceipt,
             title: this.$t('modals.delegate'),
@@ -265,7 +274,7 @@ export default {
               from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
               to: { name: this.$t('modals.toAddress'), value: this.convertedValidatorAddress },
               amount: { name: this.$t('modals.amount'), value: amount, symbol: TokenSymbols.WQT },
-              gasLimit: { name: this.$t('modals.gasLimit'), value: 200000 },
+              gasLimit: { name: this.$t('modals.gasLimit'), value: gas_used },
             },
             callback: async () => await new Promise((resolve) => {
               setTimeout(async () => {
@@ -282,6 +291,7 @@ export default {
                 ValidatorsMethods.DELEGATE,
                 this.validatorData.operator_address,
                 new BigNumber(amount).shiftedBy(18).toString(),
+                gas_used,
               );
               const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: delegateTx.result });
               if (broadcastRes.tx_response.raw_log !== '[]') {
@@ -301,14 +311,23 @@ export default {
         delegateMode: DelegateMode.VALIDATORS,
         unbondingDays: this.unbondingDays,
         tokensAmount: this.delegatedData.amount,
-        submitMethod: () => {
+        submitMethod: async () => {
+          this.SetLoader(true);
+          const gasUsedTx = await CreateSignedTxForValidator(
+            ValidatorsMethods.UNDELEGATE,
+            this.validatorData.operator_address,
+            this.delegatedData.amount,
+          );
+          const simulateRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result });
+          const { gas_used } = simulateRes.gas_info;
+          this.SetLoader(false);
           this.ShowModal({
             key: modals.transactionReceipt,
             isShowSuccess: true,
             fields: {
               from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
               to: { name: this.$t('modals.toAddress'), value: this.convertedValidatorAddress },
-              gasLimit: { name: this.$t('modals.gasLimit'), value: 200000 },
+              gasLimit: { name: this.$t('modals.gasLimit'), value: gas_used },
             },
             callback: async () => await new Promise((resolve) => {
               setTimeout(async () => {
@@ -325,6 +344,7 @@ export default {
                 ValidatorsMethods.UNDELEGATE,
                 this.validatorData.operator_address,
                 this.delegatedData.amount,
+                gas_used,
               );
               const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: undelegateTx.result });
               if (broadcastRes.tx_response.raw_log !== '[]') {

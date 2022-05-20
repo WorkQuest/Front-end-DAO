@@ -394,7 +394,7 @@ const sign = (txBody, authInfo, accountNumber, privKey) => {
   return Buffer.from(txBytes, 'binary').toString('base64'); // txBytesBase64
 };
 
-export const CreateSignedTxForValidator = async (method, validatorAddress, amount) => {
+export const CreateSignedTxForValidator = async (method, validatorAddress, amount, gas_limit = 200000) => {
   try {
     const address = converter('wq').toBech32(wallet.address);
     const data = await fetchCosmosAccount(address);
@@ -418,8 +418,9 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
       sequence: +data.account.base_account.sequence,
     });
     const feeValue = new v1beta1.Fee({
-      amount: [{ denom: 'awqt', amount: String('2000000000000') }],
-      gas_limit: 200000,
+      // txFee | 10000000 - min gas price on worknet
+      amount: [{ denom: 'awqt', amount: new BigNumber(10000000).multipliedBy(gas_limit).toString() }],
+      gas_limit,
     });
     const authInfo = new v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
     // sign

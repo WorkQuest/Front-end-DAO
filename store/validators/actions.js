@@ -96,4 +96,18 @@ export default {
       return error();
     }
   },
+  async simulate(_, { signedTxBytes, broadCastMode = 'BROADCAST_MODE_SYNC' }) {
+    try {
+      const { data } = await nodeApi.post('/cosmos/tx/v1beta1/simulate', {
+        tx_bytes: signedTxBytes,
+        mode: broadCastMode,
+      }, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+      return data;
+    } catch (e) {
+      console.error('wallet/broadcast');
+      return error();
+    }
+  },
 };

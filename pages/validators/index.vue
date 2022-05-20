@@ -61,6 +61,14 @@ export default {
       validatorsList: 'validators/getValidatorsList',
       validatorsCount: 'validators/getValidatorsCount',
     }),
+    /**
+     * @property moniker
+     * @property operator_address
+     * @property commission
+     * @property commission_rates
+     * @property min_self_delegation
+     * @returns {{investorAddress: *, stake: string, slots: *, minStake: *, missedBlocks: *, fee: string, validatorName: *, id: *}[]}
+     */
     validators() {
       return this.validatorsList.map((item) => {
         const address = this.ConvertToBech32('wq', this.ConvertToHex('wqvaloper', item.operator_address));
