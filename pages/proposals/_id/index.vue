@@ -921,6 +921,8 @@ export default {
   &__table {
     position: relative;
     margin-top: 15px;
+    background: $white;
+    border-radius: 6px;
   }
 
   &__proposals {

@@ -248,7 +248,6 @@ export default {
   overflow-x: hidden;
   background: $white;
   border-radius: 6px;
-  width: 1180px;
 
   &__title {
     margin: 10px;
@@ -287,21 +286,10 @@ export default {
     text-decoration: none !important;
   }
 
-  @include _1199 {
-    .btn__delegate {
-      width: 80px !important;
-      font-size: 13px;
-    }
-  }
   @include _991 {
     .table {
       width: 1180px;
       overflow-x: hidden;
-
-      .btn__delegate {
-        width: 60px !important;
-        font-size: 10px;
-      }
     }
     &__copy {
       font-size: 10px;

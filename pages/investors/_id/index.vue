@@ -137,34 +137,26 @@
               </div>
             </div>
           </div>
-          <!--          <div class="profile__table">-->
-          <!--            <base-table-->
-          <!--              class="profile__table_txs"-->
-          <!--              :title="$t('wallet.table.trx')"-->
-          <!--              :items="styledTransactions"-->
-          <!--              :fields="walletTableFields"-->
-          <!--            />-->
-          <!--          </div>-->
-          <!--          <div class="profile__history">-->
-          <!--            <p class="profile__subtitle">-->
-          <!--              {{ $t('wallet.table.trx') }}-->
-          <!--            </p>-->
-          <!--            <mobile-table-item-->
-          <!--              v-for="(transaction, index) in styledTransactions"-->
-          <!--              :key="index"-->
-          <!--              :item="transaction"-->
-          <!--              :is-last="currentPage === totalPages"-->
-          <!--            />-->
-          <!--          </div>-->
         </div>
       </div>
-      <div class="profile__table">
+      <div class="investor__table">
         <base-table
-          class="profile__table_txs"
+          class="investor__table_txs"
           :title="$t('wallet.table.trx')"
           :items="styledTransactions"
           :fields="walletTableFields"
         />
+        <div class="investor__table_mobile">
+          <p class="investor__table_title">
+            {{ $t('wallet.table.trx') }}
+          </p>
+          <mobile-table-item
+            v-for="(transaction, index) in styledTransactions"
+            :key="index"
+            :item="transaction"
+            :is-last="currentPage === totalPages"
+          />
+        </div>
       </div>
       <base-pager
         v-if="totalPages > 1"
@@ -357,12 +349,27 @@ export default {
   @include text-simple;
   color: $black800;
 
-  &__profile {
-    //width: 100%;
-    //max-width: 1180px;
-  }
+  &__table {
+    background: $white;
+    border-radius: 6px;
+    margin: 20px 0;
+    position: relative;
+    overflow: auto;
+    width: calc(100vw - 40px);
 
-  &__pagination {
+    &_txs {
+      width: 1180px;
+    }
+
+    &_mobile {
+      display: none;
+    }
+
+    &_title {
+      padding: 10px;
+      font-weight: 600;
+      font-size: 20px;
+    }
   }
 
   &__header {
@@ -460,22 +467,6 @@ export default {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
-  }
-
-  &__table {
-    background: $white;
-    border-radius: 6px;
-    margin: 20px 0;
-    overflow: hidden;
-    position: relative;
-    width: 1180px;
-    &_txs {
-
-    }
-  }
-
-  &__history {
-    display: none;
   }
 }
 
@@ -628,6 +619,14 @@ export default {
     &__header {
       margin: 15px 10px;
     }
+
+    &__table_txs {
+      display: none;
+    }
+
+    &__table_mobile {
+      display: block;
+    }
   }
   .info {
     grid-template-rows: 3fr 1fr auto;
@@ -646,9 +645,6 @@ export default {
     }
   }
   .profile {
-    &__table {
-      display: none;
-    }
 
     &__subtitle {
       font-size: 20px;

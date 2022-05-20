@@ -321,8 +321,10 @@ export default {
 <style lang="scss" scoped>
 
 .table {
-  &__container {
-    width: 100%;
+  position: relative;
+  overflow: auto;
+  &__txs {
+    width: 1180px;
   }
 }
 
@@ -411,10 +413,7 @@ export default {
   }
 
   &__table {
-    position: relative;
     box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
-    max-width: 100%;
-    overflow-x: auto;
     margin-bottom: 15px;
   }
 }
@@ -600,18 +599,6 @@ export default {
     margin: 0;
     grid-template-columns: 2fr 1fr;
     height: 240px;
-  }
-}
-
-@include _991 {
-  .wallet {
-    &__table {
-      overflow: auto;
-      width: calc(100vw - 40px);
-    }
-  }
-  .table {
-    width: 1180px;
   }
 }
 
