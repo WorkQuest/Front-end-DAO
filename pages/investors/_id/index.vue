@@ -49,11 +49,10 @@
                   alt=""
                 >
               </div>
-              <!--              TODO вернуть -->
-              <!--              <div class="profile__status status">-->
-              <!--                {{ $t('settings.verifiсated') }}-->
-              <!--                <span class="icon input-icon input-icon__check icon-check_all_big" />-->
-              <!--              </div>-->
+              <div class="profile__status status">
+                {{ $t('settings.verifiсated') }}
+                <span class="icon input-icon input-icon__check icon-check_all_big" />
+              </div>
               <div
                 v-for="input in mainDataArr"
                 :key="input.key"
@@ -63,7 +62,6 @@
                   v-if="input.isVisible"
                   class="contacts__name"
                   :is-hide-error="true"
-                  :disabled="true"
                   mode="left"
                   :value="fillInputs(input)"
                   :placeholder="$t('investor.notFilled')"
@@ -139,27 +137,34 @@
               </div>
             </div>
           </div>
-
-          <div class="profile__table">
-            <base-table
-              class="profile__field"
-              :title="$t('wallet.table.trx')"
-              :items="styledTransactions"
-              :fields="walletTableFields"
-            />
-          </div>
-          <div class="profile__history">
-            <p class="profile__subtitle">
-              {{ $t('wallet.table.trx') }}
-            </p>
-            <mobile-table-item
-              v-for="(transaction, index) in styledTransactions"
-              :key="index"
-              :item="transaction"
-              :is-last="currentPage === totalPages"
-            />
-          </div>
+          <!--          <div class="profile__table">-->
+          <!--            <base-table-->
+          <!--              class="profile__table_txs"-->
+          <!--              :title="$t('wallet.table.trx')"-->
+          <!--              :items="styledTransactions"-->
+          <!--              :fields="walletTableFields"-->
+          <!--            />-->
+          <!--          </div>-->
+          <!--          <div class="profile__history">-->
+          <!--            <p class="profile__subtitle">-->
+          <!--              {{ $t('wallet.table.trx') }}-->
+          <!--            </p>-->
+          <!--            <mobile-table-item-->
+          <!--              v-for="(transaction, index) in styledTransactions"-->
+          <!--              :key="index"-->
+          <!--              :item="transaction"-->
+          <!--              :is-last="currentPage === totalPages"-->
+          <!--            />-->
+          <!--          </div>-->
         </div>
+      </div>
+      <div class="profile__table">
+        <base-table
+          class="profile__table_txs"
+          :title="$t('wallet.table.trx')"
+          :items="styledTransactions"
+          :fields="walletTableFields"
+        />
       </div>
       <base-pager
         v-if="totalPages > 1"
@@ -353,12 +358,11 @@ export default {
   color: $black800;
 
   &__profile {
-    width: 100%;
-    max-width: 1180px;
+    //width: 100%;
+    //max-width: 1180px;
   }
 
   &__pagination {
-    margin-top: 10px;
   }
 
   &__header {
@@ -459,7 +463,15 @@ export default {
   }
 
   &__table {
-    margin: 15px 0;
+    background: $white;
+    border-radius: 6px;
+    margin: 20px 0;
+    overflow: hidden;
+    position: relative;
+    width: 1180px;
+    &_txs {
+
+    }
   }
 
   &__history {
@@ -636,13 +648,6 @@ export default {
   .profile {
     &__table {
       display: none;
-    }
-
-    &__history {
-      display: block;
-      background: $white;
-      padding: 16px;
-      margin: 15px 0;
     }
 
     &__subtitle {

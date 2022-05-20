@@ -128,6 +128,7 @@ export default {
     if (this.options.delegateMode === DelegateMode.VALIDATORS) {
       this.SetLoader(false);
       this.balance = this.balanceData.WQT.fullBalance;
+      // 0.01 - для оплаты комиссии за транзакцию
       if (new BigNumber(this.balance).minus(0.01).isLessThan(0)) {
         this.ShowToast(this.$t('proposal.errors.transaction.notEnoughFunds'));
         this.balance = 0;
