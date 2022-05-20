@@ -441,7 +441,11 @@
       "title": "Connection to Work Quest",
       "desc": "If you already have an account created on one of the Work Quest products, you can log in using its login details"
     },
+    "emailVerificationCode": "Email verification code",
+    "emailPlaceholder": "Please enter Email verification code",
     "emailVerificationCodeField": "email verification",
+    "googleVerificationCode": "Google verification code",
+    "codePlaceholder": "Please enter Google verification code",
     "googleVerificationCodeField": "google verification"
   },
   "ui": {
