@@ -117,7 +117,10 @@
               <div>
                 {{ $t('investors.table.voting') }}: {{ votingPower }}
               </div>
-              <div class="action__btns">
+              <div
+                class="action__btns"
+                :class="{'action__btns_single': !isDelegatedToUser}"
+              >
                 <base-btn
                   v-if="isDelegatedToUser"
                   mode="lightRed"
@@ -136,36 +139,34 @@
               </div>
             </div>
           </div>
-          <!--TODO Попросила убрать роза пока не появятся данные для таблицы-->
-          <!--          <div class="profile__table">-->
-          <!--            <base-table-->
-          <!--              class="profile__field"-->
-          <!--              :title="$t('wallet.table.trx')"-->
-          <!--              :items="transactionsData"-->
-          <!--              :fields="walletTableFields"-->
-          <!--            />-->
-          <!--          </div>-->
-          <!-- mobile -->
-          <!--          <div class="profile__history">-->
-          <!--            <p class="profile__subtitle">-->
-          <!--              {{ $t('wallet.table.trx') }}-->
-          <!--            </p>-->
-          <!--            <mobile-table-item-->
-          <!--              v-for="(transaction, index) in transactionsData"-->
-          <!--              :key="index"-->
-          <!--              :item="transaction"-->
-          <!--              :is-last="transactionsData[index] === transactionsData[transactionsData.length - 1]"-->
-          <!--            />-->
-          <!--          </div>-->
-          <!-- /mobile -->
+
+          <div class="profile__table">
+            <base-table
+              class="profile__field"
+              :title="$t('wallet.table.trx')"
+              :items="styledTransactions"
+              :fields="walletTableFields"
+            />
+          </div>
+          <div class="profile__history">
+            <p class="profile__subtitle">
+              {{ $t('wallet.table.trx') }}
+            </p>
+            <mobile-table-item
+              v-for="(transaction, index) in styledTransactions"
+              :key="index"
+              :item="transaction"
+              :is-last="currentPage === totalPages"
+            />
+          </div>
         </div>
       </div>
-      <!--TODO Попросила убрать роза пока не появятся данные для таблицы-->
-      <!--      <base-pager-->
-      <!--        v-model="pages"-->
-      <!--        class="investor__pagination"-->
-      <!--        :total-pages="totalPages"-->
-      <!--      />-->
+      <base-pager
+        v-if="totalPages > 1"
+        v-model="currentPage"
+        class="investor__pagination"
+        :total-pages="totalPages"
+      />
     </div>
     <empty-data
       v-else
@@ -176,8 +177,9 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
-import { UserRole } from '~/utils/enums';
+import { TokenSymbolByContract, TokenSymbols, UserRole } from '~/utils/enums';
 import { getStyledAmount } from '~/utils/wallet';
 
 export default {
@@ -188,74 +190,50 @@ export default {
       userId: this.$route.params.id,
       votingPower: 0,
       investorAddress: '',
-      pages: 1,
-      totalPages: 5,
-      transactionsData: [
-        {
-          tx_hash: 'sd535sd66sdsd',
-          status: 'Success',
-          block: '5267575474',
-          timestamp: 'Feb 1, 2021, 21:34',
-          transferred: 'To 2381hkjk123',
-          value: '120 WUSD',
-          transaction_fee: '5 WUSD',
-        },
-        {
-          tx_hash: 'sd535sd66sdsd',
-          status: 'Success',
-          block: '5267575474',
-          timestamp: 'Feb 1, 2021, 21:34',
-          transferred: 'To 2381hkjk123',
-          value: '120 WUSD',
-          transaction_fee: '5 WUSD',
-        },
-        {
-          tx_hash: 'sd535sd66sdsd',
-          status: 'Success',
-          block: '5267575474',
-          timestamp: 'Feb 1, 2021, 21:34',
-          transferred: 'To 2381hkjk123',
-          value: '120 WUSD',
-          transaction_fee: '5 WUSD',
-        },
-        {
-          tx_hash: 'sd535sd66sdsd',
-          status: 'Success',
-          block: '5267575474',
-          timestamp: 'Feb 1, 2021, 21:34',
-          transferred: 'To 2381hkjk123',
-          value: '120 WUSD',
-          transaction_fee: '5 WUSD',
-        },
-        {
-          tx_hash: 'sd535sd66sdsd',
-          status: 'Success',
-          block: '5267575474',
-          timestamp: 'Feb 1, 2021, 21:34',
-          transferred: 'To 2381hkjk123',
-          value: '120 WUSD',
-          transaction_fee: '5 WUSD',
-        },
-        {
-          tx_hash: 'sd535sd66sdsd',
-          status: 'Success',
-          block: '5267575474',
-          timestamp: 'Feb 1, 2021, 21:34',
-          transferred: 'To 2381hkjk123',
-          value: '120 WUSD',
-          transaction_fee: '5 WUSD',
-        },
-      ],
+      currentPage: 1,
+      txsPerPage: 10,
     };
   },
   computed: {
     ...mapGetters({
+      balance: 'wallet/getBalanceData',
       delegatedToUser: 'investors/getDelegatedToUser',
       userData: 'user/getUserData',
       isWalletConnected: 'wallet/getIsWalletConnected',
+      transactions: 'wallet/getTransactions',
+      transactionsCount: 'wallet/getTransactionsCount',
     }),
+    totalPages() {
+      if (!this.transactionsCount) return 0;
+      return Math.ceil(this.transactionsCount / this.txsPerPage);
+    },
     styledInvestorAddress() {
       return this.CutTxn(this.ConvertToBech32('wq', this.investorAddress), 8, 8);
+    },
+    /**
+     * @property block_number
+     * @property to_address_hash
+     * @property gas_price
+     * @property gas_used
+     * @property tokenTransfers
+     * @property from_address_hash
+     * @return {{transaction_fee: BigNumber, tx_hash: *, block: *, to_address: *, value: string, from_address: *, timestamp: *, status}[]}
+     */
+    styledTransactions() {
+      return this.transactions.map((t) => {
+        const symbol = TokenSymbolByContract[t.to_address_hash.hex] || TokenSymbols.WQT;
+        const decimals = this.balance[symbol]?.decimals || 18;
+        return {
+          tx_hash: t.hash,
+          block: t.block_number,
+          timestamp: this.$moment(t.block.timestamp).format('lll'),
+          status: !!t.status,
+          value: `${getStyledAmount(t.tokenTransfers[0]?.amount || t.value, false, decimals)} ${symbol}`,
+          transaction_fee: new BigNumber(t.gas_price).multipliedBy(t.gas_used),
+          from_address: t.from_address_hash.hex,
+          to_address: t.to_address_hash.hex,
+        };
+      });
     },
     isDelegatedToUser() {
       return this.delegatedToUser && this.investorAddress === this.delegatedToUser?.wallet?.address;
@@ -293,14 +271,27 @@ export default {
       return this.userData.id === this.userId;
     },
   },
+  watch: {
+    currentPage() {
+      this.getTransactions();
+    },
+  },
   async beforeMount() {
     await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
   },
   async mounted() {
     if (!this.isWalletConnected) return;
     await this.getInvestorData();
+    await this.getTransactions();
   },
   methods: {
+    async getTransactions() {
+      await this.$store.dispatch('wallet/getTransactions', {
+        limit: this.txsPerPage,
+        offset: this.txsPerPage * (this.currentPage - 1),
+        investorAddress: this.investorAddress,
+      });
+    },
     fillInputs(input) {
       if (this.investor.additionalInfo) {
         if (input.key === 'location') return this.investor.locationPlaceName;
@@ -544,6 +535,9 @@ export default {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
+    &_single {
+      grid-template-columns: 1fr;
+    }
   }
 }
 
