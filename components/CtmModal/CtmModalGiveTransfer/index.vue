@@ -51,6 +51,7 @@
               <base-btn
                 mode="max"
                 class="max__button"
+                selector="MAX"
                 @click="maxBalance"
               >
                 <span class="max__text">
@@ -71,6 +72,7 @@
           <base-btn
             class="buttons__action"
             :disabled="invalid || !isCanSubmit"
+            selector="SUBMIT"
             @click="handleSubmit(showWithdrawInfo)"
           >
             {{ $t('meta.send') }}

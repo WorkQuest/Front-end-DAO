@@ -24,11 +24,11 @@
           class="title__panel panel"
         >
           <div class="panel__address">
-            {{ CutTxn(convertToBech32('wq', investorAddress), 8, 8) }}
+            {{ styledInvestorAddress }}
           </div>
           <div class="panel__picture">
             <base-btn
-              v-clipboard:copy="convertToBech32('wq', investorAddress)"
+              v-clipboard:copy="ConvertToBech32('wq', investorAddress)"
               v-clipboard:success="ClipboardSuccessHandler"
               v-clipboard:error="ClipboardErrorHandler"
               mode="copy"
@@ -49,11 +49,10 @@
                   alt=""
                 >
               </div>
-              <!--              TODO вернуть -->
-              <!--              <div class="profile__status status">-->
-              <!--                {{ $t('settings.verifiсated') }}-->
-              <!--                <span class="icon input-icon input-icon__check icon-check_all_big" />-->
-              <!--              </div>-->
+              <div class="profile__status status">
+                {{ $t('settings.verifiсated') }}
+                <span class="icon input-icon input-icon__check icon-check_all_big" />
+              </div>
               <div
                 v-for="input in mainDataArr"
                 :key="input.key"
@@ -63,7 +62,6 @@
                   v-if="input.isVisible"
                   class="contacts__name"
                   :is-hide-error="true"
-                  :disabled="true"
                   mode="left"
                   :value="fillInputs(input)"
                   :placeholder="$t('investor.notFilled')"
@@ -139,26 +137,25 @@
               </div>
             </div>
           </div>
-
-          <div class="profile__table">
-            <base-table
-              class="profile__field"
-              :title="$t('wallet.table.trx')"
-              :items="styledTransactions"
-              :fields="walletTableFields"
-            />
-          </div>
-          <div class="profile__history">
-            <p class="profile__subtitle">
-              {{ $t('wallet.table.trx') }}
-            </p>
-            <mobile-table-item
-              v-for="(transaction, index) in styledTransactions"
-              :key="index"
-              :item="transaction"
-              :is-last="currentPage === totalPages"
-            />
-          </div>
+        </div>
+      </div>
+      <div class="investor__table">
+        <base-table
+          class="investor__table_txs"
+          :title="$t('wallet.table.trx')"
+          :items="styledTransactions"
+          :fields="walletTableFields"
+        />
+        <div class="investor__table_mobile">
+          <p class="investor__table_title">
+            {{ $t('wallet.table.trx') }}
+          </p>
+          <mobile-table-item
+            v-for="(transaction, index) in styledTransactions"
+            :key="index"
+            :item="transaction"
+            :is-last="currentPage === totalPages"
+          />
         </div>
       </div>
       <base-pager
@@ -207,6 +204,18 @@ export default {
       if (!this.transactionsCount) return 0;
       return Math.ceil(this.transactionsCount / this.txsPerPage);
     },
+    styledInvestorAddress() {
+      return this.CutTxn(this.ConvertToBech32('wq', this.investorAddress), 8, 8);
+    },
+    /**
+     * @property block_number
+     * @property to_address_hash
+     * @property gas_price
+     * @property gas_used
+     * @property tokenTransfers
+     * @property from_address_hash
+     * @return {{transaction_fee: BigNumber, tx_hash: *, block: *, to_address: *, value: string, from_address: *, timestamp: *, status}[]}
+     */
     styledTransactions() {
       return this.transactions.map((t) => {
         const symbol = TokenSymbolByContract[t.to_address_hash.hex] || TokenSymbols.WQT;
@@ -248,11 +257,12 @@ export default {
       return [
         { key: 'tx_hash', label: this.$t('wallet.table.txHash'), sortable: true },
         { key: 'status', label: this.$t('wallet.table.status'), sortable: true },
-        { key: 'block', label: this.$t('wallet.table.block'), sortable: true },
+        { key: 'block', label: this.$t('wallet.table.block'), sortable: false },
         { key: 'timestamp', label: this.$t('wallet.table.timestamp'), sortable: true },
-        { key: 'transferred', label: this.$t('wallet.table.transferred'), sortable: true },
-        { key: 'value', label: this.$t('wallet.table.value'), sortable: true },
-        { key: 'transaction_fee', label: this.$t('wallet.table.trxFee'), sortable: true },
+        { key: 'from_address', label: this.$t('modals.fromAddress'), sortable: true },
+        { key: 'to_address', label: this.$t('modals.toAddress'), sortable: true },
+        { key: 'value', label: this.$t('wallet.table.transferred'), sortable: true },
+        { key: 'transaction_fee', label: this.$t('wallet.table.trxFee'), sortable: false },
       ];
     },
     isMyProfile() {
@@ -339,13 +349,27 @@ export default {
   @include text-simple;
   color: $black800;
 
-  &__profile {
-    width: 100%;
-    max-width: 1180px;
-  }
+  &__table {
+    background: $white;
+    border-radius: 6px;
+    margin: 20px 0;
+    position: relative;
+    overflow: auto;
+    width: calc(100vw - 40px);
 
-  &__pagination {
-    margin-top: 10px;
+    &_txs {
+      width: 1180px;
+    }
+
+    &_mobile {
+      display: none;
+    }
+
+    &_title {
+      padding: 10px;
+      font-weight: 600;
+      font-size: 20px;
+    }
   }
 
   &__header {
@@ -443,14 +467,6 @@ export default {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
-  }
-
-  &__table {
-    margin: 15px 0;
-  }
-
-  &__history {
-    display: none;
   }
 }
 
@@ -603,6 +619,14 @@ export default {
     &__header {
       margin: 15px 10px;
     }
+
+    &__table_txs {
+      display: none;
+    }
+
+    &__table_mobile {
+      display: block;
+    }
   }
   .info {
     grid-template-rows: 3fr 1fr auto;
@@ -621,16 +645,6 @@ export default {
     }
   }
   .profile {
-    &__table {
-      display: none;
-    }
-
-    &__history {
-      display: block;
-      background: $white;
-      padding: 16px;
-      margin: 15px 0;
-    }
 
     &__subtitle {
       font-size: 20px;

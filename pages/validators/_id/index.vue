@@ -15,7 +15,14 @@
           {{ $t('validator.title') }}
         </div>
       </div>
-      <div class="validator__block">
+      <empty-data
+        v-if="notFounded"
+        :description="$t('validators.notFounded')"
+      />
+      <div
+        v-else
+        class="validator__block"
+      >
         <div class="validator__profile profile">
           <div class="profile__left">
             <img
@@ -24,17 +31,32 @@
               alt="empty avatar"
             >
             <div class="left__info">
-              <div class="left__user">
+              <div
+                v-if="validatorData"
+                class="left__user"
+              >
                 <div class="left__text left__text_name">
-                  Вовоже_CrS Вовожевич_CrS444444444444444444444444444444444
+                  {{ validatorData.description.moniker }}
                 </div>
                 <div class="left__date">
-                  Created on 22 Aug, 2021
+                  {{ $t('validators.createdAt', { date: $moment(validatorData.commission.update_time).format('LLL') }) }}
                 </div>
               </div>
             </div>
           </div>
           <div class="profile__left profile__left_data">
+            <div class="left__user">
+              <div class="left__text">
+                {{ $t('modals.address') }}
+              </div>
+              <a
+                :href="explorerAddressUrl"
+                target="_blank"
+                class="left__date"
+              >
+                {{ CutTxn(convertedValidatorAddress, 6, 6) }}
+              </a>
+            </div>
             <div
               v-for="(item, key) in leftColumn"
               :key="key"
@@ -63,12 +85,12 @@
                     {{ `${$t('validator.occupied')}:` }}
                   </div>
                   <div class="bar__text bar__text_small">
-                    {{ `395 ${$t('validator.outOf')} 1000` }}
+                    {{ `${slots} ${$t('validator.outOf')} 1000` }}
                   </div>
                 </div>
               </div>
               <progress-bar
-                :value="75"
+                :value="slots / 10"
                 mode="blue"
               />
             </div>
@@ -78,7 +100,7 @@
                   {{ $t('validator.delegators') }}
                 </div>
                 <div class="right__data-desc">
-                  337
+                  {{ slots }}
                 </div>
               </div>
               <div class="right__info">
@@ -86,17 +108,26 @@
                   {{ $t('validator.minimalStake') }}
                 </div>
                 <div class="right__data-desc">
-                  {{ $tc('meta.wusdCount', 0) }}
+                  {{ $tc('meta.wqtCount', validatorData ? validatorData.min_self_delegation : '') }}
                 </div>
               </div>
             </div>
             <div class="right__block">
-              <button class="right__button right__button_red">
+              <base-btn
+                mode="lightRed"
+                class="right__button"
+                :disabled="!delegatedData"
+                @click="toUndelegateModal"
+              >
                 {{ $t('modals.undelegate') }}
-              </button>
-              <button class="right__button right__button_blue">
+              </base-btn>
+              <base-btn
+                mode="lightBlue"
+                class="right__button"
+                @click="toDelegateModal"
+              >
                 {{ $t('modals.delegate') }}
-              </button>
+              </base-btn>
             </div>
           </div>
         </div>
@@ -106,16 +137,225 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+import BigNumber from 'bignumber.js';
+import {
+  DelegateMode, ExplorerUrls, TokenSymbols, ValidatorsMethods,
+} from '~/utils/enums';
+import modals from '~/store/modals/modals';
+import { error, success } from '~/utils/success-error';
+import { CreateSignedTxForValidator } from '~/utils/wallet';
+
 export default {
   name: 'Validator',
+  data() {
+    return {
+      notFounded: false,
+      slots: 0,
+      missedBlocks: 0,
+      delegatedData: null,
+      validatorAddress: null,
+    };
+  },
   computed: {
+    ...mapGetters({
+      balanceData: 'wallet/getBalanceData',
+      stakingParams: 'validators/getStakingParams',
+      validatorData: 'validators/getValidatorData',
+      validatorsList: 'validators/getValidatorsList',
+      userWalletAddress: 'user/getUserWalletAddress',
+      isWalletConnected: 'wallet/getIsWalletConnected',
+    }),
+    unbondingDays() {
+      // Через N дней юзеру вернутся WQT после undelegate
+      return Number(this.stakingParams.unbonding_time.slice(0, -1)) / 60 / 60 / 24;
+    },
     leftColumn() {
+      const stake = this.validatorData?.tokens
+        ? new BigNumber(this.validatorData.tokens).shiftedBy(-this.balanceData.WQT.decimals).toString() : 0;
       return [
-        { name: this.$t('modals.address'), desc: '0xnf…thb3' },
-        { name: this.$t('validator.commonStake'), desc: this.$tc('meta.wusdCount', 1000000) },
-        { name: this.$t('validator.fee'), desc: '5%' },
-        { name: this.$t('validator.missedBlocks'), desc: 1000 },
+        { name: this.$t('validator.commonStake'), desc: this.$tc('meta.wqtCount', stake) },
+        { name: this.$t('validator.fee'), desc: `${Math.ceil(this.validatorData?.commission?.commission_rates?.rate * 100)}%` },
+        { name: this.$t('validator.missedBlocks'), desc: this.missedBlocks },
       ];
+    },
+    convertedValidatorAddress() {
+      if (!this.validatorData) return '';
+      return this.ConvertToBech32('wq', this.ConvertToHex('wqvaloper', this.validatorData.operator_address));
+    },
+    explorerAddressUrl() {
+      const url = process.env.PROD === 'true' ? ExplorerUrls.PROD : ExplorerUrls.DEV;
+      return `${url}/address/${this.convertedValidatorAddress}`;
+    },
+  },
+  beforeCreate() {
+    this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
+  },
+  async beforeMount() {
+    if (!this.isWalletConnected) return;
+    this.SetLoader(true);
+    const { id } = this.$route.params;
+    let validatorAddress = null;
+    try {
+      validatorAddress = this.ConvertToHex('wq', id);
+      validatorAddress = this.ConvertToBech32('wqvaloper', validatorAddress);
+      // eslint-disable-next-line no-empty
+    } catch (e) {
+      this.toNotFound();
+      return;
+    }
+    // eslint-disable-next-line no-restricted-syntax
+    for (const item of this.validatorsList) {
+      if (item.operator_address === validatorAddress) {
+        this.$store.commit('validators/setValidatorData', item);
+      }
+    }
+    if (!this.validatorData) {
+      const res = await this.$store.dispatch('validators/getValidatorByAddress', validatorAddress);
+      if (!res.ok) this.toNotFound();
+    }
+
+    const [slotsRes, missedBlocksRes] = await Promise.all([
+      this.$store.dispatch('validators/getSlotsCount', validatorAddress),
+      this.$store.dispatch('validators/getMissedBlocks', this.validatorData.consensus_pubkey.key),
+      this.$store.dispatch('validators/getStakingParams'),
+      this.updateDelegatedAmount(),
+    ]);
+    if (slotsRes.ok) this.slots = slotsRes.result;
+    if (missedBlocksRes.ok) this.missedBlocks = missedBlocksRes.result;
+    this.validatorAddress = validatorAddress;
+    this.SetLoader(false);
+  },
+  beforeDestroy() {
+    this.$store.commit('validators/setValidatorData', null);
+  },
+  methods: {
+    async updateDelegatedAmount() {
+      // Данные о делегировании с аккаунта юзера этому валидатору
+      const res = await this.$store.dispatch('validators/getDelegatedDataForValidator', {
+        userWalletAddress: this.ConvertToBech32('wq', this.userWalletAddress),
+        validatorAddress: this.validatorData.operator_address,
+      });
+      if (!res.ok) {
+        this.delegatedData = null;
+        return;
+      }
+      this.delegatedData = {
+        amount: res.result.delegation_response.balance.amount,
+        shares: res.result.delegation_response.delegation.shares,
+      };
+    },
+    toNotFound() {
+      this.notFounded = true;
+      this.SetLoader(false);
+    },
+    async toDelegateModal() {
+      this.ShowModal({
+        key: modals.delegate,
+        delegateMode: DelegateMode.VALIDATORS,
+        unbondingDays: this.unbondingDays,
+        investorAddress: this.ConvertToHex('wqvaloper', this.validatorData.operator_address),
+        min: this.validatorData.min_self_delegation,
+        submitMethod: async (amount) => {
+          this.SetLoader(true);
+          const gasUsedTx = await CreateSignedTxForValidator(
+            ValidatorsMethods.DELEGATE,
+            this.validatorData.operator_address,
+            new BigNumber(amount).shiftedBy(18).toString(),
+          );
+          const simulateRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result });
+          const { gas_used } = simulateRes.gas_info;
+          this.SetLoader(false);
+          this.ShowModal({
+            key: modals.transactionReceipt,
+            title: this.$t('modals.delegate'),
+            isShowSuccess: true,
+            fields: {
+              from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
+              to: { name: this.$t('modals.toAddress'), value: this.convertedValidatorAddress },
+              amount: { name: this.$t('modals.amount'), value: amount, symbol: TokenSymbols.WQT },
+              gasLimit: { name: this.$t('modals.gasLimit'), value: gas_used },
+            },
+            callback: async () => await new Promise((resolve) => {
+              setTimeout(async () => {
+                await Promise.all([
+                  this.$store.dispatch('validators/getSlotsCount', this.validatorAddress),
+                  this.$store.dispatch('validators/getValidatorByAddress', this.validatorAddress),
+                  this.updateDelegatedAmount(),
+                ]);
+                resolve();
+              }, 7000);
+            }),
+            submitMethod: async () => {
+              const delegateTx = await CreateSignedTxForValidator(
+                ValidatorsMethods.DELEGATE,
+                this.validatorData.operator_address,
+                new BigNumber(amount).shiftedBy(18).toString(),
+                gas_used,
+              );
+              const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: delegateTx.result });
+              if (broadcastRes.tx_response.raw_log !== '[]') {
+                this.ShowToast(broadcastRes.tx_response.raw_log);
+                return error();
+              }
+              return success();
+            },
+          });
+        },
+      });
+    },
+    toUndelegateModal() {
+      this.ShowModal({
+        key: modals.undelegate,
+        title: this.$t('modals.undelegate'),
+        delegateMode: DelegateMode.VALIDATORS,
+        unbondingDays: this.unbondingDays,
+        tokensAmount: this.delegatedData.amount,
+        submitMethod: async () => {
+          this.SetLoader(true);
+          const gasUsedTx = await CreateSignedTxForValidator(
+            ValidatorsMethods.UNDELEGATE,
+            this.validatorData.operator_address,
+            this.delegatedData.amount,
+          );
+          const simulateRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result });
+          const { gas_used } = simulateRes.gas_info;
+          this.SetLoader(false);
+          this.ShowModal({
+            key: modals.transactionReceipt,
+            isShowSuccess: true,
+            fields: {
+              from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
+              to: { name: this.$t('modals.toAddress'), value: this.convertedValidatorAddress },
+              gasLimit: { name: this.$t('modals.gasLimit'), value: gas_used },
+            },
+            callback: async () => await new Promise((resolve) => {
+              setTimeout(async () => {
+                await Promise.all([
+                  this.$store.dispatch('validators/getSlotsCount', this.validatorAddress),
+                  this.$store.dispatch('validators/getValidatorByAddress', this.validatorAddress),
+                  this.updateDelegatedAmount(),
+                ]);
+                resolve();
+              }, 7000);
+            }),
+            submitMethod: async () => {
+              const undelegateTx = await CreateSignedTxForValidator(
+                ValidatorsMethods.UNDELEGATE,
+                this.validatorData.operator_address,
+                this.delegatedData.amount,
+                gas_used,
+              );
+              const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: undelegateTx.result });
+              if (broadcastRes.tx_response.raw_log !== '[]') {
+                this.ShowToast(broadcastRes.tx_response.raw_log);
+                return error();
+              }
+              return success();
+            },
+          });
+        },
+      });
     },
   },
 };
@@ -306,9 +546,21 @@ export default {
       }
     }
   }
+  .validator {
+    &__profile {
+      max-height: none;
+    }
+    &__block {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+  .right__block {
+    grid-template-columns: 1fr;
+  }
 }
 
-@include _380 {
+@include _480 {
   .validator {
     &__profile {
       max-height: 100%;
@@ -317,6 +569,9 @@ export default {
       grid-template-columns: auto;
       grid-template-rows: repeat(2, 340px);
     }
+  }
+  .profile__left_data {
+    grid-template-columns: 1fr;
   }
   .bar {
     &__data {

@@ -36,6 +36,7 @@ export const Path = Object.freeze({
   ROLE: '/role',
   PROPOSALS: '/proposals',
   INVESTORS: '/investors',
+  VALIDATORS: '/validators',
   DISCUSSIONS: '/discussions',
   WALLET: '/wallet',
 });
@@ -119,4 +120,14 @@ export const UserStatuses = Object.freeze({
 export const ExplorerUrls = Object.freeze({
   PROD: 'https://dev-explorer.workquest.co',
   DEV: 'https://dev-explorer.workquest.co',
+});
+
+export const ValidatorsMethods = Object.freeze({
+  DELEGATE: '/cosmos.staking.v1beta1.MsgDelegate',
+  UNDELEGATE: '/cosmos.staking.v1beta1.MsgUndelegate',
+});
+
+export const DelegateMode = Object.freeze({
+  VALIDATORS: 0,
+  INVESTORS: 1,
 });

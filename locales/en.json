@@ -266,6 +266,7 @@
       "subtitle": "Please open site from Metamask app"
     },
     "txInfo": "Transaction info",
+    "gasLimit": "Gas limit",
     "textCopy": "Text has been copied",
     "textCopyError": "Copy error",
     "success": "Success",
@@ -758,9 +759,12 @@
   },
   "validators": {
     "title": "Validators",
+    "createdAt": "Created at {date}",
+    "notFounded": "Validator not founded",
     "candidates": "Candidates",
     "searchValidator": "Search validator or candidate",
     "searchCandidates": "Search proposal",
+    "undelegateAfterDays": "Your tokens will be undelegate after {n} days",
     "table": {
       "name": "Name",
       "address": "Address",

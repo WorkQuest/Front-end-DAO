@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import converter from 'bech32-converting';
 import {
   disconnect,
   getBalance,
@@ -91,6 +92,7 @@ export default {
   setSelectedToken({ commit }, token) {
     commit('setSelectedToken', token);
   },
+
   async getBalance({ commit }) {
     const res = await getBalance();
     commit('setBalance', {
@@ -205,7 +207,7 @@ export default {
       else user = await dispatch('user/getUserByWalletAddress', address, { root: true });
       commit('investors/setDelegatedToUser', {
         ...user,
-        investorAddress: address,
+        investorAddress: converter('wq').toBech32(address),
         voting: votingPowerArray ? getStyledAmount(votingPowerArray.result[0]) : null,
         fullName: `${user.firstName || ''} ${user.lastName || ''}`,
       }, { root: true });

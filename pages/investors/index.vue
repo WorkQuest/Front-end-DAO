@@ -12,12 +12,14 @@
         mode="icon"
         data-selector="INPUT-SEARCH-INVESTOR"
       />
-      <base-table
-        v-if="investorsCount !== 0"
-        class="investors__table"
-        :fields="tableFields"
-        :items="users"
-      />
+      <div class="investors__table-container">
+        <base-table
+          v-if="investorsCount"
+          class="investors__table"
+          :fields="tableFields"
+          :items="users"
+        />
+      </div>
       <div class="investors__investors">
         <mobile-table-item
           v-for="(investor, index) in users"
@@ -27,7 +29,7 @@
         />
       </div>
       <base-pager
-        v-if="investorsCount > limit"
+        v-if="totalPages > 1"
         v-model="currPage"
         class="investors__pagination"
         :total-pages="totalPages"
@@ -40,6 +42,7 @@
 
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
+import { DelegateMode } from '~/utils/enums';
 
 export default {
   name: 'Investors',
@@ -81,6 +84,7 @@ export default {
       if (this.delegatedToUser) {
         users.push({
           ...this.delegatedToUser,
+          investorAddress: this.delegatedToUser.investorAddress,
           voting: this.$tc('meta.wqtCount', this.delegatedToUser.voting),
           callback: this.getInvestors,
         });
@@ -90,6 +94,7 @@ export default {
             || (this.delegatedToUser && user.investorAddress !== this.delegatedToUser?.wallet?.address)) {
           users.push({
             ...user,
+            investorAddress: this.ConvertToBech32('wq', user.investorAddress),
             voting: this.$tc('meta.wqtCount', user.voting),
             callback: this.getInvestors,
           });
@@ -136,6 +141,7 @@ export default {
     openModalUndelegate() {
       this.ShowModal({
         key: modals.undelegate,
+        delegateMode: DelegateMode.INVESTORS,
         tokensAmount: this.delegatedToUser.tokensAmount,
         callback: async () => await this.getInvestors(),
       });
@@ -162,10 +168,14 @@ export default {
     height: 100%;
   }
 
-  &__table {
+  &__table-container {
     overflow: auto;
     margin-bottom: 15px;
     position: relative;
+  }
+
+  &__table {
+    width: 1180px;
   }
 
   &__investors {
@@ -216,10 +226,6 @@ export default {
   .investors {
     &__body {
       padding: 0 20px;
-    }
-
-    &__table {
-      width: calc(100vw - 49px);
     }
   }
 }

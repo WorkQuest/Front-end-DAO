@@ -110,7 +110,7 @@
       class="item__subtitle"
     >
       {{ $t('proposal.table.address') }}
-      <span class="item__info">
+      <a class="item__info">
         {{ CutTxn(item.address || item.investorAddress, 9, 6) }}
         <base-btn
           v-if="item.investorAddress"
@@ -120,7 +120,7 @@
           mode="copy"
           class="item__copy"
         />
-      </span>
+      </a>
     </div>
     <div
       v-if="item.vote"
@@ -145,18 +145,18 @@
       class="item__buttons"
     >
       <base-btn
-        v-if="delegatedToUser && item.investorAddress === delegatedToUser.address"
+        v-if="isShowDelegateBtns && delegatedToUser && item.investorAddress === delegatedToUser.investorAddress"
         mode="lightRed"
         class="btn__delegate"
-        :disabled="!+balanceData.WQT.balance"
         @click="openModalUndelegate(item)"
       >
         {{ $t('modals.undelegate') }}
       </base-btn>
       <base-btn
+        v-if="isShowDelegateBtns"
         mode="lightBlue"
         class="btn__delegate"
-        @click="!+balanceData.WQT.balance ? toastsDelegateInfo($t('investors.notEnoughTokens')) : openModalDelegate(item)"
+        @click="openModalDelegate(item)"
       >
         {{ $t('modals.delegate') }}
       </base-btn>
@@ -166,6 +166,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
+import { Path } from '~/utils/enums';
 
 export default {
   name: 'Item',
@@ -186,6 +187,9 @@ export default {
       delegatedToUser: 'investors/getDelegatedToUser',
       balanceData: 'wallet/getBalanceData',
     }),
+    isShowDelegateBtns() {
+      return this.$route.path.includes(Path.INVESTORS);
+    },
   },
   methods: {
     toastsDelegateInfo(value) {
@@ -217,10 +221,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .item {
-  padding: 20px 0;
+  padding: 10px;
   border-bottom: 1px solid $black100;
-  grid-template-columns: 1fr 1fr;
-  display: grid;
 
   &__link {
     &:hover {
@@ -321,6 +323,8 @@ export default {
     height: 120px;
     -o-object-fit: cover;
     object-fit: cover;
+    border-radius: 50%;
+    object-position: center;
   }
 }
 </style>

@@ -1,21 +1,33 @@
+/* eslint-disable no-tabs */
 import { ethers } from 'ethers';
 import { AES, enc } from 'crypto-js';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
+import message from '@cosmostation/cosmosjs/src/messages/proto';
+import { keccak_256 } from '@noble/hashes/sha3';
+import converter from 'bech32-converting';
+import secp256k1 from 'secp256k1';
+import { sha256 } from 'ethers/lib.esm/utils';
 import { error, success } from '~/utils/success-error';
 import { errorCodes } from '~/utils/enums';
 import { WQVoting, ERC20 } from '~/abi/index';
 
 const bip39 = require('bip39');
 
+let bip32Lib;
+const BIP32Factory = require('bip32').default;
+
+import('tiny-secp256k1').then((ecc) => BIP32Factory(ecc)).then((bip32) => { bip32Lib = bip32; });
+
 BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN });
 BigNumber.config({ EXPONENTIAL_AT: 60 });
 
+const path = Object.freeze("m/44'/60'/0'/0/0");
 // eslint-disable-next-line import/prefer-default-export
 export const generateMnemonic = () => bip39.generateMnemonic();
 export const createWallet = (mnemonic) => {
   try {
-    return ethers.utils.HDNode.fromMnemonic(mnemonic).derivePath("m/44'/60'/0'/0/0");
+    return ethers.utils.HDNode.fromMnemonic(mnemonic).derivePath(path);
   } catch (e) {
     // incorrect mnemonic
     return false;
@@ -35,6 +47,7 @@ export const GetWalletProvider = () => web3;
 const wallet = {
   address: null,
   privateKey: null,
+  mnemonic: null,
   init(address, privateKey) {
     if (!web3) web3 = new Web3(process.env.WQ_PROVIDER);
     this.address = address.toLowerCase();
@@ -106,6 +119,7 @@ export const connectWallet = (userAddress, userPassword) => {
         ...JSON.parse(sessionStorage.getItem('mnemonic')),
         [userAddress]: mnemonic,
       }));
+      wallet.mnemonic = mnemonic;
       return success();
     }
   }
@@ -126,6 +140,7 @@ export const connectWithMnemonic = (userAddress) => {
   const _walletTemp = createWallet(mnemonic);
   if (_walletTemp && _walletTemp.address.toLowerCase() === userAddress) {
     wallet.init(_walletTemp.address.toLowerCase(), _walletTemp.privateKey);
+    wallet.mnemonic = mnemonic;
     return true;
   }
   return false;
@@ -325,39 +340,99 @@ export const getContractFeeData = async (method, abi, contractAddress, data, rec
   }
 };
 
-/* Proposals */
-export const doVote = async (id, value) => {
+/** VALIDATORS */
+const chainId = 'worknet_20220112-1';
+const fetchCosmosAccount = async (address) => fetch(`${process.env.WQ_PROVIDER}/api/cosmos/auth/v1beta1/accounts/${address}`)
+  .then((response) => response.json());
+
+const getPrivAndPublic = async (mnemonic) => {
+  const seed = await bip39.mnemonicToSeed(mnemonic);
+  const node = bip32Lib.fromSeed(seed);
+  const child = node.derivePath(path);
+
+  const ECPariPriv = child.privateKey;
+
+  const tempPub = child.publicKey;
+  // eslint-disable-next-line new-cap
+  const buf1 = new Buffer.from([10]);
+  // eslint-disable-next-line new-cap
+  const buf2 = new Buffer.from([tempPub.length]);
+  // eslint-disable-next-line new-cap
+  const buf3 = new Buffer.from(tempPub);
+  const pubKey = Buffer.concat([buf1, buf2, buf3]);
+  const pubKeyAny = new message.google.protobuf.Any({
+    type_url: '/ethermint.crypto.v1.ethsecp256k1.PubKey',
+    value: pubKey,
+  });
+  return { pubKeyAny, privKey: ECPariPriv };
+};
+
+function toRealUint8Array(data) {
+  if (data instanceof Uint8Array) return data;
+  return Uint8Array.from(data);
+}
+
+const sign = (txBody, authInfo, accountNumber, privKey) => {
+  const { v1beta1 } = message.cosmos.tx;
+  const bodyBytes = v1beta1.TxBody.encode(txBody).finish();
+  const authInfoBytes = v1beta1.AuthInfo.encode(authInfo).finish();
+  const signDoc = new v1beta1.SignDoc({
+    body_bytes: bodyBytes,
+    auth_info_bytes: authInfoBytes,
+    chain_id: chainId,
+    account_number: Number(accountNumber),
+  });
+  const signMessage = v1beta1.SignDoc.encode(signDoc).finish();
+  const hash = keccak_256.create().update(toRealUint8Array(signMessage)).digest();
+  const sig = secp256k1.sign(Buffer.from(hash), Buffer.from(privKey));
+  const txRaw = new v1beta1.TxRaw({
+    body_bytes: bodyBytes,
+    auth_info_bytes: authInfoBytes,
+    signatures: [sig.signature],
+  });
+  const txBytes = v1beta1.TxRaw.encode(txRaw).finish();
+  return Buffer.from(txBytes, 'binary').toString('base64'); // txBytesBase64
+};
+
+export const CreateSignedTxForValidator = async (method, validatorAddress, amount, gas_limit = 200000) => {
   try {
-    const res = await sendWalletTransaction('doVote', {
-      abi: WQVoting,
-      address: process.env.WORKNET_VOTING,
-      data: [id, value],
+    const address = converter('wq').toBech32(wallet.address);
+    const data = await fetchCosmosAccount(address);
+    const { v1beta1 } = message.cosmos.tx;
+    const { privKey, pubKeyAny } = await getPrivAndPublic(wallet.mnemonic);
+    // txBody
+    const msgSend = new message.cosmos.bank.v1beta1.MsgSend({
+      from_address: address,
+      to_address: validatorAddress,
+      amount: [{ denom: 'awqt', amount }],
     });
-    return success(res);
+    const msgSendAny = new message.google.protobuf.Any({
+      type_url: method,
+      value: message.cosmos.bank.v1beta1.MsgSend.encode(msgSend).finish(),
+    });
+    const txBody = new v1beta1.TxBody({ messages: [msgSendAny], memo: '' });
+    // authInfo
+    const signerInfo = new v1beta1.SignerInfo({
+      public_key: pubKeyAny,
+      mode_info: { single: { mode: message.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT } },
+      sequence: +data.account.base_account.sequence,
+    });
+    const feeValue = new v1beta1.Fee({
+      // txFee | 10000000 - min gas price on worknet
+      amount: [{ denom: 'awqt', amount: new BigNumber(10000000).multipliedBy(gas_limit).toString() }],
+      gas_limit,
+    });
+    const authInfo = new v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
+    // sign
+    return success(sign(txBody, authInfo, data.account.base_account.account_number, privKey)); // signedTxBytes base64
   } catch (e) {
-    return error(errorCodes.VoteProposal, e.message, e);
+    console.error('CreateSignedTxForValidator', e);
+    return error();
   }
 };
-export const getVoteThreshold = async () => {
-  try {
-    const result = await fetchWalletContractData('voteThreshold', WQVoting, process.env.WORKNET_VOTING);
-    return success(new BigNumber(result.toString()).shiftedBy(-18).toString());
-  } catch (e) {
-    return error(errorCodes.GetVoteThreshold, e.message, e);
-  }
-};
-export const getReceipt = async (id, accountAddress) => {
-  try {
-    const result = await fetchWalletContractData('getReceipt', WQVoting, process.env.WORKNET_VOTING, [+id, accountAddress]);
-    return success(result);
-  } catch (e) {
-    return error(errorCodes.GetReceipt, e.message, e);
-  }
-};
-export const voteResults = async (id) => {
-  try {
-    return await fetchWalletContractData('voteResults', WQVoting, process.env.WORKNET_VOTING, [id]);
-  } catch (e) {
-    return error(errorCodes.VoteResults, e.message, e);
-  }
+export const tempTxFeeValidators = 0.01;
+
+export const getAddressFromConsensusPub = (pub) => {
+  const foo = Buffer.from(pub, 'base64');
+  return sha256(foo).substr(2, 40);
 };

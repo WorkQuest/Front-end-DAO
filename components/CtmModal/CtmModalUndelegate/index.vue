@@ -23,8 +23,14 @@
       </div>
       <div class="undelegate__tokens tokens">
         <div class="tokens__footer footer">
-          {{ $tc('modals.willBeUndelegate', Floor(frozenBalance)) }}
+          {{ $t('modals.willBeUndelegate', { n: willBeUndelegate }) }}
         </div>
+      </div>
+      <div
+        v-if="options.unbondingDays"
+        class="undelegate__unbonding"
+      >
+        {{ $t('validators.undelegateAfterDays', { n: options.unbondingDays } ) }}
       </div>
       <div class="undelegate__bottom bottom">
         <base-btn
@@ -48,32 +54,34 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { TokenSymbols } from '~/utils/enums';
+import BigNumber from 'bignumber.js';
+import { DelegateMode, TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import { WQVoting } from '~/abi/index';
 
 export default {
   name: 'Undelegate',
-  data() {
-    return {
-      tokensAmount: '',
-      accountAddress: '',
-    };
-  },
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
       userWalletAddress: 'user/getUserWalletAddress',
       frozenBalance: 'user/getFrozenBalance',
     }),
+    willBeUndelegate() {
+      return this.options.delegateMode === DelegateMode.INVESTORS
+        ? this.Floor(this.frozenBalance) : new BigNumber(this.options.tokensAmount).shiftedBy(-18).toString();
+    },
   },
   beforeMount() {
-    this.tokensAmount = this.options.tokensAmount;
     this.$store.dispatch('wallet/updateFrozenBalance');
   },
   methods: {
     async undelegate() {
-      const { userWalletAddress, frozenBalance, convertToBech32 } = this;
+      if (this.options.delegateMode === DelegateMode.VALIDATORS) {
+        this.options.submitMethod();
+        return;
+      }
+
       const { callback } = this.options;
       this.CloseModal();
       this.SetLoader(true);
@@ -92,8 +100,8 @@ export default {
         key: modals.transactionReceipt,
         title: this.$t('modals.undelegate'),
         fields: {
-          from: { name: this.$t('modals.fromAddress'), value: convertToBech32('wq', userWalletAddress) },
-          to: { name: this.$t('modals.toAddress'), value: convertToBech32('wq', process.env.WORKNET_VOTING) },
+          from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
+          to: { name: this.$t('modals.toAddress'), value: this.ConvertToBech32('wq', process.env.WORKNET_VOTING) },
           fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WQT },
         },
         submitMethod: async () => {
@@ -101,7 +109,7 @@ export default {
           const res = await this.$store.dispatch('wallet/undelegate');
           this.SetLoader(false);
           if (res.ok) {
-            this.ShowToast(this.$tc('modals.undelegateAmount', this.Floor(frozenBalance)), this.$t('modals.undelegate'));
+            this.ShowToast(this.$tc('modals.undelegateAmount', this.Floor(this.frozenBalance)), this.$t('modals.undelegate'));
           } else if (res.msg.includes('Not enough balance to undelegate')) {
             this.ShowToast(this.$t('errors.transaction.notEnoughFunds'), this.$t('errors.undelegateTitle'));
           }
@@ -135,6 +143,10 @@ export default {
 
   &__bottom {
     margin-top: 25px;
+  }
+  &__unbonding {
+    margin-top: 5px;
+    color: $black500;
   }
 }
 
