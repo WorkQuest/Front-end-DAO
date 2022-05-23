@@ -13,7 +13,6 @@ export default {
   raiseViews: 'raiseViews',
   confirmDetails: 'confirmDetails',
   depositIsOpened: 'depositIsOpened',
-  openADispute: 'openADispute',
   notice: 'notice',
   changePassInSettings: 'changePassInSettings',
   twoFAAuth: 'twoFAAuth',
