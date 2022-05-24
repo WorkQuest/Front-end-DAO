@@ -47,7 +47,7 @@
           </div>
         </div>
         <div class="header__links">
-          <n-link
+          <nuxt-link
             v-for="(item, i) in headerLinks"
             :key="`link-${i}`"
             class="header__link"
@@ -60,12 +60,12 @@
                 alt=""
               >
             </div>
-          </n-link>
+          </nuxt-link>
         </div>
       </div>
     </div>
     <div class="header__bottom">
-      <n-link
+      <nuxt-link
         v-for="(item, i) in headerLinks"
         :key="`link-${i}`"
         class="header__link"
@@ -78,7 +78,7 @@
             alt=""
           >
         </div>
-      </n-link>
+      </nuxt-link>
     </div>
   </div>
 </template>

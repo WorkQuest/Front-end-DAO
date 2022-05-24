@@ -12,12 +12,12 @@
       </div>
       <div class="auth__text auth__text_simple">
         <span>{{ $t('signUp.haveAccount') }}</span>
-        <n-link
+        <nuxt-link
           class="auth__text auth__text_link"
           to="/sign-in"
         >
           {{ $t('signUp.auth') }}
-        </n-link>
+        </nuxt-link>
       </div>
       <form
         class="auth__fields"
