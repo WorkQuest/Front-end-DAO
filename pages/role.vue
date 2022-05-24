@@ -210,6 +210,7 @@ export default {
       this.step = WalletState.ImportOrCreate;
     },
     async redirectUser() {
+      window.removeEventListener('beforeunload', this.clearCookies);
       await this.$store.dispatch('user/getUserData');
       await this.$router.push(Path.PROPOSALS);
     },
