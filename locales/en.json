@@ -789,5 +789,17 @@
     "delegators": "Delegators",
     "minimalStake": "Minimal stake",
     "outOf": "out of"
+  },
+  "report": {
+    "btn": {
+      "report": "Report",
+      "send": "Send report"
+    },
+    "title": "Title",
+    "titlePlaceholder": "Add a post title",
+    "message": "Message",
+    "messagePlaceholder": "Add message",
+    "sent": "Report sent",
+    "complainAbout": "Complain about"
   }
 }
