@@ -191,4 +191,13 @@ export default {
       return false;
     }
   },
+  async sendReport(_, payload) {
+    try {
+      const { ok } = await this.$axios.$post('/v1/report/send', payload);
+      return ok;
+    } catch (e) {
+      console.log('user/sendReport');
+      return false;
+    }
+  },
 };

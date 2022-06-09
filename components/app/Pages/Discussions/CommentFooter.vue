@@ -40,6 +40,7 @@
         :name="$t('discussions.response')"
         :auto-focus="isReply"
         mode="comment-field"
+        data-selector="COMMENT_TYPES"
         @keyup.enter.native="addSubCommentResponse(comment)"
       />
       <base-btn

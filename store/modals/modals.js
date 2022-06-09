@@ -27,4 +27,5 @@ export default {
   collateralTransaction: 'collateralTransaction',
   securityCheck: 'securityCheck',
   warning: 'warning',
+  reports: 'reports',
 };

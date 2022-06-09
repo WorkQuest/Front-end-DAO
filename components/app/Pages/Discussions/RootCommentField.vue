@@ -62,6 +62,15 @@
             <div class="bottom__counter bottom__counter_right">
               {{ comment.amountLikes }}
             </div>
+            <button
+              v-if="showReportBtn"
+              class="bottom__like"
+            >
+              <span
+                class="icon-warning_outline bottom__like"
+                @click="showReportModal"
+              />
+            </button>
           </div>
         </div>
       </div>
@@ -79,6 +88,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import modals from '~/store/modals/modals';
 
 export default {
   name: 'RootCommentField',
@@ -102,12 +112,18 @@ export default {
   computed: {
     ...mapGetters({
       currentDiscussion: 'discussions/getCurrentDiscussion',
+      userData: 'user/getUserData',
     }),
     avatarUrl() {
       if (this.comment.author.avatar && this.comment.author.avatar.url) {
         return this.comment.author.avatar.url;
       }
       return require('~/assets/img/app/avatar_empty.png');
+    },
+    showReportBtn() {
+      const { authorId } = this.comment;
+      const { id: userID } = this.userData;
+      return authorId !== userID;
     },
   },
   async mounted() {
@@ -166,6 +182,15 @@ export default {
     },
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
+    },
+    showReportModal() {
+      const { author, id: entityId } = this.comment;
+      this.ShowModal({
+        key: modals.reports,
+        title: `${author.firstName} ${author.lastName}`,
+        entityId,
+        entityType: 'DiscussionComment',
+      });
     },
   },
 };
