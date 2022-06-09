@@ -1,5 +1,8 @@
 <template>
-  <div class="comment">
+  <div
+    :id="data.id"
+    class="comment"
+  >
     <div class="comment__field comment_sub">
       <div class="comment__user user">
         <img
@@ -34,21 +37,23 @@
         {{ data.text }}
       </div>
       <div class="comment__bottom bottom">
-        <base-btn
-          v-if="data.level !== 4"
-          class="bottom__btn"
-          mode="blue"
-          @click="toggleReply"
-        >
-          {{ !isReply ? $t('discussions.reply') : $t('discussions.cancel') }}
-        </base-btn>
-        <base-btn
-          v-if="data.amountSubComments > 0"
-          class="bottom__btn"
-          @click="toggleShowSubComments(data)"
-        >
-          {{ !filterComments(subComments, data.id).length ? $t('discussions.show') : $t('discussions.hide') }}
-        </base-btn>
+        <div class="bottom__left">
+          <base-btn
+            v-if="data.level !== 4"
+            class="bottom__btn"
+            mode="blue"
+            @click="toggleReply"
+          >
+            {{ !isReply ? $t('discussions.reply') : $t('discussions.cancel') }}
+          </base-btn>
+          <base-btn
+            v-if="data.amountSubComments > 0"
+            class="bottom__btn"
+            @click="toggleShowSubComments(data)"
+          >
+            {{ !filterComments(subComments, data.id).length ? $t('discussions.show') : $t('discussions.hide') }}
+          </base-btn>
+        </div>
         <div class="bottom__panel">
           <base-btn
             class="bottom__like"
@@ -63,6 +68,15 @@
           <div class="bottom__counter bottom__counter_right">
             {{ data.amountLikes }}
           </div>
+          <button
+            v-if="showReportBtn"
+            class="bottom__like"
+          >
+            <span
+              class="icon-warning_outline bottom__like"
+              @click="showReportModal"
+            />
+          </button>
         </div>
       </div>
       <comment-footer
@@ -90,6 +104,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import modals from '~/store/modals/modals';
 
 export default {
   name: 'Comment',
@@ -117,12 +132,18 @@ export default {
   computed: {
     ...mapGetters({
       currentDiscussion: 'discussions/getCurrentDiscussion',
+      userData: 'user/getUserData',
     }),
     avatarUrl() {
       if (this.data.author.avatar && this.data.author.avatar.url) {
         return this.data.author.avatar.url;
       }
       return require('~/assets/img/app/avatar_empty.png');
+    },
+    showReportBtn() {
+      const { id: authorId } = this.data.author;
+      const { id: userID } = this.userData;
+      return authorId !== userID;
     },
     isShowBtnMoreComments() {
       return this.array[this.array.length - 1].id === this.data.id
@@ -198,6 +219,15 @@ export default {
           else if (!comment.rootCommentId) this.$parent.getRootComments();
         }
       }
+    },
+    showReportModal() {
+      const { author, id: entityId } = this.data;
+      this.ShowModal({
+        key: modals.reports,
+        title: `${author.firstName} ${author.lastName}`,
+        entityId,
+        entityType: 'DiscussionComment',
+      });
     },
   },
 };
@@ -304,11 +334,13 @@ export default {
   a.nuxt-link-active {
     text-decoration: none;
   }
+  &__left {
+    display: flex;
+  }
   &__panel {
     display: flex;
     align-items: center;
     justify-items: right;
-    width: 100%;
   }
   &__btn {
     @include text-usual;
