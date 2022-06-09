@@ -199,6 +199,7 @@
       />
       <div
         v-for="(comment) in rootComments.comments"
+        :id="comment.id"
         :key="comment.id"
         class="info__comment comment"
       >
