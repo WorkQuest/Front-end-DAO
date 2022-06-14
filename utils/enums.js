@@ -1,4 +1,5 @@
-// eslint-disable-next-line import/prefer-default-export
+import ENV from '~/utils/addresses';
+
 export const errorCodes = Object.freeze({
   ProviderIsNull: -1,
   WrongChainId: 0,
@@ -83,20 +84,20 @@ export const TokenSymbols = Object.freeze({
 });
 
 export const TokenSymbolByContract = Object.freeze({
-  [process.env.WORKNET_WUSD_TOKEN.toLowerCase()]: TokenSymbols.WUSD,
-  [process.env.WORKNET_USDT_TOKEN.toLowerCase()]: TokenSymbols.USDT,
-  [process.env.WORKNET_WBNB_TOKEN.toLowerCase()]: TokenSymbols.WBNB,
-  [process.env.WORKNET_WETH_TOKEN.toLowerCase()]: TokenSymbols.WETH,
+  [ENV.WORKNET_WUSD_TOKEN.toLowerCase()]: TokenSymbols.WUSD,
+  [ENV.WORKNET_USDT_TOKEN.toLowerCase()]: TokenSymbols.USDT,
+  [ENV.WORKNET_WBNB_TOKEN.toLowerCase()]: TokenSymbols.WBNB,
+  [ENV.WORKNET_WETH_TOKEN.toLowerCase()]: TokenSymbols.WETH,
 });
 
 export const TokenMap = {
-  [TokenSymbols.WUSD]: process.env.WORKNET_WUSD_TOKEN,
-  [TokenSymbols.USDT]: process.env.WORKNET_USDT_TOKEN,
-  [TokenSymbols.WBNB]: process.env.WORKNET_WBNB_TOKEN,
-  [TokenSymbols.WETH]: process.env.WORKNET_WETH_TOKEN,
+  [TokenSymbols.WUSD]: ENV.WORKNET_WUSD_TOKEN,
+  [TokenSymbols.USDT]: ENV.WORKNET_USDT_TOKEN,
+  [TokenSymbols.WBNB]: ENV.WORKNET_WBNB_TOKEN,
+  [TokenSymbols.WETH]: ENV.WORKNET_WETH_TOKEN,
 };
 
-export const WorknetTokenAddresses = [process.env.WORKNET_WUSD_TOKEN];
+export const WorknetTokenAddresses = [ENV.WORKNET_WUSD_TOKEN];
 
 export const WalletTables = Object.freeze({
   TXS: 'TXS',
@@ -117,10 +118,12 @@ export const UserStatuses = Object.freeze({
   NeedSetRole: 2,
 });
 
-export const ExplorerUrls = Object.freeze({
-  PROD: 'https://dev-explorer.workquest.co',
-  DEV: 'https://dev-explorer.workquest.co',
-});
+export const ExplorerUrl = {
+  master: 'https://testnet-explorer.workquest.co',
+  testnet: 'https://testnet-explorer.workquest.co',
+  stage: 'https://stage-explorer.workquest.co',
+  develop: 'https://dev-explorer.workquest.co',
+}[process.env.BRANCH];
 
 export const ValidatorsMethods = Object.freeze({
   DELEGATE: '/cosmos.staking.v1beta1.MsgDelegate',

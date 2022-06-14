@@ -3,12 +3,19 @@ import moment from 'moment';
 import VueTippy, { TippyComponent } from 'vue-tippy';
 import converter from 'bech32-converting';
 import modals from '~/store/modals/modals';
+import ENV, { IS_PROD } from '~/utils/addresses/index';
 
 Vue.use(VueTippy);
 Vue.component('tippy', TippyComponent);
 
 Vue.mixin({
+  data() {
+    return {
+      ENV,
+    };
+  },
   methods: {
+    IsProd: () => IS_PROD,
     ConvertToBech32(prefix, address) {
       return converter(prefix).toBech32(address);
     },

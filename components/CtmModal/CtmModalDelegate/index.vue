@@ -139,7 +139,7 @@ export default {
     const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
       method: 'delegate',
       abi: WQVoting,
-      contractAddress: process.env.WORKNET_VOTING,
+      contractAddress: this.ENV.WORKNET_VOTING,
       data: [this.investorAddress],
       amount: this.balanceData.WQT.fullBalance,
     });
@@ -181,7 +181,7 @@ export default {
       const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
         method: 'delegate',
         abi: WQVoting,
-        contractAddress: process.env.WORKNET_VOTING,
+        contractAddress: this.ENV.WORKNET_VOTING,
         data: [investorAddress],
         amount: tokensAmount,
       });
@@ -195,7 +195,7 @@ export default {
         title: this.$t('modals.delegate'),
         fields: {
           from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', userWalletAddress) },
-          to: { name: this.$t('modals.toAddress'), value: this.ConvertToBech32('wq', process.env.WORKNET_VOTING) },
+          to: { name: this.$t('modals.toAddress'), value: this.ConvertToBech32('wq', this.ENV.WORKNET_VOTING) },
           amount: { name: this.$t('modals.amount'), value: tokensAmount, symbol: TokenSymbols.WQT },
           fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WQT },
         },

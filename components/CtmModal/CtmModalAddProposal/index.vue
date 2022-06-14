@@ -158,7 +158,7 @@ export default {
       const feeCheck = await this.$store.dispatch('wallet/getContractFeeData', {
         method: 'addProposal',
         abi: WQVoting,
-        contractAddress: process.env.WORKNET_VOTING,
+        contractAddress: this.ENV.WORKNET_VOTING,
         data: [1, this.descriptionInput.toString().trim()],
       });
       if (!feeCheck.ok || new BigNumber(this.balanceData.WQT.fullBalance.toString()).isLessThan(feeCheck.result.fee)) {
@@ -179,7 +179,7 @@ export default {
         const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
           method: 'addProposal',
           abi: WQVoting,
-          contractAddress: process.env.WORKNET_VOTING,
+          contractAddress: this.ENV.WORKNET_VOTING,
           data: [nonce, this.descriptionInput.toString()],
         });
         this.SetLoader(false);
@@ -189,7 +189,7 @@ export default {
             title: this.$t('modals.addProposal'),
             fields: {
               from: { name: this.$t('modals.fromAddress'), value: this.userWalletAddress },
-              to: { name: this.$t('modals.toAddress'), value: process.env.WORKNET_VOTING },
+              to: { name: this.$t('modals.toAddress'), value: this.ENV.WORKNET_VOTING },
               fee: {
                 name: this.$t('modals.trxFee'),
                 value: feeRes.result.fee,

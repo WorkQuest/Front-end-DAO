@@ -260,7 +260,7 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
-  ExplorerUrls, Path, proposalStatuses, TokenSymbols,
+  ExplorerUrl, Path, proposalStatuses, TokenSymbols,
 } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import { WQVoting } from '~/abi/index';
@@ -269,7 +269,6 @@ export default {
   name: 'ProposalInfo',
   data() {
     return {
-      isProd: process.env.PROD === 'true',
       idCard: null,
       card: {
         createdEvent: {
@@ -449,7 +448,7 @@ export default {
       this.historyTableData = result;
     },
     getHashLink() {
-      return `${ExplorerUrls[this.isProd ? 'PROD' : 'DEV']}/transactions/${this.card.createdEvent.transactionHash}`;
+      return `${ExplorerUrl}/tx/${this.card.createdEvent.transactionHash}`;
     },
     async executeVoting() {
       this.SetLoader(true);
@@ -567,7 +566,7 @@ export default {
         this.$store.dispatch('wallet/getContractFeeData', {
           method: 'doVote',
           abi: WQVoting,
-          contractAddress: process.env.WORKNET_VOTING,
+          contractAddress: this.ENV.WORKNET_VOTING,
           data: [this.card.createdEvent.contractProposalId, value],
         }),
         this.$store.dispatch('wallet/getBalance'),
@@ -582,7 +581,7 @@ export default {
         title: this.$t('proposal.voteForProposal'),
         fields: {
           from: { name: this.$t('modals.fromAddress'), value: this.userWalletAddress },
-          to: { name: this.$t('modals.toAddress'), value: process.env.WORKNET_VOTING },
+          to: { name: this.$t('modals.toAddress'), value: this.ENV.WORKNET_VOTING },
           votingPower: { name: (this.$t('investors.table.voting')), value: pastVotes },
           votedFor: { name: this.$t('proposal.youVoted'), value: this.$t(`proposal.${value ? 'yes' : 'no'}`) },
           fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WQT },

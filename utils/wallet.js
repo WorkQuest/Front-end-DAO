@@ -1,4 +1,3 @@
-/* eslint-disable no-tabs */
 import { ethers } from 'ethers';
 import { AES, enc } from 'crypto-js';
 import BigNumber from 'bignumber.js';
@@ -10,7 +9,8 @@ import secp256k1 from 'secp256k1';
 import { sha256 } from 'ethers/lib.esm/utils';
 import { error, success } from '~/utils/success-error';
 import { errorCodes } from '~/utils/enums';
-import { WQVoting, ERC20 } from '~/abi/index';
+import { ERC20 } from '~/abi/index';
+import ENV from '~/utils/addresses/index';
 
 const bip39 = require('bip39');
 
@@ -42,14 +42,14 @@ export const getCipherKey = () => cipherKey;
 // eslint-disable-next-line no-return-assign
 export const setCipherKey = (key) => cipherKey = key;
 
-let web3 = new Web3(process.env.WQ_PROVIDER);
+let web3 = new Web3(ENV.WQ_PROVIDER);
 export const GetWalletProvider = () => web3;
 const wallet = {
   address: null,
   privateKey: null,
   mnemonic: null,
   init(address, privateKey) {
-    if (!web3) web3 = new Web3(process.env.WQ_PROVIDER);
+    if (!web3) web3 = new Web3(ENV.WQ_PROVIDER);
     this.address = address.toLowerCase();
     this.privateKey = privateKey;
     if (privateKey) {
@@ -288,7 +288,7 @@ export const fetchWalletContractData = async (_method, _abi, _address, _params) 
 export const transferToken = async (recipient, value) => {
   try {
     value = new BigNumber(value).shiftedBy(18).toString();
-    const inst = new web3.eth.Contract(ERC20, process.env.WORKNET_WUSD_TOKEN);
+    const inst = new web3.eth.Contract(ERC20, ENV.WORKNET_WUSD_TOKEN);
     const [gasPrice, gasEstimate] = await Promise.all([
       web3.eth.getGasPrice(),
       inst.methods.transfer.apply(null, [recipient, value]).estimateGas({ from: wallet.address }),
@@ -342,7 +342,7 @@ export const getContractFeeData = async (method, abi, contractAddress, data, rec
 
 /** VALIDATORS */
 const chainId = 'worknet_20220112-1';
-const fetchCosmosAccount = async (address) => fetch(`${process.env.WQ_PROVIDER}/api/cosmos/auth/v1beta1/accounts/${address}`)
+const fetchCosmosAccount = async (address) => fetch(`${ENV.WQ_PROVIDER}/api/cosmos/auth/v1beta1/accounts/${address}`)
   .then((response) => response.json());
 
 const getPrivAndPublic = async (mnemonic) => {

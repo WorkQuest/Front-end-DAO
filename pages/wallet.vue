@@ -274,7 +274,7 @@ export default {
             feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
               method: 'transfer',
               abi: ERC20,
-              contractAddress: process.env.WORKNET_WUSD_TOKEN,
+              contractAddress: this.ENV.WORKNET_WUSD_TOKEN,
               data: [recipient, value],
             });
           }

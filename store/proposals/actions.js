@@ -7,6 +7,7 @@ import {
   sendWalletTransaction,
 } from '~/utils/wallet';
 import { WQVoting } from '~/abi';
+import ENV from '~/utils/addresses';
 
 export default {
   setProposalThreshold({ commit }, payload) {
@@ -54,7 +55,7 @@ export default {
   /** Contracts */
   async getVotesByAddresses({ commit }, addresses) {
     try {
-      const res = await fetchWalletContractData('getVotes', WQVoting, process.env.WORKNET_VOTING, [addresses]);
+      const res = await fetchWalletContractData('getVotes', WQVoting, ENV.WORKNET_VOTING, [addresses]);
       return success(res);
     } catch (e) {
       console.error('getVotes');
@@ -66,7 +67,7 @@ export default {
       const res = await fetchWalletContractData(
         'getPastVotes',
         WQVoting,
-        process.env.WORKNET_VOTING,
+        ENV.WORKNET_VOTING,
         [getWalletAddress(), proposalBlockNumber],
       );
       return success(res);
@@ -77,7 +78,7 @@ export default {
   },
   async getProposalThreshold({ commit }) {
     try {
-      const res = await fetchWalletContractData('proposalThreshold', WQVoting, process.env.WORKNET_VOTING);
+      const res = await fetchWalletContractData('proposalThreshold', WQVoting, ENV.WORKNET_VOTING);
       commit('setProposalThreshold', res);
     } catch (e) {
       console.error('wallet/getProposalThreshold');
@@ -87,7 +88,7 @@ export default {
     try {
       const res = await sendWalletTransaction('addProposal', {
         abi: WQVoting,
-        address: process.env.WORKNET_VOTING,
+        address: ENV.WORKNET_VOTING,
         data: [nonce, description.toString()],
       });
       return success(res);
@@ -98,7 +99,7 @@ export default {
   },
   async getProposalInfoById({ commit }, id) {
     try {
-      const res = await fetchWalletContractData('proposals', WQVoting, process.env.WORKNET_VOTING, [id]);
+      const res = await fetchWalletContractData('proposals', WQVoting, ENV.WORKNET_VOTING, [id]);
       return success(res);
     } catch (e) {
       console.error('proposals/getProposalInfoById');
@@ -109,7 +110,7 @@ export default {
     try {
       const res = await sendWalletTransaction('doVote', {
         abi: WQVoting,
-        address: process.env.WORKNET_VOTING,
+        address: ENV.WORKNET_VOTING,
         data: [id, value],
       });
       return success(res);
@@ -120,7 +121,7 @@ export default {
   },
   async getVoteThreshold({ rootGetters }) {
     try {
-      const result = await fetchWalletContractData('voteThreshold', WQVoting, process.env.WORKNET_VOTING);
+      const result = await fetchWalletContractData('voteThreshold', WQVoting, ENV.WORKNET_VOTING);
       return success(new BigNumber(result.toString()).shiftedBy(-rootGetters['wallet/getBalanceData'].WQT.decimals).toString());
     } catch (e) {
       console.error('proposals/getVoteThreshold');
@@ -129,7 +130,7 @@ export default {
   },
   async getReceipt({ _ }, { id, accountAddress }) {
     try {
-      const result = await fetchWalletContractData('getReceipt', WQVoting, process.env.WORKNET_VOTING, [+id, accountAddress]);
+      const result = await fetchWalletContractData('getReceipt', WQVoting, ENV.WORKNET_VOTING, [+id, accountAddress]);
       return success(result);
     } catch (e) {
       return error(errorCodes.GetReceipt, e.message, e);
@@ -137,7 +138,7 @@ export default {
   },
   async voteResults({ _ }, id) {
     try {
-      const result = await fetchWalletContractData('voteResults', WQVoting, process.env.WORKNET_VOTING, [id]);
+      const result = await fetchWalletContractData('voteResults', WQVoting, ENV.WORKNET_VOTING, [id]);
       return success(result);
     } catch (e) {
       console.error('proposals/voteResults');
@@ -148,7 +149,7 @@ export default {
   // Chairperson TODO: remove chairperson logic (for execute voting) and move to admin panel
   async getChairpersonHash({ _ }) {
     try {
-      const result = await fetchWalletContractData('CHAIRPERSON_ROLE', WQVoting, process.env.WORKNET_VOTING);
+      const result = await fetchWalletContractData('CHAIRPERSON_ROLE', WQVoting, ENV.WORKNET_VOTING);
       return success(result);
     } catch (e) {
       console.error('proposals/getChairpersonHash');
@@ -159,7 +160,7 @@ export default {
     try {
       const result = await sendWalletTransaction('executeVoting', {
         abi: WQVoting,
-        address: process.env.WORKNET_VOTING,
+        address: ENV.WORKNET_VOTING,
         data: [id],
       });
       return success(result);
@@ -171,10 +172,10 @@ export default {
   async isChairpersonRole({ commit, getters }) {
     try {
       if (!getters.isChairpersonRole) {
-        const chairpersonHash = await fetchWalletContractData('CHAIRPERSON_ROLE', WQVoting, process.env.WORKNET_VOTING);
+        const chairpersonHash = await fetchWalletContractData('CHAIRPERSON_ROLE', WQVoting, ENV.WORKNET_VOTING);
         commit('setChairpersonRoleHash', chairpersonHash);
       }
-      const result = await fetchWalletContractData('hasRole', WQVoting, process.env.WORKNET_VOTING, [getters.chairpersonRoleHash, getWalletAddress()]);
+      const result = await fetchWalletContractData('hasRole', WQVoting, ENV.WORKNET_VOTING, [getters.chairpersonRoleHash, getWalletAddress()]);
       commit('setIsChairpersonRole', result);
     } catch (e) {
       console.error('proposals/isChairpersonRole');

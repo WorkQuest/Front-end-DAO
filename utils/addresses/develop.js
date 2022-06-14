@@ -1,0 +1,15 @@
+export default {
+  BRANCH: process.env.BRANCH,
+  BASE_URL: 'https://dev-app.workquest.co/api/',
+  // GMAPKEY: process.env.GMAPKEY,
+  // SECRET_SUMSUB: process.env.SECRET_SUMSUB,
+
+  WQ_PROVIDER: 'https://dev-node-nyc3.workquest.co/',
+  WQ_EXPLORER: 'https://dev-explorer.workquest.co/api/v1',
+
+  WORKNET_WBNB_TOKEN: '0x75349C3f2C3CFD94488A71a350Ba841C14309c5b',
+  WORKNET_WETH_TOKEN: '0xD9679C4Bc6E1546cfCb9c70AC81A4CBf400E7D24',
+  WORKNET_WUSD_TOKEN: '0x0Ed13A696Fa29151F3064077aCb2a281e68df2aa',
+  WORKNET_USDT_TOKEN: '0xbd5bBEd9677401e911044947cFF9fA4979c29bD8',
+  WORKNET_VOTING: '0xB52c71e0696869548Ea9c20F0F1840875B34c4c8',
+};
