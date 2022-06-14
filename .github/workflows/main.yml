@@ -2,10 +2,10 @@ name: Deploy-Frontend
 
 on:
   push:
-    branches: [ master, staging, develop ]
+    branches: [ master, staging, develop, testnet ]
 
 jobs:
-  build-prod:
+  deploy-prod:
     if: github.ref == 'refs/heads/master'
     environment: production
     runs-on: ubuntu-latest
@@ -39,7 +39,7 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
 
-  build-develop:
+  deploy-develop:
     if: github.ref == 'refs/heads/develop'
     environment: develop
     runs-on: ubuntu-latest
@@ -73,9 +73,43 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
 
-  build-staging:
+  deploy-staging:
     if: github.ref == 'refs/heads/stage'
     environment: staging
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Copy code files to container
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14.x'
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Run generate static task
+        run: npm run generate
+        env:
+          BRANCH: ${{ secrets.BRANCH }}
+          GMAPKEY: ${{ secrets.GMAPKEY }}
+          SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
+
+      - name: Deploy to Server
+        uses: easingthemes/ssh-deploy@v2.1.4
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltgoDzvO --delete"
+          SOURCE: "dist/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}
+
+  deploy-TestNetwork:
+    if: github.ref == 'refs/heads/testnet'
+    environment: TestNetwork
     runs-on: ubuntu-latest
 
     steps:
