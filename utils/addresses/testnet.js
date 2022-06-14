@@ -4,7 +4,7 @@ export default {
   // GMAPKEY: process.env.GMAPKEY,
   // SECRET_SUMSUB: process.env.SECRET_SUMSUB,
 
-  WQ_PROVIDER: 'https://testnet-gate.workquest.co/rpc/',
+  WQ_PROVIDER: 'https://testnet-gate.workquest.co/',
   WQ_EXPLORER: 'https://testnet-explorer-api.workquest.co/api/v1',
 
   WORKNET_WBNB_TOKEN: '0xe550018bC9cF68fed303dFB5f225bB0e6B1e201F',
