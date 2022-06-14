@@ -56,7 +56,15 @@
     "required_if": "The {_field_} field is required",
     "required": "The {_field_} field is required",
     "size": "The {_field_} field size must be less than {size}KB",
-    "decimal": "The {_field_} field must contain only decimal values"
+    "decimal": "The {_field_} field must contain only decimal values",
+    "is": "The values do not match",
+    "is_not": "Incorrect value",
+    "mnemonic": "Incorrect secret phrase",
+    "attemptsExceeded": "Number of attempts exceeded",
+    "loginWithSecret": "Please login with secret phrase",
+    "invalidPassword": "Invalid password",
+    "loginToContinue": "Please login to continue",
+    "walletNotLinked": "Wallet not linked"
   },
   "labels": {
     "firstName": "First name",
@@ -99,6 +107,7 @@
     "2FA": "2FA Authentication",
     "changePass": "Change password",
     "switchOn": "Switch On",
+    "switchOff": "Switch Off",
     "change": "Change",
     "save": "Save",
     "raiseViews": "Raise views",
@@ -130,6 +139,7 @@
     }
   },
   "meta": {
+    "confirm": "Confirm",
     "back": "Back",
     "open": "Open",
     "ok": "Ok",
@@ -140,6 +150,7 @@
     "details": "View details",
     "cancel": "Cancel",
     "submit": "Submit",
+    "disable": "Disable",
     "showAllReviews": "Show all reviews",
     "later": "Later",
     "iAgree": "I agree",
@@ -147,7 +158,9 @@
     "addProposal": "Add proposal",
     "delete": "delete",
     "addFile": "Add File",
-    "change": "Change"
+    "change": "Change",
+    "wqtCount": "{n} WQT",
+    "wusdCount": "{n} WUSD"
   },
   "priority": {
     "title": "Priority",
@@ -158,6 +171,7 @@
   },
   "signIn": {
     "title": "Sign in",
+    "desc": "Propose your idea right now",
     "account": "Haven’t account?",
     "regs": "Registration",
     "login": "Login",
@@ -173,6 +187,15 @@
     "signUp": "Sign Up",
     "forgotYourPass": "Forgot your password?"
   },
+  "securityCheck": {
+    "title": "Security check",
+    "confCode": "Google confirmation code",
+    "placeholder": "123456",
+    "confCodeDesc": "Enter the 6-digit code from the Google Authentication app",
+    "confCodeField": "google verification",
+    "confirmAccess": "Confirm access",
+    "confirmPassToContinue": "You need to confirm your password to continue"
+  },
   "signUp": {
     "title": "Sign Up",
     "haveAccount": "Already have an account?",
@@ -181,9 +204,23 @@
     "lastName": "Last name",
     "email": "Email",
     "password": "Password",
+    "totp": "TOTP",
     "confirmPassword": "Repeat password",
     "create": "Create account",
     "back": "back"
+  },
+  "createWallet": {
+    "showSecretPhrase": "Show secret phrase",
+    "savePhrase": "Save your secret phrase",
+    "keptPhrase": "I have kept a secret phrase",
+    "confirmSecretPhrase": "Confirm secret phrase",
+    "typeSecret": "Type secret word #{a}",
+    "secret": "Secret word #{a}",
+    "create": "Create wallet",
+    "importWallet": "Import wallet",
+    "createOrImport": "Create or import wallet",
+    "typeSecretPhrase": "Type secret phrase",
+    "secretPhrase": "Secret phrase"
   },
   "forgot": {
     "title": "Forgot password?",
@@ -222,75 +259,34 @@
   "skills": {
     "title": "Skills"
   },
-  "quests": {
-    "invited": "Invited",
-    "active": "Active",
-    "performed": "Performed",
-    "requested": "Requested",
-    "youInvited": "You Invited",
-    "inProgressBy": "In progress by:",
-    "showAllCases": "Show all cases",
-    "portfolio": "Portfolio",
-    "searchQuests": "Search quests",
-    "readCompletely": "Read completely",
-    "questBig": "Quest",
-    "fromBig": "From",
-    "fromYou": "from you",
-    "reviews": "reviews",
-    "reviewsBig": "Reviews",
-    "MyQuests": "My quests",
-    "activeQuest": "Active quest",
-    "createANewQuest": "Create a new quest",
-    "proposal": "Proposal",
-    "category": "Category",
-    "address": "Address",
-    "runtime": "Runtime",
-    "uploadQuestMaterials": "Upload quest materials",
-    "price": "Price",
-    "typeOfAd": "Type of advertisement",
-    "free": "Free",
-    "paid": "Paid",
-    "priceOfAClick": "Price of a click",
-    "city": "City",
-    "period": "Period",
-    "EstimatedPayment": "Estimated payment:",
-    "createAQuest": "Create a quest",
-    "activeQuests": "Active quests",
-    "completedQuests": "Completed quests",
-    "oneTime": "One time",
-    "fullTime": "Full time",
-    "uploadAImagesOrVideos": "Upload a images or videos",
-    "averageRating": "Average rating",
-    "showAllActiveQuests": "Show all active quests",
-    "performanceTimer": "Performance timer",
-    "questAmount": "quests",
-    "otherQuestsSpec": "Other quests for the specialization",
-    "questMaterials": "Quest materials",
-    "searchResults": "Search results",
-    "type": "Type of job",
-    "time": "Added time",
-    "priority": {
-      "all": "All priority",
-      "low": "Low",
-      "normal": "Normal",
-      "urgent": "Urgent"
-    },
-    "ui": {
-      "showMap": "Show map",
-      "search": "City / Street / Place"
-    },
-    "worker": "Worker",
-    "raiseViews": "Raise views",
-    "deleteQuest": "Delete quest",
-    "approve": "Approve",
-    "startQuest": "Start quest"
-  },
   "modals": {
+    "trxFee": "Transactions fee",
+    "metamask": {
+      "install": "Please install Metamask!",
+      "subtitle": "Please open site from Metamask app"
+    },
+    "txInfo": "Transaction info",
+    "gasLimit": "Gas limit",
+    "textCopy": "Text has been copied",
+    "textCopyError": "Copy error",
+    "success": "Success",
+    "fromAddress": "From",
+    "toAddress": "To",
+    "error": "Error",
+    "selectToken": "Select token",
+    "from": "From",
+    "to": "To",
+    "transfer": "Transfer",
     "toYourEmail": "To your email address",
     "codeHasBeenSent": "code has been sent",
     "switchOnGoogleAuth": "Switch on Google Authenticator",
     "conformationCodeFromMail": "Confirmation code from email",
     "twoFAConfirmationCode": "2FA confirmation code",
+    "disable2Fa": "Disable 2FA",
+    "2FAEnabled": "2FA enabled successfully!",
+    "2FADisabled": "2FA disabled successfully!",
+    "2FAStatus": "2FA Status",
+    "enterCode": "Enter the 6-digit code from the Google Authentication app",
     "appleStore": "Apple store",
     "googlePlay": "Google play",
     "useYourGoogleAuth": "Use your Google Authenticator app to scan the barcode",
@@ -314,7 +310,6 @@
     "uploadAImages": "Upload a images or videos",
     "description": "Description",
     "addCase": "Add case",
-    "openADispute": "Open a dispute",
     "reason": "Reason",
     "lorem": "Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam,",
     "withdraw": "Withdraw",
@@ -410,12 +405,14 @@
     "votingStart": "Voting start",
     "votingStartField": "voting start",
     "undelegate": "Undelegate",
-    "shure": "Are you shure to undelegate {n}?",
+    "shureToUndelegate": "Are you shure to undelegate {n}?",
+    "willBeUndelegate": "{n} tokens will be undelegate",
+    "undelegateAmount": "Undelegate {n} WQT",
     "delegate": "Delegate",
     "investorAddress": "Investor address",
     "tokensNumber": "Tokens Number",
     "tokensDelegated": "Enter number of tokens that will be delegated",
-    "max": "Maximum",
+    "max": "MAX",
     "placeholder": "Placeholder",
     "votingEnd": "Voting end",
     "votingEndField": "voting End",
@@ -444,13 +441,20 @@
     "signWorkQuest": {
       "title": "Connection to Work Quest",
       "desc": "If you already have an account created on one of the Work Quest products, you can log in using its login details"
-    }
+    },
+    "emailVerificationCode": "Email verification code",
+    "emailPlaceholder": "Please enter Email verification code",
+    "emailVerificationCodeField": "email verification",
+    "googleVerificationCode": "Google verification code",
+    "codePlaceholder": "Please enter Google verification code",
+    "googleVerificationCodeField": "google verification"
   },
   "ui": {
     "workers": "Workers",
     "proposals": "Proposals",
     "investors": "Investors",
     "discussions": "Discussions",
+    "validators": "Validators",
     "KYC": "KYC",
     "wallet": "Wallet",
     "myQuests": "My quests",
@@ -464,8 +468,16 @@
       "logout": "Logout"
     },
     "locals": {
-      "en": "EN",
-      "ru": "RU"
+      "en": "en",
+      "ru": "ru",
+      "bn": "bn",
+      "zh": "zh",
+      "fr": "fr",
+      "hi": "hi",
+      "id": "id",
+      "pt": "pt",
+      "es": "es",
+      "ar": "ar"
     },
     "notifications": {
       "title": "Notifications",
@@ -485,30 +497,36 @@
     }
   },
   "wallet": {
+    "success": "Success",
+    "failed": "Failed",
+    "frozen": "Frozen balance",
+    "WUSD": "WUSD wallet",
     "cryptoWallet": "Crypto wallet",
     "bankCard": "Bank card",
     "send": "Send",
     "toThisAddress": "to this address",
     "wallet": "Wallet",
     "balance": "Balance",
-    "deposit": "Deposit",
+    "deposit": "Receive",
     "withdraw": "Withdraw",
-    "transfer": "Transfer",
-    "addCardProposal": "Add your own card for easy withdrawal",
+    "transfer": "Buy / Send",
+    "addCardProposal": "Add bank card for easy withdrawal",
     "addCard": "Add card",
     "table": {
-      "trx": "Transaction History",
-      "txHash": "Tx hash",
+      "trx": "Transactions",
+      "txHash": "Txn Hash",
       "status": "Status",
       "block": "Block",
       "timestamp": "Timestamp",
-      "transferred": "Transferred",
-      "value": "Value",
-      "trxFee": "Transaction fee"
+      "transferred": "Tokens Transferred",
+      "value": "Quantity",
+      "empty": "Transactions list is empty",
+      "trxFee": "Transaction Fee"
     }
   },
   "kyc": {
-    "KYC": "KYC"
+    "KYC": "KYC",
+    "alreadyVerified": "Your profile already verified!"
   },
   "chat": {
     "openDispute": "Open dispute",
@@ -526,6 +544,7 @@
   "proposals": {
     "addProposals": "Add proposal",
     "title": "Proposals",
+    "voting": "Voting",
     "textBanner": "Official DAO proposals are the only way to create enforceable change on the WorkQuest protocol.\nTo create a new DAO proposal, you need at least 10,000 (locked for one year).",
     "ui": {
       "search": "Search proposal",
@@ -580,13 +599,19 @@
       "addProposal": "Add proposal error",
       "voteError": "Voting error",
       "votingTimeIsExpired": "Voting time is expired",
-      "notEnoughFunds": "You must have delegated at least {a} WQT. Delegated: {b} WQT.",
+      "notEnoughFunds": "You must have at least {a} votes. Votes now: {b}",
       "vote": "Vote",
       "isEmpty": "List is empty",
-      "delegatedAfter": "Your votes delegated after creating voting"
+      "delegatedAfter": "Your votes delegated after creating voting",
+      "notEnoughDelegatedPastVotes": "You didn't have enough votes at the time the proposal was created ({a}). {b} votes required",
+      "transaction": {
+        "notEnoughFunds": "Not enough funds"
+      }
     }
   },
   "settings": {
+    "firstNumber": "Main phone number",
+    "secondNumber": "Additional phone number",
     "description": "And you are beautiful",
     "imgLoaded": "Image loaded successful",
     "workExp": "Work experience",
@@ -640,7 +665,9 @@
     "savingProduct": "Savings product",
     "crediting": "Crediting",
     "liquidityMining": "Liquidity mining",
-    "aboutMe": "About Me"
+    "aboutMe": "About Me",
+    "mainNumberMissing": "The main number is missing",
+    "secondNumberMissing": "The second number is missing"
   },
   "disputes": {
     "disputes": "Disputes",
@@ -684,10 +711,9 @@
   },
   "errors": {
     "incorrectPass": "Oops, something went wrong. Check the data and try again.",
-    "delegate": {
-      "title": "Delegate error",
-      "notEnoughBalance": "Not enough balance to delegate"
-    }
+    "delegateTitle": "Delegate error",
+    "undelegateTitle": "Undelegate error",
+    "notEnoughBalance": "Not enough balance"
   },
   "discussions": {
     "showComments": "Show comments",
@@ -719,6 +745,8 @@
   "investors": {
     "title": "Investors",
     "search": "Search investor",
+    "notEnoughTokens": "You dont have enough WQT tokens!",
+    "delegateInfo": "Delegate info",
     "table": {
       "name": "Name",
       "address": "Address",
@@ -729,6 +757,49 @@
     "profile": "Investor Profile"
   },
   "investor": {
-    "notFilled": "Not filled"
+    "notFilled": "Not filled",
+    "notFound": "Investor not found"
+  },
+  "validators": {
+    "title": "Validators",
+    "createdAt": "Created at {date}",
+    "notFounded": "Validator not founded",
+    "candidates": "Candidates",
+    "searchValidator": "Search validator or candidate",
+    "searchCandidates": "Search proposal",
+    "undelegateAfterDays": "Your tokens will be undelegate after {n} days",
+    "table": {
+      "name": "Name",
+      "address": "Address",
+      "missedBlocks": "Missed blocks",
+      "fee": "Fee",
+      "stake": "Stake",
+      "minStake": "Min stake",
+      "slots": "Slots"
+    }
+  },
+  "validator": {
+    "title": "Validator Profile",
+    "address": "Address",
+    "fee": "Fee",
+    "commonStake": "Common stake",
+    "missedBlocks": "Missed blocks",
+    "slots": "Slots",
+    "occupied": "Occupied",
+    "delegators": "Delegators",
+    "minimalStake": "Minimal stake",
+    "outOf": "out of"
+  },
+  "report": {
+    "btn": {
+      "report": "Report",
+      "send": "Send report"
+    },
+    "title": "Title",
+    "titlePlaceholder": "Add a post title",
+    "message": "Message",
+    "messagePlaceholder": "Add message",
+    "sent": "Report sent",
+    "complainAbout": "Complain about"
   }
 }

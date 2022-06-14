@@ -1,15 +1,29 @@
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
 import moment from 'moment';
 import VueTippy, { TippyComponent } from 'vue-tippy';
+import converter from 'bech32-converting';
 import modals from '~/store/modals/modals';
+import ENV, { IS_PROD } from '~/utils/addresses/index';
 
 Vue.use(VueTippy);
 Vue.component('tippy', TippyComponent);
 
 Vue.mixin({
+  data() {
+    return {
+      ENV,
+    };
+  },
   methods: {
-    async uploadFiles(files) {
+    IsProd: () => IS_PROD,
+    ConvertToBech32(prefix, address) {
+      return converter(prefix).toBech32(address);
+    },
+    ConvertToHex(prefix, address) {
+      if (address.startsWith(prefix)) return converter(prefix).toHex(address);
+      return address;
+    },
+    async UploadFiles(files) {
       if (!files.length) return [];
       const fetchData = [];
       const fetchUrlsData = [];
@@ -46,20 +60,14 @@ Vue.mixin({
       this.$store.dispatch('modals/hide');
     },
     ClipboardSuccessHandler(value) {
-      this.$store.dispatch('main/showToast', {
-        title: 'Copied successfully',
-        text: value,
-      });
+      this.ShowToast(value, this.$t('modals.textCopy'));
     },
     ClipboardErrorHandler(value) {
-      this.$store.dispatch('main/showToast', {
-        title: 'Copy error',
-        text: value,
-      });
+      this.ShowToast(value, this.$t('modals.textCopyError'));
     },
     ShowError(label) {
       this.$bvToast.toast(label, {
-        title: 'Ошибка',
+        title: this.$t('modals.error'),
         variant: 'warning',
         solid: true,
         toaster: 'b-toaster-bottom-right',
@@ -101,8 +109,20 @@ Vue.mixin({
       };
       this.$store.dispatch('user/setCurrentPosition', payload);
     },
-    cutString(item, endFromBeginning = 6, startToEnd = 6) {
-      return `${item.slice(0, endFromBeginning)}...${item.slice(item.length - startToEnd, item.length)}`;
+    CutTxn(txn, first = 10, second = 10) {
+      if (!txn) return '';
+      return `${txn.slice(0, first)}...${txn.slice(-second)}`;
+    },
+    ShowToast(text, title = null) {
+      this.$bvToast.toast(text, {
+        title: title || this.$t('modals.error'),
+        variant: 'warning',
+        solid: true,
+        toaster: 'b-toaster-bottom-right',
+        appendToast: true,
+        toastClass: 'custom-toast-width',
+        bodyClass: 'custom-toast-width',
+      });
     },
   },
 });

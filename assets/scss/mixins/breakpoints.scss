@@ -37,8 +37,8 @@
 
 @mixin _1024 {
   @media(max-width: 1024px) {
-    padding: 20px
-    }
+    @content;
+  }
 }
 
 @mixin _991 {
@@ -67,6 +67,12 @@
 
 @mixin _380 {
   @media (max-width: 380px) {
+    @content;
+  }
+}
+
+@mixin _350 {
+  @media (max-width: 350px) {
     @content;
   }
 }

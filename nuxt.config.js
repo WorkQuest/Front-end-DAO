@@ -1,5 +1,7 @@
 import localeEn from './locales/en.json';
 
+import ENV from './utils/addresses/index';
+
 require('dotenv').config();
 
 export default {
@@ -10,7 +12,11 @@ export default {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'Decentralized marketplace for work. Where employers can look for performers for different tasks, and workers perform. Work in any field with different deadlines, interactions occur through smart contracts.' },
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'Decentralized marketplace for work. Where employers can look for performers for different tasks, and workers perform. Work in any field with different deadlines, interactions occur through smart contracts.',
+      },
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/img/app/favicon.svg' },
@@ -25,6 +31,7 @@ export default {
     { src: '@plugins/vee-validate.js' },
     { src: '@plugins/clipboard.js' },
     { src: '@plugins/injectComponents.js' },
+    { src: '@plugins/vue-qrcode.js' },
   ],
   components: true,
   buildModules: [
@@ -47,12 +54,10 @@ export default {
       key: process.env.GMAPKEY,
     }],
   ],
-  router: {
-    scrollBehavior() {
-      return { x: 0, y: 0 };
-    },
-  },
   build: {
+    loaders: {
+      scss: { sourceMap: false },
+    },
     transpile: [
       'vee-validate/dist/rules',
     ],
@@ -61,7 +66,7 @@ export default {
     },
   },
   axios: {
-    baseURL: process.env.BASE_URL,
+    baseURL: ENV.BASE_URL,
   },
   // bootstrapVue: {
   //   // bootstrapCSS: false, // Or `css: false`
@@ -84,12 +89,8 @@ export default {
     },
   },
   env: {
-    PROD: process.env.PROD,
-    BASE_URL: process.env.BASE_URL,
+    BRANCH: process.env.BRANCH,
     GMAPKEY: process.env.GMAPKEY,
-
     SECRET_SUMSUB: process.env.SECRET_SUMSUB,
-    WQ_TOKEN: process.env.WQ_TOKEN,
-    WQ_DAO_VOTING: process.env.WQ_DAO_VOTING,
   },
 };

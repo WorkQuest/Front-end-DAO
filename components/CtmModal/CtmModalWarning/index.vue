@@ -19,7 +19,7 @@
         <base-btn
           class="action__cancel"
           mode="lightBlue"
-          @click="cancel()"
+          @click="CloseModal"
         >
           {{ $t('meta.cancel') }}
         </base-btn>
@@ -45,9 +45,6 @@ export default {
     }),
   },
   methods: {
-    cancel() {
-      this.CloseModal();
-    },
     change() {
       this.options.callback();
       this.CloseModal();
@@ -60,13 +57,16 @@ export default {
 .warning {
   @include text-simple;
   min-width: 380px !important;
+
   &__content {
     padding: 0 28px 30px;
     margin-top: 25px;
   }
+
   &__icon {
     margin: 5px auto 0;
   }
+
   &__title {
     font-weight: 500;
     font-size: 23px;
@@ -75,6 +75,7 @@ export default {
     color: #1D2127;
     margin-top: 30px;
   }
+
   &__desc {
     font-size: 16px;
     line-height: 21px;
@@ -82,6 +83,7 @@ export default {
     color: #4C5767;
     margin-top: 5px;
   }
+
   &__action {
     margin-top: 30px;
     display: grid;

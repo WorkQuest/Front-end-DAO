@@ -1,7 +1,7 @@
 <template>
   <ctm-modal-box
     class="privacy"
-    :title="$t('privacy.title')"
+    :title="$tc('privacy.title')"
   >
     <div class="ctm-modal__content">
       <div class="ctm-modal__desc">
@@ -11,34 +11,40 @@
         <base-checkbox
           v-model="privacy"
           name="privacy"
-          :label="$t('privacy.agree')"
+          :label="$tc('privacy.agree')"
         >
           <template v-slot:sub>
-            <span class="privacy__link">{{ $t('privacy.privacyLink') }}</span>
+            <span class="privacy__link">
+              {{ $t('privacy.privacyLink') }}
+            </span>
           </template>
         </base-checkbox>
         <base-checkbox
           v-model="terms"
           name="terms"
-          :label="$t('privacy.agree')"
+          :label="$tc('privacy.agree')"
         >
           <template v-slot:sub>
-            <span class="privacy__link">{{ $t('privacy.termsLink') }}</span>
+            <span class="privacy__link">
+              {{ $t('privacy.termsLink') }}
+            </span>
           </template>
         </base-checkbox>
         <base-checkbox
           v-model="aml"
           name="aml"
-          :label="$t('privacy.agree')"
+          :label="$tc('privacy.agree')"
         >
           <template v-slot:sub>
-            <span class="privacy__link">{{ $t('privacy.amlLink') }}</span>
+            <span class="privacy__link">
+              {{ $t('privacy.amlLink') }}
+            </span>
           </template>
         </base-checkbox>
         <base-btn
           class="privacy__action"
           :disabled="!isAllChecked"
-          @click="hide()"
+          @click="onSubmit()"
         >
           {{ $t('meta.ok') }}
         </base-btn>
@@ -49,6 +55,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { Path, UserStatuses } from '~/utils/enums';
 
 export default {
   name: 'PrivacyModal',
@@ -62,30 +69,31 @@ export default {
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
+      userData: 'user/getUserData',
     }),
     isAllChecked() {
       return this.privacy && this.terms && this.aml;
     },
   },
   methods: {
-    async hide() {
-      try {
-        const payload = {
-          confirmCode: this.options.confirmCode,
-          role: this.options.role,
-        };
-        const response = await this.$store.dispatch('user/confirm', payload);
-        if (response?.ok) {
-          await this.$store.dispatch('main/showToast', {
-            title: 'Success',
-            text: 'Your account has been successfully verified',
-          });
-          await this.$router.push('/proposals');
-        }
-        this.CloseModal();
-      } catch (e) {
-        console.log(e);
+    async onSubmit() {
+      const response = await this.$store.dispatch('user/confirm', {
+        confirmCode: sessionStorage.getItem('confirmToken'),
+        role: this.options.role,
+      });
+      if (response?.ok) {
+        const { callback } = this.options;
+        this.$cookies.set('userLogin', true, { path: Path.ROOT });
+        this.$cookies.set('userStatus', UserStatuses.Confirmed, { path: Path.ROOT });
+        sessionStorage.removeItem('confirmToken');
+        this.ShowToast(this.$t('modals.yourAccountVerified'), this.$t('modals.success'));
+        await callback();
+      } else {
+        // Wrong confirm token
+        await this.$store.dispatch('user/logout');
+        await this.$router.push(Path.SIGN_IN);
       }
+      this.CloseModal();
     },
   },
 };
@@ -94,18 +102,22 @@ export default {
 <style lang="scss" scoped>
 .ctm-modal {
   @include modalKit;
+
   &__desc {
     text-align: left;
   }
 }
+
 .privacy {
   max-width: 382px !important;
+
   &__forms {
     padding-top: 25px;
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 15px;
   }
+
   &__link {
     font-family: 'Inter', sans-serif;
     font-style: normal;
@@ -115,6 +127,7 @@ export default {
     text-decoration-line: underline;
     color: $blue;
   }
+
   &__action {
     margin-top: 20px;
   }

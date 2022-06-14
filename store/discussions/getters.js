@@ -1,4 +1,6 @@
 export default {
+  getDiscussionDocuments: (state) => state.discussionDocuments,
+  getDiscussionImages: (state) => state.discussionImages,
   getCurrentDiscussionAuthorData: (state) => state.currentDiscussion?.author,
   getCurrentDiscussionAuthorAvatarUrl: (state) => state.currentDiscussion?.author?.avatar?.url || null,
   getCurrentDiscussion: (state) => state.currentDiscussion,

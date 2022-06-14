@@ -5,27 +5,30 @@
       class="investor__profile"
     >
       <div class="investor__header header">
-        <nuxt-link
-          to="/investors"
+        <base-btn
           class="header__link link"
+          @click="$router.go(-1)"
         >
           <span class="icon-short_left link__arrow" />
           <div class="link__text">
             {{ $t('discussions.back') }}
           </div>
-        </nuxt-link>
+        </base-btn>
       </div>
       <div class="investor__title title">
         <div class="title__name">
           {{ $t('investors.profile') }}
         </div>
-        <div class="title__panel panel">
+        <div
+          v-if="investorAddress"
+          class="title__panel panel"
+        >
           <div class="panel__address">
-            {{ investorAddress }}
+            {{ styledInvestorAddress }}
           </div>
           <div class="panel__picture">
             <base-btn
-              v-clipboard:copy="investorAddress"
+              v-clipboard:copy="ConvertToBech32('wq', investorAddress)"
               v-clipboard:success="ClipboardSuccessHandler"
               v-clipboard:error="ClipboardErrorHandler"
               mode="copy"
@@ -46,23 +49,23 @@
                   alt=""
                 >
               </div>
-              <!--              TODO вернуть -->
-              <!--              <div class="profile__status status">-->
-              <!--                {{ $t('settings.verifiсated') }}-->
-              <!--                <span class="icon input-icon input-icon__check icon-check_all_big" />-->
-              <!--              </div>-->
+              <div class="profile__status status">
+                {{ $t('settings.verifiсated') }}
+                <span class="icon input-icon input-icon__check icon-check_all_big" />
+              </div>
               <div
                 v-for="input in mainDataArr"
                 :key="input.key"
                 class="profile__main-inp-cont"
               >
                 <base-field
+                  v-if="input.isVisible"
                   class="contacts__name"
                   :is-hide-error="true"
-                  mode="iconWhite"
-                  :disabled="true"
-                  :value="investor.additionalInfo ? (input.key === 'location' ? investor.additionalInfo.address : investor[input.key]) : ''"
+                  mode="left"
+                  :value="fillInputs(input)"
                   :placeholder="$t('investor.notFilled')"
+                  data-selector="NAME"
                 >
                   <template v-slot:left>
                     <span
@@ -80,7 +83,7 @@
               <textarea
                 id="textarea"
                 class="about__textarea"
-                :title="'test'"
+                title="test"
                 :disabled="true"
                 :placeholder="investor.additionalInfo ? (investor.additionalInfo.description || $t('investor.notFilled')) : ''"
               />
@@ -91,10 +94,11 @@
                 :key="input.key"
                 class="social__network"
                 :disabled="true"
+                mode="left"
                 :is-hide-error="true"
-                mode="iconWhite"
                 :value="investor.additionalInfo && investor.additionalInfo.socialNetwork ? investor.additionalInfo.socialNetwork[input.key] : ''"
                 :placeholder="$t('investor.notFilled')"
+                :data-selector="`SOCIAL-${input.key}`"
               >
                 <template v-slot:left>
                   <span
@@ -104,144 +108,141 @@
                 </template>
               </base-field>
             </div>
-            <div class="info__action action">
-              <base-btn
-                mode="lightRed"
-                class="action__undelegate"
-                :disabled="!isMyProfile || votingPower === 0"
-                @click="openModalUndelegate"
+            <div
+              v-if="investorAddress"
+              class="info__action action"
+            >
+              <div>
+                {{ $t('investors.table.voting') }}: {{ votingPower }}
+              </div>
+              <div
+                class="action__btns"
+                :class="{'action__btns_single': !isDelegatedToUser}"
               >
-                {{ $t('modals.undelegate') }}
-              </base-btn>
-              <base-btn
-                mode="lightBlue"
-                class="action__delegate"
-                :disabled="!isMyProfile"
-                @click="openModalDelegate"
-              >
-                {{ $t('modals.delegate') }}
-              </base-btn>
+                <base-btn
+                  v-if="isDelegatedToUser"
+                  mode="lightRed"
+                  class="action__button"
+                  @click="openModalUndelegate"
+                >
+                  {{ $t('modals.undelegate') }}
+                </base-btn>
+                <base-btn
+                  mode="lightBlue"
+                  class="action__button"
+                  @click="openModalDelegate"
+                >
+                  {{ $t('modals.delegate') }}
+                </base-btn>
+              </div>
             </div>
           </div>
-          <!--TODO Попросила убрать роза пока не появятся данные для таблицы-->
-          <!--          <div class="profile__table">-->
-          <!--            <base-table-->
-          <!--              class="profile__field"-->
-          <!--              :title="$t('wallet.table.trx')"-->
-          <!--              :items="transactionsData"-->
-          <!--              :fields="walletTableFields"-->
-          <!--            />-->
-          <!--          </div>-->
-          <!-- mobile -->
-          <!--          <div class="profile__history">-->
-          <!--            <p class="profile__subtitle">-->
-          <!--              {{ $t('wallet.table.trx') }}-->
-          <!--            </p>-->
-          <!--            <mobile-table-item-->
-          <!--              v-for="(transaction, index) in transactionsData"-->
-          <!--              :key="index"-->
-          <!--              :item="transaction"-->
-          <!--              :is-last="transactionsData[index] === transactionsData[transactionsData.length - 1]"-->
-          <!--            />-->
-          <!--          </div>-->
-          <!-- /mobile -->
         </div>
       </div>
-      <!--TODO Попросила убрать роза пока не появятся данные для таблицы-->
-      <!--      <base-pager-->
-      <!--        v-model="pages"-->
-      <!--        class="investor__pagination"-->
-      <!--        :total-pages="totalPages"-->
-      <!--      />-->
+      <div class="investor__table">
+        <base-table
+          class="investor__table_txs"
+          :title="$t('wallet.table.trx')"
+          :items="styledTransactions"
+          :fields="walletTableFields"
+        />
+        <div class="investor__table_mobile">
+          <p class="investor__table_title">
+            {{ $t('wallet.table.trx') }}
+          </p>
+          <mobile-table-item
+            v-for="(transaction, index) in styledTransactions"
+            :key="index"
+            :item="transaction"
+            :is-last="currentPage === totalPages"
+          />
+        </div>
+      </div>
+      <base-pager
+        v-if="totalPages > 1"
+        v-model="currentPage"
+        class="investor__pagination"
+        :total-pages="totalPages"
+      />
     </div>
+    <empty-data
+      v-else
+      :description="$t('investor.notFound')"
+    />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
+import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
-import { Chains } from '~/utils/enums';
+import { TokenSymbolByContract, TokenSymbols, UserRole } from '~/utils/enums';
+import { getStyledAmount } from '~/utils/wallet';
 
 export default {
+  name: 'InvestorProfile',
   data() {
     return {
       investor: {},
       userId: this.$route.params.id,
       votingPower: 0,
-      investorAddress: '0xnf8o29837hrvbn42o37hsho3b74thb3',
-      stake: '126,613,276',
-      name: 'user@gmail.com',
-      pages: 1,
-      totalPages: 5,
-      transactionsData: [
-        {
-          tx_hash: 'sd535sd66sdsd',
-          status: 'Success',
-          block: '5267575474',
-          timestamp: 'Feb 1, 2021, 21:34',
-          transferred: 'To 2381hkjk123',
-          value: '120 WUSD',
-          transaction_fee: '5 WUSD',
-        },
-        {
-          tx_hash: 'sd535sd66sdsd',
-          status: 'Success',
-          block: '5267575474',
-          timestamp: 'Feb 1, 2021, 21:34',
-          transferred: 'To 2381hkjk123',
-          value: '120 WUSD',
-          transaction_fee: '5 WUSD',
-        },
-        {
-          tx_hash: 'sd535sd66sdsd',
-          status: 'Success',
-          block: '5267575474',
-          timestamp: 'Feb 1, 2021, 21:34',
-          transferred: 'To 2381hkjk123',
-          value: '120 WUSD',
-          transaction_fee: '5 WUSD',
-        },
-        {
-          tx_hash: 'sd535sd66sdsd',
-          status: 'Success',
-          block: '5267575474',
-          timestamp: 'Feb 1, 2021, 21:34',
-          transferred: 'To 2381hkjk123',
-          value: '120 WUSD',
-          transaction_fee: '5 WUSD',
-        },
-        {
-          tx_hash: 'sd535sd66sdsd',
-          status: 'Success',
-          block: '5267575474',
-          timestamp: 'Feb 1, 2021, 21:34',
-          transferred: 'To 2381hkjk123',
-          value: '120 WUSD',
-          transaction_fee: '5 WUSD',
-        },
-        {
-          tx_hash: 'sd535sd66sdsd',
-          status: 'Success',
-          block: '5267575474',
-          timestamp: 'Feb 1, 2021, 21:34',
-          transferred: 'To 2381hkjk123',
-          value: '120 WUSD',
-          transaction_fee: '5 WUSD',
-        },
-      ],
+      investorAddress: '',
+      currentPage: 1,
+      txsPerPage: 10,
     };
   },
   computed: {
     ...mapGetters({
+      balance: 'wallet/getBalanceData',
+      delegatedToUser: 'investors/getDelegatedToUser',
       userData: 'user/getUserData',
+      isWalletConnected: 'wallet/getIsWalletConnected',
+      transactions: 'wallet/getTransactions',
+      transactionsCount: 'wallet/getTransactionsCount',
     }),
+    totalPages() {
+      if (!this.transactionsCount) return 0;
+      return Math.ceil(this.transactionsCount / this.txsPerPage);
+    },
+    styledInvestorAddress() {
+      return this.CutTxn(this.ConvertToBech32('wq', this.investorAddress), 8, 8);
+    },
+    /**
+     * @property block_number
+     * @property to_address_hash
+     * @property gas_price
+     * @property gas_used
+     * @property tokenTransfers
+     * @property from_address_hash
+     * @return {{transaction_fee: BigNumber, tx_hash: *, block: *, to_address: *, value: string, from_address: *, timestamp: *, status}[]}
+     */
+    styledTransactions() {
+      return this.transactions.map((t) => {
+        const symbol = TokenSymbolByContract[t.to_address_hash.hex] || TokenSymbols.WQT;
+        const decimals = this.balance[symbol]?.decimals || 18;
+        return {
+          tx_hash: t.hash,
+          block: t.block_number,
+          timestamp: this.$moment(t.block.timestamp).format('lll'),
+          status: !!t.status,
+          value: `${getStyledAmount(t.tokenTransfers[0]?.amount || t.value, false, decimals)} ${symbol}`,
+          transaction_fee: new BigNumber(t.gas_price).multipliedBy(t.gas_used),
+          from_address: t.from_address_hash.hex,
+          to_address: t.to_address_hash.hex,
+        };
+      });
+    },
+    isDelegatedToUser() {
+      return this.delegatedToUser && this.investorAddress === this.delegatedToUser?.wallet?.address;
+    },
     mainDataArr() {
       return [
-        { key: 'firstName', icon: 'icon-user' },
-        { key: 'lastName', icon: 'icon-user' },
-        { key: 'location', icon: 'icon-location' },
-        { key: 'email', icon: 'icon-mail' },
-        { key: 'secondMobileNumber', icon: 'icon-phone' },
+        { key: 'firstName', icon: 'icon-user', isVisible: true },
+        { key: 'lastName', icon: 'icon-user', isVisible: true },
+        { key: 'location', icon: 'icon-location', isVisible: true },
+        { key: 'email', icon: 'icon-mail', isVisible: true },
+        { key: 'phone', icon: 'icon-phone', isVisible: true },
+        { key: 'secondPhone', icon: 'icon-phone', isVisible: this.investor.role === UserRole.EMPLOYER },
       ];
     },
     socialInputsArr() {
@@ -256,73 +257,85 @@ export default {
       return [
         { key: 'tx_hash', label: this.$t('wallet.table.txHash'), sortable: true },
         { key: 'status', label: this.$t('wallet.table.status'), sortable: true },
-        { key: 'block', label: this.$t('wallet.table.block'), sortable: true },
+        { key: 'block', label: this.$t('wallet.table.block'), sortable: false },
         { key: 'timestamp', label: this.$t('wallet.table.timestamp'), sortable: true },
-        { key: 'transferred', label: this.$t('wallet.table.transferred'), sortable: true },
-        { key: 'value', label: this.$t('wallet.table.value'), sortable: true },
-        { key: 'transaction_fee', label: this.$t('wallet.table.trxFee'), sortable: true },
+        { key: 'from_address', label: this.$t('modals.fromAddress'), sortable: true },
+        { key: 'to_address', label: this.$t('modals.toAddress'), sortable: true },
+        { key: 'value', label: this.$t('wallet.table.transferred'), sortable: true },
+        { key: 'transaction_fee', label: this.$t('wallet.table.trxFee'), sortable: false },
       ];
     },
     isMyProfile() {
       return this.userData.id === this.userId;
     },
   },
+  watch: {
+    currentPage() {
+      this.getTransactions();
+    },
+  },
   async beforeMount() {
-    const isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
-    if (isMobile) {
-      this.ShowModal({
-        key: modals.status,
-        title: 'Please install Metamask!',
-        subtitle: 'Please open site from Metamask app',
-      });
-      await this.$router.push('/proposals');
-      return;
-    }
-    await this.getInvestorData();
+    await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
   },
   async mounted() {
-    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-    await this.getVotingPower();
+    if (!this.isWalletConnected) return;
+    await this.getInvestorData();
+    await this.getTransactions();
   },
   methods: {
-    async getVotingPower() {
-      const { address } = await this.$store.dispatch('web3/getAccount');
-      const response = await this.$store.dispatch('web3/getVotes', address);
-      if (response.ok) this.votingPower = +response.result;
+    async getTransactions() {
+      await this.$store.dispatch('wallet/getTransactions', {
+        limit: this.txsPerPage,
+        offset: this.txsPerPage * (this.currentPage - 1),
+        investorAddress: this.investorAddress,
+      });
+    },
+    fillInputs(input) {
+      if (this.investor.additionalInfo) {
+        if (input.key === 'location') return this.investor.locationPlaceName;
+        if (input.key === 'phone') return this.investor.phone?.fullPhone || this.investor.tempPhone?.fullPhone;
+        if (input.key === 'secondPhone') return this.investor.additionalInfo.secondMobileNumber?.fullPhone;
+        return this.investor[input.key];
+      }
+      return '';
     },
     async getInvestorData() {
-      if (this.isMyProfile) {
-        this.investor = this.userData;
-      } else {
-        this.investor = await this.$store.dispatch('user/getSpecialUserData', this.userId);
+      if (this.isMyProfile) this.investor = this.userData;
+      else {
+        const [investor] = await Promise.all([
+          this.$store.dispatch('user/getSpecialUserData', this.userId),
+          this.$store.dispatch('wallet/getDelegates'),
+        ]);
+        this.investor = investor;
       }
+
+      if (this.investor?.wallet?.address) {
+        this.investorAddress = this.investor.wallet.address;
+        const powerResponse = await this.$store.dispatch('wallet/getVotesByAddresses', [this.investorAddress]);
+        if (powerResponse.ok) this.votingPower = getStyledAmount(powerResponse.result[0]);
+      }
+    },
+    async updateDelegatedUser() {
+      this.SetLoader(true);
+      await Promise.all([
+        this.getInvestorData(),
+        this.$store.dispatch('wallet/getDelegates'),
+      ]);
+      this.SetLoader(false);
     },
     async openModalDelegate() {
       this.ShowModal({
         key: modals.delegate,
-        stake: this.stake,
         investorAddress: this.investorAddress,
-        callback: this.getVotingPower,
+        callback: async () => this.updateDelegatedUser(),
       });
     },
     async openModalUndelegate() {
       this.ShowModal({
         key: modals.undelegate,
-        stake: this.stake,
         name: `${this.investor.firstName} ${this.investor.lastName}`,
-        callback: this.getVotingPower,
-      });
-    },
-    ClipboardSuccessHandler(value) {
-      this.$store.dispatch('main/showToast', {
-        title: 'Copied successfully',
-        text: value,
-      });
-    },
-    ClipboardErrorHandler(value) {
-      this.$store.dispatch('main/showToast', {
-        title: 'Copy error',
-        text: value,
+        tokensAmount: this.votingPower,
+        callback: async () => this.updateDelegatedUser(),
       });
     },
   },
@@ -334,14 +347,31 @@ export default {
 .investor {
   @include main;
   @include text-simple;
-  color: #1D2127;
-  &__profile {
-    width: 100%;
-    max-width: 1180px;
+  color: $black800;
+
+  &__table {
+    background: $white;
+    border-radius: 6px;
+    margin: 20px 0;
+    position: relative;
+    overflow: auto;
+    width: calc(100vw - 40px);
+
+    &_txs {
+      width: 1180px;
+    }
+
+    &_mobile {
+      display: none;
+    }
+
+    &_title {
+      padding: 10px;
+      font-weight: 600;
+      font-size: 20px;
+    }
   }
-  &__pagination {
-    margin-top: 10px;
-  }
+
   &__header {
     display: flex;
     justify-content: left;
@@ -353,7 +383,8 @@ export default {
 .title {
   display: flex;
   justify-content: space-between;
-  &__name{
+
+  &__name {
     font-weight: 600;
     font-size: 28px;
     line-height: 36px;
@@ -365,10 +396,11 @@ export default {
   display: table;
 
   &__copy {
-    background: #F7F8FA;
+    background: $black0;
   }
-  &__copy:hover{
-    background: #F7F8FA;
+
+  &__copy:hover {
+    background: $black0;
   }
 
   &__address {
@@ -383,23 +415,31 @@ export default {
 .profile {
   @include main;
   @include text-simple;
+
   &__body {
     max-width: 1180px;
     height: 100%;
   }
+
   &__grid-container {
     display: grid;
     gap: 20px;
     padding: 20px;
-    background: #FFFFFF;
+    background: $white;
     border-radius: 6px;
     margin-top: 15px;
   }
+
   &__main-data {
     display: grid;
     gap: 20px;
     grid-template-columns: 151px repeat(2, 1fr);
   }
+
+  &__main-inp-cont {
+    height: 46px;
+  }
+
   &__avatar {
     height: 151px;
     border-radius: 6px;
@@ -407,7 +447,8 @@ export default {
     grid-column: 1;
     grid-row: 1/5;
   }
-  &__status{
+
+  &__status {
     grid-column: 2/4;
     display: grid;
     grid-template-columns: repeat(2, max-content);
@@ -417,7 +458,7 @@ export default {
     height: 34px;
     padding: 0 13px;
     background: rgba(0, 131, 199, 0.1);
-    color: #0083C7;
+    color: $blue;
     border-radius: 36px;
     font-size: 14px;
   }
@@ -427,23 +468,15 @@ export default {
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
   }
-  &__table {
-    margin: 15px 0;
-  }
-  &__history {
-    display: none;
-  }
 }
 
 .contacts {
-
-  &__name{
-    color: #1D2127 !important;
+  &__name {
+    color: $black800 !important;
   }
 }
 
 .avatar {
-
   &__img {
     width: 100%;
     height: 100%;
@@ -456,45 +489,59 @@ export default {
   flex-direction: column;
 
   &__title {
-    color: #1D2127;
+    color: $black800;
     font-size: 16px;
     line-height: 21px;
     margin-bottom: 5px;
   }
 
   &__textarea {
+    @include text-simple;
     height: 86px;
     padding: 10px 10px 0 10px;
     border-radius: 6px;
     resize: none;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 18.2px;
-    background-color: #FFFFFF;
-    border: 1px solid #F7F8FA;
+    background-color: $white;
+    border: 1px solid $black0;
 
     &::placeholder {
-      color: #1D2127;
+      color: $black800;
+      padding-left: 30px;
+      padding-top: 20px;
     }
+  }
+}
+
+.social {
+  &__network {
+    height: 46px;
   }
 }
 
 .input-icon {
   font-size: 23px;
-  color: #0083C7;
+  color: $blue;
   line-height: 36px;
 }
 
 .action {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
 
-  &__undelegate {
-    max-width: 240px;
+  &__button {
+    min-width: 270px;
   }
 
-  &__delegate {
-    @extend .action__undelegate;
-    margin-left: 20px;
+  &__btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    &_single {
+      grid-template-columns: 1fr;
+    }
   }
 }
 
@@ -502,18 +549,25 @@ export default {
   display: flex;
   align-items: center;
   text-decoration: none;
+  background: transparent;
+  justify-content: flex-start;
+  width: 100px;
+
+  &:hover {
+    background: transparent;
+  }
 
   &__text {
     font-size: 18px;
     line-height: 130%;
     font-weight: 500;
     align-items: center;
-    color: #4C5767;
+    color: $black600;
   }
 
   &__arrow {
     margin: 6px 10px 6px 0;
-    color:  #4C5767;
+    color: $black600;
     font-size: 25px;
     cursor: pointer;
   }
@@ -530,15 +584,74 @@ export default {
     &__main-data {
       grid-template-columns: 151px 1fr;
     }
+
     &__avatar {
       grid-row: 1/7;
     }
+
     &__status {
       grid-column: 2;
     }
+
     &__social {
       grid-template-columns: repeat(2, 1fr);
     }
+  }
+  .action {
+    flex-direction: column;
+    align-items: normal;
+    &__btns {
+      margin-top: 10px;
+    }
+  }
+}
+
+@include _767 {
+  .title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .investor {
+    width: 100vw;
+    display: block;
+    margin: 0;
+
+    &__header {
+      margin: 15px 10px;
+    }
+
+    &__table_txs {
+      display: none;
+    }
+
+    &__table_mobile {
+      display: block;
+    }
+  }
+  .info {
+    grid-template-rows: 3fr 1fr auto;
+
+    &__base {
+      grid-template-columns: 1fr;
+    }
+
+    &__additional {
+      grid-template-columns: 1fr;
+    }
+
+    &__avatar {
+      height: 100%;
+      width: 340px;
+    }
+  }
+  .profile {
+
+    &__subtitle {
+      font-size: 20px;
+    }
+  }
+  .title {
+    margin: 0 15px;
   }
 }
 
@@ -558,54 +671,17 @@ export default {
       grid-template-columns: 1fr;
     }
   }
-}
-@include _767 {
-  .investor {
-    width: 100vw;
-    display: block;
-    margin: 0;
-    &__header {
-      margin: 15px 10px;
-    }
-  }
-  .info {
-    grid-template-rows: 3fr 1fr auto;
-    &__base {
-      grid-template-columns: 1fr;
-    }
-    &__additional {
-      grid-template-columns: 1fr;
-    }
-    &__avatar {
-      height: 100%;
-      width: 340px;
-    }
-  }
-  .action {
-    justify-content: space-around;
-  }
-  .profile {
-    &__table {
-      display: none;
-    }
-    &__history {
-      display: block;
-      background: $white;
-      padding: 16px;
-      margin: 15px 0;
-    }
-    &__subtitle {
-      font-size: 20px;
-    }
-  }
-  .title {
-    margin: 0 15px;
-  }
-}
-@include _575 {
   .title {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .action {
+    &__button {
+      max-width: 100%;
+    }
+    &__btns {
+      grid-template-columns: 1fr;
+    }
   }
 }
 </style>

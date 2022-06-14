@@ -12,12 +12,12 @@
       </div>
       <div class="auth__text auth__text_simple">
         <span>{{ $t('signUp.haveAccount') }}</span>
-        <n-link
+        <nuxt-link
           class="auth__text auth__text_link"
           to="/sign-in"
         >
           {{ $t('signUp.auth') }}
-        </n-link>
+        </nuxt-link>
       </div>
       <form
         class="auth__fields"
@@ -26,11 +26,13 @@
       >
         <base-field
           v-model="model.firstName"
+          class="auth__input"
           :placeholder="$t('signUp.firstName')"
-          :mode="'icon'"
+          mode="icon"
           autocomplete="off"
           :name="$t('signUp.firstName')"
           rules="required_if|alpha_spaces"
+          data-selector="FIRST-NAME"
         >
           <template v-slot:left>
             <img
@@ -41,10 +43,12 @@
         </base-field>
         <base-field
           v-model="model.lastName"
+          class="auth__input"
           :placeholder="$t('signUp.lastName')"
-          :mode="'icon'"
+          mode="icon"
           :name="$t('signUp.lastName')"
           rules="required_if|alpha_spaces"
+          data-selector="LAST-NAME"
         >
           <template v-slot:left>
             <img
@@ -55,11 +59,13 @@
         </base-field>
         <base-field
           v-model="model.email"
+          class="auth__input"
           rules="required|email"
           :name="$t('signUp.email')"
           :placeholder="$t('signUp.email')"
-          :mode="'icon'"
+          mode="icon"
           autocomplete="username"
+          data-selector="EMAIL"
         >
           <template v-slot:left>
             <img
@@ -70,13 +76,15 @@
         </base-field>
         <base-field
           v-model="model.password"
+          class="auth__input"
           :placeholder="$t('signUp.password')"
-          :mode="'icon'"
+          mode="icon"
           :name="$t('signUp.password')"
           autocomplete="current-password"
           rules="required_if|min:8"
           type="password"
           vid="confirmation"
+          data-selector="PASSWORD"
         >
           <template v-slot:left>
             <img
@@ -87,11 +95,13 @@
         </base-field>
         <base-field
           v-model="model.passwordConfirm"
+          class="auth__input"
           :placeholder="$t('signUp.confirmPassword')"
-          :mode="'icon'"
+          mode="icon"
           type="password"
           :name="$t('signUp.confirmPassword')"
           rules="required_if|min:8|confirmed:confirmation"
+          data-selector="CONFIRM-PASSWORD"
         >
           <template v-slot:left>
             <img
@@ -112,6 +122,7 @@
 
 <script>
 import modals from '~/store/modals/modals';
+import { Path } from '~/utils/enums';
 
 export default {
   name: 'SignUp',
@@ -127,26 +138,20 @@ export default {
       },
     };
   },
-  async mounted() {
-    this.SetLoader(true);
-    this.SetLoader(false);
-  },
   methods: {
     async signUp() {
-      try {
-        const payload = {
-          firstName: this.model.firstName,
-          lastName: this.model.lastName,
-          email: this.model.email,
-          password: this.model.password,
-        };
-        const response = await this.$store.dispatch('user/signUp', payload);
-        if (response?.ok) {
-          this.showConfirmEmailModal();
-        }
-      } catch (e) {
-        console.log(e);
+      const payload = {
+        firstName: this.model.firstName,
+        lastName: this.model.lastName,
+        email: this.model.email,
+        password: this.model.password,
+      };
+      const response = await this.$store.dispatch('user/signUp', payload);
+      if (response?.ok) {
+        this.showConfirmEmailModal();
+        await this.$router.push(Path.SIGN_IN);
       }
+      this.SetLoader(false);
     },
     showConfirmEmailModal() {
       this.ShowModal({
@@ -163,21 +168,30 @@ export default {
     display: grid;
     grid-template-rows: auto;
   }
+
+  &__input {
+    height: 46px;
+    margin-bottom: 20px;
+  }
+
   &__text {
     font-family: 'Inter', sans-serif;
     font-style: normal;
     line-height: 130%;
+
     &_title {
       font-weight: 600;
       font-size: 34px;
       color: $black800;
     }
+
     &_simple {
       color: #000000;
       font-weight: 300;
       font-size: 16px;
       padding-top: 15px;
     }
+
     &_link {
       padding-left: 5px;
       font-weight: 300;
@@ -186,15 +200,18 @@ export default {
       text-decoration: underline;
     }
   }
+
   &__fields {
     padding-top: 40px;
     display: grid;
     grid-template-columns: 1fr;
   }
+
   &__action {
     padding-top: 30px;
   }
 }
+
 @include _1199 {
   .auth {
     &__text {

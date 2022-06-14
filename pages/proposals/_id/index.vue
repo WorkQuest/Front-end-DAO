@@ -20,19 +20,29 @@
       <div class="proposal__content content">
         <div class="proposal__info info content__column">
           <div class="info__top info__top_blue">
-            <!-- TODO: потом удалить -->
-            <span>{{ `Voting #${+idCard - 1}` }}</span>
+            <span class="info__voting-number">
+              {{ `${$t('proposals.voting')} #${card.createdEvent.contractProposalId}` }}
+            </span>
             <span
               class="info__status"
-              :class="cardsStatusColor(status)"
-            >{{ getPriority(status) }}</span>
+              :class="cardsStatusColor(card.status)"
+            >{{ getPriority(card.status) }}</span>
           </div>
           <div class="info__header header">
             <div class="header__title">
-              <span>{{ title }}</span>
+              <span>{{ card.title }}</span>
             </div>
-            <div class="header__subtitle">
-              <span v-if="dateStart && dateEnd">{{ $moment(dateStart).format('lll') }} - {{ $moment(dateEnd).format('lll') }}</span>
+            <div
+              v-if="dateStart && dateEnd"
+              class="header__subtitle"
+            >
+              <span class="header__subtitle-start-date">
+                {{ $moment(dateStart).format('lll') }}
+              </span>
+              <span class="header__subtitle-delimiter">-</span>
+              <span class="header__subtitle-end-date">
+                {{ $moment(dateEnd).format('lll') }}
+              </span>
             </div>
           </div>
           <div class="info__transactions transactions">
@@ -45,7 +55,7 @@
                 class="hash__value"
                 target="_blank"
               >
-                {{ hash.length ? cutString(hash) : '...' }}
+                {{ CutTxn(card.createdEvent.transactionHash, 8, 8) }}
               </a>
             </div>
             <div class="transactions__files files">
@@ -69,13 +79,13 @@
               {{ $t('proposal.description') }}
             </div>
             <div class="description__value">
-              {{ description }}
+              {{ card.description }}
             </div>
           </div>
           <div class="info__forum forum">
             <nuxt-link
               class="forum__link btn"
-              :to="discussionId ? `/discussions/${discussionId}` : '/discussions'"
+              :to="card.discussionId ? `/discussions/${card.discussionId}` : '/discussions'"
             >
               <base-btn
                 mode="outline"
@@ -100,14 +110,10 @@
                   {{ `${results.percents.yes}%` }}
                 </div>
               </div>
-              <div class="bar__line">
-                <div class="bar__line_gray">
-                  <div
-                    class="bar__line_green"
-                    :style="`width: ${results.percents.yes}%`"
-                  />
-                </div>
-              </div>
+              <progress-bar
+                :value="results.percents.yes"
+                mode="green"
+              />
               <div class="bar__votes">
                 {{ results.votes.yes }} {{ $t('proposal.votes') }}
               </div>
@@ -121,14 +127,10 @@
                   {{ `${results.percents.no}%` }}
                 </div>
               </div>
-              <div class="bar__line">
-                <div class="bar__line_gray">
-                  <div
-                    class="bar__line_red"
-                    :style="`width: ${results.percents.no}%`"
-                  />
-                </div>
-              </div>
+              <progress-bar
+                :value="results.percents.no"
+                mode="red"
+              />
               <div class="bar__votes">
                 {{ results.votes.no }} {{ $t('proposal.votes') }}
               </div>
@@ -161,14 +163,14 @@
               <base-btn
                 mode="delete"
                 class="btn__votes btn__votes_size"
-                @click="toVote(false)"
+                @click="doVote(false)"
               >
                 {{ $t('proposal.no') }}
               </base-btn>
               <base-btn
                 mode="approve"
                 class="btn__votes btn__votes_size btn__votes_green"
-                @click="toVote(true)"
+                @click="doVote(true)"
               >
                 {{ $t('proposal.yes') }}
               </base-btn>
@@ -182,7 +184,7 @@
                 {'btn__voted_red': vote === false },
               ]"
             >
-              {{ vote ? $t('proposal.agree') : $t('proposal.disagree') }}
+              {{ $t('proposal.youVoted') }} {{ vote ? $t('proposal.yes') : $t('proposal.no') }}
             </base-btn>
           </div>
         </div>
@@ -223,12 +225,6 @@
           class="history__pagination"
           :total-pages="totalPages"
         />
-        <div
-          v-if="!historyTableData.length"
-          class="history__table history__empty"
-        >
-          {{ $t('proposal.table.isEmpty') }}
-        </div>
         <!-- mobile -->
         <div class="history__proposals">
           <p class="history__subtitle">
@@ -263,26 +259,37 @@
 <script>
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
-import { proposalStatuses, Chains } from '~/utils/enums';
+import {
+  ExplorerUrl, Path, proposalStatuses, TokenSymbols,
+} from '~/utils/enums';
 import modals from '~/store/modals/modals';
+import { WQVoting } from '~/abi/index';
 
 export default {
+  name: 'ProposalInfo',
   data() {
     return {
+      idCard: null,
+      card: {
+        createdEvent: {
+          contractProposalId: '',
+          transactionHash: '',
+          votingPeriod: 0,
+          blockNumber: 0,
+        },
+        description: '',
+        medias: [],
+        status: 0,
+        title: '',
+      },
+      documents: [],
+      dateStart: '',
+      dateEnd: '',
       limit: 10,
       currentPage: 1,
       historyTableData: [],
       historyCount: 0,
-      idCard: null,
-      discussionId: null,
-      status: 0,
-      dateStart: '',
-      dateEnd: '',
-      title: '',
       ddValue: 0,
-      documents: [],
-      hash: '',
-      description: null,
       results: {
         percents: {
           yes: 0,
@@ -297,13 +304,15 @@ export default {
       vote: null,
       isDescending: true,
       isActive: true,
-      isFirstLoading: true,
     };
   },
   computed: {
     ...mapGetters({
-      isConnected: 'web3/getWalletIsConnected',
-      isChairperson: 'web3/isChairpersonRole',
+      userWalletAddress: 'user/getUserWalletAddress',
+      balanceData: 'wallet/getBalanceData',
+      proposalThreshold: 'proposals/proposalThreshold',
+      isWalletConnected: 'wallet/getIsWalletConnected',
+      isChairperson: 'proposals/isChairpersonRole',
       cards: 'proposals/cards',
     }),
     docs() {
@@ -344,16 +353,6 @@ export default {
     },
   },
   watch: {
-    async isConnected(newVal) {
-      if (this.isFirstLoading) return;
-      if (!newVal) {
-        this.resetDataFromContract();
-        return;
-      }
-      this.SetLoader(true);
-      await this.loadCard();
-      this.SetLoader(false);
-    },
     async isDescending() {
       await this.fetchVoting(this.currentPage);
     },
@@ -365,59 +364,42 @@ export default {
     },
   },
   async beforeMount() {
-    const isMobile = await this.$store.dispatch('web3/checkIsMobileMetamaskNeed');
-    if (isMobile) {
-      await this.$router.push('/proposals');
-    }
+    await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
   },
   async mounted() {
+    if (!this.isWalletConnected) return;
     this.SetLoader(true);
-    this.idCard = +this.$route.params.id;
+    this.idCard = this.$route.params.id;
 
-    let card = null;
+    let tempCard = null;
     if (this.cards && this.cards.length) {
       // eslint-disable-next-line no-restricted-syntax
       for (const item of this.cards) {
         if (item.proposalId === this.idCard) {
-          card = item;
+          tempCard = item;
           break;
         }
       }
     }
-    if (card === null) {
+    // Not found in store
+    if (tempCard === null) {
       const [proposalRes, votingRes] = await Promise.all([
-        this.$store.dispatch('proposals/getProposal', {
-          proposalId: this.idCard,
-        }),
+        this.$store.dispatch('proposals/getProposal', { proposalId: this.idCard }),
         this.fetchVoting(this.currentPage),
       ]);
       if (!proposalRes.ok || !votingRes) {
         this.SetLoader(false);
-        await this.$router.push('/proposals');
+        await this.$router.push(Path.PROPOSALS);
         return;
       }
-      card = proposalRes.result;
-    } else {
-      const votingRes = this.fetchVoting(this.currentPage);
-      if (!votingRes) {
-        this.SetLoader(false);
-        await this.$router.push('/proposals');
-        return;
-      }
+      tempCard = proposalRes.result;
     }
-    await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-    if (this.isConnected) {
-      await this.loadCard();
-    }
-    this.discussionId = card.discussionId;
-    this.title = card.title;
-    this.description = card.description;
-    this.hash = card.txHash;
-    this.dateStart = new Date(card.timestamp * 1000);
-    this.dateEnd = new Date((card.timestamp + card.votingPeriod) * 1000);
+    this.card = tempCard;
+    this.dateStart = new Date(this.card.createdEvent.timestamp * 1000);
+    this.dateEnd = new Date((+this.card.createdEvent.timestamp + +this.card.createdEvent.votingPeriod) * 1000);
     let i = 1;
     // eslint-disable-next-line no-restricted-syntax
-    for (const media of card.medias) {
+    for (const media of this.card.medias) {
       const type = media.contentType.split('/')[0] === 'image' ? 'img' : 'doc';
       this.documents.push({
         id: i,
@@ -427,7 +409,8 @@ export default {
       });
       if (type === 'doc') i += 1;
     }
-    this.isFirstLoading = false;
+    await this.loadCard();
+
     this.SetLoader(false);
   },
   methods: {
@@ -437,15 +420,15 @@ export default {
         params: {
           limit: this.limit,
           offset: (page - 1) * this.limit,
-          createdAt: this.isDescending ? 'desc' : 'asc',
           support: this.ddValue > 0 ? this.ddValue === 1 : null,
+          'sort[createdAt]': this.isDescending ? 'desc' : 'asc',
         },
       });
       if (!votingRes.ok) {
         return false;
       }
       this.historyCount = votingRes.result.count;
-      this.fillTableData(votingRes.result.voting);
+      this.fillTableData(votingRes.result.votes);
       return true;
     },
     fillTableData(votes) {
@@ -457,7 +440,7 @@ export default {
           number: id,
           tx_hash: vote.transactionHash,
           date: new Date(vote.timestamp * 1000),
-          investorAddress: vote.voter,
+          investorAddress: this.ConvertToBech32('wq', vote.voter),
           vote: vote.support,
         });
         id += 1;
@@ -465,21 +448,14 @@ export default {
       this.historyTableData = result;
     },
     getHashLink() {
-      if (!this.hash) return '';
-      return process.env.PROD === 'true'
-        ? `https://rinkeby.etherscan.io/tx/${this.hash}` : `https://rinkeby.etherscan.io/tx/${this.hash}`;
-    },
-    async checkRole() { // TODO: remove check chairperson and move logic to admin panel
-      await this.$store.dispatch('web3/isChairpersonRole');
+      return `${ExplorerUrl}/tx/${this.card.createdEvent.transactionHash}`;
     },
     async executeVoting() {
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!this.isConnected) return;
       this.SetLoader(true);
       if (!this.isChairperson) return;
-      await this.$store.dispatch('web3/executeVoting', this.idCard);
+      await this.$store.dispatch('proposals/executeVoting', this.card.createdEvent.contractProposalId);
       this.isActive = false;
-      await this.updateVoteResults();
+      await this.loadCard();
       this.SetLoader(false);
     },
     resetDataFromContract() {
@@ -496,16 +472,22 @@ export default {
     },
     async loadCard() {
       const [proposalRes] = await Promise.all([
-        this.$store.dispatch('web3/getProposalInfoById', this.idCard),
-        this.updateVoteResults(),
+        this.$store.dispatch('proposals/getProposalInfoById', this.card.createdEvent.contractProposalId),
         this.getReceipt(),
-        this.checkRole(),
+        this.$store.dispatch('proposals/isChairpersonRole'), // TODO: remove check chairperson and move logic to admin panel
       ]);
       if (!proposalRes.ok) return;
-      const { result } = proposalRes.result;
       const {
-        forVotes, againstVotes, active,
-      } = result;
+        forVotes, againstVotes, active, succeded, defeated, blockNumber,
+      } = proposalRes.result;
+      this.card.createdEvent.blockNumber = blockNumber;
+
+      if (!succeded && !defeated) {
+        this.card.status = 1;
+      } else if (defeated || !succeded) {
+        this.card.status = 2;
+      } else this.card.status = 3;
+
       const yes = +(new BigNumber(forVotes).shiftedBy(-18));
       const no = +(new BigNumber(againstVotes).shiftedBy(-18));
       this.results.votes.yes = yes;
@@ -514,10 +496,10 @@ export default {
       if (sumVotes <= 0) {
         this.results.percents.yes = 0;
         this.results.percents.no = 0;
-      } else if (no - yes === no) {
+      } else if (!+new BigNumber(no).minus(yes)) {
         this.results.percents.yes = 0;
         this.results.percents.no = 100;
-      } else if (yes - no === yes) {
+      } else if (!+new BigNumber(yes).minus(no)) {
         this.results.percents.yes = 100;
         this.results.percents.no = 0;
       } else {
@@ -530,19 +512,11 @@ export default {
       }
       this.isActive = active;
     },
-    async updateVoteResults() {
-      const res = await this.$store.dispatch('web3/voteResults', this.idCard);
-      if (!res.ok) return;
-      const { succeded, defeated } = res.result;
-      if (!succeded && !defeated) {
-        this.status = 1;
-      } else if (defeated || !succeded) {
-        this.status = 2;
-      } else this.status = 3;
-    },
     async getReceipt() {
-      const { address } = await this.$store.dispatch('web3/getAccount');
-      const res = await this.$store.dispatch('web3/getReceipt', { id: this.idCard, accountAddress: address });
+      const res = await this.$store.dispatch('proposals/getReceipt', {
+        id: this.card.createdEvent.contractProposalId,
+        accountAddress: this.userWalletAddress,
+      });
       if (res.ok && res.result) {
         const { hasVoted, support } = res.result;
         this.isVoted = hasVoted;
@@ -559,57 +533,75 @@ export default {
       return statusClass[idx] || 'None';
     },
     getPriority(index) {
-      const priority = {
+      return {
         [proposalStatuses.PENDING]: this.$t('proposals.cards.status.pending'),
         [proposalStatuses.ACTIVE]: this.$t('proposals.cards.status.active'),
         [proposalStatuses.REJECTED]: this.$t('proposals.cards.status.rejected'),
         [proposalStatuses.ACCEPTED]: this.$t('proposals.cards.status.accepted'),
-      };
-      return priority[index] || 'None';
+      }[index] || 'None';
     },
-    async toVote(value) {
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!this.isConnected) return;
+    async doVote(value) {
+      if (this.$moment().isAfter(this.$moment(this.dateEnd))) {
+        this.ShowToast(this.$t('proposal.errors.votingTimeIsExpired'), this.$t('proposal.voteError'));
+        return;
+      }
 
-      const account = await this.$store.dispatch('web3/getAccount');
-      const [delegated, voteThreshold] = await Promise.all([
-        this.$store.dispatch('web3/getVotes', account.address),
-        this.$store.dispatch('web3/getVoteThreshold'),
+      const [pastVotesRes, thresholdRes] = await Promise.all([
+        this.$store.dispatch('proposals/getPastVotes', this.card.createdEvent.blockNumber),
+        this.$store.dispatch('proposals/getVoteThreshold'),
       ]);
-      if (+delegated.result < +voteThreshold.result) {
-        await this.$store.dispatch('main/showToast', {
-          title: this.$t('proposal.errors.voteError'),
-          text: this.$t('proposal.errors.notEnoughFunds', {
-            a: +voteThreshold.result,
-            b: +delegated.result,
-          }),
-        });
+      // pastVotes - сколько голосов было на момент создания голосования;
+      const pastVotes = new BigNumber(pastVotesRes.result).shiftedBy(-this.balanceData.WQT.decimals);
+      const thresholdToVote = thresholdRes.result;
+      if (new BigNumber(pastVotes).isLessThan(thresholdToVote)) {
+        this.ShowToast(
+          this.$t('proposal.errors.notEnoughDelegatedPastVotes', { a: pastVotes.toString(), b: thresholdToVote.toString() }),
+          this.$t('proposal.errors.voteError'),
+        );
         return;
       }
 
       this.SetLoader(true);
-      if (this.$moment().isAfter(this.$moment(this.endTime))) {
-        await this.$store.dispatch('main/showToast', {
-          title: this.$t('proposal.voteError'),
-          text: this.$t('proposal.errors.votingTimeIsExpired'),
-        });
-        this.SetLoader(false);
-        return;
-      }
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!this.isConnected) return;
-      const res = await this.$store.dispatch('web3/doVote', { id: this.idCard, value });
-      if (!res.ok) {
-        await this.$store.dispatch('main/showToast', {
-          title: this.$t('proposal.errors.voteError'),
-          text: this.$t('proposal.errors.delegatedAfter'),
-        });
-        this.SetLoader(false);
-        return;
-      }
-      await this.fetchVoting(this.currentPage);
-      await this.loadCard();
+      const [feeRes] = await Promise.all([
+        this.$store.dispatch('wallet/getContractFeeData', {
+          method: 'doVote',
+          abi: WQVoting,
+          contractAddress: this.ENV.WORKNET_VOTING,
+          data: [this.card.createdEvent.contractProposalId, value],
+        }),
+        this.$store.dispatch('wallet/getBalance'),
+      ]);
       this.SetLoader(false);
+      if (!feeRes.ok) {
+        this.ShowToast(feeRes.msg);
+        return;
+      }
+      this.ShowModal({
+        key: modals.transactionReceipt,
+        title: this.$t('proposal.voteForProposal'),
+        fields: {
+          from: { name: this.$t('modals.fromAddress'), value: this.userWalletAddress },
+          to: { name: this.$t('modals.toAddress'), value: this.ENV.WORKNET_VOTING },
+          votingPower: { name: (this.$t('investors.table.voting')), value: pastVotes },
+          votedFor: { name: this.$t('proposal.youVoted'), value: this.$t(`proposal.${value ? 'yes' : 'no'}`) },
+          fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WQT },
+        },
+        submitMethod: async () => {
+          this.SetLoader(true);
+          const res = await this.$store.dispatch('proposals/doVote', {
+            id: this.card.createdEvent.contractProposalId,
+            value,
+          });
+          if (!res.ok) {
+            this.ShowToast(this.$t('proposal.errors.delegatedAfter'), this.$t('proposal.errors.voteError'));
+            this.SetLoader(false);
+            return;
+          }
+          await this.fetchVoting(this.currentPage);
+          await this.loadCard();
+          this.SetLoader(false);
+        },
+      });
     },
   },
 };
@@ -622,8 +614,14 @@ export default {
 
   &__body {
     margin: 30px 15px 0 15px;
-    max-width: 1180px;
     height: 100%;
+  }
+
+  &__info {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__header {
@@ -691,7 +689,7 @@ export default {
     &_blue {
       font-size: 14px;
       line-height: 130%;
-      color: #0083C7;
+      color: $blue;
     }
   }
 
@@ -707,15 +705,18 @@ export default {
       background-color: #f6f8fa;
       color: #AAB0B9;
     }
+
     &_active {
       background-color: #f6f8fa;
       color: $blue;
     }
+
     &_rejected {
       background-color: #fcebeb;
       color: $red;
     }
-    &_accepted{
+
+    &_accepted {
       background-color: #f6f8fa;
       color: $green;
     }
@@ -726,9 +727,9 @@ export default {
   }
 
   &__transactions {
-    display: grid;
-    grid-template-columns: max-content auto;
-    grid-gap: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     margin-top: 20px;
   }
 
@@ -750,6 +751,10 @@ export default {
 
 .header {
   &__title {
+    min-width: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     font-weight: 600;
     font-size: 24px;
     line-height: 32px;
@@ -824,6 +829,9 @@ export default {
     line-height: 130%;
     color: #7C838D;
     margin: 10px 0;
+    min-width: 0;
+    word-break: break-all;
+    white-space: normal;
   }
 }
 
@@ -834,6 +842,7 @@ export default {
     color: #1D2127;
     margin-bottom: 15px;
   }
+
   &__finish {
     margin-bottom: 15px;
   }
@@ -892,6 +901,7 @@ export default {
 
 .buttons {
   margin-top: 15px;
+
   &__header {
     font-size: 18px;
     line-height: 130%;
@@ -910,15 +920,21 @@ export default {
   &__table {
     position: relative;
     margin-top: 15px;
+    background: $white;
+    border-radius: 6px;
   }
+
   &__proposals {
     display: none;
   }
+
   &__empty {
     text-align: center;
   }
+
   &__pagination {
     margin-top: 20px;
+
     &_mobile {
       display: none;
       margin-top: 20px;
@@ -971,14 +987,17 @@ export default {
     &_green {
       color: #00AA5B;
       border-color: rgba(0, 170, 91, 0.1) !important;
+
       &:hover {
         color: #00AA5B;
         background: rgba(0, 170, 91, 0.1);
       }
     }
+
     &_red {
       color: #DF3333;
       border-color: rgba(223, 51, 51, 0.1) !important;
+
       &:hover {
         color: #DF3333;
         background: rgba(223, 51, 51, 0.1);
@@ -989,6 +1008,7 @@ export default {
   &__sorting {
     width: 152px;
     border: 1px solid rgba(0, 0, 0, 0);
+
     &:hover {
       background: #FFFFFF;
       border: 1px solid rgba(0, 0, 0, 0.1);
@@ -1008,23 +1028,57 @@ export default {
   border: 1px solid rgba(0, 0, 0, 0);
   min-width: 140px;
 }
+
+@include _1300 {
+  .proposal {
+    &__content {
+      display: flex;
+      flex-direction: column;
+      margin-right: 30px;
+    }
+
+    &__history {
+      margin-right: 30px;
+    }
+  }
+}
+
 @include _991 {
   .content {
     grid-template-columns: 1fr;
     grid-row-gap: 20px;
   }
 }
+
 @include _767 {
+  .item {
+    display: flex;
+    flex-direction: column;
+  }
+  .info__forum {
+    display: flex;
+    justify-content: center;
+  }
   .proposal {
     &__header {
       &-wrapper {
-      display: grid;
-      padding: 20px;
+        display: grid;
+        padding: 20px;
       }
     }
+
     &__back, &__header {
       margin: 0;
     }
+
+    &__content {
+      margin-right: 10px;
+    }
+
+    &__history {
+      margin-right: 10px;
+    }
+
     &__body {
       margin: 22px 5px;
       @include mobile-container;
@@ -1036,33 +1090,40 @@ export default {
     }
   }
   .history {
+
     &__table {
       display: none;
     }
+
     &__pagination {
       display: none;
+
       &_mobile {
         display: block;
       }
     }
+
     &__proposals {
-      display: block;
+      display: flex;
+      flex-direction: column;
       background: $white;
       padding: 20px 15px;
       margin-top: 15px;
       border-radius: 6px;
     }
+
     &__subtitle {
       font-size: 20px;
     }
   }
-  .info{
+  .info {
     &__transactions {
       grid-gap: 60px;
       margin-top: 20px;
     }
   }
 }
+
 @include _480 {
   .proposal {
     &__body {
@@ -1074,10 +1135,24 @@ export default {
       padding: 0;
     }
   }
-  .info{
+  .info {
     &__transactions {
       grid-gap: 10px;
       grid-template-columns: 1fr;
+    }
+  }
+}
+
+@include _380 {
+  .header__subtitle {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    word-wrap: inherit;
+    gap: 5px;
+
+    &-delimiter {
+      display: none;
     }
   }
 }

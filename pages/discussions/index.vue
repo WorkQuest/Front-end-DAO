@@ -7,9 +7,11 @@
       <base-field
         v-model="search"
         class="discussions__search"
-        :is-hide-error="true"
-        :is-search="true"
+        is-hide-error
+        is-search
         :placeholder="$t('discussions.seacrhField')"
+        mode="icon"
+        data-selector="FIELD-SEARCH"
         @input="searchDiscussion"
       />
       <base-btn
@@ -110,12 +112,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .discussions {
+  padding: 15px;
   justify-content: center;
   max-width: 1180px;
   margin: 0 auto;
   width: 100%;
   height: 100%;
-  @include _1024;
 
   &__header {
     display: flex;
@@ -142,10 +144,14 @@ export default {
     line-height: 130%;
   }
 
+  &__card {
+    min-width: 0;
+  }
+
   &__cards {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-gap: 20px 20px;
+    grid-gap: 20px;
     margin-bottom: 15px;
   }
 
@@ -153,15 +159,29 @@ export default {
     width: 220px;
     height: 43px;
   }
-
-  &__pager {
-    margin-top: 5px;
-  }
 }
 
 @include _1199 {
   .discussions {
-    padding: 20px 15px;
+
+    &__title {
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+
+    &__header {
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+
+    &__cards {
+      grid-template-columns: 1fr;
+      margin: 20px;
+    }
+
+    &__pager {
+      margin-right: 20px;
+    }
   }
 }
 
@@ -179,6 +199,17 @@ export default {
   .discussions {
     &__cards {
       grid-template-columns: 1fr;
+    }
+  }
+}
+
+@include _480 {
+  .discussions {
+    &__btn {
+      font-size: 12px;
+    }
+    &__pager {
+      margin: 0 auto;
     }
   }
 }

@@ -2,7 +2,7 @@
   <div class="header">
     <div class="header__container">
       <div class="header__body">
-        <n-link
+        <nuxt-link
           tag="div"
           class="header__logo"
           to="/about"
@@ -11,7 +11,7 @@
             src="~assets/img/app/logo.svg"
             alt=""
           >
-        </n-link>
+        </nuxt-link>
         <div class="header__info">
           <div
             class="header__route"
@@ -47,7 +47,7 @@
           </div>
         </div>
         <div class="header__links">
-          <n-link
+          <nuxt-link
             v-for="(item, i) in headerLinks"
             :key="`link-${i}`"
             class="header__link"
@@ -60,12 +60,12 @@
                 alt=""
               >
             </div>
-          </n-link>
+          </nuxt-link>
         </div>
       </div>
     </div>
     <div class="header__bottom">
-      <n-link
+      <nuxt-link
         v-for="(item, i) in headerLinks"
         :key="`link-${i}`"
         class="header__link"
@@ -78,7 +78,7 @@
             alt=""
           >
         </div>
-      </n-link>
+      </nuxt-link>
     </div>
   </div>
 </template>

@@ -10,7 +10,7 @@
     >
       {{ $t('wallet.table.txHash') }}
       <span class="item__info_large">
-        {{ cutString(item.tx_hash, 9, 6) }}
+        {{ CutTxn(item.tx_hash, 9, 6) }}
       </span>
     </div>
     <div
@@ -19,7 +19,7 @@
     >
       {{ $t('proposal.table.hash') }}
       <span class="item__info_large">
-        {{ cutString(item.hash, 9, 6) }}
+        {{ CutTxn(item.hash, 9, 6) }}
       </span>
     </div>
     <p
@@ -52,7 +52,7 @@
       </nuxt-link>
     </div>
     <div
-      v-if="item.status"
+      v-if="typeof item.status === 'string'"
       class="item__subtitle"
     >
       {{ $t('wallet.table.status') }}
@@ -110,8 +110,8 @@
       class="item__subtitle"
     >
       {{ $t('proposal.table.address') }}
-      <span class="item__info">
-        {{ cutString(item.address || item.investorAddress, 9, 6) }}
+      <a class="item__info">
+        {{ CutTxn(item.address || item.investorAddress, 9, 6) }}
         <base-btn
           v-if="item.investorAddress"
           v-clipboard:copy="item.investorAddress"
@@ -120,7 +120,7 @@
           mode="copy"
           class="item__copy"
         />
-      </span>
+      </a>
     </div>
     <div
       v-if="item.vote"
@@ -141,26 +141,24 @@
       </span>
     </div>
     <div
-      v-if="item.delegate || item.undelegate"
+      v-if="item.investorAddress"
       class="item__buttons"
     >
       <base-btn
-        v-if="item.undelegate"
+        v-if="isShowDelegateBtns && delegatedToUser && item.investorAddress === delegatedToUser.investorAddress"
         mode="lightRed"
         class="btn__delegate"
-        :disabled="!myProfile(item.id) || item.voting === 0"
         @click="openModalUndelegate(item)"
       >
-        {{ item.undelegate }}
+        {{ $t('modals.undelegate') }}
       </base-btn>
       <base-btn
-        v-if="item.delegate"
+        v-if="isShowDelegateBtns"
         mode="lightBlue"
         class="btn__delegate"
-        :disabled="!myProfile(item.id)"
         @click="openModalDelegate(item)"
       >
-        {{ item.delegate }}
+        {{ $t('modals.delegate') }}
       </base-btn>
     </div>
   </div>
@@ -168,13 +166,15 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
+import { Path } from '~/utils/enums';
 
 export default {
   name: 'Item',
   props: {
     item: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
     },
     isLast: {
       type: Boolean,
@@ -184,9 +184,17 @@ export default {
   computed: {
     ...mapGetters({
       userData: 'user/getUserData',
+      delegatedToUser: 'investors/getDelegatedToUser',
+      balanceData: 'wallet/getBalanceData',
     }),
+    isShowDelegateBtns() {
+      return this.$route.path.includes(Path.INVESTORS);
+    },
   },
   methods: {
+    toastsDelegateInfo(value) {
+      this.ShowToast(value, this.$t('investors.delegateInfo'));
+    },
     myProfile(id) {
       return this.userData.id === id;
     },
@@ -195,13 +203,17 @@ export default {
         key: modals.delegate,
         stake: item.stake,
         investorAddress: item.investorAddress,
+        callback: item.callback,
       });
     },
     openModalUndelegate(item) {
       this.ShowModal({
         key: modals.undelegate,
         stake: item.stake,
-        name: item.name,
+        name: item.fullName,
+        tokensAmount: item.voting,
+        investorAddress: item.investorAddress,
+        callback: item.callback,
       });
     },
   },
@@ -209,93 +221,110 @@ export default {
 </script>
 <style lang="scss" scoped>
 .item {
-    padding: 20px 0;
-    border-bottom: 1px solid $black100;
-    grid-template-columns: 1fr 1fr;
-    display: grid;
-    &__link {
-      &:hover {
-        text-decoration: none;
-      }
-    }
-    &__separator {
-        border: none;
-        padding-bottom: 0;
-    }
-    &__hash {
-      font-weight: 600;
-      font-size: 14px;
-      color: $black300;
-    }
-    &__timestamp {
-      font-weight: normal;
-      font-size: 14px;
-      color: $black400;
-      justify-self: flex-end;
-    }
-    &__subtitle {
-      font-weight: 600;
-      grid-column: 1/3;
-      margin-top: 11px;
-    }
-    &__info {
-        font-weight: normal;
-        margin-left: 10px;
-        &_large {
-            display: block;
-            font-size: 20px;
-            color: $black800;
-        }
-        &_green {
-            font-weight: normal;
-            color: $green;
-        }
-        &_red {
-            font-weight: normal;
-            color: $red;
-        }
-        &_yes {
-          background: $green;
-          width: 63px;
-          height: 31px;
-          border-radius: 6px;
-          display: inline-flex;
-          justify-content: center;
-          align-items: center;
-          @include text-simple;
-          @include text-usual;
-          color: $white;
-          margin-left: 10px;
-        }
-        &_no {
-          background: $red;
-          width: 63px;
-          height: 31px;
-          border-radius: 6px;
-          display: inline-flex;
-          justify-content: center;
-          align-items: center;
-          @include text-simple;
-          @include text-usual;
-          color: $white;
-          margin-left: 10px;
-        }
-    }
-    &__buttons {
-      display: flex;
-      gap: 10px;
-      margin: 10px 0;
-    }
-    &__copy {
-      display: inline-block !important;
-      width: 15px !important;
-      height: 100% !important;
-    }
-    &__image {
-      width: 120px;
-      height: 120px;
-      -o-object-fit: cover;
-      object-fit: cover;
+  padding: 10px;
+  border-bottom: 1px solid $black100;
+
+  &__link {
+    &:hover {
+      text-decoration: none;
     }
   }
+
+  &__separator {
+    border: none;
+    padding-bottom: 0;
+  }
+
+  &__hash {
+    font-weight: 600;
+    font-size: 14px;
+    color: $black300;
+  }
+
+  &__timestamp {
+    font-weight: normal;
+    font-size: 14px;
+    color: $black400;
+    justify-self: flex-end;
+  }
+
+  &__subtitle {
+    font-weight: 600;
+    grid-column: 1/3;
+    margin-top: 11px;
+  }
+
+  &__info {
+    font-weight: normal;
+    margin-left: 10px;
+
+    &_large {
+      width: calc(100vw - 80px);
+      display: block;
+      font-size: 20px;
+      color: $black800;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    &_green {
+      font-weight: normal;
+      color: $green;
+    }
+
+    &_red {
+      font-weight: normal;
+      color: $red;
+    }
+
+    &_yes {
+      background: $green;
+      width: 63px;
+      height: 31px;
+      border-radius: 6px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      @include text-simple;
+      @include text-usual;
+      color: $white;
+      margin-left: 10px;
+    }
+
+    &_no {
+      background: $red;
+      width: 63px;
+      height: 31px;
+      border-radius: 6px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      @include text-simple;
+      @include text-usual;
+      color: $white;
+      margin-left: 10px;
+    }
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+  }
+
+  &__copy {
+    display: inline-block !important;
+    width: 15px !important;
+    height: 100% !important;
+  }
+
+  &__image {
+    width: 120px;
+    height: 120px;
+    -o-object-fit: cover;
+    object-fit: cover;
+    border-radius: 50%;
+    object-position: center;
+  }
+}
 </style>

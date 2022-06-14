@@ -11,36 +11,39 @@
         <div class="header__close">
           <span
             class="icon-close_big header__close"
-            @click="hide"
+            @click="CloseModal"
           />
         </div>
       </div>
-      <div class="undelegate__body">
-        {{ $tc('modals.shure', options.name) }}
+      <div
+        v-if="options.name"
+        class="undelegate__body"
+      >
+        {{ $tc('modals.shureToUndelegate', options.name) }}
       </div>
       <div class="undelegate__tokens tokens">
         <div class="tokens__footer footer">
-          <base-field
-            id="tokensNumber"
-            v-model="accountAddress.address"
-            :disabled="true"
-            class="footer__body"
-            :placeholder="$t('modals.placeholder')"
-          />
+          {{ $t('modals.willBeUndelegate', { n: willBeUndelegate }) }}
         </div>
+      </div>
+      <div
+        v-if="options.unbondingDays"
+        class="undelegate__unbonding"
+      >
+        {{ $t('validators.undelegateAfterDays', { n: options.unbondingDays } ) }}
       </div>
       <div class="undelegate__bottom bottom">
         <base-btn
           class="bottom__cancel"
           mode="lightBlue"
-          @click="hide()"
+          @click="CloseModal"
         >
           {{ $t('modals.cancel') }}
         </base-btn>
         <base-btn
           mode="delete"
           class="bottom__done"
-          @click="undelegate()"
+          @click="undelegate"
         >
           {{ $t('modals.undelegate') }}
         </base-btn>
@@ -51,51 +54,69 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { Chains } from '~/utils/enums';
+import BigNumber from 'bignumber.js';
+import { DelegateMode, TokenSymbols } from '~/utils/enums';
 import modals from '~/store/modals/modals';
+import { WQVoting } from '~/abi/index';
 
 export default {
   name: 'Undelegate',
-  data() {
-    return {
-      tokensAmount: '',
-      accountAddress: '',
-    };
-  },
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
-      isConnected: 'web3/getWalletIsConnected',
+      userWalletAddress: 'user/getUserWalletAddress',
+      frozenBalance: 'user/getFrozenBalance',
     }),
+    willBeUndelegate() {
+      return this.options.delegateMode === DelegateMode.INVESTORS
+        ? this.Floor(this.frozenBalance) : new BigNumber(this.options.tokensAmount).shiftedBy(-18).toString();
+    },
   },
-  async mounted() {
-    this.accountAddress = await this.$store.dispatch('web3/getAccount');
+  beforeMount() {
+    this.$store.dispatch('wallet/updateFrozenBalance');
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     async undelegate() {
-      await this.$store.dispatch('web3/checkMetamaskStatus', Chains.ETHEREUM);
-      if (!this.isConnected) return;
-      const { callback } = this.options;
-      this.SetLoader(true);
-      const res = await this.$store.dispatch('web3/undelegate');
-      this.SetLoader(false);
-      if (res.ok) {
-        await this.hide();
-        await this.$store.dispatch('main/showToast', {
-          title: 'Undelegate',
-          text: `Undelegate ${this.tokensAmount} WQT`,
-        });
-        if (callback) await callback();
-      } else if (res.msg.includes('Not enough balance to undelegate')) {
-        await this.$store.dispatch('modals/show', {
-          key: modals.status,
-          title: 'Undelegate error', // TODO: to localization
-          subtitle: 'Not enough balance to undelegate',
-        });
+      if (this.options.delegateMode === DelegateMode.VALIDATORS) {
+        this.options.submitMethod();
+        return;
       }
+
+      const { callback } = this.options;
+      this.CloseModal();
+      this.SetLoader(true);
+      const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
+        method: 'undelegate',
+        abi: WQVoting,
+        contractAddress: this.ENV.WORKNET_VOTING,
+        data: [],
+      });
+      this.SetLoader(false);
+      if (!feeRes.ok) {
+        this.ShowToast(feeRes.msg);
+        return;
+      }
+      this.ShowModal({
+        key: modals.transactionReceipt,
+        title: this.$t('modals.undelegate'),
+        fields: {
+          from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
+          to: { name: this.$t('modals.toAddress'), value: this.ConvertToBech32('wq', this.ENV.WORKNET_VOTING) },
+          fee: { name: this.$t('modals.trxFee'), value: feeRes.result.fee, symbol: TokenSymbols.WQT },
+        },
+        submitMethod: async () => {
+          this.SetLoader(true);
+          const res = await this.$store.dispatch('wallet/undelegate');
+          this.SetLoader(false);
+          if (res.ok) {
+            this.ShowToast(this.$tc('modals.undelegateAmount', this.Floor(this.frozenBalance)), this.$t('modals.undelegate'));
+          } else if (res.msg.includes('Not enough balance to undelegate')) {
+            this.ShowToast(this.$t('errors.transaction.notEnoughFunds'), this.$t('errors.undelegateTitle'));
+          }
+          return res;
+        },
+        callback,
+      });
     },
   },
 };
@@ -104,68 +125,81 @@ export default {
 <style lang="scss" scoped>
 .ctm-modal {
   @include modalKit;
-  padding: 30px 36px 30px 28px!important;
+  padding: 30px 36px 30px 28px !important;
 }
 
 .undelegate {
   max-width: 500px !important;
+
   &__content {
-    padding: 30px 28px 30px 28px!important;
+    padding: 30px 28px 30px 28px !important;
   }
-  &__body{
+
+  &__body {
     @include text-usual;
-    color: #1D2127;
+    color: $black800;
     margin: 20px 0 25px 0;
   }
-  &__bottom{
+
+  &__bottom {
     margin-top: 25px;
   }
+  &__unbonding {
+    margin-top: 5px;
+    color: $black500;
+  }
 }
-.header{
+
+.header {
   display: flex;
   justify-content: space-between;
-  &__title{
+
+  &__title {
     font-weight: 500;
     font-size: 23px;
     line-height: 130%;
   }
-  &__close{
-    color: black;
+
+  &__close {
+    color: $black800;
     font-size: 25px;
     cursor: pointer;
   }
 }
-.bottom{
+
+.bottom {
   display: flex;
   justify-content: space-between;
-  &__cancel{
-    width: 112px!important;
+
+  &__cancel {
+    width: 112px !important;
   }
-  &__done{
-    width: 257px!important;
+
+  &__done {
+    width: 257px !important;
   }
 }
-.tokens{
-  &__title{
+
+.tokens {
+  &__title {
     @include text-usual;
-    color: #1D2127;
+    color: $black800;
     margin-bottom: 5px;
-    &_grey{
-      color: #7C838D;
-      margin-bottom: 10px!important;
+
+    &_grey {
+      color: $black400;
+      margin-bottom: 10px !important;
     }
   }
 }
+
 .footer {
   display: flex;
   justify-content: space-between;
-  &__body{
-    width: 100%;
-    height: 46px!important;
-  }
-  &__maximum{
-    width: 100px!important;
-    height: 46px!important;
+
+  &__maximum {
+    width: 100px !important;
+    height: 46px !important;
   }
 }
 </style>

@@ -6,7 +6,7 @@
     :rules="rules"
     :name="name"
     :vid="vid"
-    mode="eager"
+    :mode="validationMode"
     slim
   >
     <div
@@ -54,6 +54,10 @@ import moment from 'moment';
 export default {
   name: 'BaseTextarea',
   props: {
+    validationMode: {
+      type: String,
+      default: 'aggressive',
+    },
     value: {
       type: String,
       default: '',

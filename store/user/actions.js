@@ -1,45 +1,74 @@
+import { error } from '~/utils/success-error';
+import { connectWithMnemonic } from '~/utils/wallet';
+
 export default {
   async signIn({ commit, dispatch }, payload) {
-    const response = await this.$axios.$post('/v1/auth/login', payload);
-    commit('setNewTokens', response.result);
-    await dispatch('getUserData');
-    return response;
+    try {
+      const response = await this.$axios.$post('/v1/auth/login', {
+        email: payload.email,
+        password: payload.password,
+      });
+      const {
+        access, refresh, social, userStatus,
+      } = response.result;
+      commit('setTokens', {
+        refresh: payload.isRememberMeSelected ? refresh : '',
+        access,
+        social,
+        userStatus,
+      });
+      return response;
+    } catch (e) {
+      return error(e.response.data.code, e.response.data.msg);
+    }
+  },
+  async registerWallet({ commit }, payload) {
+    try {
+      return await this.$axios.$post('/v1/auth/register/wallet', payload);
+    } catch (e) {
+      return error(e.response.data.code, e.response.data.msg);
+    }
   },
   async signUp({ commit }, payload) {
-    const response = await this.$axios.$post('/v1/auth/dao/register', payload);
-    commit('setNewTokens', response.result);
-    return response;
+    try {
+      const response = await this.$axios.$post('/v1/auth/dao/register', payload);
+      commit('setTokens', response.result);
+      return response;
+    } catch (e) {
+      return error();
+    }
   },
   async confirm({ commit }, payload) {
-    commit('setOldTokens', { access: this.$cookies.get('access'), refresh: this.$cookies.get('refresh') });
+    commit('setTokens', { access: this.$cookies.get('access'), refresh: this.$cookies.get('refresh') });
     this.$cookies.set('role', payload.role);
-    const response = await this.$axios.$post('/v1/auth/confirm-email', payload);
-    return response;
+    return await this.$axios.$post('/v1/auth/confirm-email', payload);
   },
   async getUserData({ commit }) {
-    const response = await this.$axios.$get('/v1/profile/me');
-    commit('setUserData', response.result);
-    return response;
+    try {
+      const response = await this.$axios.$get('/v1/profile/me');
+      const { result } = response;
+      commit('setUserData', result);
+      if (result.wallet?.address) connectWithMnemonic(result.wallet.address);
+      return response;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
   },
   async getSpecialUserData({ commit }, id) {
-    const response = await this.$axios.$get(`/v1/profile/${id}`);
-    commit('setSpecialUserData', response.result);
-    return response.result;
-  },
-  async getAllUserData({ commit }, config) {
     try {
-      if (!config.q.length) delete config.q;
-      const { result } = await this.$axios.$get('/v1/profile/users', { params: { ...config } });
-      result.users.forEach((user) => {
-        user.fullName = `${user.firstName || ''} ${user.lastName || ''}`;
-        user.investorAddress = '****************';
-        user.voting = '';
-        user.undelegate = 'Undelegate';
-        user.delegate = 'Delegate';
-      });
-      commit('setUsersData', result);
+      const { result } = await this.$axios.$get(`/v1/profile/${id}`);
+      return result;
     } catch (e) {
-      console.log(e);
+      return false;
+    }
+  },
+  async getUserByWalletAddress({ commit }, address) {
+    try {
+      const { result } = await this.$axios.$get(`/v1/profile/wallet/${address}`);
+      return result;
+    } catch (e) {
+      return null;
     }
   },
   async setUserRole({ commit }) {
@@ -52,7 +81,7 @@ export default {
   },
   async refreshTokens({ commit }) {
     const response = await this.$axios.$post('/v1/auth/refresh-tokens');
-    commit('setNewTokens', response.result);
+    commit('setTokens', response.result);
     return response;
   },
   async setCurrentPosition({ commit }, payload) {
@@ -105,5 +134,70 @@ export default {
         'x-amz-acl': 'public-read',
       },
     });
+  },
+  async confirmEnable2FA({ commit }, payload) {
+    try {
+      const response = await this.$axios.$post('/v1/totp/confirm', payload);
+      commit('setEnable2FA', response.result);
+      commit('setTwoFAStatus', true);
+      return response;
+    } catch (e) {
+      const response = {
+        ok: e.response.data.ok,
+        code: e.response.data.code,
+        msg: e.response.data.msg,
+        data: e.response.data.data,
+      };
+      return response;
+    }
+  },
+  async disable2FA({ commit }, payload) {
+    try {
+      const response = await this.$axios.$post('/v1/totp/disable', payload);
+      commit('setDisable2FA', response.result);
+      commit('setTwoFAStatus', false);
+      return response;
+    } catch (e) {
+      const response = {
+        ok: e.response.data.ok,
+        code: e.response.data.code,
+        msg: e.response.data.msg,
+        data: e.response.data.data,
+      };
+      return response;
+    }
+  },
+  async enable2FA({ commit }, payload) {
+    try {
+      const response = await this.$axios.$post('/v1/totp/enable', payload);
+      commit('setTwoFACode', response.result);
+      return response;
+    } catch (e) {
+      const response = {
+        ok: e.response.data.ok,
+        code: e.response.data.code,
+        msg: e.response.data.msg,
+        data: e.response.data.data,
+      };
+      return response;
+    }
+  },
+  async validateTOTP({ commit }, payload) {
+    try {
+      const response = await this.$axios.$post('/v1/auth/validate-totp', payload);
+      return response.result.isValid;
+    } catch (e) {
+      console.log('user/validateTOTP');
+      return false;
+    }
+  },
+  async sendReport(_, payload) {
+    try {
+      const { ok } = await this.$axios.$post('/v1/report/send', payload);
+      return ok;
+    } catch (e) {
+      console.log('user/sendReport');
+      return false;
+    }
   },
 };

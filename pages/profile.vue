@@ -1,13 +1,8 @@
 <template>
   <div class="wq-profile">
     <div class="wq-profile__body">
-      <!--      TODO вернуть-->
-      <!--      <div-->
-      <!--          v-if="!localUserData.isVerified"-->
-      <!--          class="wq-profile__banner banner"-->
-      <!--      >-->
       <div
-        v-if="false"
+        v-if="userData.statusKYC === $options.SumSubStatuses.NOT_VERIFIED"
         class="wq-profile__banner banner"
       >
         <transition name="fade-fast">
@@ -29,18 +24,22 @@
               </div>
             </div>
             <div class="banner__image">
-              <img src="~/assets/img/ui/goldStatus.svg">
+              <img
+                src="~/assets/img/ui/goldStatus.svg"
+                alt=""
+              >
             </div>
           </div>
         </transition>
       </div>
-      <div
-        class="wq-profile__header"
-        :class="{ 'wq-profile__header_noMarginTop': localUserData.isVerified }"
-      >
+      <div class="wq-profile__header">
         {{ $t('profile.title') }}
       </div>
-      <div class="profile-cont">
+      <validation-observer
+        v-slot="{ invalid, handleSubmit}"
+        class="profile-cont"
+        tag="div"
+      >
         <div class="profile-cont__grid-container">
           <div class="profile-cont__main-data">
             <div class="profile-cont__avatar avatar">
@@ -58,7 +57,7 @@
                 <ValidationProvider
                   v-slot="{ validate }"
                   class="edit__validator"
-                  rules="required|ext:png,jpeg,jpg"
+                  rules="ext:png,jpeg,jpg"
                   tag="div"
                 >
                   <input
@@ -72,9 +71,11 @@
             </div>
             <div
               class="profile-cont__status status"
-              :class="{ 'status_verified': localUserData.isVerified }"
+              :class="{ 'status_verified': userData.statusKYC === $options.SumSubStatuses.VERIFIED }"
             >
-              {{ $t(`settings.${localUserData.isVerified ? 'verified' : 'notVerified'}`) }}
+              {{
+                $t(`settings.${userData.statusKYC === $options.SumSubStatuses.VERIFIED ? 'verified' : 'notVerified'}`)
+              }}
               <span class="status__icon icon icon-check_all_big" />
             </div>
             <base-field
@@ -84,6 +85,7 @@
               :placeholder="cell.placeholder || $t('settings.nameInput')"
               :disabled="!isProfileEdit"
               rules="required"
+              :data-selector="cell.selector"
               :name="$t('modals.nameField')"
               mode="icon"
               mode-error="small"
@@ -95,14 +97,17 @@
             </base-field>
             <base-field
               v-model="localUserData.additionalInfo.address"
+              v-click-outside="hideAddressSelector"
               :placeholder="address || $t('settings.addressInput')"
               :disabled="!isProfileEdit"
               :is-with-loader="true"
               mode="icon"
+              data-selector="BASE-INPUT-FIELD-ADDRESS"
               :name="$t('modals.addressField')"
               mode-error="small"
+              :rules="isProfileEdit ? 'required' : ''"
               class="profile-cont__field"
-              @focus="changeFocusValue"
+              @focus="isGeoInputOnFocus = true"
               @input="getPositionData"
             >
               <template v-slot:left>
@@ -143,6 +148,7 @@
               disabled
               mode="icon"
               :name="$t('modals.emailField')"
+              data-selector="BASE-INPUT-FIELD-ADDRESS"
               mode-error="small"
               class="profile-cont__field"
             >
@@ -152,27 +158,40 @@
             </base-field>
             <div
               v-for="cell in phoneInputsArr"
-              :key="cell.id"
-              class="profile-cont__field"
+              :key="cell.type"
+              class="profile-cont__field field__phone"
             >
+              <label
+                v-if="isProfileEdit"
+                class="profile-cont__label"
+                :for="cell.label"
+              >
+                {{ cell.label }}
+              </label>
               <vue-phone-number-input
                 v-if="isProfileEdit"
-                v-model="localUserData.additionalInfo.secondMobileNumber"
+                :id="cell.label"
+                v-model="phone[cell.type].fullPhone"
                 class="input-phone"
                 error-color="#EB5757"
+                data-selector="FIELD-MAIN-PHONE"
                 clearable
                 show-code-on-list
                 required
+                :disabled="cell.disabled"
+                :default-country-code="phone[cell.type].codeRegion"
                 size="lg"
-                @update="updatedPhone = $event"
+                @update="updatedPhone[cell.type] = $event"
               />
               <base-field
                 v-else
-                v-model="cell.model"
-                :placeholder="cell.placeholder || $t('settings.telInput')"
+                :label="cell.label"
+                :data-selector="cell.selector"
+                :value="cell.fullNumber"
+                class="field__input"
+                :placeholder="cell.placeholder"
                 :disabled="true"
                 is-hide-error
-                inputmode="numeric"
                 mode="icon"
               >
                 <template v-slot:left>
@@ -182,12 +201,17 @@
             </div>
           </div>
           <div class="profile-cont__about about">
-            <div class="about__title">
+            <label
+              for="about"
+              class="about__title"
+            >
               {{ $t('profile.aboutMe') }}
-            </div>
+            </label>
             <textarea
+              id="about"
               v-model="localUserData.additionalInfo.description"
               class="about__textarea"
+              data-selector="TEXTAREA-ABOUT-ME"
               :class="{ 'about__textarea_disabled': !isProfileEdit }"
               :placeholder="$t('profile.aboutMe')"
               :disabled="!isProfileEdit"
@@ -200,10 +224,12 @@
               v-model="localUserData.additionalInfo.socialNetwork[cell.key]"
               :placeholder="cell.placeholder || $t('settings.socialInput')"
               :disabled="!isProfileEdit"
+              :data-selector="cell.selector"
               is-hide-error
               mode="icon"
               type="text"
               mode-error="small"
+              class="profile-cont__social-input"
               @input="handleChangeSocial($event, cell.id)"
             >
               <template v-slot:left>
@@ -218,13 +244,14 @@
             <base-btn
               mode="lightBlue"
               class="action__btn"
-              @click="handleClickEditBtn"
+              :disabled="invalid"
+              @click="handleSubmit(handleClickEditBtn)"
             >
               {{ $t(`profile.${isProfileEdit ? 'save' : 'change'}`) }}
             </base-btn>
           </div>
         </div>
-      </div>
+      </validation-observer>
       <div
         v-if="isProfileEdit"
         class="wq-profile__header"
@@ -254,9 +281,9 @@
           <base-btn
             class="security__btn"
             mode="lightBlue"
-            @click="modalTwoFAAuth()"
+            @click="totpToggle"
           >
-            {{ $t('profile.switchOn') }}
+            {{ userData.totpIsActive ? $t('profile.switchOff') : $t('profile.switchOn') }}
           </base-btn>
         </div>
       </div>
@@ -267,15 +294,24 @@
 <script>
 
 import { mapGetters } from 'vuex';
+import ClickOutside from 'vue-click-outside';
 import { GeoCode } from 'geo-coder';
 import modals from '~/store/modals/modals';
+import { UserRole, SumSubStatuses } from '~/utils/enums';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 
 export default {
   name: 'Settings',
+  SumSubStatuses,
+  directives: {
+    ClickOutside,
+  },
   data() {
     return {
-      updatedPhone: null,
+      updatedPhone: {
+        main: null,
+        second: null,
+      },
       isProfileEdit: false,
       isPositionSearch: false,
       isGeoInputOnFocus: false,
@@ -287,9 +323,22 @@ export default {
       localUserData: null,
       avatar_change: null,
       socialInputs: [],
-      phoneInputsArr: [],
       nameInputsArr: [],
       coordinates: undefined,
+      profileVisibility: {
+        network: this.userData?.profileVisibilitySetting?.network ?? 0,
+        ratingStatus: this.userData?.profileVisibilitySetting?.ratingStatus ?? 0,
+      },
+      phone: {
+        main: {
+          fullPhone: null,
+          codeRegion: null,
+        },
+        second: {
+          fullPhone: null,
+          codeRegion: null,
+        },
+      },
     };
   },
   computed: {
@@ -308,16 +357,52 @@ export default {
       secondMobileNumber: 'user/getUserSecondMobileNumber',
       imageData: 'user/getImageData',
     }),
+    phoneInputsArr() {
+      const phones = [];
+      const { phone, tempPhone, additionalInfo } = this.userData;
+      const mainPhone = {
+        type: 'main',
+        label: this.$t('settings.firstNumber'),
+        fullNumber: null,
+        selector: 'MAIN-PHONE',
+        placeholder: this.$t('settings.mainNumberMissing'),
+        isVerify: false,
+        disabled: false,
+      };
+      mainPhone.fullNumber = phone ? phone?.fullPhone : tempPhone?.fullPhone;
+      mainPhone.isVerify = !!phone;
+      phones.push(mainPhone);
+
+      if (this.userRole === UserRole.EMPLOYER) {
+        const secondPhone = {
+          type: 'second',
+          label: this.$t('settings.secondNumber'),
+          fullNumber: null,
+          selector: 'SECOND-PHONE',
+          placeholder: this.$t('settings.secondNumberMissing'),
+          isVerify: false,
+          disabled: false,
+        };
+        secondPhone.fullNumber = additionalInfo.secondMobileNumber?.fullPhone || null;
+        phones.push(secondPhone);
+      }
+      return phones;
+    },
   },
   beforeMount() {
     this.isVerified = !!this.userData.statusKYC;
-
     this.setCurrData();
   },
-  mounted() {
-    this.SetLoader(false);
-  },
   methods: {
+    hideAddressSelector() {
+      this.isGeoInputOnFocus = false;
+    },
+    totpToggle() {
+      const mode = this.userData.totpIsActive ? 'disableTwoFAAuth' : 'twoFAAuth';
+      this.ShowModal({
+        key: modals[mode],
+      });
+    },
     getVerification() {
       this.$router.push('/KYC');
     },
@@ -325,66 +410,60 @@ export default {
       this.localUserData = JSON.parse(JSON.stringify(this.userData));
 
       const {
-        localUserData, firstMobileNumber, secondMobileNumber, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
+        localUserData, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
       } = this;
+      this.localUserData.additionalInfo.address = this.userData?.locationPlaceName;
+      this.phone.main = localUserData.phone || localUserData.tempPhone || { fullPhone: null, codeRegion: 'RU' };
 
-      const {
-        instagram, facebook, linkedin, twitter,
-      } = localUserData.additionalInfo.socialNetwork;
+      this.phone.second = localUserData.additionalInfo.secondMobileNumber || { fullPhone: null, codeRegion: 'RU' };
 
       this.socialInputs = [{
         key: 'instagram',
         placeholder: userInstagram,
         imgClass: 'icon-instagram',
+        selector: 'INSTAGRAM',
       },
       {
         key: 'facebook',
         placeholder: userFacebook,
         imgClass: 'icon-facebook',
+        selector: 'FACEBOOK',
       },
       {
         key: 'linkedin',
         placeholder: userLinkedin,
         imgClass: 'icon-LinkedIn',
+        selector: 'LINKEDIN',
       },
       {
         key: 'twitter',
         placeholder: userTwitter,
         imgClass: 'icon-twitter',
+        selector: 'TWITTER',
       }];
-
-      // TODO add verif phone number
-
-      // this.phoneInputsArr = [{
-      //   id: 'firstMobileNumber',
-      //   model: localUserData.tempPhone,
-      //   placeholder: firstMobileNumber,
-      // }];
-
-      // if (this.userRole === 'employer') {
-      this.phoneInputsArr = [{
-        id: 'secondMobileNumber',
-        model: localUserData.additionalInfo.secondMobileNumber,
-        placeholder: secondMobileNumber,
-      }];
-      // }
 
       this.nameInputsArr = [{
         key: 'firstName',
         model: localUserData.firstName,
+        selector: 'FIRST-NAME',
         placeholder: firstName,
       },
       {
         key: 'lastName',
         model: localUserData.lastName,
+        selector: 'LAST-NAME',
         placeholder: lastName,
       }];
     },
     handleClickEditBtn() {
-      if (this.isProfileEdit) {
-        this.editUserData();
-      } else {
-        this.showModalWarning();
+      if (this.isProfileEdit) this.editUserData();
+      else {
+        this.ShowModal({
+          key: modals.warning,
+          callback: () => {
+            this.isProfileEdit = true;
+          },
+        });
       }
     },
     handleChangeSocial(val, key) {
@@ -396,15 +475,10 @@ export default {
         longitude: address.lng,
         latitude: address.lat,
       };
-    },
-    changeFocusValue(arg) {
-      setTimeout(() => {
-        this.isGeoInputOnFocus = arg;
-      }, 300);
+      this.hideAddressSelector();
     },
     getPositionData(address) {
       this.addresses = [];
-
       if (!address) {
         this.localUserData.additionalInfo.address = null;
         this.localUserData.location = null;
@@ -461,25 +535,20 @@ export default {
         output.src = URL.createObjectURL(file);
         output.onload = () => {
           URL.revokeObjectURL(output.src);
-          this.showModalImageOk();
+          this.ShowModal({
+            key: modals.status,
+            img: require('~/assets/img/ui/questAgreed.svg'),
+            title: this.$t('modals.imageLoadedSuccessful'),
+            subtitle: this.$t('modals.pleasePressSaveButton'),
+          });
         };
-
         reader.onerror = (evt) => {
           console.error(evt);
         };
       }
     },
-    showModalImageOk() {
-      this.ShowModal({
-        key: modals.status,
-        img: require('~/assets/img/ui/questAgreed.svg'),
-        title: this.$t('modals.imageLoadedSuccessful'),
-        subtitle: this.$t('modals.pleasePressSaveButton'),
-      });
-    },
     showModalSave() {
       this.isProfileEdit = false;
-
       this.ShowModal({
         key: modals.status,
         img: require('~/assets/img/ui/questAgreed.svg'),
@@ -487,30 +556,10 @@ export default {
         subtitle: this.$t('modals.userDataHasBeenSaved'),
       });
     },
-    showModalWarning() {
-      this.ShowModal({
-        key: modals.warning,
-        callback: () => {
-          this.isProfileEdit = true;
-        },
-      });
-    },
     modalChangePassword() {
       this.ShowModal({
         key: modals.changePassInSettings,
       });
-    },
-    modalTwoFAAuth() {
-      this.ShowModal({
-        key: modals.twoFAAuth,
-      });
-    },
-    switch2Fa() {
-      this.twoFa = !this.twoFa;
-    },
-    switchSms() {
-      this.sms = !this.sms;
-      this.$router.push('/sms-verification');
     },
     async editUserData() {
       const {
@@ -519,11 +568,21 @@ export default {
         }, priority, workplace, wagePerHour, userSpecializations, educations, workExperiences,
       } = this.localUserData;
 
-      const { isValid, formatInternational } = this.updatedPhone;
+      const mainPhone = this.updatedPhone.main;
+      const secondPhone = this.updatedPhone.second;
 
-      const secondMobileNumber = formatInternational.replace(/\s/g, '') || '';
-
-      if (!firstName || !lastName || (secondMobileNumber && !isValid)) return;
+      let phoneNumber = {
+        phone: mainPhone?.phoneNumber || null,
+        fullPhone: mainPhone?.formattedNumber || null,
+        codeRegion: mainPhone?.countryCode,
+      };
+      let secondMobileNumber = {
+        phone: secondPhone?.phoneNumber || null,
+        fullPhone: secondPhone?.formattedNumber || null,
+        codeRegion: secondPhone?.countryCode,
+      };
+      if (!phoneNumber.fullPhone) phoneNumber = null;
+      if (!secondMobileNumber.fullPhone) secondMobileNumber = null;
 
       const { avatar_change, userRole } = this;
 
@@ -539,26 +598,30 @@ export default {
         };
         await this.$store.dispatch('user/setImage', response);
       }
-
       let config = {
         avatarId,
         firstName,
         lastName,
-        location,
+        phoneNumber,
+        profileVisibility: this.profileVisibility,
+        locationFull: {
+          location,
+          locationPlaceName: this.localUserData.additionalInfo.address,
+        },
       };
 
       const additionalInfo = {
         address,
         socialNetwork,
         description,
-        secondMobileNumber,
       };
 
-      if (userRole === 'employer') {
+      if (userRole === UserRole.EMPLOYER) {
         config = {
           ...config,
           additionalInfo: {
             ...additionalInfo,
+            secondMobileNumber,
             company,
             CEO,
             website,
@@ -601,11 +664,14 @@ export default {
 .wq-profile {
   @include main;
   @include text-simple;
+
   &__body {
     max-width: 1180px;
     height: 100%;
   }
+
   &__header {
+    color: $black800;
     font-weight: 600;
     font-size: 28px;
     line-height: 36px;
@@ -615,6 +681,7 @@ export default {
       margin-top: 0;
     }
   }
+
   &__info {
     display: grid;
     grid-template-rows: 151px 112px 43px;
@@ -623,7 +690,7 @@ export default {
     margin-top: 20px;
     padding: 20px;
 
-    background: #FFFFFF;
+    background: $white;
     border-radius: 6px;
   }
 
@@ -635,15 +702,15 @@ export default {
 }
 
 .banner {
-  background-color: #0083C7;
-  color: #FFFFFF;
+  color: $white;
   border-radius: 6px;
   margin-top: 30px;
 
   &__body {
     display: grid;
     grid-template-columns: 1fr 1fr;
-
+    background: $blue;
+    border-radius: 6px;
     width: 100%;
   }
 
@@ -679,8 +746,17 @@ export default {
 }
 
 .profile-cont {
-  background-color: #fff;
+  background-color: $white;
   border-radius: 6px;
+
+  &__social-input {
+    height: 46px;
+  }
+
+  &__field {
+    height: 46px;
+    margin-bottom: 15px;
+  }
 
   &__grid-container {
     display: grid;
@@ -703,7 +779,7 @@ export default {
     grid-row: 1/5;
   }
 
-  &__status{
+  &__status {
     grid-column: 2/4;
     margin-bottom: 15px;
   }
@@ -734,7 +810,8 @@ export default {
     grid-gap: 20px;
     height: 100%;
   }
-  &__space{
+
+  &__space {
     height: 44px;
   }
 }
@@ -757,6 +834,7 @@ export default {
 
   font-size: 14px;
   line-height: 18px;
+
   &__icon {
     font-size: 23px;
     color: #AAB0B9;
@@ -766,25 +844,28 @@ export default {
   }
 
   &_verified {
-    color: #0083C7;
+    color: $blue;
     background: rgba(0, 131, 199, 0.1);
 
     & .status__icon {
-      color: #0083C7;
+      color: $blue;
     }
   }
 }
 
 .avatar {
   border: 1px solid $black0;
+
   &:hover .edit {
     opacity: 1;
   }
+
   &__img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
+
   &__edit {
     position: relative;
     top: -60%;
@@ -794,7 +875,7 @@ export default {
     width: 40px;
     height: 40px;
 
-    background: #F7F8FA;
+    background: $black0;
     border-radius: 6px;
 
     -moz-transition: all 0.5s;
@@ -803,9 +884,10 @@ export default {
     transition: all 0.5s;
 
     &:hover {
-      background: #0083C7;
+      background: $blue;
+
       & .edit__icon {
-        color: #FFFFFF;
+        color: $white;
       }
     }
   }
@@ -813,6 +895,7 @@ export default {
 
 .edit {
   cursor: pointer;
+
   &__validator {
     width: 100%;
     height: 100%;
@@ -820,18 +903,20 @@ export default {
     overflow: hidden;
     position: absolute;
     z-index: -1;
+
     & input {
       width: 100%;
       height: 100%;
     }
   }
+
   &__icon {
     position: absolute;
     top: 50%;
     margin-right: -50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: #0083C7;
+    color: $blue;
     font-size: 20px;
   }
 }
@@ -839,33 +924,35 @@ export default {
 .about {
   display: flex;
   flex-direction: column;
+
   &__title {
-    color: #1D2127;
+    color: $black800;
     font-size: 16px;
     line-height: 21px;
-
     margin-bottom: 5px;
   }
+
   &__textarea {
     height: 86px;
     padding: 10px 10px 0 10px;
     border: none;
     border-radius: 6px;
-    color: #1D2127;
-    background-color: #F7F8FA;
+    color: $black800;
+    background-color: $black100;
     resize: none;
 
     &:focus {
-      background-color: #FFFFFF;
-      border: 1px solid #F3F7FA;
+      background-color: $white;
+      border: 1px solid $black0;
     }
 
     &_disabled {
-      background-color: #FFFFFF;
-      border: 1px solid #F3F7FA;
+      background-color: $white;
+      border: 1px solid $black100;
     }
+
     &::placeholder {
-      color: #D8DFE3;
+      color: $black100;
     }
   }
 }
@@ -880,6 +967,7 @@ export default {
 .action {
   display: flex;
   justify-content: flex-end;
+
   &__btn {
     max-width: 250px;
   }
@@ -887,63 +975,66 @@ export default {
 
 .security {
   margin-top: 20px;
+
   &__title {
     font-weight: 500;
     font-size: 22px;
     line-height: 39px;
-
-    color: #000000;
+    color: $black800;
   }
 
   &__btn {
     width: 250px;
   }
+
   &__password {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-
-    background: #FFFFFF;
+    background: $white;
     border-radius: 6px;
     padding: 20px;
   }
+
   &__auth {
     @extend .security__password;
   }
 }
 
-.icon {
-  &__input {
-    font-size: 23px;
-    color: #0083C7;
-    line-height: 36px;
-  }
+.icon__input {
+  font-size: 23px;
+  color: $blue;
+  line-height: 36px;
 }
 
 .selector {
   @include box;
   width: 100%;
   z-index: 140;
+
   &_hide {
     display: none;
   }
+
   &__items {
-    background: #FFFFFF;
+    background: $white;
     display: grid;
     grid-template-columns: 1fr;
     width: 100%;
   }
+
   &__item {
     @include text-simple;
     padding: 15px 20px;
-    background: #FFFFFF;
+    background: $white;
     font-weight: 500;
     font-size: 16px;
     color: $black800;
     cursor: pointer;
     transition: .3s;
+
     &:hover {
-      background: #F3F7FA;
+      background: $black100;
     }
   }
 }
@@ -973,20 +1064,16 @@ export default {
     &__body {
       grid-template-columns: 1fr;
     }
+
     &__image {
       grid-row: 1;
     }
   }
   .profile-cont {
-    &__main-data {
-      grid-template-columns: 151px 1fr;
-    }
     &__avatar {
       grid-row: 1/7;
     }
-    &__status {
-      grid-column: 2;
-    }
+
     &__social {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -1004,42 +1091,61 @@ export default {
 }
 
 @include _767 {
-  .security {
-    grid-template-columns: 1fr;
-
-    &__password,
-    &__auth {
-      display: flex;
-      justify-items: unset;
-      justify-content: space-between;
-    }
+  .field__phone {
+    height: fit-content;
   }
-}
-
-@include _575 {
+  .avatar__img {
+    height: 149px;
+    width: 149px;
+    border: 1px solid $black0;
+    border-radius: 6px;
+  }
   .profile-cont {
+    &__label {
+      display: flex;
+    }
+
+    &__main-data {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    &__status {
+      display: flex;
+    }
 
     &__avatar {
-      grid-row: 1;
+      display: flex;
+      justify-content: center;
       margin-bottom: 17px;
     }
 
-    &__field {
-      grid-column: 1/3;
-    }
-
-    &__social {
+    .security {
       grid-template-columns: 1fr;
+
+      &__password,
+      &__auth {
+        display: flex;
+        justify-items: unset;
+        justify-content: space-between;
+      }
     }
   }
 
-  .security {
-    &__password,
-    &__auth {
-      display: grid;
-      gap: 10px;
-      justify-items: center;
-      justify-content: center;
+  @include _575 {
+    &__social {
+      grid-template-columns: 1fr;
+    }
+
+    .security {
+      &__password,
+      &__auth {
+        display: grid;
+        gap: 10px;
+        justify-items: center;
+        justify-content: center;
+      }
     }
   }
 }
@@ -1049,14 +1155,14 @@ export default {
 <style lang="scss">
 .input-phone {
   input {
-    background-color: #F7F8FA !important;
+    background-color: $black100 !important;
     border: unset !important;
     height: 46px !important;
     min-height: 46px !important;
 
     &:focus {
-      background-color: #FFFFFF !important;
-      border: 1px solid #0083C7 !important;
+      background-color: $white !important;
+      border: 1px solid $blue !important;
     }
   }
 
@@ -1068,7 +1174,7 @@ export default {
   .input-tel__input {
     border-top-right-radius: 6px !important;
     border-bottom-right-radius: 6px !important;
-    border-left: 1px solid #ccc !important;
+    border-left: 1px solid $black200 !important;
   }
 }
 </style>

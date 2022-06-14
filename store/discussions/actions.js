@@ -1,6 +1,14 @@
 import { error, success } from '~/utils/success-error';
 
 export default {
+  async setDiscussionDocuments({ commit }, data) {
+    commit('setDiscussionDocuments', data);
+    return data;
+  },
+  async setDiscussionImages({ commit }, data) {
+    commit('setDiscussionImages', data);
+    return data;
+  },
   async getAllDiscussions({ commit }, queries) {
     try {
       if (!queries.q) delete queries.q;
@@ -90,7 +98,6 @@ export default {
     }
   },
 
-  // TODO: Интегрировать методы
   async getPeopleListWhoLikeDiscussion({ commit }, discussionId) {
     try {
       const response = await this.$axios.$get(`/v1/discussion/comment/${discussionId}/usersLikes`);

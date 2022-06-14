@@ -2,22 +2,22 @@ name: Deploy-Frontend
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master, stage, testnet, develop ]
 
 jobs:
-  build-prod:
+  deploy-prod:
     if: github.ref == 'refs/heads/master'
     environment: production
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Copy code files to container
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: '12.x'
+          node-version: '14.x'
 
       - name: Install npm dependencies
         run: npm install
@@ -25,14 +25,9 @@ jobs:
       - name: Run generate static task
         run: npm run generate
         env:
-          PROD: ${{ secrets.PROD }}
-
-          BASE_URL: ${{ secrets.BASE_URL }}
+          BRANCH: ${{ secrets.BRANCH }}
           GMAPKEY: ${{ secrets.GMAPKEY }}
           SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
-
-          WQ_TOKEN: ${{ secrets.WQ_TOKEN }}
-          WQ_DAO_VOTING: ${{ secrets.WQ_DAO_VOTING }}
 
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@v2.1.4
@@ -44,19 +39,19 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
 
-  build-develop:
-    if: github.ref == 'refs/heads/develop'
-    environment: develop
-    runs-on: ubuntu-18.04
+  deploy-stage:
+    if: github.ref == 'refs/heads/stage'
+    environment: production
+    runs-on: ubuntu-latest
 
     steps:
       - name: Copy code files to container
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: '12.x'
+          node-version: '14.x'
 
       - name: Install npm dependencies
         run: npm install
@@ -64,14 +59,77 @@ jobs:
       - name: Run generate static task
         run: npm run generate
         env:
-          PROD: ${{ secrets.PROD }}
-
-          BASE_URL: ${{ secrets.BASE_URL }}
+          BRANCH: ${{ secrets.BRANCH }}
           GMAPKEY: ${{ secrets.GMAPKEY }}
           SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
 
-          WQ_TOKEN: ${{ secrets.WQ_TOKEN }}
-          WQ_DAO_VOTING: ${{ secrets.WQ_DAO_VOTING }}
+      - name: Deploy to Server
+        uses: easingthemes/ssh-deploy@v2.1.4
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltgoDzvO --delete"
+          SOURCE: "dist/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}
+
+  deploy-TestNetwork:
+    if: github.ref == 'refs/heads/testnet'
+    environment: TestNetwork
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Copy code files to container
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14.x'
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Run generate static task
+        run: npm run generate
+        env:
+          BRANCH: ${{ secrets.BRANCH }}
+          GMAPKEY: ${{ secrets.GMAPKEY }}
+          SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
+
+      - name: Deploy to Server
+        uses: easingthemes/ssh-deploy@v2.1.4
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltgoDzvO --delete"
+          SOURCE: "dist/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}
+
+  deploy-develop:
+    if: github.ref == 'refs/heads/develop'
+    environment: develop
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Copy code files to container
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14.x'
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Run generate static task
+        run: npm run generate
+        env:
+          BRANCH: ${{ secrets.BRANCH }}
+          GMAPKEY: ${{ secrets.GMAPKEY }}
+          SECRET_SUMSUB: ${{ secrets.SECRET_SUMSUB }}
 
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@v2.1.4

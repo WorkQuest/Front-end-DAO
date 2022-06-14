@@ -1,15 +1,7 @@
 import ERC20 from '~/abi/ERC20';
-import WQToken from '~/abi/WQToken';
-import WQDAOVoting from '~/abi/WQDAOVoting';
+import WQVoting from '~/abi/WQVoting';
 
-export default {
+export {
   ERC20,
-  WQToken,
-  WQDAOVoting,
-};
-
-export const abiNames = {
-  ERC20: 'ERC20',
-  WQToken: 'WQToken',
-  WQDAOVoting: 'WQDAOVoting',
+  WQVoting,
 };

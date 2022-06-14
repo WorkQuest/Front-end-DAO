@@ -9,6 +9,9 @@ import {
 } from 'vee-validate';
 
 import * as rules from 'vee-validate/dist/rules';
+import { validateMnemonic } from 'bip39';
+import BigNumber from 'bignumber.js';
+import { utils } from 'ethers';
 
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
@@ -32,9 +35,9 @@ extend('numberOfCard', {
     const cardNumber = value.replaceAll(/[^0-9]/g, '');
     const maxNumberLength = 19;
     const checkCardNumber = (number) => (americanExpress.test(number)
-        || dinersClub.test(number) || discover.test(number) || jcb.test(number)
-        || maestro.test(number) || mastercard.test(number) || visa.test(number))
-        && number.length <= maxNumberLength;
+                || dinersClub.test(number) || discover.test(number) || jcb.test(number)
+                || maestro.test(number) || mastercard.test(number) || visa.test(number))
+            && number.length <= maxNumberLength;
     return {
       required: true,
       valid: checkCardNumber(cardNumber),
@@ -118,7 +121,7 @@ extend('twitter', {
 extend('facebook', {
   validate(value) {
     // eslint-disable-next-line
-    const regex = /(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?([\w\-]*)?/;
+        const regex = /(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?([\w\-]*)?/;
     return {
       required: true,
       valid: regex.test(value),
@@ -129,13 +132,67 @@ extend('facebook', {
 extend('linkedIn', {
   validate(value) {
     // eslint-disable-next-line
-    const regex = /((https?:\/\/)?((www|\w\w)\.)?linkedin\.com\/)((([\w]{2,3})?)|([^\/]+\/(([\w|\d-&#?=])+\/?){1,}))$/;
+        const regex = /((https?:\/\/)?((www|\w\w)\.)?linkedin\.com\/)((([\w]{2,3})?)|([^\/]+\/(([\w|\d-&#?=])+\/?){1,}))$/;
     return {
       required: true,
       valid: regex.test(value),
     };
   },
   message: 'Please enter correct {_field_}',
+});
+
+extend('decimalPlaces', {
+  validate(value, { places }) {
+    const regex = new RegExp(`^\\d+\\.\\d{0,${places}}$`);
+    return {
+      required: true,
+      valid: !value.toString().includes('.') || regex.test(value),
+    };
+  },
+  params: ['places'],
+  message: 'Max decimal places: {places}',
+});
+
+extend('mnemonic', {
+  validate(value) {
+    return {
+      required: true,
+      valid: validateMnemonic(value),
+    };
+  },
+  message: 'Incorrect secret phrase',
+});
+
+extend('address', {
+  validate(value) {
+    return {
+      required: true,
+      valid: utils.isAddress(value),
+    };
+  },
+  message: 'Type correct address',
+});
+
+extend('addressBech32', {
+  validate(value) {
+    const regex = /wq1[a-z-0-9]{3,41}$/;
+    return {
+      required: true,
+      valid: regex.test(value),
+    };
+  },
+  message: 'Please enter correct {_field_}',
+});
+
+extend('max_bn', {
+  validate(value, { max }) {
+    return {
+      required: true,
+      valid: new BigNumber(value).isLessThanOrEqualTo(new BigNumber(max)),
+    };
+  },
+  params: ['max'],
+  message: 'Value must be more than or equal {max}',
 });
 
 export default ({ app }) => {

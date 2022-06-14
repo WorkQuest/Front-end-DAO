@@ -15,6 +15,7 @@
       </span>
       <button class="user__star">
         <img
+          class="star"
           :src="require(`~/assets/img/ui/star_${isFavorite ? 'checked' : 'simple'}.svg`)"
           alt="favorite"
           @click="toggleFavorite(item.id)"
@@ -22,7 +23,7 @@
       </button>
     </div>
     <div class="discussion__title">
-      {{ cropTxt(item.title, 30) }}
+      {{ item.title }}
     </div>
     <div class="discussion__date">
       {{ $moment(item.createdAt).format('Do MMMM YYYY, hh:mm a') }}
@@ -33,7 +34,7 @@
         {{ $t('discussions.descriptionTitle') }}
       </div>
       <div class="description__item">
-        {{ cropTxt(item.description) }}
+        {{ item.description }}
       </div>
     </div>
     <div class="bottom discussion__bottom">
@@ -79,7 +80,8 @@ export default {
   props: {
     item: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
     },
   },
   data() {
@@ -125,140 +127,184 @@ export default {
       this.amountLikes = !this.isLiked ? this.amountLikes + 1 : this.amountLikes - 1;
       this.isLiked = !this.isLiked;
     },
-    cropTxt(str, maxLength = 80) {
-      if (str.length > maxLength) str = `${str.slice(0, maxLength)}...`;
-      return str;
-    },
   },
 };
 </script>
 <style lang="scss" scoped>
 .discussion {
+  animation: show 1s 1;
   width: 100%;
   height: 100%;
-  background: #FFFFFF;
+  background: $white;
   border-radius: 8px;
   padding: 20px;
+
   &__title {
     font-weight: 600;
     font-size: 24px;
     line-height: 32px;
     margin: 18px 0 10px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
+
   &__date {
     font-size: 14px;
     line-height: 130%;
     margin-bottom: 20px;
-    color: #AAB0B9;
+    color: $black400;
   }
+
   &__line {
     margin-top: 20px;
   }
 }
+
 .user {
-    display: flex;
-    align-items: center;
-    &__name {
-      font-size: 16px;
-      line-height: 130%;
-      color: #1D2127;
-      padding: 10px;
-      cursor: pointer;
-    }
-    &__avatar {
-      flex: 0 0 0 32px;
-      width: 32px;
-      height: 32px;
-      left: 0;
-      top: 0;
-      border-radius: 50%;
-      cursor: pointer;
-      object-fit: cover;
-    }
-    &__star {
-      margin-left: auto;
-      width: 20px;
-      height: 20px;
-    }
+  display: flex;
+  align-items: center;
+
+  &__name {
+    font-size: 16px;
+    line-height: 130%;
+    color: $black800;
+    padding: 10px;
+    cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
+
+  &__avatar {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    left: 0;
+    top: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    object-fit: cover;
+  }
+
+  &__star {
+    min-width: 25px;
+    min-height: 25px;
+    margin-left: auto;
+  }
+}
+
+.star {
+  margin-left: 5px;
+  margin-right: 5px;
+  width: 25px;
+  height: 25px;
+}
+
 .description {
   &__item {
     font-size: 16px;
     line-height: 130%;
-    color: #7C838D;
+    color: $black500;
     align-self: stretch;
     margin-bottom: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
+
   &__title {
     font-size: 18px;
     line-height: 130%;
     font-weight: 600;
     margin: 20px 0 10px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }
+
 .bottom {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  &__footer {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: space-between;
-    &__footer {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    justify-content: center;
+  }
+
+  &__like {
+    margin-left: auto;
+    margin-top: 5px;
+    color: $black200;
+    font-size: 22px;
+    transition: 0.5s;
+
+    &:hover {
+      color: $blue;
     }
-    &__like {
-      margin-left: auto;
-      margin-top: 5px;
-      color: #E9EDF2;
-      font-size: 22px;
-      transition: 0.5s;
-      &:hover {
-        color: #0083C7;
-      }
-      &_chosen {
-        color: #0083C7;
-      }
-    }
-    &__arrow {
-      margin-top: 10px;
-      margin-left: auto;
-      margin-right: 7px;
-      text-align: center;
-      font-size: 25px;
-      color: #0083C7;
-    }
-    &__comment {
-      height: 18px;
-      width: 18px;
-      margin-top: 5px;
-      cursor: default;
-    }
-    &__counter {
-      font-size: 14px;
-      line-height: 18px;
-      color: #1D2127;
-      margin: 0 22px 0 8px;
-      cursor: pointer;
-      &_right {
-        margin: 7px;
-      }
+
+    &_chosen {
+      color: $blue;
     }
   }
+
+  &__arrow {
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: 7px;
+    text-align: center;
+    font-size: 25px;
+    color: $blue;
+  }
+
+  &__comment {
+    height: 18px;
+    width: 18px;
+    margin-top: 5px;
+    cursor: default !important;
+  }
+
+  &__counter {
+    font-size: 14px;
+    line-height: 18px;
+    color: $black800;
+    margin: 0 22px 0 8px;
+    cursor: pointer;
+
+    &_right {
+      margin: 7px;
+    }
+  }
+}
+
 .link {
   display: flex;
   justify-content: center;
   text-align: center;
   align-items: center;
   text-decoration: none;
+
   &__text {
-  margin: 7px 14px 7px 10px;
-  font-size: 16px;
-  line-height: 130%;
+    margin: 7px 14px 7px 10px;
+    font-size: 16px;
+    line-height: 130%;
   }
+
   &__arrow {
     margin-top: 4px;
     font-size: 25px;
-    color: #0083C7;
+    color: $blue;
   }
 }
+
+@include _480 {
+  .discussion__bottom {
+    flex-direction: column-reverse;
+  }
+}
+
 </style>

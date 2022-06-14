@@ -16,14 +16,15 @@
           id="currPerc_input"
           v-model="amount_input"
           :is-hide-error="true"
-          :placeholder="'15%'"
+          placeholder="15%"
+          data-selector="AMOUNT"
         />
       </div>
       <div class="ctm-modal__content-btns">
         <div class="btn-group">
           <base-btn
             class="btn"
-            @click="hide()"
+            @click="CloseModal"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
@@ -41,7 +42,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import modals from '~/store/modals/modals';
 
 export default {
   name: 'ModalApplyForAPension',
@@ -56,9 +56,6 @@ export default {
     }),
   },
   methods: {
-    hide() {
-      this.CloseModal();
-    },
     showPensionIsRegisteredModal() {
     },
   },
@@ -69,6 +66,7 @@ export default {
 
 .ctm-modal {
   @include modalKit;
+
   &__content-field {
     margin: 15px 0 0 0;
   }
@@ -127,12 +125,14 @@ export default {
 
 .messageSend {
   max-width: 495px !important;
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
     grid-gap: 20px;
   }
+
   &__action {
     margin-top: 10px;
   }
