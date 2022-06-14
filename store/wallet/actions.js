@@ -19,6 +19,7 @@ import {
 } from '~/utils/enums';
 import { error, success } from '~/utils/success-error';
 import { ERC20, WQVoting } from '~/abi/index';
+import ENV from '~/utils/addresses';
 
 export default {
   async getTransactions({ commit }, params) {
@@ -27,7 +28,7 @@ export default {
       delete params.investorAddress;
       const res = await this.$axios({
         url: `/account/${investorAddress ?? getWalletAddress()}/transactions`,
-        baseURL: process.env.WQ_EXPLORER,
+        baseURL: ENV.WQ_EXPLORER,
         params,
       });
       commit('setTransactions', res.data.result.transactions);
@@ -164,7 +165,7 @@ export default {
      */
   async getVotesByAddresses({ commit }, addresses) {
     try {
-      const res = await fetchWalletContractData('getVotes', WQVoting, process.env.WORKNET_VOTING, [addresses]);
+      const res = await fetchWalletContractData('getVotes', WQVoting, ENV.WORKNET_VOTING, [addresses]);
       return success(res);
     } catch (e) {
       console.error('getVotes');
@@ -176,7 +177,7 @@ export default {
       const res = await fetchWalletContractData(
         'frozed',
         WQVoting,
-        process.env.WORKNET_VOTING,
+        ENV.WORKNET_VOTING,
         [getWalletAddress()],
       );
       commit('user/setFrozenBalance', res
@@ -193,7 +194,7 @@ export default {
       const res = await fetchWalletContractData(
         'delegates',
         WQVoting,
-        process.env.WORKNET_VOTING,
+        ENV.WORKNET_VOTING,
         [getWalletAddress()],
       );
       const address = !+res ? null : res.toLowerCase();
@@ -220,7 +221,7 @@ export default {
       amount = new BigNumber(amount).shiftedBy(getters.getBalanceData.WQT.decimals).toString();
       const res = await sendWalletTransaction('delegate', {
         abi: WQVoting,
-        address: process.env.WORKNET_VOTING,
+        address: ENV.WORKNET_VOTING,
         data: [toAddress],
         value: amount,
       });
@@ -234,7 +235,7 @@ export default {
     try {
       const res = await sendWalletTransaction('undelegate', {
         abi: WQVoting,
-        address: process.env.WORKNET_VOTING,
+        address: ENV.WORKNET_VOTING,
       });
       return success(res);
     } catch (e) {

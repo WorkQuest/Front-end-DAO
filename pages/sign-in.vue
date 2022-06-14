@@ -406,7 +406,7 @@ export default {
       });
     },
     async redirectSocialLink(socialNetwork) {
-      window.location = `${process.env.BASE_URL}v1/auth/login/dao/${socialNetwork}`;
+      window.location = `${this.ENV.BASE_URL}v1/auth/login/dao/${socialNetwork}`;
     },
     showSignWorkQuest() {
       this.ShowModal({

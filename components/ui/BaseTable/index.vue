@@ -147,7 +147,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
-import { DelegateMode, ExplorerUrls, Path } from '~/utils/enums';
+import { DelegateMode, ExplorerUrl, Path } from '~/utils/enums';
 
 export default {
   Path,
@@ -165,11 +165,6 @@ export default {
       default: () => [],
     },
   },
-  data() {
-    return {
-      isProd: process.env.PROD === 'true',
-    };
-  },
   computed: {
     ...mapGetters({
       userData: 'user/getUserData',
@@ -182,10 +177,10 @@ export default {
       this.ShowToast(value, this.$t('investors.delegateInfo'));
     },
     getTransactionUrl(hash) {
-      return `${ExplorerUrls[this.isProd ? 'PROD' : 'DEV']}/transactions/${hash}`;
+      return `${ExplorerUrl}/tx/${hash}`;
     },
     getAddressUrl(address) {
-      return `${ExplorerUrls[this.isProd ? 'PROD' : 'DEV']}/address/${address}`;
+      return `${ExplorerUrl}/address/${address}`;
     },
     myProfile(id) {
       return this.userData.id === id;

@@ -140,7 +140,7 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
-  DelegateMode, ExplorerUrls, TokenSymbols, ValidatorsMethods,
+  DelegateMode, ExplorerUrl, TokenSymbols, ValidatorsMethods,
 } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import { error, success } from '~/utils/success-error';
@@ -184,8 +184,7 @@ export default {
       return this.ConvertToBech32('wq', this.ConvertToHex('wqvaloper', this.validatorData.operator_address));
     },
     explorerAddressUrl() {
-      const url = process.env.PROD === 'true' ? ExplorerUrls.PROD : ExplorerUrls.DEV;
-      return `${url}/address/${this.convertedValidatorAddress}`;
+      return `${ExplorerUrl}/address/${this.convertedValidatorAddress}`;
     },
   },
   beforeCreate() {

@@ -1,5 +1,7 @@
 import localeEn from './locales/en.json';
 
+import ENV from './utils/addresses/index';
+
 require('dotenv').config();
 
 export default {
@@ -64,7 +66,7 @@ export default {
     },
   },
   axios: {
-    baseURL: process.env.BASE_URL,
+    baseURL: ENV.BASE_URL,
   },
   // bootstrapVue: {
   //   // bootstrapCSS: false, // Or `css: false`
@@ -87,19 +89,8 @@ export default {
     },
   },
   env: {
-    PROD: process.env.PROD,
-    BASE_URL: process.env.BASE_URL,
+    BRANCH: process.env.BRANCH,
     GMAPKEY: process.env.GMAPKEY,
     SECRET_SUMSUB: process.env.SECRET_SUMSUB,
-
-    WORKNET_WUSD_TOKEN: process.env.WORKNET_WUSD_TOKEN,
-    WORKNET_WBNB_TOKEN: process.env.WORKNET_WBNB_TOKEN,
-    WORKNET_WETH_TOKEN: process.env.WORKNET_WETH_TOKEN,
-    WORKNET_USDT_TOKEN: process.env.WORKNET_USDT_TOKEN,
-
-    WORKNET_VOTING: process.env.WORKNET_VOTING,
-
-    WQ_PROVIDER: process.env.WQ_PROVIDER,
-    WQ_EXPLORER: process.env.WQ_EXPLORER,
   },
 };
