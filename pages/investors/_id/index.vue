@@ -2,7 +2,7 @@
   <div class="investor">
     <div
       v-if="investor"
-      class="investor__profile"
+      class="investor__profile investor__body"
     >
       <div class="investor__header header">
         <base-btn
@@ -355,7 +355,6 @@ export default {
     margin: 20px 0;
     position: relative;
     overflow: auto;
-    width: calc(100vw - 40px);
 
     &_txs {
       width: 1180px;
