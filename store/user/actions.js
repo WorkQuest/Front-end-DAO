@@ -1,4 +1,4 @@
-import { error } from '~/utils/success-error';
+import { success, error } from '~/utils/success-error';
 import { connectWithMnemonic } from '~/utils/wallet';
 
 export default {
@@ -35,6 +35,15 @@ export default {
       commit('setTokens', response.result);
       return response;
     } catch (e) {
+      return error();
+    }
+  },
+  async resendEmail(_, { email }) {
+    try {
+      const { result } = await this.$axios.$post('/v1/auth/dao/resend-email', { email });
+      return success(result);
+    } catch (e) {
+      console.error('Error in user/resendEmail: ', e);
       return error();
     }
   },

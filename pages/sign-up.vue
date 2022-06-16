@@ -148,6 +148,7 @@ export default {
       };
       const response = await this.$store.dispatch('user/signUp', payload);
       if (response?.ok) {
+        this.$cookies.set('userStatus', response.result.userStatus);
         this.showConfirmEmailModal();
         await this.$router.push(Path.SIGN_IN);
       }

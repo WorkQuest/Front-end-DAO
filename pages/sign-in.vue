@@ -81,6 +81,17 @@
           >
             {{ $t('signIn.login') }}
           </base-btn>
+          <base-btn
+            v-if="!hiddenResend"
+            class="auth__resend"
+            :class="{auth__resend_hidden : disableResend && hiddenResend}"
+            data-selector="RESEND-LETTER"
+            :disabled="disableResend"
+            type="button"
+            @click="resendLetter"
+          >
+            {{ `${$t('signIn.resend')} ${resendTimer}` }}
+          </base-btn>
         </div>
         <div class="auth__text auth__text_wrap">
           {{ $t('signIn.or') }}
@@ -154,6 +165,8 @@ import {
   Path, UserStatuses, WalletState,
 } from '~/utils/enums';
 
+const timerDefaultValue = 60;
+
 export default {
   name: 'SignIn',
   layout: 'auth',
@@ -163,6 +176,11 @@ export default {
   WalletState,
   data() {
     return {
+      hiddenResend: true,
+      disableResend: true,
+      isStartedTimer: false,
+      timerValue: timerDefaultValue,
+      timer: null,
       addressAssigned: false,
       userWalletAddress: null,
       step: WalletState.Default,
@@ -177,6 +195,21 @@ export default {
       userData: 'user/getUserData',
       isLoading: 'main/getIsLoading',
     }),
+    resendTimer() {
+      const { timerValue, isStartedTimer } = this;
+      return isStartedTimer ? this.$tc('meta.units.seconds', this.DeclOfNum(timerValue), { count: timerValue }) : '';
+    },
+  },
+  watch: {
+    userStatus() {
+      if (this.userStatus === UserStatuses.Unconfirmed || this.timer) {
+        this.hiddenResend = false;
+        if (!this.isStartedTimer) this.disableResend = false;
+      } else {
+        this.hiddenResend = true;
+        this.disableResend = true;
+      }
+    },
   },
   created() {
     const { token } = this.$route.query;
@@ -186,14 +219,15 @@ export default {
     }
   },
   async mounted() {
+    this.continueTimer();
     this.isLoginWithSocial = this.$cookies.get('socialNetwork');
     const access = this.$cookies.get('access');
     const refresh = this.$cookies.get('refresh');
-    const userStatus = this.$cookies.get('userStatus');
-    if (access && +userStatus === UserStatuses.Confirmed) await this.$router.push(Path.PROPOSALS);
-    if (this.isLoginWithSocial && access && +userStatus === UserStatuses.Confirmed) {
+    this.userStatus = this.$cookies.get('userStatus');
+    if (access && +this.userStatus === UserStatuses.Confirmed) await this.$router.push(Path.PROPOSALS);
+    if (this.isLoginWithSocial && access && +this.userStatus === UserStatuses.Confirmed) {
       this.SetLoader(true);
-      await this.$store.dispatch('user/getUserData');
+      this.userStatus = await this.$store.dispatch('user/getUserData');
       this.userWalletAddress = this.userData?.wallet?.address;
       this.SetLoader(false);
       if (!this.userWalletAddress) return;
@@ -201,18 +235,34 @@ export default {
       this.$store.commit('user/setTokens', {
         access,
         refresh,
-        userStatus,
+        userStatus: this.userStatus,
         social: this.isLoginWithSocial,
       });
     }
     if (sessionStorage.getItem('confirmToken')) this.ShowToast(this.$t('messages.loginToContinue'), ' ');
   },
   beforeDestroy() {
+    if (this.isStartedTimer) {
+      this.$cookies.set('resend-timer', {
+        timerValue: this.timerValue,
+        createdAt: Date.now(),
+      });
+    }
     if (!this.addressAssigned && !this.$cookies.get('access') && !this.$cookies.get('userStatus')) {
       this.$store.dispatch('user/logout');
     }
   },
   methods: {
+    beforeunload() {
+      if (this.isStartedTimer) {
+        this.$cookies.set('resend-timer', {
+          timerValue: this.timerValue,
+          createdAt: Date.now(),
+        });
+        this.hiddenResend = true;
+      } else this.$cookies.remove('resend-timer');
+      this.clearCookies();
+    },
     unloadHandler() {
       if (this.addressAssigned) return;
       this.$store.dispatch('user/logout');
@@ -418,12 +468,72 @@ export default {
         key: modals.restore,
       });
     },
+    async resendLetter() {
+      this.model.email = this.model.email.trim();
+      if (!this.model.email && !this.model.password) {
+        await this.$store.dispatch('main/showToast', {
+          text: this.$t('signIn.enterEmail'),
+        });
+      } else if (this.model.email && !this.disableResend) {
+        await this.$store.dispatch('user/resendEmail', { email: this.model.email });
+        await this.$store.dispatch('main/showToast', {
+          title: this.$t('registration.emailConfirmTitle'),
+          text: this.$t('registration.emailConfirmNewLetter'),
+        });
+        this.startTimer();
+      }
+    },
+    startTimer() {
+      if (!this.isStartedTimer) {
+        this.timerId = setInterval(() => {
+          if (this.timerId && this.timerValue === 0) this.clearTimer();
+          this.timerValue -= 1;
+        }, 1000);
+
+        this.isStartedTimer = true;
+        this.disableResend = true;
+      }
+    },
+    clearTimer() {
+      this.$cookies.remove('resend-timer');
+      this.timerValue = timerDefaultValue;
+      clearInterval(this.timerId);
+      this.isStartedTimer = false;
+      this.disableResend = false;
+    },
+    continueTimer() {
+      if (this.userStatus === UserStatuses.Unconfirmed) this.hiddenResend = false;
+      this.timer = this.$cookies.get('resend-timer');
+      if (!this.timer) return;
+      this.timer.timerValue -= (this.$moment().diff(this.timer.createdAt) / 1000).toFixed(0);
+      if (this.timer.timerValue <= 0) {
+        this.clearTimer();
+        return;
+      }
+      this.timerValue = this.timer.timerValue;
+      this.startTimer();
+    },
+    clearCookies() {
+      const mnemonicInLocalStorage = JSON.parse(localStorage.getItem('mnemonic'));
+      const isWalletInMnemonicList = mnemonicInLocalStorage && mnemonicInLocalStorage[this.userWalletAddress];
+      if (this.userData.id && (isWalletInMnemonicList || localStorage.getItem('mnemonic'))) return;
+      this.$cookies.remove('access');
+      this.$cookies.remove('refresh');
+      this.$cookies.remove('userLogin');
+      this.$cookies.remove('userStatus');
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .auth {
+  &__resend {
+    margin-top: 10px;
+    &_hidden {
+      display: none;
+    }
+  }
   &__back {
     cursor: pointer;
     display: table-cell;
