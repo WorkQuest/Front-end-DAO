@@ -13,7 +13,10 @@
       >
         {{ getAuthorName(item) }}
       </span>
-      <button class="user__star">
+      <button
+        v-if="false"
+        class="user__star"
+      >
         <img
           class="star"
           :src="require(`~/assets/img/ui/star_${isFavorite ? 'checked' : 'simple'}.svg`)"
