@@ -30,6 +30,7 @@
             >
               {{ authorName() }}
             </span>
+            <!--  TODO: hid user star-->
             <button
               v-if="false"
               class="user__star"
