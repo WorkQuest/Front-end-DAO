@@ -91,7 +91,10 @@
                     v-if="isShowProfile"
                     class="profile"
                   >
-                    <div class="profile__header">
+                    <div
+                      class="profile__header"
+                      @click="redirectToProfile"
+                    >
                       <div class="profile__avatar">
                         <img
                           v-if="imageData"
@@ -362,6 +365,7 @@
 import { mapGetters } from 'vuex';
 import ClickOutside from 'vue-click-outside';
 import moment from 'moment';
+import { Path } from '~/utils/enums';
 
 export default {
   scrollToTop: true,
@@ -526,6 +530,9 @@ export default {
       this.isShowNotify = false;
       this.isShowAdditionalMenu = false;
       this.isShowLocale = false;
+    },
+    redirectToProfile() {
+      this.$router.push(`${Path.PROFILE}`);
     },
   },
 };
