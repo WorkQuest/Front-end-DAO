@@ -182,7 +182,7 @@ export default {
           timestamp: this.$moment(t.block.timestamp).format('lll'),
           status: !!t.status,
           value: `${getStyledAmount(t.tokenTransfers[0]?.amount || t.value, false, decimals)} ${symbol}`,
-          transaction_fee: getStyledAmount(new BigNumber(t.gas_price).multipliedBy(t.gas_used), true),
+          transaction_fee: getStyledAmount(new BigNumber(t.gas_price).multipliedBy(t.gas_used), false),
           from_address: t.from_address_hash.hex,
           to_address: t.to_address_hash.hex,
         };
@@ -318,7 +318,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
 .table {
   position: relative;
@@ -582,7 +582,7 @@ export default {
     border-radius: 6px !important;
   }
 
-  &__row > td {
+  /deep/ td {
     padding: 12px 10px !important;
   }
 

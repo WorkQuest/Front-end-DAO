@@ -226,7 +226,7 @@ export default {
           timestamp: this.$moment(t.block.timestamp).format('lll'),
           status: !!t.status,
           value: `${getStyledAmount(t.tokenTransfers[0]?.amount || t.value, false, decimals)} ${symbol}`,
-          transaction_fee: new BigNumber(t.gas_price).multipliedBy(t.gas_used),
+          transaction_fee: getStyledAmount(new BigNumber(t.gas_price).multipliedBy(t.gas_used), false),
           from_address: t.from_address_hash.hex,
           to_address: t.to_address_hash.hex,
         };
@@ -355,6 +355,10 @@ export default {
     margin: 20px 0;
     position: relative;
     overflow: auto;
+
+    /deep/ td {
+      padding: 12px 10px !important;
+    }
 
     &_txs {
       width: 1180px;
