@@ -213,7 +213,7 @@ export default {
   },
   created() {
     const { token } = this.$route.query;
-    window.addEventListener('beforeunload', this.unloadHandler);
+    window.addEventListener('beforeunload', this.beforeunload);
     if (token) {
       sessionStorage.setItem('confirmToken', String(token));
     }
@@ -262,10 +262,6 @@ export default {
         this.hiddenResend = true;
       } else this.$cookies.remove('resend-timer');
       this.clearCookies();
-    },
-    unloadHandler() {
-      if (this.addressAssigned) return;
-      this.$store.dispatch('user/logout');
     },
     back() {
       if (this.step === WalletState.ImportOrCreate) {
@@ -470,12 +466,22 @@ export default {
     },
     async resendLetter() {
       this.model.email = this.model.email.trim();
-      if (!this.model.email && !this.model.password) {
+      const { email, password } = this.model;
+      if (!email || !password) {
         await this.$store.dispatch('main/showToast', {
           text: this.$t('signIn.enterEmail'),
         });
-      } else if (this.model.email && !this.disableResend) {
-        await this.$store.dispatch('user/resendEmail', { email: this.model.email });
+        return;
+      }
+      if (!this.$cookies.get('access')) {
+        const payload = {
+          email,
+          password,
+        };
+        await this.$store.dispatch('user/signIn', payload);
+      }
+      if (this.$cookies.get('access')) {
+        await this.$store.dispatch('user/resendEmail', { email });
         await this.$store.dispatch('main/showToast', {
           title: this.$t('registration.emailConfirmTitle'),
           text: this.$t('registration.emailConfirmNewLetter'),

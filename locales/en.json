@@ -191,7 +191,7 @@
     "signUp": "Sign Up",
     "forgotYourPass": "Forgot your password?",
     "resend": "Resend email with code",
-    "enterEmail": "Please enter correct email"
+    "enterEmail": "Please enter correct email and password"
   },
   "securityCheck": {
     "title": "Security check",
