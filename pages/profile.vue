@@ -451,14 +451,14 @@ export default {
         model: localUserData.firstName,
         selector: 'FIRST-NAME',
         placeholder: firstName,
-        rules: 'required||max:15||alpha_spaces_dash',
+        rules: 'required|max:15|alpha_spaces_dash',
       },
       {
         key: 'lastName',
         model: localUserData.lastName,
         selector: 'LAST-NAME',
         placeholder: lastName,
-        rules: 'required||max:15||alpha_spaces_dash',
+        rules: 'required|max:15|alpha_spaces_dash',
       }];
     },
     handleClickEditBtn() {
