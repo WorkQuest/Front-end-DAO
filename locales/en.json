@@ -518,7 +518,7 @@
       "status": "Status",
       "block": "Block",
       "timestamp": "Timestamp",
-      "transferred": "Tokens Transferred",
+      "transferred": "Amount",
       "value": "Quantity",
       "empty": "Transactions list is empty",
       "trxFee": "Transaction Fee"
