@@ -227,7 +227,7 @@ export default {
     if (access && +this.userStatus === UserStatuses.Confirmed) await this.$router.push(Path.PROPOSALS);
     if (this.isLoginWithSocial && access && +this.userStatus === UserStatuses.Confirmed) {
       this.SetLoader(true);
-      this.userStatus = await this.$store.dispatch('user/getUserData');
+      await this.$store.dispatch('user/getUserData');
       this.userWalletAddress = this.userData?.wallet?.address;
       this.SetLoader(false);
       if (!this.userWalletAddress) return;
