@@ -22,15 +22,15 @@
             :name="$t('modals.addressField')"
           />
         </div>
-        <div class="content__input input">
-          <span class="input__title">
-            {{ $t('modals.selectToken') }}
-          </span>
-          <base-dd
-            v-model="ddValue"
-            :items="tokenSymbolsDd"
-          />
-        </div>
+        <!--        <div class="content__input input">-->
+        <!--          <span class="input__title">-->
+        <!--            {{ $t('modals.token') }}-->
+        <!--          </span>-->
+        <!--          <base-dd-->
+        <!--            v-model="ddValue"-->
+        <!--            :items="tokenSymbolsDd"-->
+        <!--          />-->
+        <!--        </div>-->
         <div class="content__input input">
           <span class="input__title">
             {{ $t('modals.amount') }}
@@ -110,7 +110,7 @@ export default {
       isConnected: 'wallet/getIsWalletConnected',
     }),
     tokenSymbolsDd() {
-      return [TokenSymbols.WQT, TokenSymbols.WUSD];
+      return [TokenSymbols.WQT];
     },
     maxAmount() {
       const {

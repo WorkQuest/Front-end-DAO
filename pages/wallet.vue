@@ -39,12 +39,13 @@
                   </span>
                   {{ Floor(frozenBalance) }} {{ $options.TokenSymbols.WQT }}
                 </span>
-                <base-dd
-                  v-model="ddValue"
-                  class="balance__token"
-                  :items="tokenSymbolsDd"
-                  type="border"
-                />
+                <!--                <base-dd-->
+                <!--                  v-model="ddValue"-->
+                <!--                  class="balance__token"-->
+                <!--                  :items="tokenSymbolsDd"-->
+                <!--                  disabled="true"-->
+                <!--                  type="border"-->
+                <!--                />-->
               </span>
               <span :class="[{'balance__currency__margin-bottom' : selectedToken !== $options.TokenSymbols.WQT}]">
                 <span
@@ -189,7 +190,7 @@ export default {
       });
     },
     tokenSymbolsDd() {
-      return [TokenSymbols.WQT, TokenSymbols.WUSD];
+      return [TokenSymbols.WQT];
     },
     walletTableFields() {
       return [
@@ -240,7 +241,7 @@ export default {
     async loadData() {
       this.isFetchingBalance = true;
       await Promise.all([
-        this.$store.dispatch('wallet/getTokenBalance', TokenSymbols.WUSD),
+        // this.$store.dispatch('wallet/getTokenBalance', TokenSymbols.WUSD),
         this.$store.dispatch('wallet/getBalance'),
         this.$store.dispatch('wallet/updateFrozenBalance'),
         this.getTransactions(),
@@ -270,14 +271,15 @@ export default {
               recipient,
               value: amount,
             });
-          } else {
-            feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
-              method: 'transfer',
-              abi: ERC20,
-              contractAddress: this.ENV.WORKNET_WUSD_TOKEN,
-              data: [recipient, value],
-            });
           }
+          // else {
+          //   feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
+          //     method: 'transfer',
+          //     abi: ERC20,
+          //     contractAddress: this.ENV.WORKNET_WUSD_TOKEN,
+          //     data: [recipient, value],
+          //   });
+          // }
           this.ShowModal({
             key: modals.transactionReceipt,
             fields: {
@@ -293,7 +295,7 @@ export default {
             submitMethod: async () => {
               this.CloseModal();
               this.SetLoader(true);
-              const action = selectedToken === TokenSymbols.WQT ? 'transfer' : 'transferWUSD';
+              const action = 'transfer';
               const res = await this.$store.dispatch(`wallet/${action}`, {
                 recipient,
                 value: amount,
