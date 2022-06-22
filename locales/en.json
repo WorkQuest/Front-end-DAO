@@ -90,7 +90,8 @@
     "edit": "Edit",
     "registration": "Registration",
     "emailConfirm": "A letter has been sent to your email address",
-    "emailConfirmTitle": "Check your email"
+    "emailConfirmTitle": "Check your email",
+    "emailConfirmNewLetter": "A new letter has been sent to your email"
   },
   "login": {
     "signIn": "Sign In",
@@ -160,7 +161,10 @@
     "addFile": "Add File",
     "change": "Change",
     "wqtCount": "{n} WQT",
-    "wusdCount": "{n} WUSD"
+    "wusdCount": "{n} WUSD",
+    "units": {
+      "seconds": "{count} second | {count} seconds | {count} seconds"
+    }
   },
   "priority": {
     "title": "Priority",
@@ -185,7 +189,9 @@
     "makingMoneyIsFast": "Making\n            money is fast.\n            When your\n            work is quest.",
     "dontHaveAnAccount": "Don’t have an account?",
     "signUp": "Sign Up",
-    "forgotYourPass": "Forgot your password?"
+    "forgotYourPass": "Forgot your password?",
+    "resend": "Resend email with code",
+    "enterEmail": "Please enter correct email and password"
   },
   "securityCheck": {
     "title": "Security check",
