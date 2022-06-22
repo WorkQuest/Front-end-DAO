@@ -195,6 +195,15 @@ extend('max_bn', {
   message: 'Value must be more than or equal {max}',
 });
 
+extend('alpha_spaces_dash', {
+  validate(value) {
+    const regex = /^[\p{L}\-_\s]+$/u;
+    return {
+      valid: regex.test(value),
+    };
+  },
+});
+
 export default ({ app }) => {
   configure({
     defaultMessage: (_field_, values) => app.i18n.t(`messages.${values._rule_}`, values),

@@ -84,9 +84,9 @@
               v-model="localUserData[cell.key]"
               :placeholder="cell.placeholder || $t('settings.nameInput')"
               :disabled="!isProfileEdit"
-              rules="required"
+              :rules="cell.rules"
               :data-selector="cell.selector"
-              :name="$t('modals.nameField')"
+              :name="$t(`signUp.${cell.key}`)"
               mode="icon"
               mode-error="small"
               class="profile-cont__field"
@@ -177,7 +177,7 @@
                 data-selector="FIELD-MAIN-PHONE"
                 clearable
                 show-code-on-list
-                required
+                :required="cell.required"
                 :disabled="cell.disabled"
                 :default-country-code="phone[cell.type].codeRegion"
                 size="lg"
@@ -212,6 +212,7 @@
               v-model="localUserData.additionalInfo.description"
               class="about__textarea"
               data-selector="TEXTAREA-ABOUT-ME"
+              rules="max:650"
               :class="{ 'about__textarea_disabled': !isProfileEdit }"
               :placeholder="$t('profile.aboutMe')"
               :disabled="!isProfileEdit"
@@ -230,6 +231,7 @@
               type="text"
               mode-error="small"
               class="profile-cont__social-input"
+              rules="max:50"
               @input="handleChangeSocial($event, cell.id)"
             >
               <template v-slot:left>
@@ -242,7 +244,7 @@
           </div>
           <div class="profile-cont__action action">
             <base-btn
-              mode="lightBlue"
+              mode="outline"
               class="action__btn"
               :disabled="invalid"
               @click="handleSubmit(handleClickEditBtn)"
@@ -368,6 +370,7 @@ export default {
         placeholder: this.$t('settings.mainNumberMissing'),
         isVerify: false,
         disabled: false,
+        required: true,
       };
       mainPhone.fullNumber = phone ? phone?.fullPhone : tempPhone?.fullPhone;
       mainPhone.isVerify = !!phone;
@@ -382,6 +385,7 @@ export default {
           placeholder: this.$t('settings.secondNumberMissing'),
           isVerify: false,
           disabled: false,
+          required: false,
         };
         secondPhone.fullNumber = additionalInfo.secondMobileNumber?.fullPhone || null;
         phones.push(secondPhone);
@@ -447,12 +451,14 @@ export default {
         model: localUserData.firstName,
         selector: 'FIRST-NAME',
         placeholder: firstName,
+        rules: 'required|max:15|alpha_spaces_dash',
       },
       {
         key: 'lastName',
         model: localUserData.lastName,
         selector: 'LAST-NAME',
         placeholder: lastName,
+        rules: 'required|max:15|alpha_spaces_dash',
       }];
     },
     handleClickEditBtn() {
@@ -467,7 +473,7 @@ export default {
       }
     },
     handleChangeSocial(val, key) {
-      if (!val) this.localUserData.additionalInfo.socialNetwork[key] = null;
+      if (!val && key) this.localUserData.additionalInfo.socialNetwork[key] = null;
     },
     selectAddress(address) {
       this.localUserData.additionalInfo.address = address.formatted;
@@ -565,7 +571,7 @@ export default {
       const {
         avatarId, firstName, lastName, location, additionalInfo: {
           address, socialNetwork, description, company, CEO, website,
-        }, priority, workplace, wagePerHour, userSpecializations, educations, workExperiences,
+        }, priority, workplace, payPeriod, costPerHour, userSpecializations, educations, workExperiences,
       } = this.localUserData;
 
       const mainPhone = this.updatedPhone.main;
@@ -603,7 +609,6 @@ export default {
         firstName,
         lastName,
         phoneNumber,
-        profileVisibility: this.profileVisibility,
         locationFull: {
           location,
           locationPlaceName: this.localUserData.additionalInfo.address,
@@ -617,8 +622,13 @@ export default {
       };
 
       if (userRole === UserRole.EMPLOYER) {
+        const { arrayRatingStatusCanRespondToQuest, arrayRatingStatusInMySearch } = this.localUserData.employerProfileVisibilitySetting;
         config = {
           ...config,
+          profileVisibility: {
+            ratingStatusCanRespondToQuest: arrayRatingStatusCanRespondToQuest,
+            ratingStatusInMySearch: arrayRatingStatusInMySearch,
+          },
           additionalInfo: {
             ...additionalInfo,
             secondMobileNumber,
@@ -628,11 +638,17 @@ export default {
           },
         };
       } else {
+        const { arrayRatingStatusCanInviteMeOnQuest, arrayRatingStatusInMySearch } = this.localUserData.workerProfileVisibilitySetting;
         config = {
           ...config,
+          profileVisibility: {
+            ratingStatusCanInviteMeOnQuest: arrayRatingStatusCanInviteMeOnQuest,
+            ratingStatusInMySearch: arrayRatingStatusInMySearch,
+          },
           priority,
           workplace,
-          wagePerHour,
+          payPeriod,
+          costPerHour,
           specializationKeys: userSpecializations.map((spec) => spec.path),
           additionalInfo: {
             ...additionalInfo,
