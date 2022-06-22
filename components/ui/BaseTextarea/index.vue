@@ -27,6 +27,7 @@
         :value="mode === 'convertDate' ? convertDate(value) : value"
         class="ctm-field__textarea"
         :placeholder="placeholder"
+        :disabled="disabled"
         @input="input"
       />
       <div class="ctm-field__selector">
