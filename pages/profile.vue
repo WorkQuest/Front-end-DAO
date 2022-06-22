@@ -200,24 +200,15 @@
               </base-field>
             </div>
           </div>
-          <div class="profile-cont__about about">
-            <label
-              for="about"
-              class="about__title"
-            >
-              {{ $t('profile.aboutMe') }}
-            </label>
-            <textarea
-              id="about"
-              v-model="localUserData.additionalInfo.description"
-              class="about__textarea"
-              data-selector="TEXTAREA-ABOUT-ME"
-              rules="max:650"
-              :class="{ 'about__textarea_disabled': !isProfileEdit }"
-              :placeholder="$t('profile.aboutMe')"
-              :disabled="!isProfileEdit"
-            />
-          </div>
+          <base-textarea
+            v-model="localUserData.additionalInfo.description"
+            class="about"
+            rules="max:650"
+            :label="$t('profile.aboutMe')"
+            :placeholder="$t('profile.aboutMe')"
+            :disabled="!isProfileEdit"
+            data-selector="TEXTAREA-ABOUT-ME"
+          />
           <div class="profile-cont__social social">
             <base-field
               v-for="cell in socialInputs"
@@ -226,7 +217,7 @@
               :placeholder="cell.placeholder || $t('settings.socialInput')"
               :disabled="!isProfileEdit"
               :data-selector="cell.selector"
-              is-hide-error
+              :name="cell.key"
               mode="icon"
               type="text"
               mode-error="small"
@@ -938,37 +929,9 @@ export default {
 }
 
 .about {
-  display: flex;
-  flex-direction: column;
-
-  &__title {
-    color: $black800;
-    font-size: 16px;
-    line-height: 21px;
-    margin-bottom: 5px;
-  }
-
-  &__textarea {
-    height: 86px;
-    padding: 10px 10px 0 10px;
-    border: none;
-    border-radius: 6px;
-    color: $black800;
-    background-color: $black100;
-    resize: none;
-
-    &:focus {
-      background-color: $white;
-      border: 1px solid $black0;
-    }
-
-    &_disabled {
-      background-color: $white;
-      border: 1px solid $black100;
-    }
-
-    &::placeholder {
-      color: $black100;
+  ::v-deep {
+    .ctm-field__body {
+      height: 114px;
     }
   }
 }
@@ -983,7 +946,7 @@ export default {
 .action {
   display: flex;
   justify-content: flex-end;
-
+  margin-top: 15px;
   &__btn {
     max-width: 250px;
   }
