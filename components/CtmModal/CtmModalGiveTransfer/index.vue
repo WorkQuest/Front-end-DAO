@@ -22,15 +22,6 @@
             :name="$t('modals.addressField')"
           />
         </div>
-        <!--        <div class="content__input input">-->
-        <!--          <span class="input__title">-->
-        <!--            {{ $t('modals.token') }}-->
-        <!--          </span>-->
-        <!--          <base-dd-->
-        <!--            v-model="ddValue"-->
-        <!--            :items="tokenSymbolsDd"-->
-        <!--          />-->
-        <!--        </div>-->
         <div class="content__input input">
           <span class="input__title">
             {{ $t('modals.amount') }}

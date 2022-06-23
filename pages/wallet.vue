@@ -39,13 +39,6 @@
                   </span>
                   {{ Floor(frozenBalance) }} {{ $options.TokenSymbols.WQT }}
                 </span>
-                <!--                <base-dd-->
-                <!--                  v-model="ddValue"-->
-                <!--                  class="balance__token"-->
-                <!--                  :items="tokenSymbolsDd"-->
-                <!--                  disabled="true"-->
-                <!--                  type="border"-->
-                <!--                />-->
               </span>
               <span :class="[{'balance__currency__margin-bottom' : selectedToken !== $options.TokenSymbols.WQT}]">
                 <span
@@ -241,7 +234,6 @@ export default {
     async loadData() {
       this.isFetchingBalance = true;
       await Promise.all([
-        // this.$store.dispatch('wallet/getTokenBalance', TokenSymbols.WUSD),
         this.$store.dispatch('wallet/getBalance'),
         this.$store.dispatch('wallet/updateFrozenBalance'),
         this.getTransactions(),
@@ -262,8 +254,8 @@ export default {
       this.ShowModal({
         key: modals.giveTransfer,
         submit: async ({ recipient, amount, selectedToken }) => {
-          const { convertToHex, convertToBech32 } = this;
-          recipient = convertToHex('wq', recipient);
+          const { ConvertToHex, ConvertToBech32 } = this;
+          recipient = ConvertToHex('wq', recipient);
           const value = new BigNumber(amount).shiftedBy(18).toString();
           let feeRes;
           if (selectedToken === TokenSymbols.WQT) {
@@ -272,19 +264,11 @@ export default {
               value: amount,
             });
           }
-          // else {
-          //   feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
-          //     method: 'transfer',
-          //     abi: ERC20,
-          //     contractAddress: this.ENV.WORKNET_WUSD_TOKEN,
-          //     data: [recipient, value],
-          //   });
-          // }
           this.ShowModal({
             key: modals.transactionReceipt,
             fields: {
-              from: { name: this.$t('modals.fromAddress'), value: convertToBech32('wq', this.userData.wallet.address) },
-              to: { name: this.$t('modals.toAddress'), value: convertToBech32('wq', recipient) },
+              from: { name: this.$t('modals.fromAddress'), value: ConvertToBech32('wq', this.userData.wallet.address) },
+              to: { name: this.$t('modals.toAddress'), value: ConvertToBech32('wq', recipient) },
               amount: {
                 name: this.$t('modals.amount'),
                 value: amount,
