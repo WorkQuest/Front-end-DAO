@@ -7,7 +7,7 @@
   }
 
   & > caption {
-    padding: 20px !important;
+    padding: 20px 20px 10px !important;
   }
 
   &__title {
@@ -15,7 +15,7 @@
   }
 
   &__header {
-    font-size: 16px !important;
+    font-size: 12px !important;
   }
 
   &__th {
@@ -24,11 +24,10 @@
 }
 
 th:first-child {
-  padding-left: 20px !important;
+  padding-left: 23px !important;
 }
 
 th:last-child {
-  padding-right: 20px !important;
   background-position: right calc(20px) center !important;
 }
 
@@ -42,6 +41,9 @@ td:last-child {
 
 th {
   font-weight: 550 !important;
+  padding: 0 !important;
+  height: 27px !important;
+  line-height: 27px;
 }
 
 td {
