@@ -255,12 +255,11 @@ export default {
         key: modals.giveTransfer,
         submit: async ({ recipient, amount, selectedToken }) => {
           const { ConvertToHex, ConvertToBech32 } = this;
-          recipient = ConvertToHex('wq', recipient);
-          const value = new BigNumber(amount).shiftedBy(18).toString();
+          const recipientHexAddress = ConvertToHex('wq', recipient);
           let feeRes;
           if (selectedToken === TokenSymbols.WQT) {
             feeRes = await this.$store.dispatch('wallet/getTransferFeeData', {
-              recipient,
+              recipient: recipientHexAddress,
               value: amount,
             });
           }
@@ -268,7 +267,7 @@ export default {
             key: modals.transactionReceipt,
             fields: {
               from: { name: this.$t('modals.fromAddress'), value: ConvertToBech32('wq', this.userData.wallet.address) },
-              to: { name: this.$t('modals.toAddress'), value: ConvertToBech32('wq', recipient) },
+              to: { name: this.$t('modals.toAddress'), value: recipient },
               amount: {
                 name: this.$t('modals.amount'),
                 value: amount,
@@ -281,7 +280,7 @@ export default {
               this.SetLoader(true);
               const action = 'transfer';
               const res = await this.$store.dispatch(`wallet/${action}`, {
-                recipient,
+                recipient: recipientHexAddress,
                 value: amount,
               });
               this.SetLoader(false);
