@@ -12,7 +12,7 @@ export default {
         access, refresh, social, userStatus,
       } = response.result;
       commit('setTokens', {
-        refresh: payload.isRememberMeSelected ? refresh : '',
+        refresh,
         access,
         social,
         userStatus,
