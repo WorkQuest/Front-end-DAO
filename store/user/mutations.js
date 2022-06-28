@@ -11,14 +11,11 @@ export default {
     access, refresh, social, userStatus,
   }) {
     state.tokens.access = access;
-    state.tokens.refresh = refresh || '';
+    state.tokens.refresh = refresh;
     const opts = { path: '/' };
-    if (refresh) {
-      opts.maxAge = JSON.parse(atob(refresh.split('.')[1])).exp - new Date().getTime() / 1000 || 86400 * 30;
-      this.$cookies.set('refresh', refresh, opts);
-    }
-    this.$cookies.set('socialNetwork', social, opts);
     this.$cookies.set('access', access, opts);
+    this.$cookies.set('refresh', refresh, opts);
+    this.$cookies.set('socialNetwork', social, opts);
     if (userStatus) {
       this.$cookies.set('userStatus', userStatus, opts);
     }
