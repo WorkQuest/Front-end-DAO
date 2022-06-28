@@ -88,7 +88,7 @@ export default {
       const mainFields = [
         { key: 'validatorName', label: this.$t('validators.table.name') },
         { key: 'investorAddress', label: this.$t('validators.table.address') },
-        { key: 'copy', label: '', sortable: true },
+        { key: 'copy', label: '', sortable: false },
       ];
       if (this.tableType === 'validators') {
         mainFields.push(
@@ -97,7 +97,6 @@ export default {
           { key: 'stake', label: this.$t('validators.table.stake'), sortable: true },
           { key: 'minStake', label: this.$t('validators.table.minStake'), sortable: true },
           { key: 'slots', label: this.$t('validators.table.slots'), sortable: true },
-          { key: 'menu', label: '' },
         );
       } else {
         mainFields.push(
