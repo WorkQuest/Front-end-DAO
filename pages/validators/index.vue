@@ -25,17 +25,19 @@
             </button>
           </div>
         </div>
-        <base-table
-          class="table__txs"
-          :fields="tableFields"
-          :items="validators"
-        />
-        <base-pager
-          v-if="totalPages > 1"
-          v-model="currPage"
-          class="validators__pagination"
-          :total-pages="totalPages"
-        />
+        <div class="validators__txs">
+          <base-table
+            class="table__txs"
+            :fields="tableFields"
+            :items="validators"
+          />
+          <base-pager
+            v-if="totalPages > 1"
+            v-model="currPage"
+            class="validators__pagination"
+            :total-pages="totalPages"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -148,7 +150,6 @@ export default {
   overflow: auto;
   &__txs {
     width: 1180px;
-    margin-top: 20px;
   }
 }
 .validators {
@@ -163,11 +164,14 @@ export default {
     max-width: 1180px;
     width: calc(100vw - 40px);
     height: 100%;
-    overflow: auto;
   }
   &__head {
     display: flex;
     justify-content: space-between;
+  }
+  &__txs {
+    margin-top: 20px;
+    overflow: auto;
   }
 }
 .table__link {
