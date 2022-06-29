@@ -474,7 +474,8 @@ export default {
       const [proposalRes] = await Promise.all([
         this.$store.dispatch('proposals/getProposalInfoById', this.card.createdEvent.contractProposalId),
         this.getReceipt(),
-        this.$store.dispatch('proposals/isChairpersonRole'), // TODO: remove check chairperson and move logic to admin panel
+        // TODO: check it, logic for chair person will be here
+        this.$store.dispatch('proposals/isChairpersonRole'),
       ]);
       if (!proposalRes.ok) return;
       const {

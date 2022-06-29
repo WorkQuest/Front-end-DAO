@@ -9,7 +9,7 @@ export default () => ({
     isDescending: true,
   },
 
-  // TODO: remove
+  // TODO: check it, logic for chair person will be here
   isChairpersonRole: false,
   chairpersonRoleHash: null,
 });

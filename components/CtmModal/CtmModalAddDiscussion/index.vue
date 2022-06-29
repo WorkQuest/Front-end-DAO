@@ -18,6 +18,7 @@
       <validation-observer
         ref="observer"
         v-slot="{ invalid }"
+        tag="div"
       >
         <div class="add-discussion__subtitle">
           {{ $t('modals.discussionTopic') }}
@@ -210,7 +211,7 @@ export default {
   }
 
   &__field {
-    width: 444px !important;
+    width: 100%;
     height: 46px !important;
     background: #F3F7FA !important;
     justify-content: center;
@@ -219,7 +220,7 @@ export default {
   }
 
   &__body {
-    width: 444px;
+    width: 100%;
     height: 174px;
     margin: 5px 0 15px 0;
   }
@@ -272,29 +273,15 @@ export default {
   }
 }
 
-@include _767 {
-  .add-discussion {
-    width: 90vw !important;
-
-    &__content {
-      width: 100%;
-    }
-  }
-}
-
 @include _575 {
   .add-discussion {
-    &__field, &__body {
-      width: 80vw !important;
-    }
+    min-width: 80vw;
   }
 }
 
 @include _380 {
   .add-discussion {
-    &__field, &__body {
-      width: 75vw !important;
-    }
+    min-width: 75vw;
   }
 }
 </style>

@@ -349,10 +349,16 @@ export default {
   @include text-simple;
   color: $black800;
 
+  &__body{
+    max-width: 1180px;
+    width: calc(100vw - 40px);
+  }
+
   &__table {
     background: $white;
     border-radius: 6px;
     margin: 20px 0;
+
     position: relative;
     overflow: auto;
 
@@ -598,6 +604,10 @@ export default {
 
     &__social {
       grid-template-columns: repeat(2, 1fr);
+    }
+
+    &__main-inp-cont {
+      grid-column: 2;
     }
   }
   .action {

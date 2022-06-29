@@ -861,8 +861,6 @@ export default {
 }
 
 .avatar {
-  border: 1px solid $black0;
-
   &:hover .edit {
     opacity: 1;
   }
@@ -871,6 +869,7 @@ export default {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border: 1px solid $black0;
   }
 
   &__edit {
@@ -1076,7 +1075,6 @@ export default {
   .avatar__img {
     height: 149px;
     width: 149px;
-    border: 1px solid $black0;
     border-radius: 6px;
   }
   .profile-cont {
@@ -1099,16 +1097,11 @@ export default {
       justify-content: center;
       margin-bottom: 17px;
     }
+  }
 
-    .security {
+  .wq-profile {
+    &__security {
       grid-template-columns: 1fr;
-
-      &__password,
-      &__auth {
-        display: flex;
-        justify-items: unset;
-        justify-content: space-between;
-      }
     }
   }
 

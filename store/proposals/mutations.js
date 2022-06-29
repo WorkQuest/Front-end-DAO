@@ -12,7 +12,7 @@ export default {
     state.filters = payload;
   },
 
-  // TODO: remove
+  // TODO: check it, logic for chair person will be here
   setIsChairpersonRole(state, payload) {
     state.isChairpersonRole = payload;
   },

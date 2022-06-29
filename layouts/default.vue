@@ -251,9 +251,7 @@
               </div>
             </div>
           </transition>
-          <div
-            class="template__main"
-          >
+          <div class="template__main">
             <nuxt />
           </div>
         </div>
@@ -1496,6 +1494,25 @@ export default {
 }
 
 @include _991 {
+  .ctm-menu {
+    &__toggle {
+      display: flex;
+    }
+  }
+  .header {
+    &__links {
+      display: none;
+    }
+
+    &__button_profile {
+      display: none;
+    }
+  }
+  .mobile {
+    &__links {
+      display: flex;
+    }
+  }
   .template {
     min-height: 100vh;
 
@@ -1524,27 +1541,6 @@ export default {
   }
 }
 
-@include _767 {
-  .ctm-menu {
-    &__toggle {
-      display: flex;
-    }
-  }
-  .header {
-    &__links {
-      display: none;
-    }
-
-    &__button_profile {
-      display: none;
-    }
-  }
-  .mobile {
-    &__links {
-      display: flex;
-    }
-  }
-}
 @include _767 {
   .footer {
     &__content {
