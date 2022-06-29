@@ -30,7 +30,11 @@
             >
               {{ authorName() }}
             </span>
-            <button class="user__star">
+            <!--  TODO: hid user star-->
+            <button
+              v-if="false"
+              class="user__star"
+            >
               <img
                 :src="currentDiscussion.star ? require('~/assets/img/ui/star_checked.svg'): require('~/assets/img/ui/star_simple.svg')"
                 :alt="currentDiscussion.star ? 'checkedStar' : 'simpleStar'"

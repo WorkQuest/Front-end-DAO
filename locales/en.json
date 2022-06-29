@@ -90,7 +90,8 @@
     "edit": "Edit",
     "registration": "Registration",
     "emailConfirm": "A letter has been sent to your email address",
-    "emailConfirmTitle": "Check your email"
+    "emailConfirmTitle": "Check your email",
+    "emailConfirmNewLetter": "A new letter has been sent to your email"
   },
   "login": {
     "signIn": "Sign In",
@@ -160,7 +161,10 @@
     "addFile": "Add File",
     "change": "Change",
     "wqtCount": "{n} WQT",
-    "wusdCount": "{n} WUSD"
+    "wusdCount": "{n} WUSD",
+    "units": {
+      "seconds": "{count} second | {count} seconds | {count} seconds"
+    }
   },
   "priority": {
     "title": "Priority",
@@ -185,7 +189,9 @@
     "makingMoneyIsFast": "Making\n            money is fast.\n            When your\n            work is quest.",
     "dontHaveAnAccount": "Don’t have an account?",
     "signUp": "Sign Up",
-    "forgotYourPass": "Forgot your password?"
+    "forgotYourPass": "Forgot your password?",
+    "resend": "Resend email with code",
+    "enterEmail": "Please enter correct email and password"
   },
   "securityCheck": {
     "title": "Security check",
@@ -410,6 +416,7 @@
     "undelegateAmount": "Undelegate {n} WQT",
     "delegate": "Delegate",
     "investorAddress": "Investor address",
+    "validatorAddress": "Validator address",
     "tokensNumber": "Tokens Number",
     "tokensDelegated": "Enter number of tokens that will be delegated",
     "max": "MAX",
@@ -518,7 +525,7 @@
       "status": "Status",
       "block": "Block",
       "timestamp": "Timestamp",
-      "transferred": "Tokens Transferred",
+      "transferred": "Amount",
       "value": "Quantity",
       "empty": "Transactions list is empty",
       "trxFee": "Transaction Fee"
@@ -545,7 +552,7 @@
     "addProposals": "Add proposal",
     "title": "Proposals",
     "voting": "Voting",
-    "textBanner": "Official DAO proposals are the only way to create enforceable change on the WorkQuest protocol.\nTo create a new DAO proposal, you need at least 10,000 (locked for one year).",
+    "textBanner": "Official DAO proposals are the only way to create enforceable change on the WorkQuest protocol.\nTo create a new DAO proposal, you need at least 10,000.",
     "ui": {
       "search": "Search proposal",
       "addTime": "Added time",

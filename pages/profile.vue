@@ -84,9 +84,9 @@
               v-model="localUserData[cell.key]"
               :placeholder="cell.placeholder || $t('settings.nameInput')"
               :disabled="!isProfileEdit"
-              rules="required"
+              :rules="cell.rules"
               :data-selector="cell.selector"
-              :name="$t('modals.nameField')"
+              :name="$t(`signUp.${cell.key}`)"
               mode="icon"
               mode-error="small"
               class="profile-cont__field"
@@ -177,7 +177,7 @@
                 data-selector="FIELD-MAIN-PHONE"
                 clearable
                 show-code-on-list
-                required
+                :required="cell.required"
                 :disabled="cell.disabled"
                 :default-country-code="phone[cell.type].codeRegion"
                 size="lg"
@@ -200,23 +200,15 @@
               </base-field>
             </div>
           </div>
-          <div class="profile-cont__about about">
-            <label
-              for="about"
-              class="about__title"
-            >
-              {{ $t('profile.aboutMe') }}
-            </label>
-            <textarea
-              id="about"
-              v-model="localUserData.additionalInfo.description"
-              class="about__textarea"
-              data-selector="TEXTAREA-ABOUT-ME"
-              :class="{ 'about__textarea_disabled': !isProfileEdit }"
-              :placeholder="$t('profile.aboutMe')"
-              :disabled="!isProfileEdit"
-            />
-          </div>
+          <base-textarea
+            v-model="localUserData.additionalInfo.description"
+            class="about"
+            rules="max:650"
+            :label="$t('profile.aboutMe')"
+            :placeholder="$t('profile.aboutMe')"
+            :disabled="!isProfileEdit"
+            data-selector="TEXTAREA-ABOUT-ME"
+          />
           <div class="profile-cont__social social">
             <base-field
               v-for="cell in socialInputs"
@@ -225,11 +217,12 @@
               :placeholder="cell.placeholder || $t('settings.socialInput')"
               :disabled="!isProfileEdit"
               :data-selector="cell.selector"
-              is-hide-error
+              :name="cell.key"
               mode="icon"
               type="text"
               mode-error="small"
               class="profile-cont__social-input"
+              rules="max:50"
               @input="handleChangeSocial($event, cell.id)"
             >
               <template v-slot:left>
@@ -242,7 +235,7 @@
           </div>
           <div class="profile-cont__action action">
             <base-btn
-              mode="lightBlue"
+              mode="outline"
               class="action__btn"
               :disabled="invalid"
               @click="handleSubmit(handleClickEditBtn)"
@@ -368,6 +361,7 @@ export default {
         placeholder: this.$t('settings.mainNumberMissing'),
         isVerify: false,
         disabled: false,
+        required: true,
       };
       mainPhone.fullNumber = phone ? phone?.fullPhone : tempPhone?.fullPhone;
       mainPhone.isVerify = !!phone;
@@ -382,6 +376,7 @@ export default {
           placeholder: this.$t('settings.secondNumberMissing'),
           isVerify: false,
           disabled: false,
+          required: false,
         };
         secondPhone.fullNumber = additionalInfo.secondMobileNumber?.fullPhone || null;
         phones.push(secondPhone);
@@ -447,12 +442,14 @@ export default {
         model: localUserData.firstName,
         selector: 'FIRST-NAME',
         placeholder: firstName,
+        rules: 'required|max:15|alpha_spaces_dash',
       },
       {
         key: 'lastName',
         model: localUserData.lastName,
         selector: 'LAST-NAME',
         placeholder: lastName,
+        rules: 'required|max:15|alpha_spaces_dash',
       }];
     },
     handleClickEditBtn() {
@@ -467,7 +464,7 @@ export default {
       }
     },
     handleChangeSocial(val, key) {
-      if (!val) this.localUserData.additionalInfo.socialNetwork[key] = null;
+      if (!val && key) this.localUserData.additionalInfo.socialNetwork[key] = null;
     },
     selectAddress(address) {
       this.localUserData.additionalInfo.address = address.formatted;
@@ -565,7 +562,7 @@ export default {
       const {
         avatarId, firstName, lastName, location, additionalInfo: {
           address, socialNetwork, description, company, CEO, website,
-        }, priority, workplace, wagePerHour, userSpecializations, educations, workExperiences,
+        }, priority, workplace, payPeriod, costPerHour, userSpecializations, educations, workExperiences,
       } = this.localUserData;
 
       const mainPhone = this.updatedPhone.main;
@@ -603,7 +600,6 @@ export default {
         firstName,
         lastName,
         phoneNumber,
-        profileVisibility: this.profileVisibility,
         locationFull: {
           location,
           locationPlaceName: this.localUserData.additionalInfo.address,
@@ -617,8 +613,13 @@ export default {
       };
 
       if (userRole === UserRole.EMPLOYER) {
+        const { arrayRatingStatusCanRespondToQuest, arrayRatingStatusInMySearch } = this.localUserData.employerProfileVisibilitySetting;
         config = {
           ...config,
+          profileVisibility: {
+            ratingStatusCanRespondToQuest: arrayRatingStatusCanRespondToQuest,
+            ratingStatusInMySearch: arrayRatingStatusInMySearch,
+          },
           additionalInfo: {
             ...additionalInfo,
             secondMobileNumber,
@@ -628,11 +629,17 @@ export default {
           },
         };
       } else {
+        const { arrayRatingStatusCanInviteMeOnQuest, arrayRatingStatusInMySearch } = this.localUserData.workerProfileVisibilitySetting;
         config = {
           ...config,
+          profileVisibility: {
+            ratingStatusCanInviteMeOnQuest: arrayRatingStatusCanInviteMeOnQuest,
+            ratingStatusInMySearch: arrayRatingStatusInMySearch,
+          },
           priority,
           workplace,
-          wagePerHour,
+          payPeriod,
+          costPerHour,
           specializationKeys: userSpecializations.map((spec) => spec.path),
           additionalInfo: {
             ...additionalInfo,
@@ -854,8 +861,6 @@ export default {
 }
 
 .avatar {
-  border: 1px solid $black0;
-
   &:hover .edit {
     opacity: 1;
   }
@@ -864,6 +869,7 @@ export default {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border: 1px solid $black0;
   }
 
   &__edit {
@@ -922,37 +928,9 @@ export default {
 }
 
 .about {
-  display: flex;
-  flex-direction: column;
-
-  &__title {
-    color: $black800;
-    font-size: 16px;
-    line-height: 21px;
-    margin-bottom: 5px;
-  }
-
-  &__textarea {
-    height: 86px;
-    padding: 10px 10px 0 10px;
-    border: none;
-    border-radius: 6px;
-    color: $black800;
-    background-color: $black100;
-    resize: none;
-
-    &:focus {
-      background-color: $white;
-      border: 1px solid $black0;
-    }
-
-    &_disabled {
-      background-color: $white;
-      border: 1px solid $black100;
-    }
-
-    &::placeholder {
-      color: $black100;
+  ::v-deep {
+    .ctm-field__body {
+      height: 114px;
     }
   }
 }
@@ -967,7 +945,7 @@ export default {
 .action {
   display: flex;
   justify-content: flex-end;
-
+  margin-top: 15px;
   &__btn {
     max-width: 250px;
   }
@@ -1097,7 +1075,6 @@ export default {
   .avatar__img {
     height: 149px;
     width: 149px;
-    border: 1px solid $black0;
     border-radius: 6px;
   }
   .profile-cont {
@@ -1120,16 +1097,11 @@ export default {
       justify-content: center;
       margin-bottom: 17px;
     }
+  }
 
-    .security {
+  .wq-profile {
+    &__security {
       grid-template-columns: 1fr;
-
-      &__password,
-      &__auth {
-        display: flex;
-        justify-items: unset;
-        justify-content: space-between;
-      }
     }
   }
 

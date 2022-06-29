@@ -40,6 +40,7 @@ export const Path = Object.freeze({
   VALIDATORS: '/validators',
   DISCUSSIONS: '/discussions',
   WALLET: '/wallet',
+  PROFILE: '/profile',
 });
 
 export const UserRole = Object.freeze({

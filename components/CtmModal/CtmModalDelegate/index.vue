@@ -7,7 +7,7 @@
       <validation-observer v-slot="{handleSubmit, valid}">
         <div class="content__address address">
           <label class="address__label">
-            {{ $t('modals.investorAddress') }}
+            {{ options.delegateMode === $options.DelegateMode.INVESTORS ? $t('modals.investorAddress') : $t('modals.validatorAddress') }}
           </label>
           <div class="delegate__input">
             <base-field

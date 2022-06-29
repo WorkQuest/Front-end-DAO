@@ -2,7 +2,7 @@
   <div class="investor">
     <div
       v-if="investor"
-      class="investor__profile"
+      class="investor__profile investor__body"
     >
       <div class="investor__header header">
         <base-btn
@@ -226,7 +226,7 @@ export default {
           timestamp: this.$moment(t.block.timestamp).format('lll'),
           status: !!t.status,
           value: `${getStyledAmount(t.tokenTransfers[0]?.amount || t.value, false, decimals)} ${symbol}`,
-          transaction_fee: new BigNumber(t.gas_price).multipliedBy(t.gas_used),
+          transaction_fee: getStyledAmount(new BigNumber(t.gas_price).multipliedBy(t.gas_used), false),
           from_address: t.from_address_hash.hex,
           to_address: t.to_address_hash.hex,
         };
@@ -349,13 +349,22 @@ export default {
   @include text-simple;
   color: $black800;
 
+  &__body{
+    max-width: 1180px;
+    width: calc(100vw - 40px);
+  }
+
   &__table {
     background: $white;
     border-radius: 6px;
     margin: 20px 0;
+
     position: relative;
     overflow: auto;
-    width: calc(100vw - 40px);
+
+    /deep/ td {
+      padding: 12px 10px !important;
+    }
 
     &_txs {
       width: 1180px;
@@ -595,6 +604,10 @@ export default {
 
     &__social {
       grid-template-columns: repeat(2, 1fr);
+    }
+
+    &__main-inp-cont {
+      grid-column: 2;
     }
   }
   .action {

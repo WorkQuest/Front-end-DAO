@@ -31,7 +31,7 @@
           mode="icon"
           autocomplete="off"
           :name="$t('signUp.firstName')"
-          rules="required_if|alpha_spaces"
+          rules="required_if|alpha_spaces|alpha_spaces_dash|max:15"
           data-selector="FIRST-NAME"
         >
           <template v-slot:left>
@@ -47,7 +47,7 @@
           :placeholder="$t('signUp.lastName')"
           mode="icon"
           :name="$t('signUp.lastName')"
-          rules="required_if|alpha_spaces"
+          rules="required_if|alpha_spaces|alpha_spaces_dash|max:15"
           data-selector="LAST-NAME"
         >
           <template v-slot:left>
@@ -148,6 +148,7 @@ export default {
       };
       const response = await this.$store.dispatch('user/signUp', payload);
       if (response?.ok) {
+        this.$cookies.set('userStatus', response.result.userStatus);
         this.showConfirmEmailModal();
         await this.$router.push(Path.SIGN_IN);
       }

@@ -1,18 +1,19 @@
-import { error } from '~/utils/success-error';
+import { success, error } from '~/utils/success-error';
 import { connectWithMnemonic } from '~/utils/wallet';
 
 export default {
   async signIn({ commit, dispatch }, payload) {
     try {
+      const { email, password, isRememberMeSelected } = payload;
       const response = await this.$axios.$post('/v1/auth/login', {
-        email: payload.email,
-        password: payload.password,
+        email,
+        password,
       });
       const {
         access, refresh, social, userStatus,
       } = response.result;
       commit('setTokens', {
-        refresh: payload.isRememberMeSelected ? refresh : '',
+        refresh: isRememberMeSelected ? refresh : null,
         access,
         social,
         userStatus,
@@ -35,6 +36,15 @@ export default {
       commit('setTokens', response.result);
       return response;
     } catch (e) {
+      return error();
+    }
+  },
+  async resendEmail(_, { email }) {
+    try {
+      const { result } = await this.$axios.$post('/v1/auth/dao/resend-email', { email });
+      return success(result);
+    } catch (e) {
+      console.error('Error in user/resendEmail: ', e);
       return error();
     }
   },
@@ -116,9 +126,9 @@ export default {
   },
   async editProfile({ commit }, { config, method }) {
     try {
-      const { result, ok } = await this.$axios.$put(method, config);
+      const result = await this.$axios.$put(method, config);
       commit('setUserData', result);
-      return ok;
+      return result;
     } catch (e) {
       return console.log(e);
     }

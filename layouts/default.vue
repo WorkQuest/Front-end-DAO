@@ -91,7 +91,10 @@
                     v-if="isShowProfile"
                     class="profile"
                   >
-                    <div class="profile__header">
+                    <div
+                      class="profile__header"
+                      @click="redirectToProfile"
+                    >
                       <div class="profile__avatar">
                         <img
                           v-if="imageData"
@@ -248,9 +251,7 @@
               </div>
             </div>
           </transition>
-          <div
-            class="template__main"
-          >
+          <div class="template__main">
             <nuxt />
           </div>
         </div>
@@ -362,6 +363,7 @@
 import { mapGetters } from 'vuex';
 import ClickOutside from 'vue-click-outside';
 import moment from 'moment';
+import { Path } from '~/utils/enums';
 
 export default {
   scrollToTop: true,
@@ -526,6 +528,9 @@ export default {
       this.isShowNotify = false;
       this.isShowAdditionalMenu = false;
       this.isShowLocale = false;
+    },
+    redirectToProfile() {
+      this.$router.push(`${Path.PROFILE}`);
     },
   },
 };
@@ -1489,6 +1494,25 @@ export default {
 }
 
 @include _991 {
+  .ctm-menu {
+    &__toggle {
+      display: flex;
+    }
+  }
+  .header {
+    &__links {
+      display: none;
+    }
+
+    &__button_profile {
+      display: none;
+    }
+  }
+  .mobile {
+    &__links {
+      display: flex;
+    }
+  }
   .template {
     min-height: 100vh;
 
@@ -1517,27 +1541,6 @@ export default {
   }
 }
 
-@include _767 {
-  .ctm-menu {
-    &__toggle {
-      display: flex;
-    }
-  }
-  .header {
-    &__links {
-      display: none;
-    }
-
-    &__button_profile {
-      display: none;
-    }
-  }
-  .mobile {
-    &__links {
-      display: flex;
-    }
-  }
-}
 @include _767 {
   .footer {
     &__content {

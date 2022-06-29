@@ -39,12 +39,6 @@
                   </span>
                   {{ Floor(frozenBalance) }} {{ $options.TokenSymbols.WQT }}
                 </span>
-                <base-dd
-                  v-model="ddValue"
-                  class="balance__token"
-                  :items="tokenSymbolsDd"
-                  type="border"
-                />
               </span>
               <span :class="[{'balance__currency__margin-bottom' : selectedToken !== $options.TokenSymbols.WQT}]">
                 <span
@@ -182,14 +176,14 @@ export default {
           timestamp: this.$moment(t.block.timestamp).format('lll'),
           status: !!t.status,
           value: `${getStyledAmount(t.tokenTransfers[0]?.amount || t.value, false, decimals)} ${symbol}`,
-          transaction_fee: new BigNumber(t.gas_price).multipliedBy(t.gas_used),
+          transaction_fee: getStyledAmount(new BigNumber(t.gas_price).multipliedBy(t.gas_used), false),
           from_address: t.from_address_hash.hex,
           to_address: t.to_address_hash.hex,
         };
       });
     },
     tokenSymbolsDd() {
-      return [TokenSymbols.WQT, TokenSymbols.WUSD];
+      return [TokenSymbols.WQT];
     },
     walletTableFields() {
       return [
@@ -240,7 +234,6 @@ export default {
     async loadData() {
       this.isFetchingBalance = true;
       await Promise.all([
-        this.$store.dispatch('wallet/getTokenBalance', TokenSymbols.WUSD),
         this.$store.dispatch('wallet/getBalance'),
         this.$store.dispatch('wallet/updateFrozenBalance'),
         this.getTransactions(),
@@ -261,28 +254,20 @@ export default {
       this.ShowModal({
         key: modals.giveTransfer,
         submit: async ({ recipient, amount, selectedToken }) => {
-          const { convertToHex, convertToBech32 } = this;
-          recipient = convertToHex('wq', recipient);
-          const value = new BigNumber(amount).shiftedBy(18).toString();
+          const { ConvertToHex, ConvertToBech32 } = this;
+          const recipientHexAddress = ConvertToHex('wq', recipient);
           let feeRes;
           if (selectedToken === TokenSymbols.WQT) {
             feeRes = await this.$store.dispatch('wallet/getTransferFeeData', {
-              recipient,
+              recipient: recipientHexAddress,
               value: amount,
-            });
-          } else {
-            feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
-              method: 'transfer',
-              abi: ERC20,
-              contractAddress: this.ENV.WORKNET_WUSD_TOKEN,
-              data: [recipient, value],
             });
           }
           this.ShowModal({
             key: modals.transactionReceipt,
             fields: {
-              from: { name: this.$t('modals.fromAddress'), value: convertToBech32('wq', this.userData.wallet.address) },
-              to: { name: this.$t('modals.toAddress'), value: convertToBech32('wq', recipient) },
+              from: { name: this.$t('modals.fromAddress'), value: ConvertToBech32('wq', this.userData.wallet.address) },
+              to: { name: this.$t('modals.toAddress'), value: recipient },
               amount: {
                 name: this.$t('modals.amount'),
                 value: amount,
@@ -293,9 +278,9 @@ export default {
             submitMethod: async () => {
               this.CloseModal();
               this.SetLoader(true);
-              const action = selectedToken === TokenSymbols.WQT ? 'transfer' : 'transferWUSD';
+              const action = 'transfer';
               const res = await this.$store.dispatch(`wallet/${action}`, {
-                recipient,
+                recipient: recipientHexAddress,
                 value: amount,
               });
               this.SetLoader(false);
@@ -580,6 +565,10 @@ export default {
   &__txs {
     margin: 0 !important;
     border-radius: 6px !important;
+  }
+
+  /deep/ td {
+    padding: 12px 10px !important;
   }
 
   &__empty {
