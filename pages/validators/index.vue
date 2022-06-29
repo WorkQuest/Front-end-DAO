@@ -1,40 +1,44 @@
 <template>
   <div class="validators">
-    <div class="validators__body">
-      <div class="validators__head head">
-        <div class="head__title">
-          {{ $t('validators.title') }}
-        </div>
-        <div class="head__navigation">
-          <button
-            class="head__button"
-            :class="{ 'head__button_active' : tableType === 'validators' }"
-            data-selector="VALIDATORS"
-            @click="tableType = 'validators'"
-          >
+    <div class="validators__container">
+      <div class="validators__body">
+        <div class="validators__head head">
+          <div class="head__title">
             {{ $t('validators.title') }}
-          </button>
-          <button
-            class="head__button"
-            :class="{ 'head__button_active' : tableType === 'candidates' }"
-            data-selector="CANDIDATES"
-            @click="tableType = 'candidates'"
-          >
-            {{ $t('validators.candidates') }}
-          </button>
+          </div>
+          <div class="head__navigation">
+            <button
+              class="head__button"
+              :class="{ 'head__button_active' : tableType === 'validators' }"
+              data-selector="VALIDATORS"
+              @click="tableType = 'validators'"
+            >
+              {{ $t('validators.title') }}
+            </button>
+            <button
+              class="head__button"
+              :class="{ 'head__button_active' : tableType === 'candidates' }"
+              data-selector="CANDIDATES"
+              @click="tableType = 'candidates'"
+            >
+              {{ $t('validators.candidates') }}
+            </button>
+          </div>
+        </div>
+        <div class="validators__txs">
+          <base-table
+            class="table__txs"
+            :fields="tableFields"
+            :items="validators"
+          />
+          <base-pager
+            v-if="totalPages > 1"
+            v-model="currPage"
+            class="validators__pagination"
+            :total-pages="totalPages"
+          />
         </div>
       </div>
-      <base-table
-        class="validators__table"
-        :fields="tableFields"
-        :items="validators"
-      />
-      <base-pager
-        v-if="totalPages > 1"
-        v-model="currPage"
-        class="validators__pagination"
-        :total-pages="totalPages"
-      />
     </div>
   </div>
 </template>
@@ -140,22 +144,33 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.table {
+  position: relative;
+  overflow: auto;
+  &__txs {
+    width: 1180px;
+  }
+}
 .validators {
   @include main;
   @include text-simple;
+  &__container{
+    display: flex;
+    justify-content: center;
+  }
   &__body {
     margin-top: 30px;
     max-width: 1180px;
+    width: calc(100vw - 40px);
     height: 100%;
-  }
-  &__table{
-    overflow: auto;
-    margin: 15px 0;
-    position: relative;
   }
   &__head {
     display: flex;
     justify-content: space-between;
+  }
+  &__txs {
+    margin-top: 20px;
+    overflow: auto;
   }
 }
 .table__link {
@@ -189,16 +204,7 @@ export default {
     }
   }
 }
-@include _1199 {
-  .validators {
-    &__body {
-      padding: 0 20px;
-    }
-    &__table {
-      width: calc(100vw - 40px);
-    }
-  }
-}
+
 @include _575 {
   .validators {
     &__head {
