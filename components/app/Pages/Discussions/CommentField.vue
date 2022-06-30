@@ -272,7 +272,6 @@ export default {
     margin: 20px 0 20px 20px;
     overflow-wrap: break-word;
     word-break: break-all;
-    width: 100%;
     display: flex;
   }
 }

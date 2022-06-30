@@ -861,6 +861,10 @@ export default {
 }
 
 .avatar {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   &:hover .edit {
     opacity: 1;
   }
@@ -873,9 +877,7 @@ export default {
   }
 
   &__edit {
-    position: relative;
-    top: -60%;
-    left: 35%;
+    position: absolute;
     opacity: 0;
 
     width: 40px;

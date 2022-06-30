@@ -889,10 +889,6 @@ export default {
     }
   }
   .info {
-    &__body {
-      padding: 0;
-    }
-
     &__header,
     &__title {
       margin-left: 15px;

@@ -704,4 +704,25 @@ export default {
     }
   }
 }
+
+@include _350 {
+  .profile {
+    &__main-data {
+      grid-template-columns: 100px 120px;
+    }
+
+    & .about {
+      max-width: 240px;
+    }
+
+    &__social {
+      grid-template-columns: 240px;
+    }
+    .action {
+      &__button {
+        min-width: 240px;
+      }
+    }
+  }
+}
 </style>
