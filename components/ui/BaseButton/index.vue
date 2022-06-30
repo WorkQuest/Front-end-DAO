@@ -290,8 +290,8 @@ export default {
   &_disabled {
     pointer-events: none;
     border: 1px solid rgba(0, 131, 199, 0.1);
-    color: $black400;
-    background: $black0;
+    color: $black400 !important;
+    background: $black0 !important;
   }
 
   &_outline {
