@@ -146,9 +146,11 @@ export default {
   },
   async mounted() {
     this.acceptedTypes = this.accept.replace(/\s/g, '').split(',');
+    const { result: votingPeriod } = await this.$store.dispatch('proposals/getVotingPeriod');
+
     const start = this.$moment();
     this.votingStartInput = this.$moment(start).format('DD/MM/YYYY');
-    this.votingEndInput = this.$moment(start).add(1, 'M').format('DD/MM/YYYY');
+    this.votingEndInput = this.$moment(start).add(votingPeriod, 'seconds').format('DD/MM/YYYY');
   },
   methods: {
     async addProposal() {
