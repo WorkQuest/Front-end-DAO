@@ -213,18 +213,17 @@ export default {
   },
   created() {
     const { token } = this.$route.query;
+    if (token) sessionStorage.setItem('confirmToken', String(token));
     window.addEventListener('beforeunload', this.beforeunload);
-    if (token) {
-      sessionStorage.setItem('confirmToken', String(token));
-    }
   },
   async mounted() {
     this.continueTimer();
-    this.isLoginWithSocial = this.$cookies.get('socialNetwork');
     const access = this.$cookies.get('access');
     const refresh = this.$cookies.get('refresh');
     this.userStatus = this.$cookies.get('userStatus');
-    if (access && +this.userStatus === UserStatuses.Confirmed) await this.$router.push(Path.PROPOSALS);
+    if (+this.userStatus === UserStatuses.Confirmed && access) await this.$router.push(Path.PROPOSALS);
+
+    this.isLoginWithSocial = this.$cookies.get('socialNetwork');
     if (this.isLoginWithSocial && access && +this.userStatus === UserStatuses.Confirmed) {
       this.SetLoader(true);
       await this.$store.dispatch('user/getUserData');
@@ -235,10 +234,11 @@ export default {
       this.$store.commit('user/setTokens', {
         access,
         refresh,
-        userStatus: this.userStatus,
+        userStatus: +this.userStatus,
         social: this.isLoginWithSocial,
       });
     }
+
     if (sessionStorage.getItem('confirmToken')) this.ShowToast(this.$t('messages.loginToContinue'), ' ');
   },
   beforeDestroy() {
@@ -271,8 +271,10 @@ export default {
       if (this.step === WalletState.ImportMnemonic) {
         if (this.isLoginWithSocial) {
           this.step = WalletState.Default;
-          this.$store.dispatch('user/logout');
-        } else this.step = !this.userWalletAddress ? WalletState.ImportOrCreate : WalletState.Default;
+        } else {
+          this.step = !this.userWalletAddress ? WalletState.ImportOrCreate : WalletState.Default;
+        }
+        this.$store.dispatch('user/logout');
         return;
       }
       if (this.step === WalletState.SaveMnemonic) {
@@ -286,18 +288,24 @@ export default {
     goStep(step) {
       this.step = step;
     },
-    redirectUser() {
+    async redirectUser() {
       this.addressAssigned = true;
       this.$cookies.set('userLogin', true, { path: '/' });
       // redirect to confirm access if token exists & unconfirmed account
       const confirmToken = sessionStorage.getItem('confirmToken');
       if (this.userStatus === UserStatuses.Unconfirmed && confirmToken) {
-        this.$router.push(`${Path.ROLE}/?token=${confirmToken}`);
+        await this.$router.push(`${Path.ROLE}/?token=${confirmToken}`);
         return;
       }
       sessionStorage.removeItem('confirmToken');
-      if (this.userStatus === UserStatuses.NeedSetRole) this.$router.push(Path.ROLE);
-      else this.$router.push(Path.PROPOSALS);
+      if (!this.userData.id) await this.$store.dispatch('user/getUserData');
+
+      const mnemonicInLocalStorage = JSON.parse(localStorage.getItem('mnemonic'));
+      const isWalletInMnemonicList = mnemonicInLocalStorage && mnemonicInLocalStorage[this.userData.wallet.address];
+      if (!isWalletInMnemonicList && !this.isLoginWithSocial) return;
+
+      if (this.userStatus === UserStatuses.NeedSetRole) await this.$router.push(Path.ROLE);
+      else await this.$router.push(Path.PROPOSALS);
     },
     async signIn() {
       if (this.isLoading) return;
@@ -522,7 +530,10 @@ export default {
     clearCookies() {
       const mnemonicInLocalStorage = JSON.parse(localStorage.getItem('mnemonic'));
       const isWalletInMnemonicList = mnemonicInLocalStorage && mnemonicInLocalStorage[this.userWalletAddress];
-      if (this.userData.id && (isWalletInMnemonicList || localStorage.getItem('mnemonic'))) return;
+      if (this.isLoginWithSocial
+          || (this.userData.id && (isWalletInMnemonicList || localStorage.getItem('mnemonic')))) {
+        return;
+      }
       this.$cookies.remove('access');
       this.$cookies.remove('refresh');
       this.$cookies.remove('userLogin');
