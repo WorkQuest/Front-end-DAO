@@ -14,9 +14,13 @@
           :label="$tc('privacy.agree')"
         >
           <template v-slot:sub>
-            <span class="privacy__link">
+            <a
+              class="privacy__link"
+              :href="$options.LEGAL_INFO.PRIVACY_POLICY"
+              target="_blank"
+            >
               {{ $t('privacy.privacyLink') }}
-            </span>
+            </a>
           </template>
         </base-checkbox>
         <base-checkbox
@@ -25,9 +29,13 @@
           :label="$tc('privacy.agree')"
         >
           <template v-slot:sub>
-            <span class="privacy__link">
+            <a
+              class="privacy__link"
+              :href="$options.LEGAL_INFO.TERM_CONDITIONS"
+              target="_blank"
+            >
               {{ $t('privacy.termsLink') }}
-            </span>
+            </a>
           </template>
         </base-checkbox>
         <base-checkbox
@@ -36,14 +44,19 @@
           :label="$tc('privacy.agree')"
         >
           <template v-slot:sub>
-            <span class="privacy__link">
+            <a
+              class="privacy__link"
+              :href="$options.LEGAL_INFO.AML_POLICY"
+              target="_blank"
+            >
               {{ $t('privacy.amlLink') }}
-            </span>
+            </a>
           </template>
         </base-checkbox>
         <base-btn
           class="privacy__action"
           :disabled="!isAllChecked"
+          data-selector="OK"
           @click="onSubmit()"
         >
           {{ $t('meta.ok') }}
@@ -56,9 +69,11 @@
 <script>
 import { mapGetters } from 'vuex';
 import { Path, UserStatuses } from '~/utils/enums';
+import { LEGAL_INFO } from '~/utils/constants/footer';
 
 export default {
   name: 'PrivacyModal',
+  LEGAL_INFO,
   data() {
     return {
       privacy: false,
@@ -77,19 +92,27 @@ export default {
   },
   methods: {
     async onSubmit() {
-      const response = await this.$store.dispatch('user/confirm', {
-        confirmCode: sessionStorage.getItem('confirmToken'),
-        role: this.options.role,
-      });
+      // Role page
+      let response;
+      if (this.options.isSocialNetwork) {
+        response = await this.$store.dispatch('user/setUserRole', {
+          role: this.options.role,
+        });
+      } else {
+        response = await this.$store.dispatch('user/confirm', {
+          confirmCode: sessionStorage.getItem('confirmToken'),
+          role: this.options.role,
+        });
+      }
+
       if (response?.ok) {
-        const { callback } = this.options;
         this.$cookies.set('userLogin', true, { path: Path.ROOT });
         this.$cookies.set('userStatus', UserStatuses.Confirmed, { path: Path.ROOT });
         sessionStorage.removeItem('confirmToken');
         this.ShowToast(this.$t('modals.yourAccountVerified'), this.$t('modals.success'));
-        await callback();
+        await this.options.callback();
       } else {
-        // Wrong confirm token
+        // Wrong confirm token or errors with social network login
         await this.$store.dispatch('user/logout');
         await this.$router.push(Path.SIGN_IN);
       }
@@ -102,22 +125,18 @@ export default {
 <style lang="scss" scoped>
 .ctm-modal {
   @include modalKit;
-
   &__desc {
     text-align: left;
   }
 }
-
 .privacy {
   max-width: 382px !important;
-
   &__forms {
     padding-top: 25px;
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 15px;
   }
-
   &__link {
     font-family: 'Inter', sans-serif;
     font-style: normal;
@@ -127,7 +146,6 @@ export default {
     text-decoration-line: underline;
     color: $blue;
   }
-
   &__action {
     margin-top: 20px;
   }
