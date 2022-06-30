@@ -288,9 +288,8 @@ export default {
   }
 
   &_disabled {
-    pointer-events: none;
-    border: 1px solid rgba(0, 131, 199, 0.1);
-    color: $black400 !important;
+    pointer-events: none !important;
+    color: $black200 !important;
     background: $black0 !important;
   }
 
