@@ -36,7 +36,7 @@ export default {
     this.$cookies.remove('socialNetwork');
     sessionStorage.clear();
     state.userData = {};
-    state.tokens = { access: '', refresh: '' };
+    state.tokens = { access: null, refresh: null };
   },
   setCurrentUserPosition(state, data) {
     state.currentUserPosition = data;
