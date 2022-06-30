@@ -139,7 +139,10 @@
           </div>
         </div>
       </div>
-      <div class="investor__table">
+      <div
+        v-if="transactionsCount !== 0"
+        class="investor__table"
+      >
         <base-table
           class="investor__table_txs"
           :title="$t('wallet.table.trx')"
@@ -158,6 +161,10 @@
           />
         </div>
       </div>
+      <empty-data
+        v-else
+        :description="$t('wallet.table.empty')"
+      />
       <base-pager
         v-if="totalPages > 1"
         v-model="currentPage"

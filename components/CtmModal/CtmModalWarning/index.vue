@@ -56,7 +56,7 @@ export default {
 <style lang="scss" scoped>
 .warning {
   @include text-simple;
-  min-width: 380px !important;
+  min-width: 360px;
 
   &__content {
     padding: 0 28px 30px;
@@ -89,6 +89,12 @@ export default {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 30px;
+  }
+}
+
+@include _380 {
+  .warning {
+    min-width: 90vw;
   }
 }
 </style>
