@@ -612,9 +612,9 @@ export default {
 .proposal {
   @include main;
   @include text-simple;
+  padding: 20px 20px 0 20px;
 
   &__body {
-    margin: 30px 15px 0 15px;
     height: 100%;
   }
 
@@ -647,7 +647,7 @@ export default {
   }
 
   &__history {
-    margin-top: 30px;
+    margin-top: 20px;
   }
 }
 
@@ -1033,21 +1033,21 @@ export default {
 @include _1300 {
   .proposal {
     &__content {
-      display: flex;
-      flex-direction: column;
-      margin-right: 30px;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-row-gap: 20px;
     }
 
-    &__history {
-      margin-right: 30px;
-    }
   }
 }
 
 @include _991 {
+  .proposal {
+    padding: 20px 10px 0 10px;
+  }
   .content {
     grid-template-columns: 1fr;
-    grid-row-gap: 20px;
+    grid-row-gap: 10px;
   }
 }
 
@@ -1061,27 +1061,8 @@ export default {
     justify-content: center;
   }
   .proposal {
-    &__header {
-      &-wrapper {
-        display: grid;
-        padding: 20px;
-      }
-    }
-
-    &__back, &__header {
-      margin: 0;
-    }
-
-    &__content {
-      margin-right: 10px;
-    }
-
-    &__history {
-      margin-right: 10px;
-    }
 
     &__body {
-      margin: 22px 5px;
       @include mobile-container;
     }
   }
@@ -1126,11 +1107,6 @@ export default {
 }
 
 @include _480 {
-  .proposal {
-    &__body {
-      margin: 22px 0 0 0;
-    }
-  }
   .forum {
     &__link {
       padding: 0;
@@ -1154,6 +1130,16 @@ export default {
 
     &-delimiter {
       display: none;
+    }
+  }
+}
+
+@include _350 {
+  .proposal {
+    padding: 20px 0 0 0;
+
+    &__header-wrapper {
+      margin-left: 10px;
     }
   }
 }
