@@ -2,7 +2,9 @@
 import { Path, UserStatuses } from '~/utils/enums';
 
 // eslint-disable-next-line func-names
-export default async function ({app, redirect, store, route}) {
+export default async function ({
+  app, redirect, store, route,
+}) {
   try {
     const access = app.$cookies.get('access');
     const refresh = app.$cookies.get('refresh');
