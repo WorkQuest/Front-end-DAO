@@ -336,4 +336,15 @@ export default {
     }
   }
 }
+@include _350 {
+  .comment {
+    &__bottom {
+      margin: 0;
+    }
+
+    &__btn {
+      margin-right: 10px;
+    }
+  }
+}
 </style>

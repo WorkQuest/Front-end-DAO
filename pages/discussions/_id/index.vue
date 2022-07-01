@@ -918,5 +918,19 @@ export default {
       }
     }
   }
+
+  .info {
+    &__body {
+      padding: 10px;
+    }
+  }
+}
+
+@include _380 {
+  .comment {
+    &__field {
+      padding: 10px;
+    }
+  }
 }
 </style>

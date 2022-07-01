@@ -388,4 +388,25 @@ export default {
     }
   }
 }
+@include _480 {
+  .comment {
+    margin-left: 10px;
+    &__user {
+      margin: 10px 0 0 10px;
+    }
+    &__bottom {
+      margin: 15px 10px 15px 10px;
+      flex-direction: column;
+      align-items: end;
+    }
+  }
+
+  .bottom {
+    &__btn {
+      width: max-content;
+      padding: 0 10px;
+      justify-content: end;
+    }
+  }
+}
 </style>

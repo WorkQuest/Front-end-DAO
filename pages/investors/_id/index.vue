@@ -680,7 +680,10 @@ export default {
 
     &__avatar {
       grid-row: 1;
-      margin-bottom: 17px;
+    }
+
+    &__status {
+      grid-column: 1/3;
     }
 
     &__main-inp-cont {
