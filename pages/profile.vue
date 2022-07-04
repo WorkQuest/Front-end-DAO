@@ -1143,6 +1143,18 @@ export default {
     max-width: 100px !important;
     flex: 0 0 100px !important;
   }
+
+  .profile-cont {
+    &__grid-container {
+      padding: 10px;
+    }
+  }
+
+  .wq-profile {
+    &__body {
+      padding: 0 10px;
+    }
+  }
 }
 
 </style>
