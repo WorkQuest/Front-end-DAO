@@ -5,8 +5,8 @@ export default () => ({
   userEnable2FA: {},
   userDisable2FA: {},
   tokens: {
-    access: '',
-    refresh: '',
+    access: null,
+    refresh: null,
   },
   userData: {
     statusKYC: false,

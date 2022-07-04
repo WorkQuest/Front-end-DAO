@@ -62,6 +62,17 @@ export default {
       return error(errorCodes.GetVotes, e.message, e);
     }
   },
+
+  async getVotingPeriod(_) {
+    try {
+      const res = await fetchWalletContractData('votingPeriod', WQVoting, ENV.WORKNET_VOTING);
+      return success(res);
+    } catch (e) {
+      console.error('getVotingPeriod', e);
+      return error(errorCodes.GetVotingPeriod, e.message, e);
+    }
+  },
+
   async getPastVotes({ _ }, proposalBlockNumber) {
     try {
       const res = await fetchWalletContractData(
