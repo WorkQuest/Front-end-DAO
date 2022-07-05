@@ -929,10 +929,8 @@ export default {
 }
 
 .about {
-  ::v-deep {
-    .ctm-field__body {
-      height: 114px;
-    }
+  :deep(.ctm-field__body) {
+    height: 114px;
   }
 }
 
@@ -1132,13 +1130,13 @@ export default {
 }
 
 @include _380 {
-  ::v-deep .country-selector.lg .country-selector__label {
+  :deep(.country-selector.lg .country-selector__label) {
     font-size: 10px;
   }
-  ::v-deep .input-tel.lg .input-tel__label {
+  :deep(.input-tel.lg .input-tel__label) {
     font-size: 10px;
   }
-  ::v-deep .vue-phone-number-input .select-country-container {
+  :deep(.vue-phone-number-input .select-country-container) {
     min-width: unset !important;
     max-width: 100px !important;
     flex: 0 0 100px !important;
