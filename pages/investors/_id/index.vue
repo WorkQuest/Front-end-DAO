@@ -103,7 +103,7 @@
               >
                 <template v-slot:left>
                   <span
-                    class="icon input-icon media"
+                    class="social__icon input-icon"
                     :class="input.icon"
                     @click="goToSocialMedia(input)"
                   />
@@ -541,16 +541,16 @@ export default {
   &__network {
     height: 46px;
   }
+
+  &__icon {
+    cursor: pointer;
+  }
 }
 
 .input-icon {
   font-size: 23px;
   color: $blue;
   line-height: 36px;
-}
-
-.media {
-  cursor: pointer;
 }
 
 .action {
