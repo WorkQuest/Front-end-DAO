@@ -85,7 +85,8 @@
                 class="about__textarea"
                 title="test"
                 :disabled="true"
-                :placeholder="investor.additionalInfo ? (investor.additionalInfo.description || $t('investor.notFilled')) : ''"
+                :value="investor.additionalInfo ? investor.additionalInfo.description : ''"
+                :placeholder="$t('investor.notFilled')"
               />
             </div>
             <div class="profile__social social">
