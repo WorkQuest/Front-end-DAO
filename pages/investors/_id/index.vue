@@ -101,16 +101,11 @@
                 :data-selector="`SOCIAL-${input.key}`"
               >
                 <template v-slot:left>
-                  <a
-                    target="_blank"
-                    :href="`https://${input.key}.com/${input.nickName}`"
-                    class="social__link"
-                  >
-                    <span
-                      class="icon input-icon"
-                      :class="input.icon"
-                    />
-                  </a>
+                  <span
+                    class="icon input-icon"
+                    :class="input.icon"
+                    @click="goToSocialMedia(input)"
+                  />
                 </template>
               </base-field>
             </div>
@@ -259,7 +254,6 @@ export default {
       ];
     },
     socialInputsArr() {
-      console.log('INVESTOR :', this.investor);
       return [
         { key: 'instagram', icon: 'icon-instagram', nickName: this.investor?.additionalInfo?.socialNetwork.instagram },
         { key: 'twitter', icon: 'icon-twitter', nickName: this.investor?.additionalInfo?.socialNetwork.twitter },
@@ -297,6 +291,11 @@ export default {
     await this.getTransactions();
   },
   methods: {
+    goToSocialMedia(input) {
+      if (input.nickName) {
+        window.open(`https://${input.key}.com/${input.nickName}`, '_blank');
+      }
+    },
     async getTransactions() {
       await this.$store.dispatch('wallet/getTransactions', {
         limit: this.txsPerPage,
@@ -314,7 +313,6 @@ export default {
       return '';
     },
     async getInvestorData() {
-      console.log('investor before:', this.investor);
       if (this.isMyProfile) this.investor = this.userData;
       else {
         const [investor] = await Promise.all([
@@ -322,7 +320,6 @@ export default {
           this.$store.dispatch('wallet/getDelegates'),
         ]);
         this.investor = investor;
-        console.log('investor after:', this.investor);
       }
 
       if (this.investor?.wallet?.address) {
@@ -542,10 +539,6 @@ export default {
 .social {
   &__network {
     height: 46px;
-  }
-
-  &__link {
-    text-decoration: none;
   }
 }
 

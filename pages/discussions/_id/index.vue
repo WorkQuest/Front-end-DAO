@@ -673,6 +673,7 @@ export default {
     font-size: 24px;
     line-height: 32px;
     margin: 20px 0 10px 0;
+    word-break: break-word;
   }
 
   &__date {

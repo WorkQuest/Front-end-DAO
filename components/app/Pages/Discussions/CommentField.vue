@@ -405,7 +405,7 @@ export default {
       display: grid;
       max-width: 320px;
       grid-template-columns: max-content 200px;
-      gap: 0px 0px;
+      gap: 0;
       grid-template-areas:
     "user__avatar user__name"
     "user__date . "

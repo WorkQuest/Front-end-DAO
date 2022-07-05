@@ -337,19 +337,19 @@ export default {
   }
 }
 @include _480 {
-  .user {
-    display: grid;
-    max-width: 320px;
-    grid-template-columns: max-content 200px;
-    gap: 0px 0px;
-    grid-template-areas:
-    "user__avatar user__name"
-    "user__date . "
-  }
   .comment {
     &__field {
       padding: 10px;
     }
+  }
+  .user {
+    display: grid;
+    max-width: 320px;
+    grid-template-columns: max-content 200px;
+    gap: 0;
+    grid-template-areas:
+    "user__avatar user__name"
+    "user__date . "
   }
 }
 
