@@ -101,10 +101,16 @@
                 :data-selector="`SOCIAL-${input.key}`"
               >
                 <template v-slot:left>
-                  <span
-                    class="icon input-icon"
-                    :class="input.icon"
-                  />
+                  <a
+                    target="_blank"
+                    :href="`https://${input.key}.com/${input.nickName}`"
+                    class="social__link"
+                  >
+                    <span
+                      class="icon input-icon"
+                      :class="input.icon"
+                    />
+                  </a>
                 </template>
               </base-field>
             </div>
@@ -253,11 +259,12 @@ export default {
       ];
     },
     socialInputsArr() {
+      console.log('INVESTOR :', this.investor);
       return [
-        { key: 'instagram', icon: 'icon-instagram' },
-        { key: 'twitter', icon: 'icon-twitter' },
-        { key: 'linkedin', icon: 'icon-LinkedIn' },
-        { key: 'facebook', icon: 'icon-facebook' },
+        { key: 'instagram', icon: 'icon-instagram', nickName: this.investor?.additionalInfo?.socialNetwork.instagram },
+        { key: 'twitter', icon: 'icon-twitter', nickName: this.investor?.additionalInfo?.socialNetwork.twitter },
+        { key: 'linkedin', icon: 'icon-LinkedIn', nickName: this.investor?.additionalInfo?.socialNetwork.linkedin },
+        { key: 'facebook', icon: 'icon-facebook', nickName: this.investor?.additionalInfo?.socialNetwork.facebook },
       ];
     },
     walletTableFields() {
@@ -307,6 +314,7 @@ export default {
       return '';
     },
     async getInvestorData() {
+      console.log('investor before:', this.investor);
       if (this.isMyProfile) this.investor = this.userData;
       else {
         const [investor] = await Promise.all([
@@ -314,6 +322,7 @@ export default {
           this.$store.dispatch('wallet/getDelegates'),
         ]);
         this.investor = investor;
+        console.log('investor after:', this.investor);
       }
 
       if (this.investor?.wallet?.address) {
@@ -533,6 +542,10 @@ export default {
 .social {
   &__network {
     height: 46px;
+  }
+
+  &__link {
+    text-decoration: none;
   }
 }
 

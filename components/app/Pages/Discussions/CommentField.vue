@@ -391,8 +391,24 @@ export default {
 @include _480 {
   .comment {
     margin-left: 10px;
+    align-items: flex-end;
+    &__field {
+      max-width: 300px;
+    }
+
+    &__description {
+      word-break: break-word;
+    }
+
     &__user {
       margin: 10px 0 0 10px;
+      display: grid;
+      max-width: 320px;
+      grid-template-columns: max-content 200px;
+      gap: 0px 0px;
+      grid-template-areas:
+    "user__avatar user__name"
+    "user__date . "
     }
     &__bottom {
       margin: 15px 10px 15px 10px;

@@ -247,7 +247,7 @@ export default {
     color: #7C838D;
     margin: 20px 0;
     overflow-wrap: break-word;
-    word-break: break-all;
+    word-break: break-word;
     width: 100%;
     display: flex;
   }
@@ -336,6 +336,23 @@ export default {
     }
   }
 }
+@include _480 {
+  .user {
+    display: grid;
+    max-width: 320px;
+    grid-template-columns: max-content 200px;
+    gap: 0px 0px;
+    grid-template-areas:
+    "user__avatar user__name"
+    "user__date . "
+  }
+  .comment {
+    &__field {
+      padding: 10px;
+    }
+  }
+}
+
 @include _350 {
   .comment {
     &__bottom {

@@ -230,6 +230,7 @@ export default {
   }
 
   &__left {
+    cursor: pointer;
     position: absolute;
     left: 12px;
     padding-left: 5px;
