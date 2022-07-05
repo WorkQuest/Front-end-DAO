@@ -85,7 +85,8 @@
                 class="about__textarea"
                 title="test"
                 :disabled="true"
-                :placeholder="investor.additionalInfo ? (investor.additionalInfo.description || $t('investor.notFilled')) : ''"
+                :value="investor.additionalInfo ? investor.additionalInfo.description : ''"
+                :placeholder="$t('investor.notFilled')"
               />
             </div>
             <div class="profile__social social">
@@ -102,8 +103,9 @@
               >
                 <template v-slot:left>
                   <span
-                    class="icon input-icon"
+                    class="social__icon input-icon"
                     :class="input.icon"
+                    @click="goToSocialMedia(input)"
                   />
                 </template>
               </base-field>
@@ -254,10 +256,10 @@ export default {
     },
     socialInputsArr() {
       return [
-        { key: 'instagram', icon: 'icon-instagram' },
-        { key: 'twitter', icon: 'icon-twitter' },
-        { key: 'linkedin', icon: 'icon-LinkedIn' },
-        { key: 'facebook', icon: 'icon-facebook' },
+        { key: 'instagram', icon: 'icon-instagram', nickName: this.investor?.additionalInfo?.socialNetwork.instagram },
+        { key: 'twitter', icon: 'icon-twitter', nickName: this.investor?.additionalInfo?.socialNetwork.twitter },
+        { key: 'linkedin', icon: 'icon-LinkedIn', nickName: this.investor?.additionalInfo?.socialNetwork.linkedin },
+        { key: 'facebook', icon: 'icon-facebook', nickName: this.investor?.additionalInfo?.socialNetwork.facebook },
       ];
     },
     walletTableFields() {
@@ -290,6 +292,11 @@ export default {
     await this.getTransactions();
   },
   methods: {
+    goToSocialMedia(input) {
+      if (input.nickName) {
+        window.open(`https://${input.key}.com/${input.nickName}`, '_blank');
+      }
+    },
     async getTransactions() {
       await this.$store.dispatch('wallet/getTransactions', {
         limit: this.txsPerPage,
@@ -534,6 +541,10 @@ export default {
   &__network {
     height: 46px;
   }
+
+  &__icon {
+    cursor: pointer;
+  }
 }
 
 .input-icon {
@@ -680,7 +691,10 @@ export default {
 
     &__avatar {
       grid-row: 1;
-      margin-bottom: 17px;
+    }
+
+    &__status {
+      grid-column: 1/3;
     }
 
     &__main-inp-cont {
@@ -701,6 +715,27 @@ export default {
     }
     &__btns {
       grid-template-columns: 1fr;
+    }
+  }
+}
+
+@include _350 {
+  .profile {
+    &__main-data {
+      grid-template-columns: 100px 120px;
+    }
+
+    & .about {
+      max-width: 240px;
+    }
+
+    &__social {
+      grid-template-columns: 240px;
+    }
+    .action {
+      &__button {
+        min-width: 240px;
+      }
     }
   }
 }

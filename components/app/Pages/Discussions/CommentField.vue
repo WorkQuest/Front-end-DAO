@@ -272,7 +272,6 @@ export default {
     margin: 20px 0 20px 20px;
     overflow-wrap: break-word;
     word-break: break-all;
-    width: 100%;
     display: flex;
   }
 }
@@ -386,6 +385,43 @@ export default {
     cursor: pointer;
     &_right {
       margin: 7px 7px 7px 0;
+    }
+  }
+}
+@include _480 {
+  .comment {
+    margin-left: 10px;
+    align-items: flex-end;
+    &__field {
+      max-width: 300px;
+    }
+
+    &__description {
+      word-break: break-word;
+    }
+
+    &__user {
+      margin: 10px 0 0 10px;
+      display: grid;
+      max-width: 320px;
+      grid-template-columns: max-content 200px;
+      gap: 0;
+      grid-template-areas:
+    "user__avatar user__name"
+    "user__date . "
+    }
+    &__bottom {
+      margin: 15px 10px 15px 10px;
+      flex-direction: column;
+      align-items: end;
+    }
+  }
+
+  .bottom {
+    &__btn {
+      width: max-content;
+      padding: 0 10px;
+      justify-content: end;
     }
   }
 }

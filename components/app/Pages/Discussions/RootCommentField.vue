@@ -247,7 +247,7 @@ export default {
     color: #7C838D;
     margin: 20px 0;
     overflow-wrap: break-word;
-    word-break: break-all;
+    word-break: break-word;
     width: 100%;
     display: flex;
   }
@@ -333,6 +333,34 @@ export default {
       &:hover {
         color: #E9EDF2;
       }
+    }
+  }
+}
+@include _480 {
+  .comment {
+    &__field {
+      padding: 10px;
+    }
+  }
+  .user {
+    display: grid;
+    max-width: 320px;
+    grid-template-columns: max-content 200px;
+    gap: 0;
+    grid-template-areas:
+    "user__avatar user__name"
+    "user__date . "
+  }
+}
+
+@include _350 {
+  .comment {
+    &__bottom {
+      margin: 0;
+    }
+
+    &__btn {
+      margin-right: 10px;
     }
   }
 }

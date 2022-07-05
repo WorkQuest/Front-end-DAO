@@ -861,6 +861,10 @@ export default {
 }
 
 .avatar {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   &:hover .edit {
     opacity: 1;
   }
@@ -869,13 +873,10 @@ export default {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border: 1px solid $black0;
   }
 
   &__edit {
-    position: relative;
-    top: -60%;
-    left: 35%;
+    position: absolute;
     opacity: 0;
 
     width: 40px;
@@ -1118,6 +1119,40 @@ export default {
         justify-items: center;
         justify-content: center;
       }
+    }
+  }
+}
+
+@include _575 {
+  .profile-cont {
+    &__social {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+@include _380 {
+  ::v-deep .country-selector.lg .country-selector__label {
+    font-size: 10px;
+  }
+  ::v-deep .input-tel.lg .input-tel__label {
+    font-size: 10px;
+  }
+  ::v-deep .vue-phone-number-input .select-country-container {
+    min-width: unset !important;
+    max-width: 100px !important;
+    flex: 0 0 100px !important;
+  }
+
+  .profile-cont {
+    &__grid-container {
+      padding: 10px;
+    }
+  }
+
+  .wq-profile {
+    &__body {
+      padding: 0 10px;
     }
   }
 }

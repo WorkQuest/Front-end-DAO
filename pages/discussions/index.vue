@@ -169,14 +169,8 @@ export default {
       margin-right: 20px;
     }
 
-    &__header {
-      margin-left: 20px;
-      margin-right: 20px;
-    }
-
     &__cards {
       grid-template-columns: 1fr;
-      margin: 20px;
     }
 
     &__pager {
@@ -204,7 +198,11 @@ export default {
 }
 
 @include _480 {
+  .discussion {
+    padding: 10px;
+  }
   .discussions {
+    padding: 5px;
     &__btn {
       font-size: 12px;
     }
