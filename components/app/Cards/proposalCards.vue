@@ -606,7 +606,7 @@ export default {
       grid-template-columns: 1fr;
     }
   }
-  .dd::v-deep .dd__btn {
+  .dd:deep(.dd__btn) {
     padding: 0 10px;
   }
 }

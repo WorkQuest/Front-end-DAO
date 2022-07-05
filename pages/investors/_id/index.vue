@@ -376,7 +376,7 @@ export default {
     position: relative;
     overflow: auto;
 
-    /deep/ td {
+    :deep(td) {
       padding: 12px 10px !important;
     }
 
