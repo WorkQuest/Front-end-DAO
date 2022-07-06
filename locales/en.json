@@ -63,7 +63,7 @@
     "attemptsExceeded": "Number of attempts exceeded",
     "loginWithSecret": "Please login with secret phrase",
     "invalidPassword": "Invalid password",
-    "loginToContinue": "Please login to continue",
+    "loginToContinue": "Your account has been successfully created. Please login to continue",
     "walletNotLinked": "Wallet not linked"
   },
   "labels": {
