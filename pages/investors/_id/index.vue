@@ -185,7 +185,9 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
-import { TokenSymbolByContract, TokenSymbols, UserRole } from '~/utils/enums';
+import {
+  DelegateMode, TokenSymbolByContract, TokenSymbols, UserRole,
+} from '~/utils/enums';
 import { getStyledAmount } from '~/utils/wallet';
 
 export default {
@@ -340,6 +342,7 @@ export default {
     async openModalDelegate() {
       this.ShowModal({
         key: modals.delegate,
+        delegateMode: DelegateMode.INVESTORS,
         investorAddress: this.investorAddress,
         callback: async () => this.updateDelegatedUser(),
       });
@@ -349,6 +352,7 @@ export default {
         key: modals.undelegate,
         name: `${this.investor.firstName} ${this.investor.lastName}`,
         tokensAmount: this.votingPower,
+        delegateMode: DelegateMode.INVESTORS,
         callback: async () => this.updateDelegatedUser(),
       });
     },
