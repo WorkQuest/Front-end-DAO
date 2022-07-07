@@ -121,7 +121,7 @@ export const UserStatuses = Object.freeze({
 });
 
 export const ExplorerUrl = {
-  master: 'https://testnet-explorer.workquest.co',
+  master: 'https://explorer.workquest.co',
   testnet: 'https://testnet-explorer.workquest.co',
   stage: 'https://stage-explorer.workquest.co',
   develop: 'https://dev-explorer.workquest.co',
