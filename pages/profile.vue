@@ -757,6 +757,7 @@ export default {
   border-radius: 6px;
 
   &__social-input {
+    margin-top: 30px;
     height: 46px;
   }
 
