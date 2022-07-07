@@ -126,9 +126,9 @@ export default {
   },
   async editProfile({ commit }, { config, method }) {
     try {
-      const result = await this.$axios.$put(method, config);
+      const { result, ok } = await this.$axios.$put(method, config);
       commit('setUserData', result);
-      return result;
+      return ok;
     } catch (e) {
       return console.log(e);
     }

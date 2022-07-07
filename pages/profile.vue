@@ -650,16 +650,8 @@ export default {
         };
       }
       const method = `/v1/${userRole}/profile/edit`;
-
-      const payload = {
-        config,
-        method,
-      };
-
-      const response = await this.$store.dispatch('user/editProfile', payload);
-
-      if (response) this.showModalSave();
-
+      const ok = await this.$store.dispatch('user/editProfile', { config, method });
+      if (ok) this.showModalSave();
       this.setCurrData();
     },
   },
@@ -929,7 +921,7 @@ export default {
 }
 
 .about {
-  :deep(.ctm-field__body) {
+  ::v-deep .ctm-field__body {
     height: 114px;
   }
 }
