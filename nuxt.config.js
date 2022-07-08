@@ -44,6 +44,9 @@ export default {
   styleResources: {
     scss: ['./assets/scss/resources.scss'],
   },
+  router: {
+    middleware: ['router'],
+  },
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/style-resources',

@@ -304,8 +304,17 @@ export default {
       const isWalletInMnemonicList = mnemonicInLocalStorage && mnemonicInLocalStorage[this.userData.wallet.address];
       if (!isWalletInMnemonicList && !this.isLoginWithSocial) return;
 
-      if (this.userStatus === UserStatuses.NeedSetRole) await this.$router.push(Path.ROLE);
-      else await this.$router.push(Path.PROPOSALS);
+      if (this.userStatus === UserStatuses.NeedSetRole) {
+        await this.$router.push(Path.ROLE);
+        return;
+      }
+      const redirectTo = sessionStorage.getItem('redirectTo');
+      if (redirectTo) {
+        await this.$router.push(redirectTo);
+        sessionStorage.removeItem('redirectTo');
+        return;
+      }
+      await this.$router.push(Path.PROPOSALS);
     },
     async signIn() {
       if (this.isLoading) return;
