@@ -921,7 +921,7 @@ export default {
 }
 
 .about {
-  ::v-deep .ctm-field__body {
+  :deep(.ctm-field__body) {
     height: 114px;
   }
 }
