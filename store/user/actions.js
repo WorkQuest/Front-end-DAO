@@ -194,7 +194,7 @@ export default {
   },
   async validateTOTP({ commit }, payload) {
     try {
-      const response = await this.$axios.$post('/v1/auth/validate-totp', payload);
+      const response = await this.$axios.$post('/v1/auth/session/current/validate-totp', payload);
       return response.result.isValid;
     } catch (e) {
       console.log('user/validateTOTP');
