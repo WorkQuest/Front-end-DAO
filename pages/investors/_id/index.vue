@@ -41,74 +41,57 @@
         <div class="profile__body">
           <div class="profile__grid-container">
             <div class="profile__main-data">
-              <div class="profile__avatar avatar">
-                <img
-                  id="userAvatar"
-                  class="avatar__img"
-                  :src="(investor.avatar && investor.avatar.url) ? investor.avatar.url : require('~/assets/img/app/avatar_empty.png')"
-                  alt=""
-                >
-              </div>
-              <div class="profile__status status">
-                {{ $t('settings.verifiсated') }}
-                <span class="icon input-icon input-icon__check icon-check_all_big" />
-              </div>
-              <div
-                v-for="input in mainDataArr"
-                :key="input.key"
-                class="profile__main-inp-cont"
+              <img
+                id="userAvatar"
+                class="profile__avatar"
+                :src="(investor.avatar && investor.avatar.url) ? investor.avatar.url : require('~/assets/img/app/avatar_empty.png')"
+                alt=""
               >
-                <base-field
-                  v-if="input.isVisible"
-                  class="contacts__name"
-                  :is-hide-error="true"
-                  mode="left"
-                  :value="fillInputs(input)"
-                  :placeholder="$t('investor.notFilled')"
-                  data-selector="NAME"
-                >
-                  <template v-slot:left>
+              <div class="profile__right-data">
+                <div class="profile__status status">
+                  {{ $t('settings.verifiсated') }}
+                  <span class="icon field__icon input-icon__check icon-check_all_big" />
+                </div>
+                <div class="profile__main-fields">
+                  <div
+                    v-for="input in mainDataArr"
+                    :key="input.key"
+                    class="field"
+                  >
                     <span
-                      class="icon input-icon"
+                      class="icon field__icon"
                       :class="input.icon"
                     />
-                  </template>
-                </base-field>
+                    <span class="field__text">
+                      {{ fillInputs(input) }}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="profile__about about">
               <div class="about__title">
                 {{ $t('workers.aboutMe') }}
               </div>
-              <textarea
-                id="textarea"
-                class="about__textarea"
-                title="test"
-                :disabled="true"
-                :value="investor.additionalInfo ? investor.additionalInfo.description : ''"
-                :placeholder="$t('investor.notFilled')"
-              />
+              <div class="about__textarea">
+                {{ investor.additionalInfo && investor.additionalInfo.description ? investor.additionalInfo.description : $t('investor.notFilled') }}
+              </div>
             </div>
             <div class="profile__social social">
-              <base-field
+              <div
                 v-for="input in socialInputsArr"
                 :key="input.key"
-                class="social__network"
-                :disabled="true"
-                mode="left"
-                :is-hide-error="true"
-                :value="investor.additionalInfo && investor.additionalInfo.socialNetwork ? investor.additionalInfo.socialNetwork[input.key] : ''"
-                :placeholder="$t('investor.notFilled')"
-                :data-selector="`SOCIAL-${input.key}`"
+                class="field field_social"
+                @click="goToSocialMedia(input)"
               >
-                <template v-slot:left>
-                  <span
-                    class="social__icon input-icon"
-                    :class="input.icon"
-                    @click="goToSocialMedia(input)"
-                  />
-                </template>
-              </base-field>
+                <span
+                  class="icon field__icon"
+                  :class="input.icon"
+                />
+                <span class="field__text">
+                  {{ investor.additionalInfo && investor.additionalInfo.socialNetwork ? investor.additionalInfo.socialNetwork[input.key] : '' }}
+                </span>
+              </div>
             </div>
             <div
               v-if="investorAddress"
@@ -290,7 +273,9 @@ export default {
   },
   async mounted() {
     if (!this.isWalletConnected) return;
+    this.SetLoader(true);
     await this.getInvestorData();
+    this.SetLoader(false);
     await this.getTransactions();
   },
   methods: {
@@ -458,21 +443,28 @@ export default {
   }
 
   &__main-data {
-    display: grid;
-    gap: 20px;
-    grid-template-columns: 151px repeat(2, 1fr);
+    display: flex;
   }
 
-  &__main-inp-cont {
-    height: 46px;
+  &__right-data {
+    flex-grow: 1;
+  }
+
+  &__main-fields {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
   }
 
   &__avatar {
+    flex-shrink: 0;
     height: 151px;
+    width: 151px;
     border-radius: 6px;
     overflow: hidden;
-    grid-column: 1;
-    grid-row: 1/5;
+    object-fit: cover;
+    margin-right: 20px;
+    border: 1px solid $black0;
   }
 
   &__status {
@@ -488,6 +480,7 @@ export default {
     color: $blue;
     border-radius: 36px;
     font-size: 14px;
+    margin-bottom: 10px;
   }
 
   &__social {
@@ -500,14 +493,6 @@ export default {
 .contacts {
   &__name {
     color: $black800 !important;
-  }
-}
-
-.avatar {
-  &__img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
   }
 }
 
@@ -527,17 +512,12 @@ export default {
     height: 86px;
     padding: 10px 10px 0 10px;
     border-radius: 6px;
-    resize: none;
     font-size: 16px;
     line-height: 18.2px;
     background-color: $white;
     border: 1px solid $black0;
-
-    &::placeholder {
-      color: $black800;
-      padding-left: 30px;
-      padding-top: 20px;
-    }
+    overflow-y: auto;
+    scroll-behavior: inherit;
   }
 }
 
@@ -551,10 +531,35 @@ export default {
   }
 }
 
-.input-icon {
-  font-size: 23px;
-  color: $blue;
-  line-height: 36px;
+.field {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid $black0;
+  border-radius: 6px;
+  padding: 5px 10px;
+  word-break: break-all;
+
+  &_social {
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    .field__text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__icon {
+    font-size: 23px;
+    color: $blue;
+    line-height: 36px;
+  }
+
+  &__text {
+    margin-left: 10px;
+  }
 }
 
 .action {
@@ -612,8 +617,8 @@ export default {
 
 @include _991 {
   .profile {
-    &__main-data {
-      grid-template-columns: 151px 1fr;
+    &__main-fields {
+      grid-template-columns: 1fr;
     }
 
     &__avatar {
@@ -673,16 +678,19 @@ export default {
     &__additional {
       grid-template-columns: 1fr;
     }
-
-    &__avatar {
-      height: 100%;
-      width: 340px;
-    }
   }
   .profile {
-
     &__subtitle {
       font-size: 20px;
+    }
+    &__avatar {
+      margin: 0 auto 10px auto;
+    }
+    &__main-data {
+      flex-direction: column;
+    }
+    &__status {
+      margin: 0 auto 10px auto;
     }
   }
   .title {
@@ -726,16 +734,12 @@ export default {
 @include _350 {
   .profile {
     &__main-data {
-      grid-template-columns: 100px 120px;
     }
 
     & .about {
       max-width: 240px;
     }
 
-    &__social {
-      grid-template-columns: 240px;
-    }
     .action {
       &__button {
         min-width: 240px;
