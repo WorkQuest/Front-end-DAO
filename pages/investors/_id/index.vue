@@ -48,9 +48,15 @@
                 alt=""
               >
               <div class="profile__right-data">
-                <div class="profile__status status">
+                <div
+                  :class="investor.statusKYC ? 'verifiсated' : 'not_verified'"
+                  class="profile__status status"
+                >
                   {{ investor.statusKYC ? $t('settings.verifiсated') : $t('settings.notVerified') }}
-                  <span class="icon field__icon input-icon__check icon-check_all_big" />
+                  <span
+                    :class="investor.statusKYC ? 'verifiсated' : 'not_verified'"
+                    class="icon field__icon input-icon__check icon-check_all_big"
+                  />
                 </div>
                 <div class="profile__main-fields">
                   <div
@@ -474,13 +480,23 @@ export default {
     gap: 10px;
     align-items: center;
     width: fit-content;
-    height: 34px;
+    height: 36px;
     padding: 0 13px;
     background: rgba(0, 131, 199, 0.1);
     color: $blue;
     border-radius: 36px;
     font-size: 14px;
     margin-bottom: 10px;
+  }
+
+  & .verificated {
+    color: $blue;
+    background: rgba(0, 131, 199, 0.1);
+  }
+
+  & .not_verified {
+    color: $black300;
+    background-color: #E9EDF2;
   }
 
   &__social {
