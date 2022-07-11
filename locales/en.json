@@ -64,7 +64,8 @@
     "loginWithSecret": "Please login with secret phrase",
     "invalidPassword": "Invalid password",
     "loginToContinue": "Your account has been successfully created. Please login to continue",
-    "walletNotLinked": "Wallet not linked"
+    "walletNotLinked": "Wallet not linked",
+    "alpha_spaces_dash": "Text contains illegal characters"
   },
   "labels": {
     "firstName": "First name",

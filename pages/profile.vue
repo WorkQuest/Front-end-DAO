@@ -609,7 +609,7 @@ export default {
       const additionalInfo = {
         address,
         socialNetwork,
-        description,
+        description: description || null,
       };
 
       if (userRole === UserRole.EMPLOYER) {
