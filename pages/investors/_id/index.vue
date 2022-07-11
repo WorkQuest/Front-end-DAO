@@ -49,7 +49,7 @@
               >
               <div class="profile__right-data">
                 <div class="profile__status status">
-                  {{ $t('settings.verifiсated') }}
+                  {{ investor.statusKYC ? $t('settings.verifiсated') : $t('settings.notVerified') }}
                   <span class="icon field__icon input-icon__check icon-check_all_big" />
                 </div>
                 <div class="profile__main-fields">
