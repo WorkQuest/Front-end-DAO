@@ -21,7 +21,7 @@ export default {
     }
   },
   setUserData(state, data) {
-    state.userData = data;
+    state.userData = { ...state.userData, ...data };
   },
   setUserRole(state, data) {
     state.userRole = data;

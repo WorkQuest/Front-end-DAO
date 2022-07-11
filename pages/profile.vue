@@ -609,7 +609,7 @@ export default {
       const additionalInfo = {
         address,
         socialNetwork,
-        description,
+        description: description || null,
       };
 
       if (userRole === UserRole.EMPLOYER) {
@@ -650,16 +650,8 @@ export default {
         };
       }
       const method = `/v1/${userRole}/profile/edit`;
-
-      const payload = {
-        config,
-        method,
-      };
-
-      const response = await this.$store.dispatch('user/editProfile', payload);
-
-      if (response) this.showModalSave();
-
+      const ok = await this.$store.dispatch('user/editProfile', { config, method });
+      if (ok) this.showModalSave();
       this.setCurrData();
     },
   },
