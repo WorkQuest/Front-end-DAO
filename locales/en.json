@@ -65,7 +65,7 @@
     "invalidPassword": "Invalid password",
     "loginToContinue": "Your account has been successfully created. Please login to continue",
     "walletNotLinked": "Wallet not linked",
-    "alpha_spaces_dash": "Text contains illegal characters"
+    "alpha_spaces_dash": "The {_field_} field may only contain alphabetic characters as well as spaces, dashes and underscores"
   },
   "labels": {
     "firstName": "First name",
