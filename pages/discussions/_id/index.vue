@@ -673,6 +673,7 @@ export default {
     font-size: 24px;
     line-height: 32px;
     margin: 20px 0 10px 0;
+    word-break: break-word;
   }
 
   &__date {
@@ -889,10 +890,6 @@ export default {
     }
   }
   .info {
-    &__body {
-      padding: 0;
-    }
-
     &__header,
     &__title {
       margin-left: 15px;
@@ -920,6 +917,20 @@ export default {
       &_mobile {
         width: 120px;
       }
+    }
+  }
+
+  .info {
+    &__body {
+      padding: 10px;
+    }
+  }
+}
+
+@include _380 {
+  .comment {
+    &__field {
+      padding: 10px;
     }
   }
 }

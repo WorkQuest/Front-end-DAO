@@ -567,7 +567,7 @@ export default {
     border-radius: 6px !important;
   }
 
-  /deep/ td {
+  :deep(td) {
     padding: 12px 10px !important;
   }
 

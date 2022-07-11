@@ -21,7 +21,7 @@ export default {
     }
   },
   setUserData(state, data) {
-    state.userData = data;
+    state.userData = { ...state.userData, ...data };
   },
   setUserRole(state, data) {
     state.userRole = data;
@@ -34,7 +34,11 @@ export default {
     this.$cookies.remove('role');
     this.$cookies.remove('userLogin');
     this.$cookies.remove('socialNetwork');
+
+    const redirectTo = sessionStorage.getItem('redirectTo');
     sessionStorage.clear();
+    if (redirectTo) sessionStorage.setItem('redirectTo', redirectTo);
+
     state.userData = {};
     state.tokens = { access: null, refresh: null };
   },
