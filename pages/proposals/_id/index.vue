@@ -753,8 +753,9 @@ export default {
 .header {
   &__title {
     min-width: 0;
-    white-space: pre-line;
-    word-break: break-word;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     font-weight: 600;
     font-size: 24px;
     line-height: 32px;
