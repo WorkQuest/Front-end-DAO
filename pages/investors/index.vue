@@ -81,6 +81,14 @@ export default {
     },
     users() {
       const users = [];
+      if (this.delegatedToUser && !this.search.length) {
+        users.push({
+          ...this.delegatedToUser,
+          investorAddress: this.delegatedToUser.investorAddress,
+          voting: this.$tc('meta.wqtCount', this.delegatedToUser.voting),
+          callback: this.getInvestors,
+        });
+      }
       this.investors.forEach((user) => {
         if (!this.delegatedToUser
             || (this.delegatedToUser && user.investorAddress !== this.delegatedToUser?.wallet?.address)) {
