@@ -157,7 +157,6 @@ export default {
     }
   },
 
-  // Chairperson TODO: remove chairperson logic (for execute voting) and move to admin panel
   async getChairpersonHash({ _ }) {
     try {
       const result = await fetchWalletContractData('CHAIRPERSON_ROLE', WQVoting, ENV.WORKNET_VOTING);
