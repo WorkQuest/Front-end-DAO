@@ -206,9 +206,8 @@ export default {
               });
               await this.$store.dispatch('proposals/updateFilters', {
                 ...this.prevFilters,
-                lastPage: 1,
+                lastPage: null,
               });
-              await this.$store.dispatch('proposals/getProposals', { limit: 12, offset: 0 });
               this.SetLoader(false);
               this.CloseModal();
             },
