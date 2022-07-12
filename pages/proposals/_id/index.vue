@@ -78,8 +78,8 @@
             <div class="description__title">
               {{ $t('proposal.description') }}
             </div>
-            <div class="description__value">
-              {{ card.description }}
+            <div class="description__field">
+              <span class="description__text">{{ card.description }}</span>
             </div>
           </div>
           <div class="info__forum forum">
@@ -824,7 +824,7 @@ export default {
     margin: 10px 0;
   }
 
-  &__value {
+  &__field {
     font-weight: normal;
     font-size: 16px;
     line-height: 130%;
@@ -833,6 +833,10 @@ export default {
     min-width: 0;
     word-break: break-all;
     white-space: normal;
+  }
+
+  &__text {
+    white-space: pre-line;
   }
 }
 
