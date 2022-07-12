@@ -65,10 +65,10 @@
               <base-files
                 class="files__container"
                 :items="docs"
-                :is-show-empty="true"
+                :is-show-empty="!docs.length && !images.length"
               />
               <base-images
-                :mode="''"
+                mode=""
                 :items="images"
               />
             </div>
@@ -753,9 +753,8 @@ export default {
 .header {
   &__title {
     min-width: 0;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+    white-space: pre-line;
+    word-break: break-word;
     font-weight: 600;
     font-size: 24px;
     line-height: 32px;
