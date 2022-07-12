@@ -85,7 +85,6 @@ export default {
           slots: item.slots,
           missedBlocks: item.missedBlocks,
           stake: new BigNumber(item.tokens).shiftedBy(-this.balanceData.WQT.decimals).toString(),
-          jailed: item.jailed ? this.$t('validators.table.jailed') : '',
         };
       });
     },
@@ -102,7 +101,6 @@ export default {
           { key: 'stake', label: this.$t('validators.table.stake'), sortable: false },
           { key: 'minStake', label: this.$t('validators.table.minStake'), sortable: false },
           { key: 'slots', label: this.$t('validators.table.slots'), sortable: false },
-          { key: 'jailed', label: this.$t('validators.table.status'), sortable: false },
         );
       } else {
         mainFields.push(

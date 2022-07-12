@@ -776,6 +776,7 @@
     "searchValidator": "Search validator or candidate",
     "searchCandidates": "Search proposal",
     "undelegateAfterDays": "Your tokens will be undelegate after {n} days",
+    "jailed": "jailed",
     "table": {
       "name": "Name",
       "address": "Address",
@@ -784,8 +785,7 @@
       "stake": "Stake",
       "minStake": "Min stake",
       "slots": "Slots",
-      "status": "Status",
-      "jailed": "jailed"
+      "status": "Status"
     }
   },
   "validator": {

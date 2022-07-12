@@ -179,7 +179,7 @@ export default {
         { name: this.$t('validator.missedBlocks'), desc: this.missedBlocks },
       ];
       if (this.validatorData?.jailed) {
-        res.push({ name: this.$t('validators.table.status'), desc: this.$t('validators.table.jailed') });
+        res.push({ name: this.$t('validators.table.status'), desc: this.$t('validators.jailed') });
       }
       return res;
     },
