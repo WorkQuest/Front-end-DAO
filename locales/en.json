@@ -783,7 +783,9 @@
       "fee": "Fee",
       "stake": "Stake",
       "minStake": "Min stake",
-      "slots": "Slots"
+      "slots": "Slots",
+      "status": "Status",
+      "jailed": "jailed"
     }
   },
   "validator": {
