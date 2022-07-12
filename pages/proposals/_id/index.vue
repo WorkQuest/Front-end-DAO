@@ -829,7 +829,7 @@ export default {
     color: #7C838D;
     margin: 10px 0;
     min-width: 0;
-    word-break: break-all;
+    word-break: break-word;
     white-space: pre-line;
   }
 }
