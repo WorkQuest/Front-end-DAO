@@ -581,7 +581,7 @@ export default {
         key: modals.transactionReceipt,
         title: this.$t('proposal.voteForProposal'),
         fields: {
-          from: { name: this.$t('modals.fromAddress'), value: this.userWalletAddress },
+          from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
           to: { name: this.$t('modals.toAddress'), value: this.ENV.WORKNET_VOTING },
           votingPower: { name: (this.$t('investors.table.voting')), value: pastVotes },
           votedFor: { name: this.$t('proposal.youVoted'), value: this.$t(`proposal.${value ? 'yes' : 'no'}`) },
