@@ -190,7 +190,7 @@ export default {
             key: modals.transactionReceipt,
             title: this.$t('modals.addProposal'),
             fields: {
-              from: { name: this.$t('modals.fromAddress'), value: this.userWalletAddress },
+              from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
               to: { name: this.$t('modals.toAddress'), value: this.ENV.WORKNET_VOTING },
               fee: {
                 name: this.$t('modals.trxFee'),
