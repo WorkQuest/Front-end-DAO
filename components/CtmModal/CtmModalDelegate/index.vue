@@ -207,7 +207,7 @@ export default {
           });
           this.SetLoader(false);
           if (res.ok) {
-            this.ShowToast(`Delegated ${this.Floor(tokensAmount)} WQT`, this.$t('modals.delegate'));
+            this.ShowToast(`Delegated ${tokensAmount} WQT`, this.$t('modals.delegate'));
           } else if (res.msg.includes('Not enough balance to delegate')) {
             this.ShowToast(this.$t('errors.delegate.notEnoughBalance'), this.$t('errors.delegate.title'));
           }
