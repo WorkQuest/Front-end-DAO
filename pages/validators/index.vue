@@ -175,6 +175,9 @@ export default {
     margin-top: 20px;
     overflow: auto;
   }
+  &__pagination {
+    margin-top: 20px;
+  }
 }
 .table__link {
   color: $black800 !important;
