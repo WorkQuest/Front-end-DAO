@@ -146,10 +146,12 @@
           />
         </div>
       </div>
-      <empty-data
-        v-else
-        :description="$t('wallet.table.empty')"
-      />
+      <template v-else>
+        <div class="investor__empty-info">
+          {{ $t('wallet.table.trx') }}
+        </div>
+        <empty-data :description="$t('wallet.table.empty')" />
+      </template>
       <base-pager
         v-if="totalPages > 1"
         v-model="currentPage"
@@ -382,6 +384,13 @@ export default {
       font-weight: 600;
       font-size: 20px;
     }
+  }
+
+  &__empty-info {
+    margin-top: 20px;
+    border-radius: 6px;
+    background: white;
+    padding: 10px;
   }
 
   &__header {
