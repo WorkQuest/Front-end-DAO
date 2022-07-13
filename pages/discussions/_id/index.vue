@@ -647,7 +647,6 @@ export default {
     line-height: 18px;
     color: #1D2127;
     margin: 0 22px 0 8px;
-    cursor: pointer;
 
     &_right {
       margin: 7px;

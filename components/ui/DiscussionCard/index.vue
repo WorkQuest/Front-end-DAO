@@ -277,7 +277,6 @@ export default {
     line-height: 18px;
     color: $black800;
     margin: 0 22px 0 8px;
-    cursor: pointer;
 
     &_right {
       margin: 7px;
