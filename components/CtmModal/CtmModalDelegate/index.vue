@@ -102,7 +102,8 @@ export default {
         const max = new BigNumber(this.balance).minus(this.maxFee);
         return max.isGreaterThan(0) ? max.toString() : '0';
       }
-      return new BigNumber(this.balance).minus(tempTxFeeValidators).toString();
+      const max = new BigNumber(this.balance).minus(tempTxFeeValidators);
+      return max.isGreaterThan(0) ? max.toString() : '0';
     },
     convertValue() {
       const { windowSize, investorAddress } = this;
