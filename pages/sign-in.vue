@@ -410,7 +410,7 @@ export default {
 
       // Session & Storage invalid mnemonics
       await this.$store.dispatch('main/showToast', {
-        title: this.$t('toasts.error'),
+        title: this.$t('modals.error'),
         text: this.$t('messages.mnemonic'),
       });
       this.SetLoader(false);
@@ -428,7 +428,7 @@ export default {
       if (res.code === 400011) {
         // На данный mnemonic уже привязан какой-то аккаунт
         await this.$store.dispatch('main/showToast', {
-          title: this.$t('toasts.error'),
+          title: this.$t('modals.error'),
           text: this.$t('messages.mnemonic'),
         });
       }
@@ -447,7 +447,7 @@ export default {
       }
       // Phrase not assigned to this account
       await this.$store.dispatch('main/showToast', {
-        title: this.$t('toasts.error'),
+        title: this.$t('modals.error'),
         text: this.$t('messages.mnemonic'),
       });
     },
