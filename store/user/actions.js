@@ -102,11 +102,6 @@ export default {
     commit('setUserPassword', response.result);
     return response;
   },
-  async imageType({ commit }, payload) {
-    const response = await this.$axios.$post('/v1/storage/get-upload-link', payload);
-    commit('setImageType', response.result);
-    return response;
-  },
   async setImage({ commit }, { url, formData, type }) {
     try {
       const response = await this.$axios.$put(url, formData, {
@@ -134,16 +129,24 @@ export default {
     }
   },
   async getUploadFileLink({ commit }, config) {
-    const { result } = await this.$axios.$post('/v1/storage/get-upload-link', config);
-    return result;
+    try {
+      const { result } = await this.$axios.$post('/v1/storage/get-upload-link', config);
+      return result;
+    } catch (e) {
+      return null;
+    }
   },
   async uploadFile({ commit }, payload) {
-    await this.$axios.$put(payload.url, payload.data, {
-      headers: {
-        'Content-Type': payload.contentType,
-        'x-amz-acl': 'public-read',
-      },
-    });
+    try {
+      await this.$axios.$put(payload.url, payload.data, {
+        headers: {
+          'Content-Type': payload.contentType,
+          'x-amz-acl': 'public-read',
+        },
+      });
+    } catch (e) {
+      console.error('user/uploadFile');
+    }
   },
   async confirmEnable2FA({ commit }, payload) {
     try {
@@ -152,13 +155,12 @@ export default {
       commit('setTwoFAStatus', true);
       return response;
     } catch (e) {
-      const response = {
+      return {
         ok: e.response.data.ok,
         code: e.response.data.code,
         msg: e.response.data.msg,
         data: e.response.data.data,
       };
-      return response;
     }
   },
   async disable2FA({ commit }, payload) {
@@ -168,13 +170,12 @@ export default {
       commit('setTwoFAStatus', false);
       return response;
     } catch (e) {
-      const response = {
+      return {
         ok: e.response.data.ok,
         code: e.response.data.code,
         msg: e.response.data.msg,
         data: e.response.data.data,
       };
-      return response;
     }
   },
   async enable2FA({ commit }, payload) {
@@ -183,13 +184,12 @@ export default {
       commit('setTwoFACode', response.result);
       return response;
     } catch (e) {
-      const response = {
+      return {
         ok: e.response.data.ok,
         code: e.response.data.code,
         msg: e.response.data.msg,
         data: e.response.data.data,
       };
-      return response;
     }
   },
   async validateTOTP({ commit }, payload) {
