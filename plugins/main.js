@@ -16,6 +16,10 @@ Vue.mixin({
     };
   },
   methods: {
+    UserName(firstName, lastName) {
+      if (firstName || lastName) return `${firstName || ''} ${lastName || ''}`;
+      return this.$t('user.nameless');
+    },
     async HEICConvertTo(file, toType) {
       try {
         return await heic2any({

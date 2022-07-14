@@ -83,6 +83,7 @@ export default {
       this.investors.forEach((user, i) => {
         users.push({
           ...user,
+          fullName: this.UserName(user.firstName, user.lastName),
           investorAddress: this.ConvertToBech32('wq', user.investorAddress),
           voting: this.$tc('meta.wqtCount', user.voting),
           callback: this.getInvestors,

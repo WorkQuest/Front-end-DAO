@@ -17,12 +17,10 @@ export default {
       const votes = await dispatch('wallet/getVotesByAddresses', addresses, { root: true });
       result.users.unshift({
         ...userData,
-        fullName: `${userData.firstName || ''} ${userData.lastName || ''}`,
         investorAddress: userWalletAddress,
         voting: getStyledAmount(votes.result[addresses.indexOf(userWalletAddress)]),
       });
       result.users.forEach((user) => {
-        user.fullName = `${user.firstName || ''} ${user.lastName || ''}`;
         user.investorAddress = user.wallet?.address ? user.wallet.address : '';
         user.voting = user.wallet?.address ? getStyledAmount(votes.result[addresses.indexOf(user.wallet.address)]) : '';
       });

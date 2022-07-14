@@ -210,7 +210,7 @@ export default {
         ...user,
         investorAddress: converter('wq').toBech32(address),
         voting: votingPowerArray ? getStyledAmount(votingPowerArray.result[0]) : null,
-        fullName: `${user.firstName || ''} ${user.lastName || ''}`,
+        fullName: this.UserName(user?.firstName, user?.lastName),
       }, { root: true });
     } catch (e) {
       console.error('wallet/getDelegates', e);
