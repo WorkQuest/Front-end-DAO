@@ -154,7 +154,7 @@ export default {
   .images {
     display: inline-block;
     white-space: nowrap;
-    overflow-x: scroll;
+    overflow-x: auto;
     user-select: none;
     &__image {
       display: inline-block;

@@ -141,6 +141,7 @@
     }
   },
   "meta": {
+    "delegateNow": "Delegate Now",
     "confirm": "Confirm",
     "back": "Back",
     "open": "Open",
@@ -550,6 +551,7 @@
     "writeYouMessage": "Write you message"
   },
   "proposals": {
+    "votingInfo": "Dear user, to participate in subsequent DAO voting or create your proposals, you need to increase your voting power. To vote, you need to delegate 100 WorkQuest tokens to your wallet. To make your offer in the DAO, you must delegate 10,000 WorkQuest tokens to your wallet.",
     "addProposals": "Add proposal",
     "title": "Proposals",
     "voting": "Voting",
@@ -611,7 +613,7 @@
       "vote": "Vote",
       "isEmpty": "List is empty",
       "delegatedAfter": "Your votes delegated after creating voting",
-      "notEnoughDelegatedPastVotes": "You didn't have enough votes at the time the proposal was created ({a}). {b} votes required",
+      "notEnoughDelegatedPastVotes": "To increase your voting power and participate in subsequent voting, you need to delegate 100 WorkQuest Tokens to your wallet.",
       "transaction": {
         "notEnoughFunds": "Not enough funds"
       }
