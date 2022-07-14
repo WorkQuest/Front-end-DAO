@@ -133,7 +133,7 @@
         :to="`${$options.Path.INVESTORS}/${el.item.id}`"
         class="table__link"
       >
-        <span>{{ cropTxt(el.item.fullName, 15) }}</span>
+        <span>{{ cropTxt(el.item.fullName, 20) }}</span>
       </nuxt-link>
     </template>
     <template #cell(validatorName)="el">
