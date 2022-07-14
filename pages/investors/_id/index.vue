@@ -48,9 +48,15 @@
                 alt=""
               >
               <div class="profile__right-data">
-                <div class="profile__status status">
-                  {{ $t('settings.verifiсated') }}
-                  <span class="icon field__icon input-icon__check icon-check_all_big" />
+                <div
+                  :class="investor.statusKYC ? 'profile__status_verified' : 'profile__status_not-verified'"
+                  class="profile__status"
+                >
+                  {{ investor.statusKYC ? $t('settings.verifiсated') : $t('settings.notVerified') }}
+                  <span
+                    :class="investor.statusKYC ? 'profile__status_verified' : 'profile__status_not-verified'"
+                    class="icon field__icon input-icon__check icon-check_all_big"
+                  />
                 </div>
                 <div class="profile__main-fields">
                   <div
@@ -433,6 +439,37 @@ export default {
   }
 }
 
+.field {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid $black0;
+  border-radius: 6px;
+  padding: 5px 10px;
+  word-break: break-all;
+
+  &_social {
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    .field__text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__icon {
+    font-size: 23px;
+    color: $blue;
+    line-height: 36px;
+  }
+
+  &__text {
+    margin-left: 10px;
+  }
+}
+
 .profile {
   @include main;
   @include text-simple;
@@ -483,13 +520,20 @@ export default {
     gap: 10px;
     align-items: center;
     width: fit-content;
-    height: 34px;
+    height: 36px;
     padding: 0 13px;
     background: rgba(0, 131, 199, 0.1);
-    color: $blue;
     border-radius: 36px;
     font-size: 14px;
     margin-bottom: 10px;
+    &_verified {
+      color: $blue;
+    }
+
+    &_not-verified {
+      color: $black300;
+      background: $black100;
+    }
   }
 
   &__social {
@@ -537,37 +581,6 @@ export default {
 
   &__icon {
     cursor: pointer;
-  }
-}
-
-.field {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  min-height: 46px;
-  border: 1px solid $black0;
-  border-radius: 6px;
-  padding: 5px 10px;
-  word-break: break-all;
-
-  &_social {
-    cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    .field__text {
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
-
-  &__icon {
-    font-size: 23px;
-    color: $blue;
-    line-height: 36px;
-  }
-
-  &__text {
-    margin-left: 10px;
   }
 }
 
