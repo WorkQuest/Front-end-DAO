@@ -14,7 +14,6 @@
       />
       <div class="investors__table-container">
         <base-table
-          v-if="investorsCount"
           class="investors__table"
           :fields="tableFields"
           :items="users"
@@ -81,24 +80,16 @@ export default {
     },
     users() {
       const users = [];
-      if (this.delegatedToUser) {
+      this.investors.forEach((user, i) => {
         users.push({
-          ...this.delegatedToUser,
-          investorAddress: this.delegatedToUser.investorAddress,
-          voting: this.$tc('meta.wqtCount', this.delegatedToUser.voting),
+          ...user,
+          fullName: this.UserName(user.firstName, user.lastName),
+          investorAddress: this.ConvertToBech32('wq', user.investorAddress),
+          voting: this.$tc('meta.wqtCount', user.voting),
           callback: this.getInvestors,
+          bordered: true,
+          _rowVariant: i === 0 ? 'primary' : '',
         });
-      }
-      this.investors.forEach((user) => {
-        if (!this.delegatedToUser
-            || (this.delegatedToUser && user.investorAddress !== this.delegatedToUser?.wallet?.address)) {
-          users.push({
-            ...user,
-            investorAddress: this.ConvertToBech32('wq', user.investorAddress),
-            voting: this.$tc('meta.wqtCount', user.voting),
-            callback: this.getInvestors,
-          });
-        }
       });
       return users;
     },
@@ -119,7 +110,7 @@ export default {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         this.getInvestors();
-      }, 1000);
+      }, 300);
     },
   },
   async beforeMount() {
@@ -147,12 +138,10 @@ export default {
       });
     },
     async getInvestors() {
-      this.SetLoader(true);
       await Promise.all([
         this.$store.dispatch('investors/getInvestors', { limit: this.limit, offset: this.offset, q: this.q }),
         this.$store.dispatch('wallet/getDelegates'),
       ]);
-      this.SetLoader(false);
     },
   },
 };

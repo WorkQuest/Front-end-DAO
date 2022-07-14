@@ -2,7 +2,7 @@
   <div
     v-if="item !== undefined"
     class="item"
-    :class="{item__separator: isLast}"
+    :class="{item__separator: isLast, variant_primary: item._rowVariant === 'primary'}"
   >
     <div
       v-if="item.tx_hash"
@@ -128,7 +128,7 @@
       </a>
     </div>
     <div
-      v-if="item.vote"
+      v-if="item.vote !== null && item.vote !== undefined"
       class="item__subtitle"
     >
       {{ $t('proposal.table.vote') }}
@@ -330,6 +330,7 @@ export default {
   &__copy {
     display: inline-block !important;
     width: 15px !important;
+    background: none !important;
     height: 100% !important;
   }
 
@@ -341,5 +342,8 @@ export default {
     border-radius: 50%;
     object-position: center;
   }
+}
+.variant_primary {
+  background: #b8daff;
 }
 </style>

@@ -177,8 +177,7 @@ export default {
       return subComments.filter((item) => item.rootCommentId === rootId);
     },
     authorName(item) {
-      if (item && item.author) return `${item.author.firstName} ${item.author.lastName}`;
-      return this.$t('user.nameless');
+      return this.UserName(item?.author?.firstName, item?.author?.lastName);
     },
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);

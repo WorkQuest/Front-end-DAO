@@ -129,7 +129,7 @@
         :to="`${$options.Path.INVESTORS}/${el.item.id}`"
         class="table__link"
       >
-        <span>{{ cropTxt(el.item.fullName, 15) }}</span>
+        <span>{{ cropTxt(el.item.fullName, 20) }}</span>
       </nuxt-link>
     </template>
     <template #cell(validatorName)="el">
@@ -282,6 +282,15 @@ export default {
       width: 1180px;
       overflow-x: hidden;
     }
+    &__copy {
+      font-size: 10px;
+    }
+  }
+
+  &__copy {
+    color: $blue;
+    background: none !important;
+    font-size: 25px;
   }
 
   &__avatar {

@@ -327,8 +327,7 @@ export default {
       await this.$store.dispatch('discussions/setDiscussionImages', images);
     },
     authorName() {
-      if (this.discussionAuthor) return `${this.discussionAuthor.firstName} ${this.discussionAuthor.lastName}`;
-      return this.$t('user.nameless');
+      return this.UserName(this.discussionAuthor?.firstName, this.discussionAuthor?.lastName);
     },
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
