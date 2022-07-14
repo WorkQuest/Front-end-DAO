@@ -75,6 +75,12 @@
       </div>
     </div>
     <div
+        v-if="value && mode === 'comment-field'"
+        class="ctm-field__err characters"
+    >
+      {{ validationSymbolsLeft }}
+    </div>
+    <div
       v-if="!isHideError"
       class="ctm-field__err"
     >
@@ -171,6 +177,11 @@ export default {
       required: true,
     },
   },
+  computed: {
+    validationSymbolsLeft() {
+      return (this.value.length <= 400) ? `${this.$t('messages.characters_left')} ${400 - this.value.length}` : `${this.$t('messages.delete_extra_characters')} ${this.value.length - 400}`;
+    },
+  },
   mounted() {
     this.focus();
   },
@@ -197,6 +208,10 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.characters {
+  display: inline;
+}
+
 .ctm-field {
   &__selector {
     position: absolute;

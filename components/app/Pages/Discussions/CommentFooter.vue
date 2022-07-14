@@ -36,7 +36,7 @@
         v-model="subCommentInput"
         class="footer__input"
         :placeholder="$t('discussions.input')"
-        rules="min:1|max:250"
+        rules="min:1|symbols_left:400"
         :name="$t('discussions.response')"
         :auto-focus="isReply"
         mode="comment-field"

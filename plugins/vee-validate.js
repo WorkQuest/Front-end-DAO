@@ -204,6 +204,15 @@ extend('alpha_spaces_dash', {
   },
 });
 
+extend('symbols_left', {
+  validate(value, { max }) {
+    return {
+      valid: value.length <= max,
+    };
+  },
+  params: ['max'],
+});
+
 export default ({ app }) => {
   configure({
     defaultMessage: (_field_, values) => app.i18n.t(`messages.${values._rule_}`, values),
