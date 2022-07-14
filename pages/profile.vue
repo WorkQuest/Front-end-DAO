@@ -63,7 +63,7 @@
                   <input
                     id="coverUpload"
                     type="file"
-                    accept="image/*"
+                    accept="image/png, image/jpeg, image/heic"
                     @change="processFile($event, validate)"
                   >
                 </ValidationProvider>
@@ -504,9 +504,13 @@ export default {
       this.delay = setTimeout(f, t);
     },
     async processFile(e, validate) {
-      const file = e.target.files[0];
+      let file = e.target.files[0];
       if (!file) return;
       const isValid = await validate(e);
+
+      if (file.type === 'image/heic') {
+        file = await this.HEICConvertTo(file, 'image/jpeg');
+      }
 
       if (isValid.valid) {
         const MAX_SIZE = 20e6; // макс размер - тут 2мб

@@ -129,7 +129,7 @@ export default {
       fileId: 0,
       documents: [],
       docsLimit: 10,
-      accept: 'application/msword, application/pdf, image/png, image/jpeg',
+      accept: 'application/msword, application/pdf, image/png, image/jpeg, image/heic',
       acceptedTypes: [],
     };
   },
@@ -221,10 +221,14 @@ export default {
     checkContentType(file) {
       return this.acceptedTypes.indexOf(file.type) !== -1;
     },
-    handleFileSelected(e) {
+    async handleFileSelected(e) {
       if (!e.target.files[0] || this.isDocumentsLimitReached) return;
-      const file = e.target.files[0];
+      let file = e.target.files[0];
       const type = file.type.split('/').shift() === 'image' ? 'img' : 'doc';
+
+      if (file.type === 'image/heic') {
+        file = await this.HEICConvertTo(file, 'image/jpeg');
+      }
 
       if (!this.checkContentType(file)) {
         return;

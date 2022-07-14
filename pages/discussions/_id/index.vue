@@ -229,7 +229,7 @@ import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
-      accept: 'application/msword, application/pdf, image/jpeg, image/png',
+      accept: 'application/msword, application/pdf, image/jpeg, image/png, image/heic',
       acceptedTypes: [],
       documents: [],
       docsLimit: 10,
@@ -284,12 +284,17 @@ export default {
     checkContentType(file) {
       return this.acceptedTypes.indexOf(file.type) !== -1;
     },
-    handleFileSelected(e) {
+    async handleFileSelected(e) {
       if (!e.target.files[0] || this.docsLimitReached) return;
-      const file = e.target.files[0];
+      let file = e.target.files[0];
       const type = file.type.split('/').shift() === 'image' ? 'img' : 'doc';
+
       if (!this.checkContentType(file)) {
         return;
+      }
+
+      if (file.type === 'image/heic') {
+        file = await this.HEICConvertTo(file, 'image/jpeg');
       }
 
       const { size, name } = file;
@@ -647,7 +652,6 @@ export default {
     line-height: 18px;
     color: #1D2127;
     margin: 0 22px 0 8px;
-    cursor: pointer;
 
     &_right {
       margin: 7px;

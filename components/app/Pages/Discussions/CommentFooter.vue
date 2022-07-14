@@ -76,7 +76,7 @@ export default {
   data() {
     return {
       subCommentInput: '',
-      accept: 'application/msword, application/pdf, image/jpeg, image/png',
+      accept: 'application/msword, application/pdf, image/jpeg, image/png, image/heic',
       acceptedTypes: [],
       documents: [],
       docsLimit: 10,
