@@ -107,11 +107,7 @@ export default {
       return require('~/assets/img/app/avatar_empty.png');
     },
     getAuthorName(item) {
-      if (item.author) {
-        const { firstName, lastName } = item.author;
-        if (firstName || lastName) return `${firstName} ${lastName}`;
-      }
-      return this.$t('user.nameless');
+      return this.UserName(item?.author?.firstName, item?.author?.lastName);
     },
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
