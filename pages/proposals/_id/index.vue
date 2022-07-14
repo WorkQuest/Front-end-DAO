@@ -308,6 +308,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      userData: 'user/getUserData',
       userWalletAddress: 'user/getUserWalletAddress',
       balanceData: 'wallet/getBalanceData',
       proposalThreshold: 'proposals/proposalThreshold',
@@ -554,10 +555,15 @@ export default {
       const pastVotes = new BigNumber(pastVotesRes.result).shiftedBy(-this.balanceData.WQT.decimals);
       const thresholdToVote = thresholdRes.result;
       if (new BigNumber(pastVotes).isLessThan(thresholdToVote)) {
-        this.ShowToast(
-          this.$t('proposal.errors.notEnoughDelegatedPastVotes', { a: pastVotes.toString(), b: thresholdToVote.toString() }),
-          this.$t('proposal.errors.voteError'),
-        );
+        this.ShowModal({
+          key: modals.status,
+          img: require('~/assets/img/ui/warning.svg'),
+          subtitle: this.$t('proposal.errors.notEnoughDelegatedPastVotes'),
+          buttonText: this.$t('meta.delegateNow'),
+          closeCallback: () => {
+            this.$router.push(`${Path.INVESTORS}/${this.userData.id}`);
+          },
+        });
         return;
       }
 
