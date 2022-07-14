@@ -604,6 +604,7 @@ export default {
       // eslint-disable-next-line no-restricted-syntax
       for (const key in socialNetwork) {
         if (!socialNetwork[key]) socialNetwork[key] = null;
+        else socialNetwork[key] = socialNetwork[key].trim();
       }
 
       const additionalInfo = {
