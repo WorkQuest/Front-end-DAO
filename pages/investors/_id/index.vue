@@ -489,13 +489,15 @@ export default {
     margin-bottom: 10px;
   }
 
-  & .status_verified {
-    color: $blue;
-  }
+  & .status {
+    &_verified {
+      color: $blue;
+    }
 
-  & .status_not-verified {
-    color: $black300;
-    background-color: $black100;
+    &_not-verified {
+      color: $black300;
+      background-color: $black100;
+    }
   }
 
   &__social {
