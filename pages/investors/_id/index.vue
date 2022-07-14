@@ -495,7 +495,7 @@ export default {
 
   & .status_not-verified {
     color: $black300;
-    background-color: #E9EDF2;
+    background-color: $black100;
   }
 
   &__social {
