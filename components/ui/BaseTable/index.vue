@@ -293,6 +293,7 @@ export default {
 
   &__copy {
     color: $blue;
+    background: none !important;
     font-size: 25px;
   }
 

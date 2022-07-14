@@ -80,12 +80,14 @@ export default {
     },
     users() {
       const users = [];
-      this.investors.forEach((user) => {
+      this.investors.forEach((user, i) => {
         users.push({
           ...user,
           investorAddress: this.ConvertToBech32('wq', user.investorAddress),
           voting: this.$tc('meta.wqtCount', user.voting),
           callback: this.getInvestors,
+          bordered: true,
+          _rowVariant: i === 0 ? 'primary' : '',
         });
       });
       return users;
@@ -162,10 +164,6 @@ export default {
 
   &__table {
     width: 1180px;
-
-    :deep(.table__row):first-child {
-      border-bottom: 2px solid $blue;
-    }
   }
 
   &__investors {
