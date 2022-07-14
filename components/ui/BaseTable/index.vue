@@ -56,13 +56,9 @@
       </nuxt-link>
     </template>
     <template #cell(copy)="el">
-      <base-btn
+      <button-copy
         v-if="el.item.investorAddress"
-        v-clipboard:copy="el.item.investorAddress"
-        v-clipboard:success="ClipboardSuccessHandler"
-        v-clipboard:error="ClipboardErrorHandler"
-        mode="copy"
-        class="table__copy"
+        :copy-value="el.item.investorAddress"
       />
     </template>
     <template #cell(vote)="el">
@@ -286,14 +282,6 @@ export default {
       width: 1180px;
       overflow-x: hidden;
     }
-    &__copy {
-      font-size: 10px;
-    }
-  }
-
-  &__copy {
-    color: $blue;
-    font-size: 25px;
   }
 
   &__avatar {

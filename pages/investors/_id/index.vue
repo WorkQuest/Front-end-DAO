@@ -27,12 +27,9 @@
             {{ styledInvestorAddress }}
           </div>
           <div class="panel__picture">
-            <base-btn
-              v-clipboard:copy="ConvertToBech32('wq', investorAddress)"
-              v-clipboard:success="ClipboardSuccessHandler"
-              v-clipboard:error="ClipboardErrorHandler"
-              mode="copy"
-              class="panel__copy"
+            <button-copy
+              :copy-value="ConvertToBech32('wq', investorAddress)"
+              mode="panel"
             />
           </div>
         </div>
@@ -421,14 +418,6 @@ export default {
 .panel {
   text-align: center;
   display: table;
-
-  &__copy {
-    background: $black0;
-  }
-
-  &__copy:hover {
-    background: $black0;
-  }
 
   &__address {
     font-weight: 500;
