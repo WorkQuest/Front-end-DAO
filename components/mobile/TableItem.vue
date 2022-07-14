@@ -123,7 +123,7 @@
       </a>
     </div>
     <div
-      v-if="item.vote"
+      v-if="item.vote !== null && item.vote !== undefined"
       class="item__subtitle"
     >
       {{ $t('proposal.table.vote') }}
