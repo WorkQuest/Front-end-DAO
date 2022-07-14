@@ -88,5 +88,4 @@ export default () => ({
   currentUserPosition: null,
   userRole: {},
   userDataPassword: {},
-  imageLink: {},
 });
