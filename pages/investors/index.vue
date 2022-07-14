@@ -48,7 +48,6 @@ export default {
   data() {
     return {
       limit: 20,
-      offset: 0,
       q: '',
       timeout: '',
       search: '',
@@ -99,13 +98,11 @@ export default {
   },
   watch: {
     async currPage() {
-      this.offset = (this.currPage - 1) * this.limit;
       await this.$store.dispatch('investors/setLastPage', this.currPage);
       await this.getInvestors();
     },
     search() {
       this.q = this.search.trim();
-      this.offset = 0;
       this.currPage = 1;
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
@@ -139,7 +136,7 @@ export default {
     },
     async getInvestors() {
       await Promise.all([
-        this.$store.dispatch('investors/getInvestors', { limit: this.limit, offset: this.offset, q: this.q }),
+        this.$store.dispatch('investors/getInvestors', { limit: this.limit, offset: (this.currPage - 1) * this.limit, q: this.q }),
         this.$store.dispatch('wallet/getDelegates'),
       ]);
     },
