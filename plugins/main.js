@@ -156,6 +156,7 @@ Vue.mixin({
     },
     ShowToastCopied() {
       this.$bvToast.toast(String(this.$t('modals.textCopy')), {
+        title: this.$t('createWallet.secretPhrase'),
         variant: 'success',
         solid: true,
         toaster: 'b-toaster-bottom-right',
