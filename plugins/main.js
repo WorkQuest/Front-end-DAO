@@ -76,6 +76,7 @@ Vue.mixin({
       this.$store.dispatch('modals/hide');
     },
     ClipboardSuccessHandler(value) {
+      console.log('value :', value);
       this.ShowToast(value, this.$t('modals.textCopy'));
     },
     ClipboardErrorHandler(value) {

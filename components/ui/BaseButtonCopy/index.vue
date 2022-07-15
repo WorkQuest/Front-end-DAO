@@ -1,7 +1,7 @@
 <template>
   <button
     v-clipboard:copy="copyValue"
-    v-clipboard:success="ClipboardSuccessHandler(show)"
+    v-clipboard:success="isShowToastSuccess ? ClipboardSuccessHandler : ''"
     v-clipboard:error="ClipboardErrorHandler"
     data-selector="COPY-BTN"
     type="button"
@@ -25,7 +25,7 @@ export default {
       type: String,
       default: '',
     },
-    show: {
+    isShowToastSuccess: {
       type: Boolean,
       default: true,
     },

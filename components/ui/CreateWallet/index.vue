@@ -24,7 +24,7 @@
           <button-copy
             :copy-value="mnemonic"
             mode="mnemonic"
-            :show="false"
+            :is-show-toast-success="false"
             class="wallet__mnemonic_copy"
             @click="showCopySuccess"
           />
