@@ -24,6 +24,7 @@
           <button-copy
             :copy-value="mnemonic"
             mode="mnemonic"
+            :show="false"
             class="wallet__mnemonic_copy"
             @click="showCopySuccess"
           />
@@ -329,7 +330,7 @@ export default {
     &_copy {
       position: absolute;
       right: 10px;
-      top: 0%;
+      top: 0;
       height: 100%;
       font-size: 28px;
       cursor: pointer;

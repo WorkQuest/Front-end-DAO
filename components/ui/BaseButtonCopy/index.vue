@@ -1,7 +1,7 @@
 <template>
   <button
     v-clipboard:copy="copyValue"
-    v-clipboard:success="ClipboardSuccessHandler"
+    v-clipboard:success="ClipboardSuccessHandler(show)"
     v-clipboard:error="ClipboardErrorHandler"
     data-selector="COPY-BTN"
     type="button"
@@ -24,6 +24,10 @@ export default {
     mode: {
       type: String,
       default: '',
+    },
+    show: {
+      type: Boolean,
+      default: true,
     },
   },
   computed: {
