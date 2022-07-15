@@ -170,13 +170,20 @@
                 v-model="opinion"
                 :auto-focus="isAddComment"
                 class="footer__input"
+                custom-rules="comment"
                 :placeholder="$t('discussions.input')"
-                rules="min:1|symbols_left:400"
+                rules="min:1"
                 :name="$t('discussions.response')"
                 mode="comment-field"
                 data-selector="OPINION"
                 @keyup.enter.native="addRootCommentResponse"
               />
+              <span
+                v-if="!invalid"
+                class="footer__error"
+              >
+                {{ charactersLeft }}
+              </span>
             </div>
             <div class="response__footer">
               <base-btn
@@ -251,6 +258,9 @@ export default {
       rootComments: 'discussions/getRootComments',
       subComments: 'discussions/getSubCommentsLevel2',
     }),
+    charactersLeft() {
+      return (this.opinion.length <= 400) ? `${this.$t('messages.characters_left')} ${400 - this.opinion.length}` : '';
+    },
     docsLimitReached() {
       return this.documents.length >= this.docsLimit;
     },
@@ -806,6 +816,15 @@ export default {
 .footer {
   animation: show 1s 1;
   display: flex;
+  position: relative;
+
+  &__error {
+    position: absolute;
+    top: 58px;
+    left: 60px;
+    font-size: 12px;
+    min-height: 23px;
+  }
 
   &__input {
     @include text-usual;
@@ -913,6 +932,11 @@ export default {
       margin: 0;
     }
   }
+  .footer {
+    &__error {
+      left: 66px;
+    }
+  }
 }
 
 @include _480 {
@@ -934,7 +958,7 @@ export default {
 @include _380 {
   .comment {
     &__field {
-      padding: 10px;
+      padding: 10px 10px 35px;
     }
   }
 }

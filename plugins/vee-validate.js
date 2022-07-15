@@ -204,13 +204,13 @@ extend('alpha_spaces_dash', {
   },
 });
 
-extend('symbols_left', {
-  validate(value, { max }) {
+extend('needToDelete', {
+  validate(value, { needToDelete }) {
     return {
-      valid: value.length <= max,
+      valid: needToDelete <= 0,
     };
   },
-  params: ['max'],
+  params: ['needToDelete'],
 });
 
 export default ({ app }) => {

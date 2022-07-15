@@ -13,7 +13,7 @@
       {'ctm-field_white': mode === 'white'},
       {'ctm-field_chat': mode === 'chat'},
     ]"
-    :rules="rules"
+    :rules="customRules === 'comment' ? custom : rules"
     :name="name"
     :vid="vid"
     :mode="validationMode"
@@ -75,12 +75,6 @@
       </div>
     </div>
     <div
-        v-if="value && mode === 'comment-field'"
-        class="ctm-field__err characters"
-    >
-      {{ validationSymbolsLeft }}
-    </div>
-    <div
       v-if="!isHideError"
       class="ctm-field__err"
     >
@@ -100,6 +94,10 @@ export default {
       type: Function,
       default: () => {
       },
+    },
+    customRules: {
+      type: String,
+      default: '',
     },
     value: {
       type: [String, Number],
@@ -178,8 +176,11 @@ export default {
     },
   },
   computed: {
-    validationSymbolsLeft() {
-      return (this.value.length <= 400) ? `${this.$t('messages.characters_left')} ${400 - this.value.length}` : `${this.$t('messages.delete_extra_characters')} ${this.value.length - 400}`;
+    needToDelete() {
+      return (this.value.length - 400);
+    },
+    custom() {
+      return `needToDelete:${this.needToDelete}`;
     },
   },
   mounted() {
