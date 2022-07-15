@@ -143,14 +143,9 @@
               <span class="code__text">
                 {{ code }}
               </span>
-              <button
-                v-clipboard:copy="code"
-                v-clipboard:success="ClipboardSuccessHandler"
-                v-clipboard:error="ClipboardErrorHandler"
-                type="button"
-              >
-                <span class="icon-copy" />
-              </button>
+              <button-copy
+                :copy-value="code"
+              />
             </div>
           </div>
         </div>

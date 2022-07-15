@@ -120,12 +120,9 @@
         class="item__info item__link"
       >
         {{ CutTxn(item.address || item.investorAddress, 9, 6) }}
-        <base-btn
+        <button-copy
           v-if="item.investorAddress"
-          v-clipboard:copy="item.investorAddress"
-          v-clipboard:success="ClipboardSuccessHandler"
-          v-clipboard:error="ClipboardErrorHandler"
-          mode="copy"
+          :copy-value="item.investorAddress"
           class="item__copy"
         />
       </a>

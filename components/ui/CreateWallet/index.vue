@@ -22,14 +22,13 @@
             class="wallet__phrase-input"
             data-selector="MNEMONIC"
           >
-          <button
-            v-clipboard:copy="mnemonic"
-            v-clipboard:error="ClipboardErrorHandler"
-            type="button"
+          <button-copy
+            :copy-value="mnemonic"
+            mode="mnemonic"
+            :is-show-toast-success="false"
+            class="wallet__mnemonic_copy"
             @click="showCopySuccess"
-          >
-            <span class="icon-copy wallet__mnemonic_copy" />
-          </button>
+          />
         </div>
         <div class="wallet__confirm-phrase">
           <input
@@ -335,7 +334,7 @@ export default {
     &_copy {
       position: absolute;
       right: 10px;
-      top: 25%;
+      top: 0;
       height: 100%;
       font-size: 28px;
       cursor: pointer;

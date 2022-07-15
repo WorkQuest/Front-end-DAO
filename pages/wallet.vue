@@ -6,14 +6,10 @@
           <span class="wallet__title">{{ $t('wallet.wallet') }}</span>
           <div class="wallet__address">
             <span class="user__wallet">{{ CutTxn(ConvertToBech32('wq', userWalletAddress), 8, 8) }}</span>
-            <button
-              v-clipboard:copy="ConvertToBech32('wq', userWalletAddress)"
-              v-clipboard:success="ClipboardSuccessHandler"
-              v-clipboard:error="ClipboardErrorHandler"
-              type="button"
-            >
-              <span class="icon-copy wallet__icon" />
-            </button>
+            <button-copy
+              :copy-value="ConvertToBech32('wq', userWalletAddress)"
+              mode="wallet"
+            />
           </div>
         </div>
         <div
