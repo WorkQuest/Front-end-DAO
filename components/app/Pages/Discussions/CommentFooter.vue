@@ -36,13 +36,20 @@
         v-model="subCommentInput"
         class="footer__input"
         :placeholder="$t('discussions.input')"
-        rules="min:1|max:250"
+        custom-rules="comment"
+        rules="min:1"
         :name="$t('discussions.response')"
         :auto-focus="isReply"
         mode="comment-field"
         data-selector="COMMENT_TYPES"
         @keyup.enter.native="addSubCommentResponse(comment)"
       />
+      <span
+        v-if="!invalid"
+        class="footer__error"
+      >
+        {{ charactersLeft }}
+      </span>
       <base-btn
         class="footer__btn"
         :disabled="!isComplete() || invalid"
@@ -86,6 +93,9 @@ export default {
     ...mapGetters({
       currentDiscussion: 'discussions/getCurrentDiscussion',
     }),
+    charactersLeft() {
+      return (this.subCommentInput.length <= 400) ? `${this.$t('messages.characters_left')} ${400 - this.subCommentInput.length}` : '';
+    },
     docsLimitReached() {
       return this.documents.length >= this.docsLimit;
     },
@@ -161,6 +171,7 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
+    position: relative;
   }
 }
 
@@ -198,12 +209,20 @@ export default {
     grid-template-columns: 1fr 11fr 1fr;
     margin: 20px;
     align-items: center;
+    position: relative;
   }
 }
 
 .footer {
   animation: show 1s 1;
   display: flex;
+  &__error {
+    position: absolute;
+    top: 58px;
+    left: 60px;
+    font-size: 12px;
+    min-height: 23px;
+  }
 
   &__input {
     animation: show 1s 1;
@@ -264,6 +283,22 @@ export default {
 
     &_blue {
       color: #0083C7;
+    }
+  }
+}
+
+@include _767 {
+  .footer {
+    &__error {
+      left: 62px;
+    }
+  }
+}
+
+@include _380 {
+  .comment-footer {
+    &__footer {
+      margin-top: 0;
     }
   }
 }

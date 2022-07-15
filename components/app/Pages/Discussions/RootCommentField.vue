@@ -338,7 +338,7 @@ export default {
 @include _480 {
   .comment {
     &__field {
-      padding: 10px;
+      padding: 10px 10px 17px;
     }
   }
   .user {

@@ -13,7 +13,7 @@
       {'ctm-field_white': mode === 'white'},
       {'ctm-field_chat': mode === 'chat'},
     ]"
-    :rules="rules"
+    :rules="customRules === 'comment' ? custom : rules"
     :name="name"
     :vid="vid"
     :mode="validationMode"
@@ -95,6 +95,10 @@ export default {
       default: () => {
       },
     },
+    customRules: {
+      type: String,
+      default: '',
+    },
     value: {
       type: [String, Number],
       default: '',
@@ -171,6 +175,14 @@ export default {
       required: true,
     },
   },
+  computed: {
+    needToDelete() {
+      return (this.value.length - 400);
+    },
+    custom() {
+      return `needToDelete:${this.needToDelete}`;
+    },
+  },
   mounted() {
     this.focus();
   },
@@ -197,6 +209,10 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.characters {
+  display: inline;
+}
+
 .ctm-field {
   &__selector {
     position: absolute;

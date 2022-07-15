@@ -65,7 +65,9 @@
     "invalidPassword": "Invalid password",
     "loginToContinue": "Your account has been successfully created. Please login to continue",
     "walletNotLinked": "Wallet not linked",
-    "alpha_spaces_dash": "The {_field_} field may only contain alphabetic characters as well as spaces, dashes and underscores"
+    "alpha_spaces_dash": "The {_field_} field may only contain alphabetic characters as well as spaces, dashes and underscores",
+    "characters_left": "Characters left -",
+    "needToDelete": "Need to delete extra symbols - {needToDelete}"
   },
   "labels": {
     "firstName": "First name",
