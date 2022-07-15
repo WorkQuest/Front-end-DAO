@@ -31,6 +31,7 @@
 import { mapGetters } from 'vuex';
 import { Path, UserStatuses } from '~/utils/enums';
 import { getIsWalletConnected } from '~/utils/wallet';
+import { accessLifetime } from '~/utils/constants/cookiesLifetime';
 
 export default {
   scrollToTop: true,
@@ -50,7 +51,7 @@ export default {
       await this.$store.dispatch('user/getUserData');
       // To set role or assign wallet
       if (+userStatus === UserStatuses.NeedSetRole || !this.userData?.wallet?.address) {
-        this.$cookies.set('userLogin', true, { path: '/' });
+        this.$cookies.set('userLogin', true, { path: '/', maxAge: accessLifetime });
         await this.$router.push(Path.ROLE);
         return;
       }

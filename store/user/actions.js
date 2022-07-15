@@ -1,5 +1,6 @@
 import { success, error } from '~/utils/success-error';
 import { connectWithMnemonic } from '~/utils/wallet';
+import { accessLifetime } from '~/utils/constants/cookiesLifetime';
 
 export default {
   async signIn({ commit, dispatch }, payload) {
@@ -50,7 +51,7 @@ export default {
   },
   async confirm({ commit }, payload) {
     commit('setTokens', { access: this.$cookies.get('access'), refresh: this.$cookies.get('refresh') });
-    this.$cookies.set('role', payload.role);
+    this.$cookies.set('role', payload.role, { path: '/', maxAge: accessLifetime });
     return await this.$axios.$post('/v1/auth/confirm-email', payload);
   },
   async getUserData({ commit }) {
