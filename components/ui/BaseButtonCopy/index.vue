@@ -1,7 +1,7 @@
 <template>
   <button
     v-clipboard:copy="copyValue"
-    v-clipboard:success="isShowToastSuccess ? ClipboardSuccessHandler : ''"
+    v-clipboard:success="isShowToastSuccess ? ClipboardSuccessHandler : null"
     v-clipboard:error="ClipboardErrorHandler"
     data-selector="COPY-BTN"
     type="button"
