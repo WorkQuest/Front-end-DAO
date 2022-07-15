@@ -132,7 +132,6 @@ import modals from '~/store/modals/modals';
 import { TokenSymbolByContract, TokenSymbols, WalletTables } from '~/utils/enums';
 import { getStyledAmount } from '~/utils/wallet';
 import EmptyData from '~/components/app/EmptyData';
-import { ERC20 } from '~/abi/index';
 import { error, success } from '~/utils/success-error';
 
 export default {

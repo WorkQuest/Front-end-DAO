@@ -1,5 +1,7 @@
 /* eslint-disable no-param-reassign */
 
+import { accessLifetime, refreshLifetime } from '~/utils/constants/cookiesLifetime';
+
 export default {
   setFrozenBalance(state, data) {
     state.frozenBalance = data;
@@ -12,12 +14,12 @@ export default {
   }) {
     state.tokens.access = access;
     state.tokens.refresh = refresh;
-    const opts = { path: '/' };
-    this.$cookies.set('access', access, opts);
-    this.$cookies.set('refresh', refresh, opts);
-    this.$cookies.set('socialNetwork', social, opts);
+
+    this.$cookies.set('access', access, { path: '/', maxAge: accessLifetime });
+    this.$cookies.set('refresh', refresh, { path: '/', maxAge: refreshLifetime });
+    this.$cookies.set('socialNetwork', social, { path: '/', maxAge: accessLifetime });
     if (userStatus) {
-      this.$cookies.set('userStatus', userStatus, opts);
+      this.$cookies.set('userStatus', userStatus, { path: '/', maxAge: accessLifetime });
     }
   },
   setUserData(state, data) {
