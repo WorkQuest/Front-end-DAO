@@ -1,7 +1,7 @@
 <template>
   <button
     v-clipboard:copy="copyValue"
-    v-clipboard:success="isShowToastSuccess ? ClipboardSuccessHandler : ShowToastCopied"
+    v-clipboard:success="isShowToastSuccess ? ClipboardSuccessHandler : ShowToast(this.$t('modals.textCopy'), this.$t('createWallet.secretPhrase'))"
     v-clipboard:error="ClipboardErrorHandler"
     data-selector="COPY-BTN"
     type="button"

@@ -154,16 +154,5 @@ Vue.mixin({
         bodyClass: 'custom-toast-width',
       });
     },
-    ShowToastCopied() {
-      this.$bvToast.toast(String(this.$t('modals.textCopy')), {
-        title: this.$t('createWallet.secretPhrase'),
-        variant: 'success',
-        solid: true,
-        toaster: 'b-toaster-bottom-right',
-        appendToast: true,
-        toastClass: 'custom-toast-width',
-        bodyClass: 'custom-toast-width',
-      });
-    },
   },
 });
