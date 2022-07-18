@@ -57,13 +57,13 @@
                 <ValidationProvider
                   v-slot="{ validate }"
                   class="edit__validator"
-                  rules="ext:png,jpeg,jpg"
+                  rules="ext:png,jpeg,jpg,heic"
                   tag="div"
                 >
                   <input
                     id="coverUpload"
                     type="file"
-                    accept="image/*"
+                    accept="image/png, image/jpeg, image/heic"
                     @change="processFile($event, validate)"
                   >
                 </ValidationProvider>
@@ -73,9 +73,7 @@
               class="profile-cont__status status"
               :class="{ 'status_verified': userData.statusKYC === $options.SumSubStatuses.VERIFIED }"
             >
-              {{
-                $t(`settings.${userData.statusKYC === $options.SumSubStatuses.VERIFIED ? 'verified' : 'notVerified'}`)
-              }}
+              {{ $t(`settings.${userData.statusKYC === $options.SumSubStatuses.VERIFIED ? 'verified' : 'notVerified'}`) }}
               <span class="status__icon icon icon-check_all_big" />
             </div>
             <base-field
@@ -504,8 +502,13 @@ export default {
       this.delay = setTimeout(f, t);
     },
     async processFile(e, validate) {
-      const file = e.target.files[0];
+      let file = e.target.files[0];
       if (!file) return;
+
+      if (file.type === 'image/heic') {
+        file = await this.HEICConvertTo(file, 'image/jpeg');
+      }
+
       const isValid = await validate(e);
 
       if (isValid.valid) {
@@ -514,9 +517,9 @@ export default {
         const reader = new FileReader();
         reader.readAsDataURL(file);
 
-        const { ok, result } = await this.$store.dispatch('user/imageType', { contentType: file.type });
+        const result = await this.$store.dispatch('user/getUploadFileLink', { contentType: file.type });
 
-        if (!ok) {
+        if (!result) {
           this.avatar_change = null;
           return;
         }
@@ -538,20 +541,12 @@ export default {
             title: this.$t('modals.imageLoadedSuccessful'),
             subtitle: this.$t('modals.pleasePressSaveButton'),
           });
+          output.onload = null;
         };
         reader.onerror = (evt) => {
           console.error(evt);
         };
       }
-    },
-    showModalSave() {
-      this.isProfileEdit = false;
-      this.ShowModal({
-        key: modals.status,
-        img: require('~/assets/img/ui/questAgreed.svg'),
-        title: this.$t('modals.saved'),
-        subtitle: this.$t('modals.userDataHasBeenSaved'),
-      });
     },
     modalChangePassword() {
       this.ShowModal({
@@ -606,6 +601,12 @@ export default {
         },
       };
 
+      // eslint-disable-next-line no-restricted-syntax
+      for (const key in socialNetwork) {
+        if (!socialNetwork[key]) socialNetwork[key] = null;
+        else socialNetwork[key] = socialNetwork[key].trim();
+      }
+
       const additionalInfo = {
         address,
         socialNetwork,
@@ -651,7 +652,15 @@ export default {
       }
       const method = `/v1/${userRole}/profile/edit`;
       const ok = await this.$store.dispatch('user/editProfile', { config, method });
-      if (ok) this.showModalSave();
+      if (ok) {
+        this.isProfileEdit = false;
+        this.ShowModal({
+          key: modals.status,
+          img: require('~/assets/img/ui/questAgreed.svg'),
+          title: this.$t('modals.saved'),
+          subtitle: this.$t('modals.userDataHasBeenSaved'),
+        });
+      }
       this.setCurrData();
     },
   },
@@ -902,6 +911,7 @@ export default {
     overflow: hidden;
     position: absolute;
     z-index: -1;
+    transition: none;
 
     & input {
       width: 100%;

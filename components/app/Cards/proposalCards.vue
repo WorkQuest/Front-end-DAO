@@ -191,8 +191,9 @@ export default {
     },
     prevFilters: {
       deep: true,
-      handler() {
+      async handler() {
         this.currentPage = this.prevFilters.lastPage || 1;
+        if (!this.prevFilters.lastPage) await this.loadPage(this.currentPage);
       },
     },
   },

@@ -2,6 +2,7 @@ import Vue from 'vue';
 import moment from 'moment';
 import VueTippy, { TippyComponent } from 'vue-tippy';
 import converter from 'bech32-converting';
+import heic2any from 'heic2any';
 import modals from '~/store/modals/modals';
 import ENV, { IS_PROD } from '~/utils/addresses/index';
 
@@ -15,6 +16,21 @@ Vue.mixin({
     };
   },
   methods: {
+    UserName(firstName, lastName) {
+      if (firstName || lastName) return `${firstName || ''} ${lastName || ''}`;
+      return this.$t('user.nameless');
+    },
+    async HEICConvertTo(file, toType) {
+      try {
+        return await heic2any({
+          blob: file,
+          toType,
+        });
+      } catch (e) {
+        console.log(e);
+        return null;
+      }
+    },
     IsProd: () => IS_PROD,
     ConvertToBech32(prefix, address) {
       return converter(prefix).toBech32(address);

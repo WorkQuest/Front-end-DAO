@@ -69,7 +69,7 @@ export default {
     }),
     willBeUndelegate() {
       return this.options.delegateMode === DelegateMode.INVESTORS
-        ? this.Floor(this.frozenBalance) : new BigNumber(this.options.tokensAmount).shiftedBy(-18).toString();
+        ? this.frozenBalance : new BigNumber(this.options.tokensAmount).shiftedBy(-18).toString();
     },
   },
   beforeMount() {
@@ -109,7 +109,7 @@ export default {
           const res = await this.$store.dispatch('wallet/undelegate');
           this.SetLoader(false);
           if (res.ok) {
-            this.ShowToast(this.$tc('modals.undelegateAmount', this.Floor(this.frozenBalance)), this.$t('modals.undelegate'));
+            this.ShowToast(this.$tc('modals.undelegateAmount', this.frozenBalance), this.$t('modals.undelegate'));
           } else if (res.msg.includes('Not enough balance to undelegate')) {
             this.ShowToast(this.$t('errors.transaction.notEnoughFunds'), this.$t('errors.undelegateTitle'));
           }

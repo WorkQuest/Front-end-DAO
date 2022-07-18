@@ -170,13 +170,20 @@
                 v-model="opinion"
                 :auto-focus="isAddComment"
                 class="footer__input"
+                custom-rules="comment"
                 :placeholder="$t('discussions.input')"
-                rules="min:1|max:250"
+                rules="min:1"
                 :name="$t('discussions.response')"
                 mode="comment-field"
                 data-selector="OPINION"
                 @keyup.enter.native="addRootCommentResponse"
               />
+              <span
+                v-if="!invalid"
+                class="footer__error"
+              >
+                {{ charactersLeft }}
+              </span>
             </div>
             <div class="response__footer">
               <base-btn
@@ -229,7 +236,7 @@ import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
-      accept: 'application/msword, application/pdf, image/jpeg, image/png',
+      accept: 'application/msword, application/pdf, image/jpeg, image/png, image/heic',
       acceptedTypes: [],
       documents: [],
       docsLimit: 10,
@@ -251,6 +258,9 @@ export default {
       rootComments: 'discussions/getRootComments',
       subComments: 'discussions/getSubCommentsLevel2',
     }),
+    charactersLeft() {
+      return (this.opinion.length <= 400) ? `${this.$t('messages.characters_left')} ${400 - this.opinion.length}` : '';
+    },
     docsLimitReached() {
       return this.documents.length >= this.docsLimit;
     },
@@ -284,12 +294,17 @@ export default {
     checkContentType(file) {
       return this.acceptedTypes.indexOf(file.type) !== -1;
     },
-    handleFileSelected(e) {
+    async handleFileSelected(e) {
       if (!e.target.files[0] || this.docsLimitReached) return;
-      const file = e.target.files[0];
+      let file = e.target.files[0];
       const type = file.type.split('/').shift() === 'image' ? 'img' : 'doc';
+
       if (!this.checkContentType(file)) {
         return;
+      }
+
+      if (file.type === 'image/heic') {
+        file = await this.HEICConvertTo(file, 'image/jpeg');
       }
 
       const { size, name } = file;
@@ -322,8 +337,7 @@ export default {
       await this.$store.dispatch('discussions/setDiscussionImages', images);
     },
     authorName() {
-      if (this.discussionAuthor) return `${this.discussionAuthor.firstName} ${this.discussionAuthor.lastName}`;
-      return this.$t('user.nameless');
+      return this.UserName(this.discussionAuthor?.firstName, this.discussionAuthor?.lastName);
     },
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
@@ -647,7 +661,6 @@ export default {
     line-height: 18px;
     color: #1D2127;
     margin: 0 22px 0 8px;
-    cursor: pointer;
 
     &_right {
       margin: 7px;
@@ -802,6 +815,15 @@ export default {
 .footer {
   animation: show 1s 1;
   display: flex;
+  position: relative;
+
+  &__error {
+    position: absolute;
+    top: 58px;
+    left: 60px;
+    font-size: 12px;
+    min-height: 23px;
+  }
 
   &__input {
     @include text-usual;
@@ -909,6 +931,11 @@ export default {
       margin: 0;
     }
   }
+  .footer {
+    &__error {
+      left: 66px;
+    }
+  }
 }
 
 @include _480 {
@@ -930,7 +957,7 @@ export default {
 @include _380 {
   .comment {
     &__field {
-      padding: 10px;
+      padding: 10px 10px 35px;
     }
   }
 }

@@ -173,11 +173,15 @@ export default {
     leftColumn() {
       const stake = this.validatorData?.tokens
         ? new BigNumber(this.validatorData.tokens).shiftedBy(-this.balanceData.WQT.decimals).toString() : 0;
-      return [
+      const res = [
         { name: this.$t('validator.commonStake'), desc: this.$tc('meta.wqtCount', stake) },
         { name: this.$t('validator.fee'), desc: `${Math.ceil(this.validatorData?.commission?.commission_rates?.rate * 100)}%` },
         { name: this.$t('validator.missedBlocks'), desc: this.missedBlocks },
       ];
+      if (this.validatorData?.jailed) {
+        res.push({ name: this.$t('validators.table.status'), desc: this.$t('validators.jailed') });
+      }
+      return res;
     },
     convertedValidatorAddress() {
       if (!this.validatorData) return '';
@@ -393,7 +397,7 @@ export default {
   &__profile {
     grid-gap: 20px;
     display: grid;
-    max-height: 280px;
+    height: fit-content;
     padding: 20px;
     border-radius: 6px;
     background: white;

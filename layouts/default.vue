@@ -364,6 +364,7 @@ import { mapGetters } from 'vuex';
 import ClickOutside from 'vue-click-outside';
 import moment from 'moment';
 import { Path } from '~/utils/enums';
+import modals from '~/store/modals/modals';
 
 export default {
   scrollToTop: true,
@@ -441,6 +442,19 @@ export default {
     this.GetLocation();
     this.localUserData = JSON.parse(JSON.stringify(this.userData));
     this.$store.commit('user/setLang', this.$i18n.localeProperties.code);
+
+    const res = await this.$store.dispatch('wallet/getVotesByAddresses', [this.userData?.wallet?.address]);
+    if (res.ok && !+res.result[0]) {
+      this.ShowModal({
+        key: modals.status,
+        img: require('~/assets/img/ui/warning.svg'),
+        subtitle: this.$t('proposals.votingInfo'),
+        buttonText: this.$t('meta.delegateNow'),
+        closeCallback: () => {
+          this.$router.push(`${Path.INVESTORS}/${this.userData.id}`);
+        },
+      });
+    }
   },
   methods: {
     setLocale(item) {

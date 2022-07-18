@@ -123,6 +123,7 @@
 <script>
 import modals from '~/store/modals/modals';
 import { Path } from '~/utils/enums';
+import { accessLifetime } from '~/utils/constants/cookiesLifetime';
 
 export default {
   name: 'SignUp',
@@ -148,7 +149,7 @@ export default {
       };
       const response = await this.$store.dispatch('user/signUp', payload);
       if (response?.ok) {
-        this.$cookies.set('userStatus', response.result.userStatus);
+        this.$cookies.set('userStatus', response.result.userStatus, { path: '/', maxAge: accessLifetime });
         this.showConfirmEmailModal();
         await this.$router.push(Path.SIGN_IN);
       }

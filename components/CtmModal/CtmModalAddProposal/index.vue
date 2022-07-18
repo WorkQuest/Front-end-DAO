@@ -129,7 +129,7 @@ export default {
       fileId: 0,
       documents: [],
       docsLimit: 10,
-      accept: 'application/msword, application/pdf, image/png, image/jpeg',
+      accept: 'application/msword, application/pdf, image/png, image/jpeg, image/heic',
       acceptedTypes: [],
     };
   },
@@ -190,7 +190,7 @@ export default {
             key: modals.transactionReceipt,
             title: this.$t('modals.addProposal'),
             fields: {
-              from: { name: this.$t('modals.fromAddress'), value: this.userWalletAddress },
+              from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
               to: { name: this.$t('modals.toAddress'), value: this.ENV.WORKNET_VOTING },
               fee: {
                 name: this.$t('modals.trxFee'),
@@ -206,9 +206,8 @@ export default {
               });
               await this.$store.dispatch('proposals/updateFilters', {
                 ...this.prevFilters,
-                lastPage: 1,
+                lastPage: null,
               });
-              await this.$store.dispatch('proposals/getProposals', { limit: 12, offset: 0 });
               this.SetLoader(false);
               this.CloseModal();
             },
@@ -222,10 +221,14 @@ export default {
     checkContentType(file) {
       return this.acceptedTypes.indexOf(file.type) !== -1;
     },
-    handleFileSelected(e) {
+    async handleFileSelected(e) {
       if (!e.target.files[0] || this.isDocumentsLimitReached) return;
-      const file = e.target.files[0];
+      let file = e.target.files[0];
       const type = file.type.split('/').shift() === 'image' ? 'img' : 'doc';
+
+      if (file.type === 'image/heic') {
+        file = await this.HEICConvertTo(file, 'image/jpeg');
+      }
 
       if (!this.checkContentType(file)) {
         return;

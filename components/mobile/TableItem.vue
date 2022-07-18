@@ -2,23 +2,27 @@
   <div
     v-if="item !== undefined"
     class="item"
-    :class="{item__separator: isLast}"
+    :class="{item__separator: isLast, variant_primary: item._rowVariant === 'primary'}"
   >
     <div
       v-if="item.tx_hash"
       class="item__hash"
     >
       {{ $t('wallet.table.txHash') }}
-      <span class="item__info_large">
+      <a
+        :href="getTransactionUrl(item.tx_hash)"
+        target="_blank"
+        class="item__info_large item__link"
+      >
         {{ CutTxn(item.tx_hash, 9, 6) }}
-      </span>
+      </a>
     </div>
     <div
       v-if="item.hash"
       class="item__hash"
     >
       {{ $t('proposal.table.hash') }}
-      <span class="item__info_large">
+      <span class="item__info_large item__hash-link">
         {{ CutTxn(item.hash, 9, 6) }}
       </span>
     </div>
@@ -110,20 +114,21 @@
       class="item__subtitle"
     >
       {{ $t('proposal.table.address') }}
-      <a class="item__info">
+      <a
+        :href="getAddressUrl(item.address || item.investorAddress)"
+        target="_blank"
+        class="item__info item__link"
+      >
         {{ CutTxn(item.address || item.investorAddress, 9, 6) }}
-        <base-btn
+        <button-copy
           v-if="item.investorAddress"
-          v-clipboard:copy="item.investorAddress"
-          v-clipboard:success="ClipboardSuccessHandler"
-          v-clipboard:error="ClipboardErrorHandler"
-          mode="copy"
+          :copy-value="item.investorAddress"
           class="item__copy"
         />
       </a>
     </div>
     <div
-      v-if="item.vote"
+      v-if="item.vote !== null && item.vote !== undefined"
       class="item__subtitle"
     >
       {{ $t('proposal.table.vote') }}
@@ -166,7 +171,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
-import { DelegateMode, Path } from '~/utils/enums';
+import { DelegateMode, ExplorerUrl, Path } from '~/utils/enums';
 
 export default {
   name: 'Item',
@@ -192,6 +197,12 @@ export default {
     },
   },
   methods: {
+    getTransactionUrl(hash) {
+      return `${ExplorerUrl}/tx/${hash}`;
+    },
+    getAddressUrl(address) {
+      return `${ExplorerUrl}/address/${address}`;
+    },
     toastsDelegateInfo(value) {
       this.ShowToast(value, this.$t('investors.delegateInfo'));
     },
@@ -227,8 +238,10 @@ export default {
   border-bottom: 1px solid $black100;
 
   &__link {
+    color: $blue !important;
+    cursor: pointer;
     &:hover {
-      text-decoration: none;
+      text-decoration: underline !important;
     }
   }
 
@@ -317,6 +330,7 @@ export default {
   &__copy {
     display: inline-block !important;
     width: 15px !important;
+    background: none !important;
     height: 100% !important;
   }
 
@@ -328,5 +342,8 @@ export default {
     border-radius: 50%;
     object-position: center;
   }
+}
+.variant_primary {
+  background: #b8daff;
 }
 </style>

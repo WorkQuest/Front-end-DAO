@@ -9,7 +9,7 @@
           <img
             v-if="options.img"
             :src="options.img"
-            alt="RequestSend"
+            alt=""
           >
           <div class="ctm-modal__title">
             {{ options.title }}
@@ -24,9 +24,9 @@
           </div>
           <base-btn
             class="email__action"
-            @click="CloseModal"
+            @click="closeModal"
           >
-            {{ $t('meta.ok') }}
+            {{ options.buttonText || $t('meta.ok') }}
           </base-btn>
         </div>
       </div>
@@ -43,6 +43,15 @@ export default {
     ...mapGetters({
       options: 'modals/getOptions',
     }),
+  },
+  methods: {
+    async closeModal() {
+      const closeCallback = this.options?.closeCallback;
+      if (closeCallback) {
+        await closeCallback();
+      }
+      this.CloseModal();
+    },
   },
 };
 </script>

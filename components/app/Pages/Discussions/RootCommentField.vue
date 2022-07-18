@@ -177,8 +177,7 @@ export default {
       return subComments.filter((item) => item.rootCommentId === rootId);
     },
     authorName(item) {
-      if (item && item.author) return `${item.author.firstName} ${item.author.lastName}`;
-      return this.$t('user.nameless');
+      return this.UserName(item?.author?.firstName, item?.author?.lastName);
     },
     toInvestor(authorId) {
       this.$router.push(`/investors/${authorId}`);
@@ -339,7 +338,7 @@ export default {
 @include _480 {
   .comment {
     &__field {
-      padding: 10px;
+      padding: 10px 10px 17px;
     }
   }
   .user {

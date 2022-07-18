@@ -65,10 +65,10 @@
               <base-files
                 class="files__container"
                 :items="docs"
-                :is-show-empty="true"
+                :is-show-empty="!docs.length && !images.length"
               />
               <base-images
-                :mode="''"
+                mode=""
                 :items="images"
               />
             </div>
@@ -308,6 +308,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      userData: 'user/getUserData',
       userWalletAddress: 'user/getUserWalletAddress',
       balanceData: 'wallet/getBalanceData',
       proposalThreshold: 'proposals/proposalThreshold',
@@ -474,7 +475,6 @@ export default {
       const [proposalRes] = await Promise.all([
         this.$store.dispatch('proposals/getProposalInfoById', this.card.createdEvent.contractProposalId),
         this.getReceipt(),
-        // TODO: check it, logic for chair person will be here
         this.$store.dispatch('proposals/isChairpersonRole'),
       ]);
       if (!proposalRes.ok) return;
@@ -555,10 +555,15 @@ export default {
       const pastVotes = new BigNumber(pastVotesRes.result).shiftedBy(-this.balanceData.WQT.decimals);
       const thresholdToVote = thresholdRes.result;
       if (new BigNumber(pastVotes).isLessThan(thresholdToVote)) {
-        this.ShowToast(
-          this.$t('proposal.errors.notEnoughDelegatedPastVotes', { a: pastVotes.toString(), b: thresholdToVote.toString() }),
-          this.$t('proposal.errors.voteError'),
-        );
+        this.ShowModal({
+          key: modals.status,
+          img: require('~/assets/img/ui/warning.svg'),
+          subtitle: this.$t('proposal.errors.notEnoughDelegatedPastVotes'),
+          buttonText: this.$t('meta.delegateNow'),
+          closeCallback: () => {
+            this.$router.push(`${Path.INVESTORS}/${this.userData.id}`);
+          },
+        });
         return;
       }
 
@@ -581,7 +586,7 @@ export default {
         key: modals.transactionReceipt,
         title: this.$t('proposal.voteForProposal'),
         fields: {
-          from: { name: this.$t('modals.fromAddress'), value: this.userWalletAddress },
+          from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
           to: { name: this.$t('modals.toAddress'), value: this.ENV.WORKNET_VOTING },
           votingPower: { name: (this.$t('investors.table.voting')), value: pastVotes },
           votedFor: { name: this.$t('proposal.youVoted'), value: this.$t(`proposal.${value ? 'yes' : 'no'}`) },
@@ -753,9 +758,8 @@ export default {
 .header {
   &__title {
     min-width: 0;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+    white-space: pre-line;
+    word-break: break-word;
     font-weight: 600;
     font-size: 24px;
     line-height: 32px;
@@ -831,8 +835,8 @@ export default {
     color: #7C838D;
     margin: 10px 0;
     min-width: 0;
-    word-break: break-all;
-    white-space: normal;
+    word-break: break-word;
+    white-space: pre-line;
   }
 }
 

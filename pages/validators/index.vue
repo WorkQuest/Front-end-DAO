@@ -96,17 +96,17 @@ export default {
       ];
       if (this.tableType === 'validators') {
         mainFields.push(
-          { key: 'missedBlocks', label: this.$t('validators.table.missedBlocks'), sortable: true },
-          { key: 'fee', label: this.$t('validators.table.fee'), sortable: true },
-          { key: 'stake', label: this.$t('validators.table.stake'), sortable: true },
-          { key: 'minStake', label: this.$t('validators.table.minStake'), sortable: true },
-          { key: 'slots', label: this.$t('validators.table.slots'), sortable: true },
+          { key: 'missedBlocks', label: this.$t('validators.table.missedBlocks'), sortable: false },
+          { key: 'fee', label: this.$t('validators.table.fee'), sortable: false },
+          { key: 'stake', label: this.$t('validators.table.stake'), sortable: false },
+          { key: 'minStake', label: this.$t('validators.table.minStake'), sortable: false },
+          { key: 'slots', label: this.$t('validators.table.slots'), sortable: false },
         );
       } else {
         mainFields.push(
-          { key: 'fee', label: this.$t('validators.table.fee'), sortable: true },
-          { key: 'stake', label: this.$t('validators.table.stake'), sortable: true },
-          { key: 'slots', label: this.$t('validators.table.slots'), sortable: true },
+          { key: 'fee', label: this.$t('validators.table.fee'), sortable: false },
+          { key: 'stake', label: this.$t('validators.table.stake'), sortable: false },
+          { key: 'slots', label: this.$t('validators.table.slots'), sortable: false },
         );
       }
       return mainFields;
@@ -133,8 +133,11 @@ export default {
   methods: {
     async getValidators() {
       this.offset = (this.currPage - 1) * this.limit;
+      const type = this.tableType === 'validators'
+        ? ['BOND_STATUS_BONDED', 'BOND_STATUS_UNBONDING']
+        : 'BOND_STATUS_UNBONDED';
       await this.$store.dispatch('validators/getValidators', {
-        status: this.tableType === 'candidates' ? 'BOND_STATUS_UNBONDED' : 'BOND_STATUS_BONDED',
+        status: type,
         limit: this.limit,
         offset: this.offset,
       });
@@ -171,6 +174,9 @@ export default {
   &__txs {
     margin-top: 20px;
     overflow: auto;
+  }
+  &__pagination {
+    margin-top: 20px;
   }
 }
 .table__link {

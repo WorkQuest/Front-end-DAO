@@ -204,6 +204,15 @@ extend('alpha_spaces_dash', {
   },
 });
 
+extend('needToDelete', {
+  validate(value, { needToDelete }) {
+    return {
+      valid: needToDelete <= 0,
+    };
+  },
+  params: ['needToDelete'],
+});
+
 export default ({ app }) => {
   configure({
     defaultMessage: (_field_, values) => app.i18n.t(`messages.${values._rule_}`, values),

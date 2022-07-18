@@ -102,7 +102,8 @@ export default {
         const max = new BigNumber(this.balance).minus(this.maxFee);
         return max.isGreaterThan(0) ? max.toString() : '0';
       }
-      return new BigNumber(this.balance).minus(tempTxFeeValidators).toString();
+      const max = new BigNumber(this.balance).minus(tempTxFeeValidators);
+      return max.isGreaterThan(0) ? max.toString() : '0';
     },
     convertValue() {
       const { windowSize, investorAddress } = this;
@@ -207,7 +208,7 @@ export default {
           });
           this.SetLoader(false);
           if (res.ok) {
-            this.ShowToast(`Delegated ${this.Floor(tokensAmount)} WQT`, this.$t('modals.delegate'));
+            this.ShowToast(`Delegated ${tokensAmount} WQT`, this.$t('modals.delegate'));
           } else if (res.msg.includes('Not enough balance to delegate')) {
             this.ShowToast(this.$t('errors.delegate.notEnoughBalance'), this.$t('errors.delegate.title'));
           }

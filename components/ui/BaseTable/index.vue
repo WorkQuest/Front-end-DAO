@@ -56,13 +56,9 @@
       </nuxt-link>
     </template>
     <template #cell(copy)="el">
-      <base-btn
+      <button-copy
         v-if="el.item.investorAddress"
-        v-clipboard:copy="el.item.investorAddress"
-        v-clipboard:success="ClipboardSuccessHandler"
-        v-clipboard:error="ClipboardErrorHandler"
-        mode="copy"
-        class="table__copy"
+        :copy-value="el.item.investorAddress"
       />
     </template>
     <template #cell(vote)="el">
@@ -133,7 +129,7 @@
         :to="`${$options.Path.INVESTORS}/${el.item.id}`"
         class="table__link"
       >
-        <span>{{ cropTxt(el.item.fullName, 15) }}</span>
+        <span>{{ cropTxt(el.item.fullName, 20) }}</span>
       </nuxt-link>
     </template>
     <template #cell(validatorName)="el">
@@ -293,6 +289,7 @@ export default {
 
   &__copy {
     color: $blue;
+    background: none !important;
     font-size: 25px;
   }
 

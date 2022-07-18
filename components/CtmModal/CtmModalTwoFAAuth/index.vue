@@ -81,16 +81,10 @@
               data-selector="2FA-CODE"
               :placeholder="twoFACode"
             />
-            <button
-              v-clipboard:copy="twoFACode"
-              v-clipboard:success="ClipboardSuccessHandler"
-              v-clipboard:error="ClipboardErrorHandler"
+            <button-copy
+              :copy-value="twoFACode"
               class="content-field__btn-copy"
-              data-selector="COPY-BTN"
-              type="button"
-            >
-              <span class="icon-copy" />
-            </button>
+            />
           </div>
         </div>
       </div>
@@ -106,16 +100,10 @@
               data-selector="2FA-CODE"
               :placeholder="twoFACode"
             />
-            <button
-              v-clipboard:success="ClipboardSuccessHandler"
-              v-clipboard:error="ClipboardErrorHandler"
-              v-clipboard:copy="twoFACode"
+            <button-copy
+              :copy-value="twoFACode"
               class="content-field__btn-copy"
-              data-selector="COPY-BTN"
-              type="button"
-            >
-              <span class="icon-copy" />
-            </button>
+            />
           </div>
         </div>
       </div>
