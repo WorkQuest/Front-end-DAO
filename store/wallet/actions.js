@@ -12,10 +12,11 @@ import {
   transferToken,
   fetchWalletContractData,
   connectWallet,
-  sendWalletTransaction,
+  sendWalletTransaction, setIsEthNetWork, connectWalletToProvider,
 } from '~/utils/wallet';
 import {
-  errorCodes, TokenMap, TokenSymbols, WorknetTokenAddresses,
+  Chains,
+  errorCodes, ProviderTypesByChain, TokenMap, TokenSymbols, WalletTokensData, WorknetTokenAddresses,
 } from '~/utils/enums';
 import { error, success } from '~/utils/success-error';
 import { ERC20, WQVoting } from '~/abi/index';
@@ -242,5 +243,30 @@ export default {
       console.error('wallet/undelegate ', e);
       return error(errorCodes.Undelegate, e.message, e);
     }
+  },
+
+  /** SWITCH NETWORK */
+  async connectToProvider({
+    commit, dispatch, rootGetters, getters,
+  }, chain) {
+    if (getters.getSelectedNetwork === chain) return success();
+    const res = await connectWalletToProvider(ProviderTypesByChain[chain]);
+    if (res.ok) {
+      commit('setSelectedNetwork', chain);
+      commit('setSelectedToken', WalletTokensData[chain].tokenList[0].title);
+
+      await Promise.all([
+        dispatch('fetchCommonTokenInfo'),
+        dispatch('unsubscribeWS'),
+      ]);
+
+      // subscribe to WS wallet txs
+      await dispatch('subscribeWS');
+      setIsEthNetWork(chain === Chains.ETHEREUM);
+      $nuxt.ShowToast(`Current: ${chain}`, 'Network switched');
+    } else {
+      $nuxt.ShowToast(res.msg, 'Error on switch network');
+    }
+    return res;
   },
 };

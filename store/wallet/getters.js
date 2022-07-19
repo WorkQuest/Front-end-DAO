@@ -7,4 +7,5 @@ export default {
   getBalanceData: (state) => state.balance,
   getBalanceWQT: (state) => state.balance.WQT.balance,
   getSelectedToken: (state) => state.selectedToken,
+  getSelectedNetwork: (state) => state.selectedNetwork,
 };

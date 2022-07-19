@@ -20,11 +20,21 @@ export const IS_PROD = ['master', 'stage', 'testnet'].includes(process.env.BRANC
 
  * @property WQ_PROVIDER
  * @property WQ_EXPLORER
+ * @property WQ_WS_PROVIDER
 
  * @property WORKNET_WBNB_TOKEN
  * @property WORKNET_WETH_TOKEN
  * @property WORKNET_WUSD_TOKEN
  * @property WORKNET_USDT_TOKEN
  * @property WORKNET_VOTING
+ *
+ * @property BSC_USDT_TOKEN
+ * @property BSC_STABLE_BRIDGE
+
+ * @property POLYGON_USDT_TOKEN
+ * @property POLYGON_STABLE_BRIDGE
+
+ * @property ETHEREUM_USDT_TOKEN
+ * @property ETHEREUM_STABLE_BRIDGE
  */
 export default keysByBranch;

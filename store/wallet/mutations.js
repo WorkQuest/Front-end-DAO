@@ -33,4 +33,7 @@ export default {
   setSelectedToken(state, token) {
     state.selectedToken = token;
   },
+  setSelectedNetwork(state, chain) {
+    state.selectedNetwork = chain;
+  },
 };

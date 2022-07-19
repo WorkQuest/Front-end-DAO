@@ -520,6 +520,7 @@
     "balance": "Balance",
     "deposit": "Receive",
     "withdraw": "Withdraw",
+    "swap": "Swap",
     "transfer": "Buy / Send",
     "addCardProposal": "Add bank card for easy withdrawal",
     "addCard": "Add card",
