@@ -761,6 +761,7 @@ export default {
     color: #7C838D;
     align-self: stretch;
     margin-bottom: 20px;
+    white-space: pre-line;
   }
 
   &__title {
