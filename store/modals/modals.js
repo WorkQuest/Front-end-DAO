@@ -28,4 +28,5 @@ export default {
   securityCheck: 'securityCheck',
   warning: 'warning',
   reports: 'reports',
+  buyWQT: 'buyWQT',
 };

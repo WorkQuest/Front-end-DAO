@@ -36,6 +36,7 @@ import CtmModalSignWorkQuest from './CtmModalSignWorkQuest';
 import CtmModalTransactionReceipt from './CtmModalTransactionReceipt';
 import CtmModalSecurityCheck from './CtmModalSecurityCheck';
 import CtmModalReport from '~/components/CtmModal/CtmModalReport';
+import CtmModalBuyWQT from '~/components/CtmModal/CtmModalBuyWQT';
 
 export default {
   name: 'ModalBox',
@@ -63,6 +64,7 @@ export default {
     [modals.transactionReceipt]: CtmModalTransactionReceipt,
     [modals.securityCheck]: CtmModalSecurityCheck,
     [modals.reports]: CtmModalReport,
+    [modals.buyWQT]: CtmModalBuyWQT,
   },
   data: () => ({ modals }),
   computed: {

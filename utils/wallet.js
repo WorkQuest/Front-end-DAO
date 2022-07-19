@@ -176,6 +176,8 @@ export const disconnect = () => {
   wallet.reset();
 };
 
+export const getWalletTransactionCount = () => web3.eth.getTransactionCount(wallet.address);
+
 const min = Object.freeze(new BigNumber(0.0001));
 /**
  * @param amount
