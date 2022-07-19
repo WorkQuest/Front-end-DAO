@@ -2,7 +2,7 @@
   <div
     v-click-outside="hideDd"
     class="dd"
-    :class="[{'dd__top': mode === 'top' }]"
+    :class="[{'dd__top': mode === 'top' }, { 'dd_min-width': type !== 'underline' }]"
   >
     <button
       class="dd__btn"
@@ -45,6 +45,7 @@
       <div
         v-if="isShown && isIcon"
         class="dd__items"
+        :class="{ 'dd__items_underline-type': type === 'underline' }"
       >
         <button
           v-for="(item, i) in items"
@@ -62,6 +63,7 @@
       <div
         v-if="isShown && !isIcon"
         class="dd__items"
+        :class="{ 'dd__items_underline-type': type === 'underline' }"
       >
         <button
           v-for="(item, i) in items"
@@ -119,6 +121,7 @@ export default {
         { dd__btn_gray: type === 'gray' },
         { dd__btn_light: type === 'light' },
         { dd__btn_border: type === 'border' },
+        { dd__btn_underline: type === 'underline' },
       ];
     },
     titleClass() {
@@ -156,21 +159,29 @@ export default {
   font-size: 16px;
   line-height: 130%;
   color: $black500;
-  min-width: 131px;
   position: relative;
   text-align: left;
+
+  &_min-width {
+    min-width: 131px;
+  }
+
   &:hover .dd__caret {
     color: #0083C7;
   }
+
   &__title {
     color: $black500;
+
     &_light {
       color: $black800;
     }
   }
+
   &__top {
     align-items: flex-start;
   }
+
   &__items {
     @include box;
     width: 100%;
@@ -183,15 +194,24 @@ export default {
     grid-gap: 15px;
     padding: 15px 20px;
     z-index: 1;
+
+    &_underline-type {
+      width: fit-content;
+      min-width: fit-content;
+      right: 0;
+    }
+
   }
   &__item {
     text-align: left;
     width: 100%;
     color: $black500;
     min-height: 21px;
+
     &:hover {
       color: $black800;
     }
+
     &_icon {
       display: flex;
       align-items: center;
@@ -204,9 +224,11 @@ export default {
   &__icon {
     display: flex;
     align-items: center;
+
     img {
       margin-right: 5px;
     }
+
     span {
       margin-right: 5px;
     }
@@ -219,9 +241,11 @@ export default {
     &_dark {
       color: $black700;
     }
+
     &_light {
       color: #8D96A2;
     }
+
     &_blue {
       color: #0083C7;
     }
@@ -235,12 +259,15 @@ export default {
     width: 100%;
     background: #FFFFFF;
     border-radius: 6px;
+
     &_dark {
       background: #151552;
     }
+
     &_gray {
       background-color: $black0;
     }
+
     &_light {
       background: #FFFFFF;
       border: 1px solid rgba(0, 0, 0, 0);
@@ -248,8 +275,27 @@ export default {
         border: 1px solid rgba(0, 0, 0, 0.1);
       }
     }
+
     &_border {
       border: 1px solid $black0;
+    }
+
+    &_underline {
+      border: none;
+      background: none;
+      min-height: 26px;
+      padding-right: 0;
+      padding-left: 0;
+      margin-top: 5px;
+
+      .dd__title {
+        border-bottom: 1px solid $blue !important;
+        color: $blue !important;
+      }
+
+      &:hover {
+        border: none;
+      }
     }
   }
 }
