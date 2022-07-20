@@ -36,6 +36,7 @@ import CtmModalTransactionReceipt from './CtmModalTransactionReceipt';
 import CtmModalSecurityCheck from './CtmModalSecurityCheck';
 import CtmModalReport from '~/components/CtmModal/CtmModalReport';
 import CtmModalBuyWQT from '~/components/CtmModal/CtmModalBuyWQT';
+import CtmModalPendingHashStatus from '~/components/CtmModal/CtmModalPendingHashStatus';
 
 export default {
   name: 'ModalBox',
@@ -63,6 +64,7 @@ export default {
     [modals.securityCheck]: CtmModalSecurityCheck,
     [modals.reports]: CtmModalReport,
     [modals.buyWQT]: CtmModalBuyWQT,
+    [modals.pendingHash]: CtmModalPendingHashStatus,
   },
   data: () => ({ modals }),
   computed: {

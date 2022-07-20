@@ -29,4 +29,5 @@ export default {
   warning: 'warning',
   reports: 'reports',
   buyWQT: 'buyWQT',
+  pendingHash: 'pendingHash',
 };
