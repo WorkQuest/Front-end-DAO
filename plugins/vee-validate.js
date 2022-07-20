@@ -222,6 +222,16 @@ extend('min_tokens_amount', {
   params: ['balance', 'min', 'symbol'],
 });
 
+extend('max_buy_wqt', {
+  validate(value, { max }) {
+    return {
+      required: true,
+      valid: new BigNumber(value).isLessThanOrEqualTo(max),
+    };
+  },
+  params: ['max', 'symbol'],
+});
+
 extend('min_buy_wqt', {
   validate(value, { min }) {
     return {
@@ -230,6 +240,15 @@ extend('min_buy_wqt', {
     };
   },
   params: ['min', 'symbol'],
+});
+
+extend('have_funds', {
+  validate(value, { balance, amount }) {
+    return {
+      valid: new BigNumber(balance).isGreaterThanOrEqualTo(amount),
+    };
+  },
+  params: ['balance', 'amount', 'symbol'],
 });
 
 export default ({ app }) => {

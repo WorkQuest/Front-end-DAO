@@ -12,15 +12,19 @@ import {
   transferToken,
   fetchWalletContractData,
   connectWallet,
-  sendWalletTransaction, setIsEthNetWork, connectWalletToProvider,
+  sendWalletTransaction, setIsEthNetWork, connectWalletToProvider, GetWalletProvider, ethBoost,
 } from '~/utils/wallet';
 import {
   Chains,
-  errorCodes, ProviderTypesByChain, TokenMap, TokenSymbols, WalletTokensData, WorknetTokenAddresses,
+  errorCodes, ExplorerUrl, ProviderTypesByChain, TokenMap, TokenSymbols, WalletTokensData, WorknetTokenAddresses,
 } from '~/utils/enums';
 import { error, success } from '~/utils/success-error';
 import { ERC20, WQVoting } from '~/abi/index';
 import ENV from '~/utils/addresses';
+import BuyWQT from '~/abi/BuyWQT';
+
+let connectionWS = null;
+let callbackWS = null;
 
 export default {
   async getTransactions({ commit }, params) {
@@ -80,9 +84,10 @@ export default {
   disconnect() {
     disconnect();
   },
-  async fetchCommonTokenInfo({ commit }) {
+  async fetchCommonTokenInfo({ commit, getters }) {
     try {
-      const tokens = await Promise.all(WorknetTokenAddresses.map(async (address) => await Promise.all([
+      const chain = getters.getSelectedNetwork;
+      const tokens = await Promise.all(WalletTokensData[chain].tokenAddresses.map(async (address) => await Promise.all([
         fetchWalletContractData('symbol', ERC20, address),
         fetchWalletContractData('decimals', ERC20, address),
       ])));
@@ -158,6 +163,30 @@ export default {
     method, abi, contractAddress, data, recipient, amount,
   }) {
     return await getContractFeeData(method, abi, contractAddress, data, recipient, amount);
+  },
+
+  async approve({ commit }, {
+    tokenAddress, spenderAddress, amount, decimals = 18,
+  }) {
+    try {
+      amount = new BigNumber(amount).shiftedBy(decimals).toFixed(0).toString();
+      return await sendWalletTransaction(
+        'approve',
+        {
+          abi: ERC20,
+          address: tokenAddress,
+          data: [spenderAddress, amount],
+        },
+      );
+    } catch (e) {
+      console.error('Approve error', e.message);
+      return false;
+    }
+  },
+  async getAllowance({ commit }, { tokenAddress, spenderAddress, decimals = 18 }) {
+    const res = await fetchWalletContractData('allowance', ERC20, tokenAddress, [getWalletAddress(), spenderAddress]);
+    if (!res) return false;
+    return new BigNumber(res.toString()).shiftedBy(-decimals).toString();
   },
 
   /** Investors */
@@ -244,6 +273,99 @@ export default {
     } catch (e) {
       console.error('wallet/undelegate ', e);
       return error(errorCodes.Undelegate, e.message, e);
+    }
+  },
+
+  async subscribeWS({ getters }) {
+    try {
+      const network = getters.getSelectedNetwork;
+      if (network !== Chains.WORKNET) return success();
+      const { WSProvider } = WalletTokensData[Chains.WORKNET];
+
+      connectionWS = new WebSocket(WSProvider);
+      connectionWS.onopen = () => {
+        connectionWS.send(JSON.stringify({
+          jsonrpc: '2.0',
+          method: 'subscribe',
+          id: 0,
+          params: {
+            query: "tm.event='NewBlockHeader'",
+          },
+        }));
+      };
+      connectionWS.onmessage = async () => { if (callbackWS) await callbackWS(); };
+
+      return success();
+    } catch (err) {
+      console.error(err);
+      return error();
+    }
+  },
+  async setCallbackWS({ _ }, callback) {
+    callbackWS = callback;
+  },
+  async unsubscribeWS({ _ }) {
+    connectionWS?.close();
+    connectionWS = null;
+  },
+
+  /** BuyWQT */
+  async swap({
+    commit, dispatch, rootGetters, getters,
+  }, {
+    amount, bridgeAddress, isNative, symbol, toChainIndex, decimals,
+  }) {
+    try {
+      const provider = GetWalletProvider();
+
+      const userId = rootGetters['user/getUserData'].id;
+      const accountAddress = getWalletAddress();
+      const nonce = await provider.eth.getTransactionCount(accountAddress);
+      const bridgeInstance = await new provider.eth.Contract(BuyWQT, bridgeAddress);
+      const value = new BigNumber(amount).shiftedBy(Number(decimals)).toString();
+      const data = [nonce, toChainIndex, value, accountAddress, userId, symbol];
+
+      commit('setPendingHashLink', null);
+      await this.$wsNotifs.subscribe(`notifications/bridgeUsdt/${accountAddress}`, async (msg) => {
+        commit('setPendingHashLink', `${ExplorerUrl}/tx/${msg.data.hash}`);
+        await this.$wsNotifs.unsubscribe(`notifications/bridgeUsdt/${accountAddress}`);
+      });
+
+      let swapRes = null;
+      $nuxt.ShowToast('Swapping...', 'Swapping');
+
+      if (isNative) {
+        // eslint-disable-next-line prefer-const
+        let [gasPrice, gas] = await Promise.all([
+          provider.eth.getGasPrice(),
+          bridgeInstance.methods.swap(...data).estimateGas({ from: accountAddress, value }),
+        ]);
+        if (getters.getSelectedNetwork === Chains.ETHEREUM) gasPrice = new BigNumber(gasPrice.toString()).multipliedBy(ethBoost).toFixed(0);
+        swapRes = await bridgeInstance.methods.swap(...data).send({
+          from: accountAddress,
+          value,
+          gasPrice,
+          gas,
+        });
+      } else {
+        const [gasPrice, gas] = await Promise.all([
+          provider.eth.getGasPrice(),
+          bridgeInstance.methods.swap(...data).estimateGas({ from: accountAddress }),
+        ]);
+        swapRes = await bridgeInstance.methods.swap(...data).send({
+          from: accountAddress,
+          gasPrice,
+          gas,
+        });
+      }
+
+      $nuxt.ShowToast('Swapping done', 'Swapping');
+      return success(swapRes);
+    } catch (e) {
+      console.error('Error in swap:', e);
+      $nuxt.ShowToast(e.message, 'Swapping error');
+
+      return error(e.code, 'Error in swap action', e.data);
     }
   },
 

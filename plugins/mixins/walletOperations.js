@@ -57,10 +57,10 @@ export default {
             title: approveTitle,
             fields: {
               from: {
-                name: this.$t('meta.fromBig'),
-                value: isHexUserWalletAddress ? this.userWalletAddress : this.convertToBech32('wq', this.userWalletAddress),
+                name: this.$t('modals.fromAddress'),
+                value: isHexUserWalletAddress ? this.userWalletAddress : this.ConvertToBech32('wq', this.userWalletAddress),
               },
-              to: { name: this.$t('meta.toBig'), value: contractAddress },
+              to: { name: this.$t('modals.toAddress'), value: contractAddress },
               amount: { name: this.$t('modals.amount'), value: amount, symbol },
               fee: { name: this.$t('wallet.table.trxFee'), value: txFee.result.fee, symbol: nativeTokenSymbol },
             },

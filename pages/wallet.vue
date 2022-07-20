@@ -62,25 +62,15 @@
                 >
                   {{ selectedTokenBalanceInfo }}
                 </span>
-                <span
-                  v-if="selectedNetwork === $options.Chains.WORKNET && selectedToken === $options.TokenSymbols.WQT"
-                  class="balance__frozen-mobile"
-                >
+                <span class="balance__frozen-mobile">
                   <span class="balance__frozen-mobile_blue">
                     {{ $t('wallet.frozen') }}
                   </span>
                   {{ Floor(frozenBalance) }} {{ $options.TokenSymbols.WQT }}
                 </span>
-                <span
-                  v-else
-                  class="balance__currency__margin-bottom"
-                />
               </span>
-              <span :class="[{'balance__currency__margin-bottom' : !(selectedNetwork === $options.Chains.WORKNET && selectedToken === $options.TokenSymbols.WQT)}]">
-                <span
-                  v-if="selectedNetwork === $options.Chains.WORKNET && selectedToken === $options.TokenSymbols.WQT"
-                  class="balance__frozen balance__frozen_blue"
-                >
+              <span class="balance__currency__margin-bottom">
+                <span class="balance__frozen balance__frozen_blue">
                   <span class="balance__frozen">
                     {{ $t('wallet.frozen') }}
                   </span>
@@ -262,7 +252,7 @@ export default {
     },
     selectedTokenBalanceInfo() {
       if (!this.selectedTokenData) return this.selectedToken;
-      return `${this.selectedTokenData?.balance || '0'} ${this.selectedToken}`;
+      return `${this.selectedTokenData?.balance || '0'} ${TokenSymbols.WQT}`;
     },
     addressTypesDd() {
       return [AddressType.BECH32, AddressType.HEX];
@@ -315,8 +305,8 @@ export default {
       this.updateWQAddress();
     },
     async selectedNetwork() {
-      await this.loadData(true);
-      this.updateWQAddress();
+      // await this.loadData(true);
+      // this.updateWQAddress();
     },
     currentPage() {
       this.getTransactions();
@@ -382,7 +372,7 @@ export default {
       });
     },
     async loadData(isFirstLoading) {
-      if (this.isFetchingBalance) return;
+      if (this.isFetchingBalance || this.selectedNetwork !== Chains.WORKNET) return;
 
       if (isFirstLoading) this.isFetchingBalance = true;
 
@@ -424,8 +414,8 @@ export default {
           this.ShowModal({
             key: modals.transactionReceipt,
             fields: {
-              from: { name: this.$t('meta.fromBig'), value: wqAddress },
-              to: { name: this.$t('meta.toBig'), value: recipient },
+              from: { name: this.$t('modals.fromAddress'), value: wqAddress },
+              to: { name: this.$t('modals.toAddress'), value: recipient },
               amount: {
                 name: this.$t('modals.amount'),
                 value: amount,

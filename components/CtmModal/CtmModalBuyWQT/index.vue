@@ -72,7 +72,7 @@
       <div class="content__wqt">
         <template v-if="wqtAmount && !invalid">
           <div class="content__wqt-amount">
-            {{ $t('meta.amount.amountOfWQTToReceive') }}: {{ wqtAmount }}
+            {{ $t('wallet.buyWQT.amountOfWQTToReceive') }}: {{ wqtAmount }}
           </div>
           <div class="content__wqt-fee">
             {{ $t('wallet.buyWQT.worknetFee') }}
@@ -119,6 +119,8 @@ export default {
       updatePriceId: null,
       wqtAmount: null, // Сколько мы получим wqt
       inProgressWQT: false,
+
+      isConfirmedTransaction: false,
     };
   },
   computed: {
@@ -178,7 +180,6 @@ export default {
   watch: {
     async selectedNetwork() {
       this.clearData();
-      await this.updateTokenData();
     },
     // Определение сколько приблизительно WQT мы получим
     amount(nV) {
@@ -226,6 +227,9 @@ export default {
     await this.updateTokenData();
     this.focusBlurAmount();
   },
+  async beforeDestroy() {
+    if (!this.isConfirmedTransaction) await this.$store.dispatch('wallet/connectToProvider', Chains.WORKNET);
+  },
   methods: {
     focusBlurAmount() {
       this.$refs.amount.$refs.input.focus();
@@ -235,6 +239,7 @@ export default {
       if (this.selectedNetworkIndex === index) return;
       this.SetLoader(true);
       await this.$store.dispatch('wallet/connectToProvider', this.networkList[index].chain);
+      await this.updateTokenData();
       this.SetLoader(false);
     },
     clearData() {
@@ -250,14 +255,13 @@ export default {
     },
     // Updates balance by current network & token
     async updateTokenData() {
+      console.log('update');
       this.SetLoader(true);
       const { tokenAddress } = this.tokenList[this.selectedToken];
-      console.log(tokenAddress);
-      const provider = GetWalletProvider();
       const [balance, decimals, symbol] = await Promise.all([
-        fetchWalletContractData('balanceOf', ERC20, tokenAddress, [this.userWalletAddress], provider),
-        fetchWalletContractData('decimals', ERC20, tokenAddress, [], provider),
-        fetchWalletContractData('symbol', ERC20, tokenAddress, [], provider),
+        fetchWalletContractData('balanceOf', ERC20, tokenAddress, [this.userWalletAddress]),
+        fetchWalletContractData('decimals', ERC20, tokenAddress),
+        fetchWalletContractData('symbol', ERC20, tokenAddress),
         this.$store.dispatch('wallet/getBalance'),
       ]);
       this.SetLoader(false);
@@ -283,6 +287,8 @@ export default {
       const { decimals, symbol } = this.tokenData;
       const { tokenAddress } = this.tokenList[this.selectedToken];
       const { bridgeAddress } = this.networkList[this.selectedNetworkIndex];
+
+      this.isConfirmedTransaction = true;
 
       await this.MakeApprove({
         title: 'BuyWQT Approve',
@@ -317,8 +323,8 @@ export default {
           key: modals.transactionReceipt,
           title: 'BuyWQT Swap',
           fields: {
-            from: { name: this.$t('meta.fromBig'), value: userWalletAddress },
-            to: { name: this.$t('meta.toBig'), value: bridgeAddress },
+            from: { name: this.$t('modals.fromAddress'), value: userWalletAddress },
+            to: { name: this.$t('modals.fromAddress'), value: bridgeAddress },
             fee: { name: this.$t('wallet.table.trxFee'), value: feeRes.result.fee, symbol: nativeTokenSymbol },
           },
           submitMethod: async () => {

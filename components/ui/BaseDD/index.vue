@@ -215,7 +215,6 @@ export default {
     &_icon {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       img {
         margin-right: 5px;
         height: 24px;

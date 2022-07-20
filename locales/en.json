@@ -67,7 +67,11 @@
     "walletNotLinked": "Wallet not linked",
     "alpha_spaces_dash": "The {_field_} field may only contain alphabetic characters as well as spaces, dashes and underscores",
     "characters_left": "Characters left -",
-    "needToDelete": "Need to delete extra symbols - {needToDelete}"
+    "needToDelete": "Need to delete extra symbols - {needToDelete}",
+    "min_tokens_amount": "Insufficient tokens, min amount {min} {symbol}.",
+    "min_buy_wqt" : "To avoid unnecessary fees and network slippage, the minimum amount for this pair is ${min} {symbol}",
+    "max_buy_wqt": "To avoid unnecessary fees and network slippage, the maximum amount for this pair is ${max} {symbol}",
+    "have_funds": "Not enough {symbol} to complete this transaction"
   },
   "labels": {
     "firstName": "First name",
@@ -538,6 +542,14 @@
       "value": "Quantity",
       "empty": "Transactions list is empty",
       "trxFee": "Transaction Fee"
+    },
+    "buyWQT": {
+      "amountOfWQTToReceive": "Amount of WQT to receive",
+      "buyButton": "Buy WQT",
+      "title": "Buy $WQT now!",
+      "sub": "The easiest way to buy $WQT is using $USDT.",
+      "networks": "Networks available for purchase: Ethereum, Binance Smart Chain and Polygon. After the purchase, $WQT will automatically deposit to your WorkNet network wallet, minus the transaction fee.",
+      "worknetFee": "Includes a WorkNet network fee."
     }
   },
   "kyc": {
