@@ -261,12 +261,20 @@ export default {
         min: this.validatorData.min_self_delegation,
         submitMethod: async (amount) => {
           this.SetLoader(true);
+
+          // tx for calc gas used
           const gasUsedTx = await CreateSignedTxForValidator(
             ValidatorsMethods.DELEGATE,
             this.validatorData.operator_address,
             new BigNumber(amount).shiftedBy(18).toString(),
           );
           const simulateRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result });
+          if (!simulateRes.result) {
+            this.ShowToast(simulateRes.msg, 'Delegate error');
+            this.CloseModal();
+            this.SetLoader(false);
+            return;
+          }
           const { gas_used } = simulateRes.gas_info;
           this.SetLoader(false);
           this.ShowModal({
