@@ -92,16 +92,18 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
-import { BlockchainIndex, BuyWQTTokensData } from '~/utils/сonstants/bridge';
+import { BuyWQTTokensData } from '~/utils/сonstants/bridge';
 import {
   Chains, TokenSymbols, WalletTokensData,
 } from '~/utils/enums';
-import { WQTBuyCommission } from '~/utils/сonstants/commission';
-import { getStyledAmount, GetWalletProvider, getWalletTransactionCount } from '~/utils/wallet';
-import { fetchContractData } from '~/utils/web3';
+import {
+  getStyledAmount, GetWalletProvider, getWalletTransactionCount, fetchWalletContractData,
+} from '~/utils/wallet';
 import modals from '~/store/modals/modals';
 import { BuyWQT, ERC20 } from '~/abi';
 import walletOperations from '~/plugins/mixins/walletOperations';
+import { WQTBuyCommission } from '~/utils/constants/commission';
+import { WorknetBlockchainIndex } from '~/utils/constants/bridge';
 
 const MIN_AMOUNT = 5;
 const MAX_AMOUNT = 100;
@@ -227,12 +229,6 @@ export default {
       await this.$store.dispatch('wallet/connectToProvider', this.networkList[index].chain);
       this.SetLoader(false);
     },
-    handleInput(val) {
-      if (!val || isNaN(val)) this.amount = val;
-      else if (!this.tokenData) this.amount = 0;
-      else this.amount = this.ClearZero(val);
-      this.amount = this.amount.toString().replace(/,/g, '.');
-    },
     clearData() {
       this.amount = null;
       this.tokenData = null;
@@ -250,9 +246,9 @@ export default {
       const { tokenAddress } = this.tokenList[this.selectedToken];
       const provider = GetWalletProvider();
       const [balance, decimals, symbol] = await Promise.all([
-        fetchContractData('balanceOf', ERC20, tokenAddress, [this.userWalletAddress], provider),
-        fetchContractData('decimals', ERC20, tokenAddress, [], provider),
-        fetchContractData('symbol', ERC20, tokenAddress, [], provider),
+        fetchWalletContractData('balanceOf', ERC20, tokenAddress, [this.userWalletAddress], provider),
+        fetchWalletContractData('decimals', ERC20, tokenAddress, [], provider),
+        fetchWalletContractData('symbol', ERC20, tokenAddress, [], provider),
       ]);
       this.SetLoader(false);
       if (!decimals || !symbol) {
@@ -297,7 +293,7 @@ export default {
             method: 'swap',
             abi: BuyWQT,
             contractAddress: bridgeAddress,
-            data: [nonce, BlockchainIndex[Chains.WORKNET], BNValue, userWalletAddress, userId, symbol],
+            data: [nonce, WorknetBlockchainIndex, BNValue, userWalletAddress, userId, symbol],
           }),
           this.$store.dispatch('wallet/getBalance'),
         ]);
@@ -318,7 +314,7 @@ export default {
           },
           submitMethod: async () => {
             const res = await this.$store.dispatch('wallet/swap', {
-              toChainIndex: BlockchainIndex[Chains.WORKNET],
+              toChainIndex: WorknetBlockchainIndex,
               isNative: false,
               bridgeAddress,
               amount,

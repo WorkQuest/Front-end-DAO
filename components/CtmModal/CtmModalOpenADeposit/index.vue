@@ -55,6 +55,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
+import { images } from '~/utils/images';
 
 export default {
   name: 'ModalOpenADeposit',
@@ -70,7 +71,7 @@ export default {
     showDepositIsOpenedModal() {
       this.ShowModal({
         key: modals.status,
-        img: require('~/assets/img/ui/transactionSend.svg'),
+        img: images.TRANSACTION_SEND,
         title: this.$t('saving.depositIsOpened'),
         subTitle: '',
         path: '/savings/1',

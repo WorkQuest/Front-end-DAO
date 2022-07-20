@@ -9,4 +9,6 @@ export const images = Object.freeze({
   WUSD: require('~/assets/img/ui/wusd.svg'),
 
   WQ_LOGO: require('~/assets/img/app/logo.svg'),
+
+  TRANSACTION_SEND: require('~/assets/img/ui/transactionSend.svg'),
 });

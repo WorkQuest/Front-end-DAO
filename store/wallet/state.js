@@ -9,4 +9,5 @@ export default () => ({
   selectedToken: TokenSymbols.WQT,
   selectedNetwork: Chains.WORKNET,
   balance: { WQT: { balance: 0, fullBalance: 0, decimals: 18 } },
+  pendingHashLink: null,
 });

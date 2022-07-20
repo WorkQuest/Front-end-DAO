@@ -8,10 +8,4 @@ export default {
     state.prices = prices;
     state.symbols = symbols;
   },
-  setSecurityRatio(state, data) {
-    state.securityRatio = data;
-  },
-  setMinRatio(state, data) {
-    state.minRatio = data;
-  },
 };

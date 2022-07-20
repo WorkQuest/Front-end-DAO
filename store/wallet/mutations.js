@@ -36,4 +36,7 @@ export default {
   setSelectedNetwork(state, chain) {
     state.selectedNetwork = chain;
   },
+  setPendingHashLink(state, hashLink) {
+    state.pendingHashLink = hashLink;
+  },
 };

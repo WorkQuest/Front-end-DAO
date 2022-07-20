@@ -8,4 +8,5 @@ export default {
   getBalanceWQT: (state) => state.balance.WQT.balance,
   getSelectedToken: (state) => state.selectedToken,
   getSelectedNetwork: (state) => state.selectedNetwork,
+  getPendingHashLink: (state) => state.pendingHashLink,
 };

@@ -2,6 +2,8 @@ import { Chains, TokenSymbols } from '~/utils/enums';
 import { images } from '~/utils/images';
 import ENV from '~/utils/addresses/index';
 
+export const WorknetBlockchainIndex = 1;
+
 // eslint-disable-next-line import/prefer-default-export
 export const BuyWQTTokensData = new Map([
   [
