@@ -32,6 +32,7 @@ export default {
     { src: '@plugins/clipboard.js' },
     { src: '@plugins/injectComponents.js' },
     { src: '@plugins/vue-qrcode.js' },
+    { src: '@plugins/axiosOracle.js' },
   ],
   components: true,
   buildModules: [

@@ -4,6 +4,7 @@ export default {
   // GMAPKEY: process.env.GMAPKEY,
   // SECRET_SUMSUB: process.env.SECRET_SUMSUB,
 
+  WQ_ORACLE_URL: 'https://dev-oracle.workquest.co/api/v1',
   WQ_EXPLORER: 'https://dev-explorer.workquest.co/api/v1',
   WQ_WS_PROVIDER: 'wss://mainnet-gate.workquest.co/tendermint-rpc/websocket',
 

@@ -276,6 +276,7 @@
     "title": "Skills"
   },
   "modals": {
+    "pleaseWait": "Please wait...",
     "trxFee": "Transactions fee",
     "metamask": {
       "install": "Please install Metamask!",
