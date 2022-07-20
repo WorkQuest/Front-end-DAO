@@ -406,7 +406,6 @@ export default {
             wqAddress, ConvertToHex, nativeTokenSymbol,
           } = this;
           recipient = ConvertToHex('wq', recipient);
-          const value = new BigNumber(amount).shiftedBy(Number(this.selectedTokenData.decimals)).toString();
           const feeRes = await this.$store.dispatch('wallet/getTransferFeeData', {
             recipient,
             value: amount,

@@ -30,4 +30,5 @@ export default {
   reports: 'reports',
   buyWQT: 'buyWQT',
   pendingHash: 'pendingHash',
+  transactionSend: 'transactionSend',
 };
