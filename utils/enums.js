@@ -137,7 +137,7 @@ export const DelegateMode = Object.freeze({
   INVESTORS: 1,
 });
 
-export const ValidatorDelegatePrice = {
+export const GateGasPrice = {
   develop: '10000000',
   testnet: '1000000000000000000',
   stage: '85714285000000',
