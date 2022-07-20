@@ -291,7 +291,7 @@ export default {
     },
     async redirectUser() {
       this.addressAssigned = true;
-      this.$cookies.set('userLogin', true, { path: '/', maxAge: accessLifetime });
+      this.$cookies.set('userLogin', true, { path: Path.ROOT, maxAge: accessLifetime });
       // redirect to confirm access if token exists & unconfirmed account
       const confirmToken = sessionStorage.getItem('confirmToken');
       if (this.userStatus === UserStatuses.Unconfirmed && confirmToken) {
@@ -330,7 +330,7 @@ export default {
       const { result: { userStatus, address, totpIsActive } } = res;
       this.userStatus = userStatus;
       this.userWalletAddress = address ? address.toLowerCase() : '';
-      this.$cookies.set('userStatus', userStatus, { path: '/', maxAge: accessLifetime });
+      this.$cookies.set('userStatus', userStatus, { path: Path.ROOT, maxAge: accessLifetime });
       if (totpIsActive) {
         await this.ShowModal({
           key: modals.securityCheck,
@@ -363,7 +363,7 @@ export default {
       // Wallet is not assigned to this account
       if (!this.userWalletAddress) {
         setCipherKey(this.model.password);
-        this.$cookies.set('userLogin', true, { path: '/', maxAge: accessLifetime });
+        this.$cookies.set('userLogin', true, { path: Path.ROOT, maxAge: accessLifetime });
         await this.$router.push(Path.ROLE);
         this.SetLoader(false);
         return;
