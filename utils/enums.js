@@ -136,3 +136,10 @@ export const DelegateMode = Object.freeze({
   VALIDATORS: 0,
   INVESTORS: 1,
 });
+
+export const GateGasPrice = {
+  develop: '10000000',
+  testnet: '1000000000000000000',
+  stage: '85714285000000',
+  master: '85714285000000',
+}[process.env.BRANCH];
