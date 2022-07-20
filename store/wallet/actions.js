@@ -99,7 +99,6 @@ export default {
     const chain = getters.getSelectedNetwork;
     const token = WalletTokensData[chain].tokenList[0].title;
     const res = await getBalance();
-    console.log(token, res);
     commit('setBalance', {
       symbol: token,
       balance: res.ok ? res.result.balance : 0,
