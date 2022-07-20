@@ -8,7 +8,7 @@ import converter from 'bech32-converting';
 import secp256k1 from 'secp256k1';
 import { sha256 } from 'ethers/lib.esm/utils';
 import { error, success } from '~/utils/success-error';
-import { errorCodes } from '~/utils/enums';
+import { errorCodes, GateGasPrice } from '~/utils/enums';
 import { ERC20 } from '~/abi/index';
 import ENV from '~/utils/addresses/index';
 
@@ -445,9 +445,9 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
       mode_info: { single: { mode: message.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT } },
       sequence: +data.account.base_account.sequence,
     });
+
     const feeValue = new v1beta1.Fee({
-      // txFee | 10000000 - min gas price on worknet
-      amount: [{ denom: 'awqt', amount: new BigNumber(10000000).multipliedBy(gas_limit).toString() }],
+      amount: [{ denom: 'awqt', amount: new BigNumber(GateGasPrice).multipliedBy(gas_limit).toString() }],
       gas_limit,
     });
     const authInfo = new v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });

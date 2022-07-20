@@ -45,6 +45,13 @@ export const Path = Object.freeze({
   PROFILE: '/profile',
 });
 
+export const RouterNames = Object.freeze({
+  SIGN_IN: 'sign-in',
+  SIGN_UP: 'sign-up',
+  ROLE: 'role',
+  ROOT: 'index',
+});
+
 export const UserRole = Object.freeze({
   WORKER: 'worker',
   EMPLOYER: 'employer',
@@ -214,3 +221,10 @@ export const AddressType = Object.freeze({
   BECH32: 'BECH32',
   HEX: 'HEX',
 });
+
+export const GateGasPrice = {
+  develop: '10000000',
+  testnet: '1000000000000000000',
+  stage: '85714285000000',
+  master: '85714285000000',
+}[process.env.BRANCH];
