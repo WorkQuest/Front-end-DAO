@@ -95,10 +95,13 @@ export default {
     commit('setSelectedToken', token);
   },
 
-  async getBalance({ commit }) {
+  async getBalance({ commit, getters }) {
+    const chain = getters.getSelectedNetwork;
+    const token = WalletTokensData[chain].tokenList[0].title;
     const res = await getBalance();
+    console.log(token, res);
     commit('setBalance', {
-      symbol: TokenSymbols.WQT,
+      symbol: token,
       balance: res.ok ? res.result.balance : 0,
       fullBalance: res.ok ? res.result.fullBalance : 0,
     });

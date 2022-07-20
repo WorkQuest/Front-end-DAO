@@ -39,7 +39,9 @@
           v-if="tokenData"
           class="content__field_label"
         >
-          {{ $t('meta.balance') }} {{ tokenData.fullBalance }} {{ tokenData.symbol }}
+          {{ $t('wallet.balance') }}
+          {{ tokenData.fullBalance }} {{ tokenData.symbol }}
+          <div>{{ balanceData[nativeTokenSymbol]?.fullBalance }} {{ nativeTokenSymbol }}</div>
         </div>
         <base-field
           ref="amount"
@@ -61,7 +63,7 @@
               @click="maxValue"
             >
               <span class="max__text">
-                {{ $t('modals.maximum') }}
+                {{ $t('modals.max') }}
               </span>
             </base-btn>
           </template>
@@ -81,7 +83,7 @@
         :disabled="invalid || inProgressWQT"
         @click="handleSubmit(submit)"
       >
-        {{ $t('meta.btns.confirm') }}
+        {{ $t('meta.confirm') }}
       </base-btn>
     </validation-observer>
   </ctm-modal-box>
@@ -121,6 +123,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      balanceData: 'wallet/getBalanceData',
       selectedNetwork: 'wallet/getSelectedNetwork',
       userWalletAddress: 'user/getUserWalletAddress',
       userData: 'user/getUserData',
@@ -128,7 +131,11 @@ export default {
       oracleSymbols: 'oracle/getSymbols',
     }),
     amountRules() {
-      const { tokenData, selectedSymbol, amount } = this;
+      const {
+        tokenData,
+        selectedSymbol,
+        amount,
+      } = this;
       const minTokensAmount = `min_tokens_amount:${tokenData && tokenData.fullBalance},${MIN_AMOUNT},${selectedSymbol}`;
       const haveFounds = `have_funds:${tokenData && tokenData.fullBalance},${amount},${selectedSymbol}`;
       const decimalPlaces = `decimalPlaces:${tokenData ? tokenData.decimals : 0}`;
@@ -163,6 +170,9 @@ export default {
     },
     selectedSymbol() {
       return this.tokenData && this.tokenData.symbol;
+    },
+    nativeTokenSymbol() {
+      return WalletTokensData[this.selectedNetwork].tokenList[0].title;
     },
   },
   watch: {
@@ -248,6 +258,7 @@ export default {
         fetchWalletContractData('balanceOf', ERC20, tokenAddress, [this.userWalletAddress], provider),
         fetchWalletContractData('decimals', ERC20, tokenAddress, [], provider),
         fetchWalletContractData('symbol', ERC20, tokenAddress, [], provider),
+        this.$store.dispatch('wallet/getBalance'),
       ]);
       this.SetLoader(false);
       if (!decimals || !symbol) {
@@ -267,12 +278,11 @@ export default {
       this.SetLoader(true);
 
       const {
-        amount, userWalletAddress, selectedNetwork, userData: { id: userId },
+        amount, userWalletAddress, selectedNetwork, userData: { id: userId }, nativeTokenSymbol,
       } = this;
       const { decimals, symbol } = this.tokenData;
       const { tokenAddress } = this.tokenList[this.selectedToken];
       const { bridgeAddress } = this.networkList[this.selectedNetworkIndex];
-      const nativeTokenSymbol = WalletTokensData[selectedNetwork].tokenList[0].title;
 
       await this.MakeApprove({
         title: 'BuyWQT Approve',

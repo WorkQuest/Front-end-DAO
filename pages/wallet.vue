@@ -139,40 +139,25 @@
             </base-btn>
           </div>
         </div>
-        <a
-          v-if="selectedNetwork !== $options.Chains.WORKNET"
-          :href="selectedNetworkExplorer.url"
-          target="_blank"
-          class="wallet__explorer-ref"
-        >
-          <img
-            :src="selectedNetworkExplorer.icon"
-            :alt="selectedNetwork"
-          >
-          {{ selectedNetwork }} explorer
-        </a>
-        <div
-          v-else
-          class="wallet__table-wrapper"
-        >
+        <div class="wallet__table-wrapper">
           <div class="wallet__switch-table">
             <base-btn
               data-selector="SWITCH-ALL"
-              :mode="getSwitchButtonMode(walletTables.TXS)"
-              @click="selectedWalletTable = walletTables.TXS"
+              :mode="getSwitchButtonMode($options.WalletTables.TXS)"
+              @click="selectedWalletTable = $options.WalletTables.TXS"
             >
               {{ $t('meta.allTransactions') }}
             </base-btn>
             <base-btn
               data-selector="SWITCH-COLLATERAL"
-              :mode="getSwitchButtonMode(walletTables.COLLATERAL)"
-              @click="selectedWalletTable = walletTables.COLLATERAL"
+              :mode="getSwitchButtonMode($options.WalletTables.DELEGATIONS)"
+              @click="selectedWalletTable = $options.WalletTables.DELEGATIONS"
             >
               {{ $t('meta.delegations') }}
             </base-btn>
           </div>
           <div
-            v-if="selectedWalletTable === walletTables.TXS"
+            v-if="selectedWalletTable === $options.WalletTables.TXS"
             class="wallet__txs"
           >
             <div class="wallet__table table">
@@ -224,10 +209,10 @@ export default {
   components: { EmptyData },
   TokenSymbols,
   Chains,
+  WalletTables,
   data() {
     return {
       cardClosed: false,
-      ddValue: 0,
       txsPerPage: 10,
       currentPage: 1,
       selectedWalletTable: WalletTables.TXS,
@@ -286,9 +271,6 @@ export default {
       if (this.addressType === 0) return this.ConvertToBech32('wq', this.userWalletAddress);
       return this.userWalletAddress;
     },
-    walletTables() {
-      return WalletTables;
-    },
     totalPages() {
       if (!this.transactionsCount) return 0;
       return Math.ceil(this.transactionsCount / this.txsPerPage);
@@ -333,17 +315,8 @@ export default {
       this.updateWQAddress();
     },
     async selectedNetwork() {
-      this.ddValue = 0;
-      this.addressType = this.selectedNetwork === Chains.WORKNET ? 0 : 1;
       await this.loadData(true);
       this.updateWQAddress();
-    },
-    async selectedToken() {
-      this.ddValue = this.tokensMap[this.selectedToken].index;
-    },
-    async ddValue(newVal) {
-      await this.$store.dispatch('wallet/setSelectedToken', this.tokens[newVal].title);
-      await this.loadData(true);
     },
     currentPage() {
       this.getTransactions();

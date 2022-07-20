@@ -218,6 +218,8 @@ export default {
       justify-content: space-between;
       img {
         margin-right: 5px;
+        height: 24px;
+        width: 24px;
       }
     }
   }
@@ -226,6 +228,8 @@ export default {
     align-items: center;
 
     img {
+      height: 24px;
+      width: 24px;
       margin-right: 5px;
     }
 

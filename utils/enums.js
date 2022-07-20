@@ -123,7 +123,7 @@ export const WorknetTokenAddresses = Object.freeze([
 
 export const WalletTables = Object.freeze({
   TXS: 'TXS',
-  COLLATERAL: 'COLLATERAL',
+  DELEGATIONS: 'Delegations',
 });
 
 export const WalletState = Object.freeze({
