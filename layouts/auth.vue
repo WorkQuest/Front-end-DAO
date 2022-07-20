@@ -51,7 +51,7 @@ export default {
       await this.$store.dispatch('user/getUserData');
       // To set role or assign wallet
       if (+userStatus === UserStatuses.NeedSetRole || !this.userData?.wallet?.address) {
-        this.$cookies.set('userLogin', true, { path: '/', maxAge: accessLifetime });
+        this.$cookies.set('userLogin', true, { path: Path.ROOT, maxAge: accessLifetime });
         await this.$router.push(Path.ROLE);
         return;
       }
