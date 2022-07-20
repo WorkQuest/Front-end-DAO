@@ -78,12 +78,14 @@ export default {
   // },
   i18n: {
     locales: ['en'],
+    fallbackLocale: 'en',
     defaultLocale: 'en',
     strategy: 'no_prefix',
     vueI18n: {
       messages: {
         en: localeEn,
       },
+      silentFallbackWarn: true,
     },
     detectBrowserLanguage: {
       useCookie: true,

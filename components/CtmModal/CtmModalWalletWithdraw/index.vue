@@ -1,7 +1,7 @@
 <template>
   <ctm-modal-box
     class="transfer"
-    :title="$t('modals.transfer')"
+    :title="$t('modals.withdraw')"
   >
     <div class="transfer__content content">
       <validation-observer
@@ -80,7 +80,7 @@ import BigNumber from 'bignumber.js';
 import { TokenSymbols } from '~/utils/enums';
 
 export default {
-  name: 'ModalTakeTransfer',
+  name: 'ModalWalletWithdraw',
   data() {
     return {
       recipient: '',

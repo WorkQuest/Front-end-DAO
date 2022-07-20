@@ -4,9 +4,13 @@ export default {
   // GMAPKEY: process.env.GMAPKEY,
   // SECRET_SUMSUB: process.env.SECRET_SUMSUB,
 
-  WQ_PROVIDER: 'https://dev-node-nyc3.workquest.co/',
-  WQ_EXPLORER: 'https://dev-explorer.workquest.co/api/v1',
-  WQ_WS_PROVIDER: 'wss://testnet-gate.workquest.co/tendermint-rpc/websocket',
+  WQ_EXPLORER: 'https://mainnet-explorer-api.workquest.co/api/v1',
+  WQ_WS_PROVIDER: 'wss://mainnet-gate.workquest.co/tendermint-rpc/websocket',
+
+  WQ_PROVIDER: 'https://mainnet-gate.workquest.co',
+  ETH_PROVIDER: 'https://speedy-nodes-nyc.moralis.io/a4b1a749a870bbd413acd4f0/eth/mainnet',
+  BSC_PROVIDER: 'https://speedy-nodes-nyc.moralis.io/a4b1a749a870bbd413acd4f0/bsc/mainnet',
+  POLYGON_PROVIDER: 'https://speedy-nodes-nyc.moralis.io/a4b1a749a870bbd413acd4f0/polygon/mainnet',
 
   WORKNET_WBNB_TOKEN: '0x9C9fE9A77A3B0ed1d3584afaDd5873843bAF0E12',
   WORKNET_WETH_TOKEN: '0x75FC17d0C358F19528d5C24f29b37fA2aA725b1E',

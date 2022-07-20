@@ -1,7 +1,7 @@
 <template>
   <ctm-modal-box
     class="buy-wqt"
-    :title="$t('modals.titles.swap')"
+    :title="$t('modals.swap')"
   >
     <validation-observer
       v-slot="{handleSubmit, invalid}"
@@ -49,7 +49,6 @@
           :name="$t('modals.amount')"
           :rules="amountRules"
           data-selector="AMOUNT"
-          @input="handleInput"
         >
           <template
             v-slot:right-absolute
@@ -92,7 +91,6 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
-import { BuyWQTTokensData } from '~/utils/сonstants/bridge';
 import {
   Chains, TokenSymbols, WalletTokensData,
 } from '~/utils/enums';
@@ -103,7 +101,7 @@ import modals from '~/store/modals/modals';
 import { BuyWQT, ERC20 } from '~/abi';
 import walletOperations from '~/plugins/mixins/walletOperations';
 import { WQTBuyCommission } from '~/utils/constants/commission';
-import { WorknetBlockchainIndex } from '~/utils/constants/bridge';
+import { BuyWQTTokensData, WorknetBlockchainIndex } from '~/utils/constants/bridge';
 
 const MIN_AMOUNT = 5;
 const MAX_AMOUNT = 100;
@@ -244,6 +242,7 @@ export default {
     async updateTokenData() {
       this.SetLoader(true);
       const { tokenAddress } = this.tokenList[this.selectedToken];
+      console.log(tokenAddress);
       const provider = GetWalletProvider();
       const [balance, decimals, symbol] = await Promise.all([
         fetchWalletContractData('balanceOf', ERC20, tokenAddress, [this.userWalletAddress], provider),

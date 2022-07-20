@@ -29,10 +29,7 @@
         <div class="wallet__nav">
           <span class="wallet__title">{{ $t('wallet.wallet') }}</span>
           <div class="wallet__address">
-            <div
-              v-if="selectedNetwork === $options.Chains.WORKNET"
-              class="wallet__address-wrapper"
-            >
+            <div class="wallet__address-wrapper">
               <base-dd
                 v-model="addressType"
                 :items="addressTypesDd"
@@ -111,14 +108,14 @@
                 class="balance__btn"
                 @click="showBuyWQTModal"
               >
-                {{ $t('wallet.swap') }}
+                {{ $t('modals.swap') }}
               </base-btn>
               <base-btn
                 data-selector="SHOW-GIVE-VOTING_POWER"
                 class="balance__btn"
                 @click="showDelegateModal"
               >
-                todo: Delegate
+                {{ $t('modals.delegate') }}
               </base-btn>
             </div>
           </div>
@@ -164,15 +161,14 @@
               :mode="getSwitchButtonMode(walletTables.TXS)"
               @click="selectedWalletTable = walletTables.TXS"
             >
-              {{ $t('wallet.table.trx') }}
+              {{ $t('meta.allTransactions') }}
             </base-btn>
-            <!-- TODO del v-show, this plug for release -->
             <base-btn
               data-selector="SWITCH-COLLATERAL"
               :mode="getSwitchButtonMode(walletTables.COLLATERAL)"
               @click="selectedWalletTable = walletTables.COLLATERAL"
             >
-              тут будет чета
+              {{ $t('meta.delegations') }}
             </base-btn>
           </div>
           <div
@@ -265,21 +261,6 @@ export default {
       });
       return res;
     },
-    networkList() {
-      return [
-        BuyWQTTokensData.get(Chains.WORKNET),
-        BuyWQTTokensData.get(Chains.ETHEREUM),
-        BuyWQTTokensData.get(Chains.BINANCE),
-        BuyWQTTokensData.get(Chains.POLYGON),
-      ];
-    },
-    selectedNetworkIndex() {
-      for (let i = 0; i < this.networkList.length; i += 1) {
-        if (this.networkList[i].chain === this.selectedNetwork) return i;
-      }
-      console.error('Error on: selectedNetworkIndex', this.selectedNetwork);
-      return 0;
-    },
     selectedNetworkExplorer() {
       const net = WalletTokensData[this.selectedNetwork];
       return {
@@ -291,11 +272,8 @@ export default {
     nativeTokenSymbol() {
       return WalletTokensData[this.selectedNetwork].tokenList[0].title;
     },
-    selectedTokenAddress() {
-      return this.tokensMap[this.selectedToken]?.tokenAddress;
-    },
     selectedTokenData() {
-      return this.balance[this.selectedToken];
+      return this.balance.WQT;
     },
     selectedTokenBalanceInfo() {
       if (!this.selectedTokenData) return this.selectedToken;
@@ -305,9 +283,7 @@ export default {
       return [AddressType.BECH32, AddressType.HEX];
     },
     wqAddress() {
-      if (this.selectedNetwork === Chains.WORKNET) {
-        if (this.addressType === 0) return this.ConvertToBech32('wq', this.userWalletAddress);
-      }
+      if (this.addressType === 0) return this.ConvertToBech32('wq', this.userWalletAddress);
       return this.userWalletAddress;
     },
     walletTables() {
@@ -377,14 +353,6 @@ export default {
     this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
   },
   async mounted() {
-    if (!this.$cookies.get('isWalletAppShowed')) {
-      this.ShowModal({
-        key: modals.downloadApp,
-        title: this.$tc('modals.titles.downloadWallet'),
-        subtitle: this.$t('modals.downWalletOnSmartphone'),
-        app: 'isWalletAppShowed',
-      });
-    }
     if (!this.isWalletConnected) return;
 
     this.updateWQAddress();
@@ -408,10 +376,6 @@ export default {
       if (w > 678) this.shortWqAddress = this.wqAddress;
       else if (w > 400) this.shortWqAddress = this.CutTxn(this.wqAddress, 8, 8);
       else this.shortWqAddress = this.CutTxn(this.wqAddress, 4, 8);
-    },
-    async handleSwitchNetwork(index) {
-      if (this.selectedNetworkIndex === index) return;
-      await this.$store.dispatch('wallet/connectToProvider', this.networkList[index].chain);
     },
     showDelegateModal() {
       this.ShowModal({
@@ -449,24 +413,11 @@ export default {
 
       if (isFirstLoading) this.isFetchingBalance = true;
 
-      const { selectedToken, userWalletAddress } = this;
-
-      // 0 token is always native token for current network!
-      if (this.nativeTokenSymbol === selectedToken) {
-        const toFetch = [this.$store.dispatch('wallet/getBalance')];
-        if (this.selectedNetwork === Chains.WORKNET) {
-          toFetch.push(this.$store.dispatch('wallet/updateFrozenBalance'));
-        }
-        await Promise.all(toFetch);
-      } else {
-        const payload = { address: userWalletAddress, abi: ERC20 };
-        await this.$store.dispatch('wallet/fetchWalletData', {
-          method: 'balanceOf',
-          ...payload,
-          token: this.selectedTokenAddress,
-          symbol: selectedToken,
-        });
+      const toFetch = [this.$store.dispatch('wallet/getBalance')];
+      if (this.selectedNetwork === Chains.WORKNET) {
+        toFetch.push(this.$store.dispatch('wallet/updateFrozenBalance'));
       }
+      await Promise.all(toFetch);
 
       this.isFetchingBalance = false;
       if (isFirstLoading) {
@@ -493,20 +444,10 @@ export default {
           } = this;
           recipient = ConvertToHex('wq', recipient);
           const value = new BigNumber(amount).shiftedBy(Number(this.selectedTokenData.decimals)).toString();
-          let feeRes;
-          if (nativeTokenSymbol === selectedToken) {
-            feeRes = await this.$store.dispatch('wallet/getTransferFeeData', {
-              recipient,
-              value: amount,
-            });
-          } else {
-            feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
-              method: 'transfer',
-              abi: ERC20,
-              contractAddress: this.selectedTokenAddress,
-              data: [recipient, value],
-            });
-          }
+          const feeRes = await this.$store.dispatch('wallet/getTransferFeeData', {
+            recipient,
+            value: amount,
+          });
           this.ShowModal({
             key: modals.transactionReceipt,
             fields: {
@@ -521,14 +462,8 @@ export default {
             },
             submitMethod: async () => {
               this.CloseModal();
-              const action = selectedToken === nativeTokenSymbol ? 'transfer' : 'transferToken';
-              const payload = selectedToken === nativeTokenSymbol
-                ? { recipient, value: amount }
-                : {
-                  abi: ERC20,
-                  address: this.selectedTokenAddress,
-                  data: [recipient, value],
-                };
+              const action = 'transfer';
+              const payload = { recipient, value: amount };
               const { ok, result } = await this.$store.dispatch(`wallet/${action}`, payload);
               if (ok) {
                 await this.ShowModal({
@@ -902,6 +837,8 @@ export default {
     grid-template-columns: repeat(2, 1fr);
   }
   .balance__bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
   .buy-wqt__sub {
@@ -941,7 +878,7 @@ export default {
     }
   }
   .balance__bottom {
-    display: grid !important;
+    grid-template-columns: 1fr;
   }
 }
 </style>

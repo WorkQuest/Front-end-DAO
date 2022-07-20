@@ -143,6 +143,8 @@
     }
   },
   "meta": {
+    "allTransactions": "All transactions",
+    "delegations": "Delegations",
     "delegateNow": "Delegate Now",
     "confirm": "Confirm",
     "back": "Back",
@@ -275,6 +277,9 @@
       "install": "Please install Metamask!",
       "subtitle": "Please open site from Metamask app"
     },
+    "swap": "Swap",
+    "Delegate": "Delegate",
+    "network": "Network",
     "txInfo": "Transaction info",
     "gasLimit": "Gas limit",
     "textCopy": "Text has been copied",
@@ -520,7 +525,6 @@
     "balance": "Balance",
     "deposit": "Receive",
     "withdraw": "Withdraw",
-    "swap": "Swap",
     "transfer": "Buy / Send",
     "addCardProposal": "Add bank card for easy withdrawal",
     "addCard": "Add card",

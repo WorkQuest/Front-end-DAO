@@ -13,7 +13,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '@/store/modals/modals';
-import CtmModalGiveTransfer from './CtmModalGiveTransfer';
+import CtmModalWalletWithdraw from './CtmModalWalletWithdraw';
 import CtmModalShowFile from './CtmModalShowFile';
 import CtmModalConfirmEmail from './CtmModalConfirmEmail';
 import CtmModalChangePassword from './CtmModalChangePassword';
@@ -41,7 +41,7 @@ import CtmModalPendingHashStatus from '~/components/CtmModal/CtmModalPendingHash
 export default {
   name: 'ModalBox',
   components: {
-    [modals.giveTransfer]: CtmModalGiveTransfer,
+    [modals.walletWithdraw]: CtmModalWalletWithdraw,
     [modals.showFile]: CtmModalShowFile,
     [modals.emailConfirm]: CtmModalConfirmEmail,
     [modals.restore]: CtmModalRestore,
