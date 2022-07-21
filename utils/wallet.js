@@ -422,7 +422,7 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
     });
 
     const feeValue = new v1beta1.Fee({
-      amount: [{ denom: 'awqt', amount: new BigNumber(GateGasPrice).multipliedBy(gas_limit).toString() }],
+      amount: [{ denom: 'awqt', amount: new BigNumber(GateGasPrice).multipliedBy(200000).toString() }],
       gas_limit: 200000,
     });
     const authInfo = new v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
