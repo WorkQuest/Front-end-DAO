@@ -341,7 +341,8 @@ export const getContractFeeData = async (method, abi, contractAddress, data, rec
 };
 
 /** VALIDATORS */
-const chainId = 'worknet_20220112-1';
+const chainId = ENV.WQ_CHAIN_ID;
+
 const fetchCosmosAccount = async (address) => fetch(`${ENV.WQ_PROVIDER}/api/cosmos/auth/v1beta1/accounts/${address}`)
   .then((response) => response.json());
 
@@ -382,9 +383,11 @@ const sign = (txBody, authInfo, accountNumber, privKey) => {
     chain_id: chainId,
     account_number: Number(accountNumber),
   });
+
   const signMessage = v1beta1.SignDoc.encode(signDoc).finish();
   const hash = keccak_256.create().update(toRealUint8Array(signMessage)).digest();
   const sig = secp256k1.sign(Buffer.from(hash), Buffer.from(privKey));
+
   const txRaw = new v1beta1.TxRaw({
     body_bytes: bodyBytes,
     auth_info_bytes: authInfoBytes,
@@ -420,9 +423,10 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
 
     const feeValue = new v1beta1.Fee({
       amount: [{ denom: 'awqt', amount: new BigNumber(GateGasPrice).multipliedBy(gas_limit).toString() }],
-      gas_limit,
+      gas_limit: 200000,
     });
     const authInfo = new v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
+
     // sign
     return success(sign(txBody, authInfo, data.account.base_account.account_number, privKey)); // signedTxBytes base64
   } catch (e) {

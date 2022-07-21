@@ -18,6 +18,7 @@ export const IS_PROD = ['master', 'stage', 'testnet'].includes(process.env.BRANC
  * @property GMAPKEY - use process.env on project,
  * @property SECRET_SUMSUB - use process.env on project
 
+ * @property WQ_CHAIN_ID - ChainID for current network
  * @property WQ_PROVIDER
  * @property WQ_EXPLORER
 
