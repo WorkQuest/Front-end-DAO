@@ -140,7 +140,7 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
-  DelegateMode, ExplorerUrl, TokenSymbols, ValidatorsMethods,
+  DelegateMode, ExplorerUrl, GateGasPrice, TokenSymbols, ValidatorsMethods,
 } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import { error, success } from '~/utils/success-error';
@@ -285,7 +285,11 @@ export default {
               from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
               to: { name: this.$t('modals.toAddress'), value: this.convertedValidatorAddress },
               amount: { name: this.$t('modals.amount'), value: amount, symbol: TokenSymbols.WQT },
-              gasLimit: { name: this.$t('modals.gasLimit'), value: gas_used },
+              fee: {
+                name: this.$t('wallet.table.trxFee'),
+                value: new BigNumber(gas_used).multipliedBy(GateGasPrice).shiftedBy(-18).toString(),
+                symbol: TokenSymbols.WQT,
+              },
             },
             callback: async () => await new Promise((resolve) => {
               setTimeout(async () => {
