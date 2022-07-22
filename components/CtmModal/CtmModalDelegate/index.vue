@@ -134,11 +134,19 @@ export default {
       this.canSend = false;
 
       clearTimeout(this.feeTimeoutId);
+      this.validatorsFee = '...';
+      const amount = this.tokensAmount;
       this.feeTimeoutId = setTimeout(async () => {
+        if (!amount) {
+          this.validatorsFee = '0';
+          this.canSend = false;
+          return;
+        }
+
         const tx = await CreateSignedTxForValidator(
           ValidatorsMethods.DELEGATE,
           this.options.validatorAddress,
-          new BigNumber(this.tokensAmount).shiftedBy(18).toString(),
+          new BigNumber(amount).shiftedBy(18).toString(),
         );
         const simulateFeeRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: tx.result });
         if (!simulateFeeRes.result) {
