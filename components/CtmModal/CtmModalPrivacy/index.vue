@@ -57,7 +57,7 @@
           class="privacy__action"
           :disabled="!isAllChecked"
           data-selector="OK"
-          @click="onSubmit()"
+          @click="onSubmit"
         >
           {{ $t('meta.ok') }}
         </base-btn>
@@ -94,18 +94,8 @@ export default {
   methods: {
     async onSubmit() {
       // Role page
-      let response;
-      if (this.options.isSocialNetwork) {
-        response = await this.$store.dispatch('user/setUserRole', {
-          role: this.options.role,
-        });
-      } else {
-        response = await this.$store.dispatch('user/confirm', {
-          confirmCode: sessionStorage.getItem('confirmToken'),
-          role: this.options.role,
-        });
-      }
-
+      console.log(this.options);
+      const response = await this.$store.dispatch('user/setUserRole', { role: this.options.role });
       if (response?.ok) {
         this.$cookies.set('userLogin', true, { path: Path.ROOT, maxAge: accessLifetime });
         this.$cookies.set('userStatus', UserStatuses.Confirmed, { path: Path.ROOT, maxAge: accessLifetime });
