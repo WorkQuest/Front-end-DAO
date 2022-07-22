@@ -54,10 +54,16 @@
               {{ $t('modals.max') }}
             </base-btn>
           </div>
+          <div
+            v-if="options.delegateMode === $options.DelegateMode.VALIDATORS"
+            class="tokens__fee"
+          >
+            Fee for transaction: {{ !valid ? 0 : validatorsFee }} {{ $options.TokenSymbols.WQT }}
+          </div>
         </div>
         <base-btn
           class="delegate__done"
-          :disabled="!valid"
+          :disabled="!valid || !canSend"
           @click="handleSubmit(delegate)"
         >
           {{ $t('modals.delegate') }}
@@ -72,11 +78,15 @@ import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
 import { WQVoting } from '~/abi/index';
-import { TokenSymbols, DelegateMode } from '~/utils/enums';
-import { tempTxFeeValidators } from '~/utils/wallet';
+import {
+  TokenSymbols, DelegateMode, ValidatorsMethods, GateGasPrice,
+} from '~/utils/enums';
+import { CreateSignedTxForValidator, tempTxFeeValidators, validators_gas_limit } from '~/utils/wallet';
 
 export default {
   name: 'Delegate',
+  TokenSymbols,
+  DelegateMode,
   data() {
     return {
       tokensAmount: '',
@@ -84,9 +94,12 @@ export default {
       investorAddress: '',
       windowSize: window.innerWidth,
       maxFee: 0,
+
+      validatorsFee: 0,
+      canSend: true,
+      feeTimeoutId: null,
     };
   },
-  DelegateMode,
   computed: {
     ...mapGetters({
       options: 'modals/getOptions',
@@ -102,8 +115,7 @@ export default {
         const max = new BigNumber(this.balance).minus(this.maxFee);
         return max.isGreaterThan(0) ? max.toString() : '0';
       }
-      const max = new BigNumber(this.balance).minus(tempTxFeeValidators);
-      return max.isGreaterThan(0) ? max.toString() : '0';
+      return new BigNumber(this.balance).minus(this.options.maxFee).toString();
     },
     convertValue() {
       const { windowSize, investorAddress } = this;
@@ -114,6 +126,36 @@ export default {
       else if (windowSize > 380) a = 15;
       else if (windowSize > 350) a = 13;
       return this.CutTxn(convertedValue, a, a);
+    },
+  },
+  watch: {
+    async tokensAmount() {
+      if (this.options.delegateMode !== DelegateMode.VALIDATORS) return;
+      this.canSend = false;
+
+      clearTimeout(this.feeTimeoutId);
+      this.feeTimeoutId = setTimeout(async () => {
+        const tx = await CreateSignedTxForValidator(
+          ValidatorsMethods.DELEGATE,
+          this.options.validatorAddress,
+          new BigNumber(this.balanceData.WQT.fullBalance).shiftedBy(18)
+            .toString(),
+        );
+        const simulateFeeRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: tx.result });
+        if (!simulateFeeRes.result) {
+          this.ShowToast(simulateFeeRes.msg, 'Delegate error');
+          this.CloseModal();
+          this.SetLoader(false);
+          return;
+        }
+        const { gas_used } = simulateFeeRes.gas_info;
+        // Max fee for send tx
+        const maxFeeValue = new BigNumber(gas_used > validators_gas_limit ? gas_used : validators_gas_limit).multipliedBy(GateGasPrice)
+          .shiftedBy(-18);
+        const maxValue = new BigNumber(this.balanceData.WQT.fullBalance).minus(maxFeeValue);
+        this.validatorsFee = maxFeeValue.toString();
+        this.canSend = !maxValue.isLessThan(0);
+      }, 200);
     },
   },
   async beforeMount() {
@@ -136,7 +178,7 @@ export default {
       }
       return;
     }
-    // max fee calc
+    // max fee calc for Investors!
     const feeRes = await this.$store.dispatch('wallet/getContractFeeData', {
       method: 'delegate',
       abi: WQVoting,
@@ -237,7 +279,7 @@ export default {
   }
 
   &__done {
-    margin-top: 35px;
+    margin-top: 20px;
   }
 
   &__input {
@@ -284,6 +326,9 @@ export default {
       color: $black500;
       margin-bottom: 10px !important;
     }
+  }
+  &__fee {
+    margin-top: 35px;
   }
 }
 </style>

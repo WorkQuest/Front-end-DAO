@@ -108,7 +108,7 @@ export default {
       return data;
     } catch (e) {
       console.error('wallet/broadcast');
-      return error(-1, e?.response?.data?.message);
+      return error(e?.response?.data?.code, e?.response?.data?.message);
     }
   },
 };

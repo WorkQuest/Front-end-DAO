@@ -144,7 +144,7 @@ import {
 } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import { error, success } from '~/utils/success-error';
-import { CreateSignedTxForValidator } from '~/utils/wallet';
+import { CreateSignedTxForValidator, validators_gas_limit } from '~/utils/wallet';
 
 export default {
   name: 'Validator',
@@ -253,12 +253,46 @@ export default {
       this.SetLoader(false);
     },
     async toDelegateModal() {
+      // calculating max possible delegate value
+      await this.$store.dispatch('wallet/getBalance');
+      const possibleTx = await CreateSignedTxForValidator(
+        ValidatorsMethods.DELEGATE,
+        this.validatorData.operator_address,
+        new BigNumber(this.balanceData.WQT.fullBalance).shiftedBy(18).toString(),
+      );
+      const simulateFeeRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result });
+      if (!simulateFeeRes.result) {
+        let { msg } = simulateFeeRes;
+        const arr = msg.split(';')[2].split('awqt');
+        console.log(arr, simulateFeeRes.code, arr[1].replace(/[^1-9]/g, ''));
+        const balance = new BigNumber(arr[0]).shiftedBy(-18).toString();
+        const minBalanceToDelegate = new BigNumber(arr[1].replace(/[^1-9]/g, '')).shiftedBy(-18).toString();
+        if (simulateFeeRes.code === 3) {
+          msg = `Balance (${balance}) is less than possible to delegate: ${minBalanceToDelegate}`;
+        }
+        this.ShowToast(msg, 'Delegate error');
+        this.CloseModal();
+        this.SetLoader(false);
+        return;
+      }
+      let { gas_used } = simulateFeeRes.gas_info;
+
+      // Max fee for send tx
+      const maxFeeValue = new BigNumber(gas_used > validators_gas_limit ? gas_used : validators_gas_limit).multipliedBy(GateGasPrice).shiftedBy(-18);
+      let maxValue = new BigNumber(this.balanceData.WQT.fullBalance).minus(maxFeeValue);
+      if (maxValue.isLessThan(0)) {
+        maxValue = '0';
+      } else maxValue = maxValue.toString();
+
+      // Opening Delegate modal
       this.ShowModal({
         key: modals.delegate,
         delegateMode: DelegateMode.VALIDATORS,
         unbondingDays: this.unbondingDays,
         investorAddress: this.ConvertToHex('wqvaloper', this.validatorData.operator_address),
+        validatorAddress: this.validatorData.operator_address,
         min: this.validatorData.min_self_delegation,
+        maxFee: maxFeeValue,
         submitMethod: async (amount) => {
           this.SetLoader(true);
 
@@ -268,14 +302,18 @@ export default {
             this.validatorData.operator_address,
             new BigNumber(amount).shiftedBy(18).toString(),
           );
-          const simulateRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result });
+          const [simulateRes] = await Promise.all([
+            this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result }),
+            this.$store.dispatch('wallet/getBalance'),
+          ]);
           if (!simulateRes.result) {
             this.ShowToast(simulateRes.msg, 'Delegate error');
             this.CloseModal();
             this.SetLoader(false);
             return;
           }
-          const { gas_used } = simulateRes.gas_info;
+          gas_used = simulateRes.gas_info.gas_used;
+          const feeValue = new BigNumber(gas_used > validators_gas_limit ? gas_used : validators_gas_limit).multipliedBy(GateGasPrice).shiftedBy(-18).toString();
           this.SetLoader(false);
           this.ShowModal({
             key: modals.transactionReceipt,
@@ -287,7 +325,7 @@ export default {
               amount: { name: this.$t('modals.amount'), value: amount, symbol: TokenSymbols.WQT },
               fee: {
                 name: this.$t('wallet.table.trxFee'),
-                value: new BigNumber(gas_used).multipliedBy(GateGasPrice).shiftedBy(-18).toString(),
+                value: feeValue,
                 symbol: TokenSymbols.WQT,
               },
             },
@@ -306,7 +344,6 @@ export default {
                 ValidatorsMethods.DELEGATE,
                 this.validatorData.operator_address,
                 new BigNumber(amount).shiftedBy(18).toString(),
-                gas_used,
               );
               const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: delegateTx.result });
               if (broadcastRes.tx_response.raw_log !== '[]') {
@@ -333,7 +370,16 @@ export default {
             this.validatorData.operator_address,
             this.delegatedData.amount,
           );
-          const simulateRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result });
+          const simulateRes = await Promise.all([
+            this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result }),
+            this.$store.dispatch('wallet/getBalance'),
+          ]);
+          if (!simulateRes.result) {
+            this.ShowToast(simulateRes.msg, 'UnDelegate error');
+            this.CloseModal();
+            this.SetLoader(false);
+            return;
+          }
           const { gas_used } = simulateRes.gas_info;
           this.SetLoader(false);
           this.ShowModal({
@@ -342,7 +388,11 @@ export default {
             fields: {
               from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
               to: { name: this.$t('modals.toAddress'), value: this.convertedValidatorAddress },
-              gasLimit: { name: this.$t('modals.gasLimit'), value: gas_used },
+              fee: {
+                name: this.$t('wallet.table.trxFee'),
+                value: new BigNumber(gas_used).multipliedBy(GateGasPrice).shiftedBy(-18).toString(),
+                symbol: TokenSymbols.WQT,
+              },
             },
             callback: async () => await new Promise((resolve) => {
               setTimeout(async () => {
