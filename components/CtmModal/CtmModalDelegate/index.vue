@@ -115,7 +115,9 @@ export default {
         const max = new BigNumber(this.balance).minus(this.maxFee);
         return max.isGreaterThan(0) ? max.toString() : '0';
       }
-      return new BigNumber(this.balance).minus(this.options.maxFee).toString();
+      const possible = new BigNumber(this.balance).minus(this.options.maxFee);
+      const max = new BigNumber(999999999); // Delegate limit for validator
+      return possible.isLessThan(max) ? possible.toString() : max.toString();
     },
     convertValue() {
       const { windowSize, investorAddress } = this;
