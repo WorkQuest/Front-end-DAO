@@ -144,7 +144,7 @@ import {
 } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import { error, success } from '~/utils/success-error';
-import { CreateSignedTxForValidator } from '~/utils/wallet';
+import { CreateSignedTxForValidator, validators_gas_limit } from '~/utils/wallet';
 
 export default {
   name: 'Validator',
@@ -253,12 +253,49 @@ export default {
       this.SetLoader(false);
     },
     async toDelegateModal() {
+      // calculating possible delegate value
+      this.SetLoader(true);
+      await this.$store.dispatch('wallet/getBalance');
+      const possibleTx = await CreateSignedTxForValidator(
+        ValidatorsMethods.DELEGATE,
+        this.validatorData.operator_address,
+        new BigNumber(1).shiftedBy(18).toString(),
+      );
+      const simulateFeeRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result });
+      this.SetLoader(false);
+      if (!simulateFeeRes.result) {
+        let { msg } = simulateFeeRes;
+        const isSequenceErr = msg?.includes('account sequence mismatch');
+        const isAccountErr = msg?.includes('account number');
+        if (msg && !isSequenceErr && !isAccountErr && simulateFeeRes?.code === 3 && msg?.includes('awqt')) {
+          const arr = msg?.split('awqt');
+          const balance = new BigNumber(arr[0]?.replace(/[^0-9]/g, ''))?.shiftedBy(-18)?.toString();
+          const minBalanceToDelegate = new BigNumber(arr[1]?.replace(/[^0-9]/g, '')?.toString())?.shiftedBy(-18)?.plus(1)?.toString();
+          const symbol = TokenSymbols.WQT;
+          msg = this.$t('validators.balanceLessPossible', { balance, min: minBalanceToDelegate, s: symbol });
+        }
+        this.ShowToast(msg, 'Delegate error');
+        this.CloseModal();
+        return;
+      }
+      let { gas_used } = simulateFeeRes.gas_info;
+
+      // Max fee for send tx
+      const maxFeeValue = new BigNumber(gas_used > validators_gas_limit ? gas_used : validators_gas_limit).multipliedBy(GateGasPrice).shiftedBy(-18);
+      let maxValue = new BigNumber(this.balanceData.WQT.fullBalance).minus(maxFeeValue);
+      if (maxValue.isLessThan(0)) {
+        maxValue = '0';
+      } else maxValue = maxValue.toString();
+
+      // Opening Delegate modal
       this.ShowModal({
         key: modals.delegate,
         delegateMode: DelegateMode.VALIDATORS,
         unbondingDays: this.unbondingDays,
         investorAddress: this.ConvertToHex('wqvaloper', this.validatorData.operator_address),
+        validatorAddress: this.validatorData.operator_address,
         min: this.validatorData.min_self_delegation,
+        maxFee: maxFeeValue,
         submitMethod: async (amount) => {
           this.SetLoader(true);
 
@@ -268,15 +305,20 @@ export default {
             this.validatorData.operator_address,
             new BigNumber(amount).shiftedBy(18).toString(),
           );
-          const simulateRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result });
+          const [simulateRes] = await Promise.all([
+            this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result }),
+            this.$store.dispatch('wallet/getBalance'),
+          ]);
+          this.SetLoader(false);
           if (!simulateRes.result) {
             this.ShowToast(simulateRes.msg, 'Delegate error');
             this.CloseModal();
-            this.SetLoader(false);
             return;
           }
-          const { gas_used } = simulateRes.gas_info;
-          this.SetLoader(false);
+          gas_used = simulateRes.gas_info.gas_used;
+          const feeValue = new BigNumber(gas_used > validators_gas_limit ? gas_used : validators_gas_limit).multipliedBy(GateGasPrice).shiftedBy(-18).toString();
+
+          // Transaction receipt
           this.ShowModal({
             key: modals.transactionReceipt,
             title: this.$t('modals.delegate'),
@@ -287,7 +329,7 @@ export default {
               amount: { name: this.$t('modals.amount'), value: amount, symbol: TokenSymbols.WQT },
               fee: {
                 name: this.$t('wallet.table.trxFee'),
-                value: new BigNumber(gas_used).multipliedBy(GateGasPrice).shiftedBy(-18).toString(),
+                value: feeValue,
                 symbol: TokenSymbols.WQT,
               },
             },
@@ -306,7 +348,6 @@ export default {
                 ValidatorsMethods.DELEGATE,
                 this.validatorData.operator_address,
                 new BigNumber(amount).shiftedBy(18).toString(),
-                gas_used,
               );
               const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: delegateTx.result });
               if (broadcastRes.tx_response.raw_log !== '[]') {
@@ -319,7 +360,38 @@ export default {
         },
       });
     },
-    toUndelegateModal() {
+
+    async toUndelegateModal() {
+      this.SetLoader(true);
+      const possibleTx = await CreateSignedTxForValidator(
+        ValidatorsMethods.UNDELEGATE,
+        this.validatorData.operator_address,
+        this.delegatedData.amount,
+      );
+      const [possibleRes] = await Promise.all([
+        this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result }),
+        this.$store.dispatch('wallet/getBalance'),
+      ]);
+      this.SetLoader(false);
+      if (!possibleRes.result) {
+        let msg = possibleRes?.msg;
+        if (msg && msg?.includes('awqt')) {
+          const arr = msg?.split('awqt');
+          const balance = new BigNumber(arr[0]?.replace(/[^0-9]/g, ''))?.shiftedBy(-18)?.toString();
+          const minBalanceToUndelegate = new BigNumber(arr[1]?.replace(/[^0-9]/g, '')?.toString())?.shiftedBy(-18)?.toString();
+          const symbol = TokenSymbols.WQT;
+          msg = this.$t('validators.balanceLessPossibleUndelegate', {
+            balance,
+            min: minBalanceToUndelegate,
+            s: symbol,
+          });
+        }
+        this.ShowToast(msg, 'Undelegate error');
+        this.CloseModal();
+        return;
+      }
+
+      // Delegate info modal
       this.ShowModal({
         key: modals.undelegate,
         title: this.$t('modals.undelegate'),
@@ -333,16 +405,28 @@ export default {
             this.validatorData.operator_address,
             this.delegatedData.amount,
           );
-          const simulateRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result });
-          const { gas_used } = simulateRes.gas_info;
+          const [simulateRes] = await Promise.all([
+            this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result }),
+            this.$store.dispatch('wallet/getBalance'),
+          ]);
           this.SetLoader(false);
+          if (!simulateRes.result) {
+            this.ShowToast(simulateRes.msg, 'Undelegate error');
+            this.CloseModal();
+            return;
+          }
+          const { gas_used } = simulateRes.gas_info;
           this.ShowModal({
             key: modals.transactionReceipt,
             isShowSuccess: true,
             fields: {
               from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
               to: { name: this.$t('modals.toAddress'), value: this.convertedValidatorAddress },
-              gasLimit: { name: this.$t('modals.gasLimit'), value: gas_used },
+              fee: {
+                name: this.$t('wallet.table.trxFee'),
+                value: new BigNumber(gas_used).multipliedBy(GateGasPrice).shiftedBy(-18).toString(),
+                symbol: TokenSymbols.WQT,
+              },
             },
             callback: async () => await new Promise((resolve) => {
               setTimeout(async () => {
@@ -359,7 +443,6 @@ export default {
                 ValidatorsMethods.UNDELEGATE,
                 this.validatorData.operator_address,
                 this.delegatedData.amount,
-                gas_used,
               );
               const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: undelegateTx.result });
               if (broadcastRes.tx_response.raw_log !== '[]') {

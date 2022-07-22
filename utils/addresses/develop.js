@@ -4,6 +4,7 @@ export default {
   // GMAPKEY: process.env.GMAPKEY,
   // SECRET_SUMSUB: process.env.SECRET_SUMSUB,
 
+  WQ_CHAIN_ID: 'worknet_20220112-1',
   WQ_PROVIDER: 'https://dev-node-nyc3.workquest.co/',
   WQ_EXPLORER: 'https://dev-explorer.workquest.co/api/v1',
 

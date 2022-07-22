@@ -144,6 +144,7 @@ export const DelegateMode = Object.freeze({
   INVESTORS: 1,
 });
 
+// min gas price by gate
 export const GateGasPrice = {
   develop: '10000000',
   testnet: '1000000000000000000',
