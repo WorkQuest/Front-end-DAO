@@ -94,7 +94,6 @@ export default {
   methods: {
     async onSubmit() {
       // Role page
-      console.log(this.options);
       const response = await this.$store.dispatch('user/setUserRole', { role: this.options.role });
       if (response?.ok) {
         this.$cookies.set('userLogin', true, { path: Path.ROOT, maxAge: accessLifetime });
