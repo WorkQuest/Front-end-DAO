@@ -253,7 +253,8 @@ export default {
       this.SetLoader(false);
     },
     async toDelegateModal() {
-      // calculating max possible delegate value
+      // calculating possible delegate value
+      this.SetLoader(true);
       await this.$store.dispatch('wallet/getBalance');
       const possibleTx = await CreateSignedTxForValidator(
         ValidatorsMethods.DELEGATE,
@@ -261,9 +262,12 @@ export default {
         new BigNumber(1).shiftedBy(18).toString(),
       );
       const simulateFeeRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result });
+      this.SetLoader(false);
       if (!simulateFeeRes.result) {
         let { msg } = simulateFeeRes;
-        if (simulateFeeRes.code === 3) {
+        const isSequenceErr = msg.includes('account sequence mismatch');
+        const isAccountErr = msg.includes('account number');
+        if (!isSequenceErr && !isAccountErr && simulateFeeRes.code === 3) {
           const arr = msg.split(';')[2].split('awqt');
           const balance = new BigNumber(arr[0]).shiftedBy(-18).toString();
           const minBalanceToDelegate = new BigNumber(arr[1].replace(/[^0-9]/g, '').toString()).shiftedBy(-18).toString();
@@ -272,7 +276,6 @@ export default {
         }
         this.ShowToast(msg, 'Delegate error');
         this.CloseModal();
-        this.SetLoader(false);
         return;
       }
       let { gas_used } = simulateFeeRes.gas_info;
@@ -306,15 +309,16 @@ export default {
             this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result }),
             this.$store.dispatch('wallet/getBalance'),
           ]);
+          this.SetLoader(false);
           if (!simulateRes.result) {
             this.ShowToast(simulateRes.msg, 'Delegate error');
             this.CloseModal();
-            this.SetLoader(false);
             return;
           }
           gas_used = simulateRes.gas_info.gas_used;
           const feeValue = new BigNumber(gas_used > validators_gas_limit ? gas_used : validators_gas_limit).multipliedBy(GateGasPrice).shiftedBy(-18).toString();
-          this.SetLoader(false);
+
+          // Transaction receipt
           this.ShowModal({
             key: modals.transactionReceipt,
             title: this.$t('modals.delegate'),
@@ -356,7 +360,26 @@ export default {
         },
       });
     },
-    toUndelegateModal() {
+
+    async toUndelegateModal() {
+      this.SetLoader(true);
+      const possibleTx = await CreateSignedTxForValidator(
+        ValidatorsMethods.UNDELEGATE,
+        this.validatorData.operator_address,
+        this.delegatedData.amount,
+      );
+      const [possibleRes] = await Promise.all([
+        this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result }),
+        this.$store.dispatch('wallet/getBalance'),
+      ]);
+      if (!possibleRes.result) {
+        this.ShowToast(possibleRes.msg, 'Undelegate error');
+        this.CloseModal();
+        return;
+      }
+      this.SetLoader(false);
+
+      // Delegate info modal
       this.ShowModal({
         key: modals.undelegate,
         title: this.$t('modals.undelegate'),
@@ -370,12 +393,12 @@ export default {
             this.validatorData.operator_address,
             this.delegatedData.amount,
           );
-          const simulateRes = await Promise.all([
+          const [simulateRes] = await Promise.all([
             this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result }),
             this.$store.dispatch('wallet/getBalance'),
           ]);
           if (!simulateRes.result) {
-            this.ShowToast(simulateRes.msg, 'UnDelegate error');
+            this.ShowToast(simulateRes.msg, 'Undelegate error');
             this.CloseModal();
             this.SetLoader(false);
             return;
@@ -409,7 +432,6 @@ export default {
                 ValidatorsMethods.UNDELEGATE,
                 this.validatorData.operator_address,
                 this.delegatedData.amount,
-                gas_used,
               );
               const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: undelegateTx.result });
               if (broadcastRes.tx_response.raw_log !== '[]') {
