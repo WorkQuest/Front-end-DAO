@@ -138,14 +138,12 @@ export default {
         const tx = await CreateSignedTxForValidator(
           ValidatorsMethods.DELEGATE,
           this.options.validatorAddress,
-          new BigNumber(this.balanceData.WQT.fullBalance).shiftedBy(18)
-            .toString(),
+          new BigNumber(this.tokensAmount).shiftedBy(18).toString(),
         );
         const simulateFeeRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: tx.result });
         if (!simulateFeeRes.result) {
-          this.ShowToast(simulateFeeRes.msg, 'Delegate error');
-          this.CloseModal();
-          this.SetLoader(false);
+          this.ShowToast(simulateFeeRes.msg, 'Calc tx error');
+          this.canSend = false;
           return;
         }
         const { gas_used } = simulateFeeRes.gas_info;

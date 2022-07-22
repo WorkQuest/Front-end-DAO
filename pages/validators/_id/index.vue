@@ -258,7 +258,7 @@ export default {
       const possibleTx = await CreateSignedTxForValidator(
         ValidatorsMethods.DELEGATE,
         this.validatorData.operator_address,
-        new BigNumber(this.balanceData.WQT.fullBalance).shiftedBy(18).toString(),
+        new BigNumber(1).shiftedBy(18).toString(),
       );
       const simulateFeeRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result });
       if (!simulateFeeRes.result) {
