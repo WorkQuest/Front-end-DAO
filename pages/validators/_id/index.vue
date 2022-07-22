@@ -263,12 +263,12 @@ export default {
       const simulateFeeRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result });
       if (!simulateFeeRes.result) {
         let { msg } = simulateFeeRes;
-        const arr = msg.split(';')[2].split('awqt');
-        console.log(arr, simulateFeeRes.code, arr[1].replace(/[^1-9]/g, ''));
-        const balance = new BigNumber(arr[0]).shiftedBy(-18).toString();
-        const minBalanceToDelegate = new BigNumber(arr[1].replace(/[^1-9]/g, '')).shiftedBy(-18).toString();
         if (simulateFeeRes.code === 3) {
-          msg = `Balance (${balance}) is less than possible to delegate: ${minBalanceToDelegate}`;
+          const arr = msg.split(';')[2].split('awqt');
+          const balance = new BigNumber(arr[0]).shiftedBy(-18).toString();
+          const minBalanceToDelegate = new BigNumber(arr[1].replace(/[^0-9]/g, '').toString()).shiftedBy(-18).toString();
+          const symbol = TokenSymbols.WQT;
+          msg = `Balance (${balance} ${symbol}) is less than the minimum possible to delegate: ${minBalanceToDelegate} ${symbol}`;
         }
         this.ShowToast(msg, 'Delegate error');
         this.CloseModal();
