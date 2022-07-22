@@ -18,7 +18,7 @@
           </div>
           <base-btn
             class="email__action"
-            @click="hide()"
+            @click="CloseModal"
           >
             {{ $t('meta.ok') }}
           </base-btn>
@@ -29,21 +29,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-
 export default {
   name: 'ModalConfirmEmail',
-  computed: {
-    ...mapGetters({
-      options: 'modals/getOptions',
-    }),
-  },
-  methods: {
-    hide() {
-      this.CloseModal();
-      this.$router.push('/sign-in');
-    },
-  },
 };
 </script>
 
