@@ -781,6 +781,7 @@
     "searchCandidates": "Search proposal",
     "undelegateAfterDays": "Your tokens will be undelegate after {n} days",
     "jailed": "jailed",
+    "balanceLessPossible": "Balance ({balance} {s}) is less than the minimum possible to delegate: {min} {s}",
     "table": {
       "name": "Name",
       "address": "Address",

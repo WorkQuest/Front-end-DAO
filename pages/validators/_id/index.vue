@@ -272,7 +272,7 @@ export default {
           const balance = new BigNumber(arr[0]).shiftedBy(-18).toString();
           const minBalanceToDelegate = new BigNumber(arr[1].replace(/[^0-9]/g, '').toString()).shiftedBy(-18).toString();
           const symbol = TokenSymbols.WQT;
-          msg = `Balance (${balance} ${symbol}) is less than the minimum possible to delegate: ${minBalanceToDelegate} ${symbol}`;
+          msg = this.$t('validators.balanceLessPossible', { balance, min: minBalanceToDelegate, s: symbol });
         }
         this.ShowToast(msg, 'Delegate error');
         this.CloseModal();
