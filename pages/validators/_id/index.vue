@@ -265,12 +265,12 @@ export default {
       this.SetLoader(false);
       if (!simulateFeeRes.result) {
         let { msg } = simulateFeeRes;
-        const isSequenceErr = msg.includes('account sequence mismatch');
-        const isAccountErr = msg.includes('account number');
-        if (!isSequenceErr && !isAccountErr && simulateFeeRes.code === 3) {
-          const arr = msg.split(';')[2].split('awqt');
-          const balance = new BigNumber(arr[0]).shiftedBy(-18).toString();
-          const minBalanceToDelegate = new BigNumber(arr[1].replace(/[^0-9]/g, '').toString()).shiftedBy(-18).toString();
+        const isSequenceErr = msg?.includes('account sequence mismatch');
+        const isAccountErr = msg?.includes('account number');
+        if (msg && !isSequenceErr && !isAccountErr && simulateFeeRes?.code === 3 && msg?.includes('awqt')) {
+          const arr = msg?.split('awqt');
+          const balance = new BigNumber(arr[0]?.replace(/[^0-9]/g, ''))?.shiftedBy(-18)?.toString();
+          const minBalanceToDelegate = new BigNumber(arr[1]?.replace(/[^0-9]/g, '')?.toString())?.shiftedBy(-18)?.plus(1)?.toString();
           const symbol = TokenSymbols.WQT;
           msg = this.$t('validators.balanceLessPossible', { balance, min: minBalanceToDelegate, s: symbol });
         }
@@ -374,7 +374,19 @@ export default {
       ]);
       this.SetLoader(false);
       if (!possibleRes.result) {
-        this.ShowToast(possibleRes.msg, 'Undelegate error');
+        let msg = possibleRes?.msg;
+        if (msg && msg?.includes('awqt')) {
+          const arr = msg?.split('awqt');
+          const balance = new BigNumber(arr[0]?.replace(/[^0-9]/g, ''))?.shiftedBy(-18)?.toString();
+          const minBalanceToUndelegate = new BigNumber(arr[1]?.replace(/[^0-9]/g, '')?.toString())?.shiftedBy(-18)?.toString();
+          const symbol = TokenSymbols.WQT;
+          msg = this.$t('validators.balanceLessPossibleUndelegate', {
+            balance,
+            min: minBalanceToUndelegate,
+            s: symbol,
+          });
+        }
+        this.ShowToast(msg, 'Undelegate error');
         this.CloseModal();
         return;
       }
