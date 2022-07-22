@@ -372,12 +372,12 @@ export default {
         this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result }),
         this.$store.dispatch('wallet/getBalance'),
       ]);
+      this.SetLoader(false);
       if (!possibleRes.result) {
         this.ShowToast(possibleRes.msg, 'Undelegate error');
         this.CloseModal();
         return;
       }
-      this.SetLoader(false);
 
       // Delegate info modal
       this.ShowModal({
