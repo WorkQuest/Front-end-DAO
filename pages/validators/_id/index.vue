@@ -397,14 +397,13 @@ export default {
             this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result }),
             this.$store.dispatch('wallet/getBalance'),
           ]);
+          this.SetLoader(false);
           if (!simulateRes.result) {
             this.ShowToast(simulateRes.msg, 'Undelegate error');
             this.CloseModal();
-            this.SetLoader(false);
             return;
           }
           const { gas_used } = simulateRes.gas_info;
-          this.SetLoader(false);
           this.ShowModal({
             key: modals.transactionReceipt,
             isShowSuccess: true,
