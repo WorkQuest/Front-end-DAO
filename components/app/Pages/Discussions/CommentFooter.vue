@@ -167,7 +167,7 @@ export default {
 <style lang="scss" scoped>
 .comment-footer {
   &__footer {
-    margin-top: 25px;
+    margin: 25px 0 10px 0;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -222,6 +222,7 @@ export default {
     left: 60px;
     font-size: 12px;
     min-height: 23px;
+    color: $black400;
   }
 
   &__input {
