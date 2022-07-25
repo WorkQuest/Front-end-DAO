@@ -43,6 +43,7 @@
               data-selector="AMOUNT"
               :name="$tc('modals.tokensNumber')"
               :rules="`required${min}|max_bn:${maxValue}|decimalPlaces:18`"
+              type="number"
               @input="replaceDot"
             />
             <base-btn
@@ -58,7 +59,7 @@
             v-if="options.delegateMode === $options.DelegateMode.VALIDATORS"
             class="tokens__fee"
           >
-            Fee for transaction: {{ !valid ? 0 : validatorsFee }} {{ $options.TokenSymbols.WQT }}
+            {{ $t('wallet.table.trxFee') }}: {{ !valid ? 0 : validatorsFee }} {{ $options.TokenSymbols.WQT }}
           </div>
         </div>
         <base-btn
@@ -79,9 +80,10 @@ import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
 import { WQVoting } from '~/abi/index';
 import {
-  TokenSymbols, DelegateMode, ValidatorsMethods, GateGasPrice,
+  TokenSymbols, DelegateMode,
 } from '~/utils/enums';
-import { CreateSignedTxForValidator, tempTxFeeValidators, validators_gas_limit } from '~/utils/wallet';
+import { CreateSignedTxForValidator, tempTxFeeValidators } from '~/utils/wallet';
+import { GateGasPrice, ValidatorsMethods, ValidatorsGasLimit } from '~/utils/constants/validators';
 
 export default {
   name: 'Delegate',
@@ -116,7 +118,7 @@ export default {
         return max.isGreaterThan(0) ? max.toString() : '0';
       }
       const possible = new BigNumber(this.balance).minus(this.options.maxFee);
-      const max = new BigNumber(999999999); // Delegate limit for validator
+      const max = new BigNumber(999999999999); // Validators delegate limit
       return possible.isLessThan(max) ? possible.toString() : max.toString();
     },
     convertValue() {
@@ -139,7 +141,8 @@ export default {
       this.validatorsFee = '...';
       const amount = this.tokensAmount;
       this.feeTimeoutId = setTimeout(async () => {
-        if (!amount) {
+        const checkAmount = new BigNumber(amount);
+        if (!amount || checkAmount.decimalPlaces() > 18 || checkAmount.isGreaterThan(this.balanceData.WQT.fullBalance)) {
           this.validatorsFee = '0';
           this.canSend = false;
           return;
@@ -152,13 +155,13 @@ export default {
         );
         const simulateFeeRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: tx.result });
         if (!simulateFeeRes.result) {
-          this.ShowToast(simulateFeeRes.msg, 'Calc tx error');
+          console.error('Calc tx error', simulateFeeRes.msg);
           this.canSend = false;
           return;
         }
         const { gas_used } = simulateFeeRes.gas_info;
         // Max fee for send tx
-        const maxFeeValue = new BigNumber(gas_used > validators_gas_limit ? gas_used : validators_gas_limit).multipliedBy(GateGasPrice)
+        const maxFeeValue = new BigNumber(gas_used > ValidatorsGasLimit ? gas_used : ValidatorsGasLimit).multipliedBy(GateGasPrice)
           .shiftedBy(-18);
         const maxValue = new BigNumber(this.balanceData.WQT.fullBalance).minus(maxFeeValue);
         this.validatorsFee = maxFeeValue.toString();

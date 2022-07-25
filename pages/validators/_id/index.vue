@@ -75,25 +75,6 @@
         </div>
         <div class="validator__profile profile">
           <div class="profile__right">
-            <div class="right__bar">
-              <div class="bar__info">
-                <div class="bar__text">
-                  {{ $t('validator.slots') }}
-                </div>
-                <div class="bar__data">
-                  <div class="bar__text bar__text_grey">
-                    {{ `${$t('validator.occupied')}:` }}
-                  </div>
-                  <div class="bar__text bar__text_small">
-                    {{ `${slots} ${$t('validator.outOf')} 1000` }}
-                  </div>
-                </div>
-              </div>
-              <progress-bar
-                :value="slots / 10"
-                mode="blue"
-              />
-            </div>
             <div class="right__block">
               <div class="right__info">
                 <div class="right__data-name">
@@ -116,7 +97,7 @@
               <base-btn
                 mode="lightRed"
                 class="right__button"
-                :disabled="!delegatedData"
+                :disabled="disabledUndelegate"
                 @click="toUndelegateModal"
               >
                 {{ $t('modals.undelegate') }}
@@ -140,11 +121,12 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
-  DelegateMode, ExplorerUrl, GateGasPrice, TokenSymbols, ValidatorsMethods,
+  DelegateMode, ExplorerUrl, TokenSymbols,
 } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import { error, success } from '~/utils/success-error';
-import { CreateSignedTxForValidator, validators_gas_limit } from '~/utils/wallet';
+import { CreateSignedTxForValidator } from '~/utils/wallet';
+import { GateGasPrice, ValidatorsMethods, ValidatorsGasLimit } from '~/utils/constants/validators';
 
 export default {
   name: 'Validator',
@@ -166,6 +148,9 @@ export default {
       userWalletAddress: 'user/getUserWalletAddress',
       isWalletConnected: 'wallet/getIsWalletConnected',
     }),
+    disabledUndelegate() {
+      return new BigNumber(this.delegatedData?.amount).isZero();
+    },
     unbondingDays() {
       // Через N дней юзеру вернутся WQT после undelegate
       return Number(this.stakingParams.unbonding_time.slice(0, -1)) / 60 / 60 / 24;
@@ -252,6 +237,9 @@ export default {
       this.notFounded = true;
       this.SetLoader(false);
     },
+
+    /** VALIDATORS DELEGATE */
+
     async toDelegateModal() {
       // calculating possible delegate value
       this.SetLoader(true);
@@ -281,7 +269,7 @@ export default {
       let { gas_used } = simulateFeeRes.gas_info;
 
       // Max fee for send tx
-      const maxFeeValue = new BigNumber(gas_used > validators_gas_limit ? gas_used : validators_gas_limit).multipliedBy(GateGasPrice).shiftedBy(-18);
+      const maxFeeValue = new BigNumber(gas_used > ValidatorsGasLimit ? gas_used : ValidatorsGasLimit).multipliedBy(GateGasPrice).shiftedBy(-18);
       let maxValue = new BigNumber(this.balanceData.WQT.fullBalance).minus(maxFeeValue);
       if (maxValue.isLessThan(0)) {
         maxValue = '0';
@@ -316,7 +304,8 @@ export default {
             return;
           }
           gas_used = simulateRes.gas_info.gas_used;
-          const feeValue = new BigNumber(gas_used > validators_gas_limit ? gas_used : validators_gas_limit).multipliedBy(GateGasPrice).shiftedBy(-18).toString();
+          const resultingGasLimit = new BigNumber(gas_used > ValidatorsGasLimit ? gas_used : ValidatorsGasLimit);
+          const feeValue = resultingGasLimit.multipliedBy(GateGasPrice).shiftedBy(-18).toString();
 
           // Transaction receipt
           this.ShowModal({
@@ -348,6 +337,7 @@ export default {
                 ValidatorsMethods.DELEGATE,
                 this.validatorData.operator_address,
                 new BigNumber(amount).shiftedBy(18).toString(),
+                resultingGasLimit.toString(),
               );
               const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: delegateTx.result });
               if (broadcastRes.tx_response.raw_log !== '[]') {
@@ -361,7 +351,10 @@ export default {
       });
     },
 
+    /** VALIDATORS UNDELEGATE */
+
     async toUndelegateModal() {
+      if (this.disabledUndelegate) return;
       this.SetLoader(true);
       const possibleTx = await CreateSignedTxForValidator(
         ValidatorsMethods.UNDELEGATE,
@@ -391,7 +384,6 @@ export default {
         return;
       }
 
-      // Delegate info modal
       this.ShowModal({
         key: modals.undelegate,
         title: this.$t('modals.undelegate'),
@@ -416,6 +408,8 @@ export default {
             return;
           }
           const { gas_used } = simulateRes.gas_info;
+          const resultingGasLimit = new BigNumber(gas_used > ValidatorsGasLimit ? gas_used : ValidatorsGasLimit);
+
           this.ShowModal({
             key: modals.transactionReceipt,
             isShowSuccess: true,
@@ -424,7 +418,7 @@ export default {
               to: { name: this.$t('modals.toAddress'), value: this.convertedValidatorAddress },
               fee: {
                 name: this.$t('wallet.table.trxFee'),
-                value: new BigNumber(gas_used).multipliedBy(GateGasPrice).shiftedBy(-18).toString(),
+                value: resultingGasLimit.multipliedBy(GateGasPrice).shiftedBy(-18).toString(),
                 symbol: TokenSymbols.WQT,
               },
             },
@@ -443,6 +437,7 @@ export default {
                 ValidatorsMethods.UNDELEGATE,
                 this.validatorData.operator_address,
                 this.delegatedData.amount,
+                resultingGasLimit.toString(),
               );
               const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: undelegateTx.result });
               if (broadcastRes.tx_response.raw_log !== '[]') {

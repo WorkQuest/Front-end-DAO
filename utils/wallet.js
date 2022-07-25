@@ -8,9 +8,10 @@ import converter from 'bech32-converting';
 import secp256k1 from 'secp256k1';
 import { sha256 } from 'ethers/lib.esm/utils';
 import { error, success } from '~/utils/success-error';
-import { errorCodes, GateGasPrice } from '~/utils/enums';
+import { errorCodes } from '~/utils/enums';
 import { ERC20 } from '~/abi/index';
 import ENV from '~/utils/addresses/index';
+import { GateGasPrice, ValidatorsGasLimit } from '~/utils/constants/validators';
 
 const bip39 = require('bip39');
 
@@ -397,8 +398,7 @@ const sign = (txBody, authInfo, accountNumber, privKey) => {
   return Buffer.from(txBytes, 'binary').toString('base64'); // txBytesBase64
 };
 
-export const validators_gas_limit = 200000;
-export const CreateSignedTxForValidator = async (method, validatorAddress, amount) => {
+export const CreateSignedTxForValidator = async (method, validatorAddress, amount, gasLimit = ValidatorsGasLimit) => {
   try {
     const address = converter('wq').toBech32(wallet.address);
     const data = await fetchCosmosAccount(address);
@@ -423,8 +423,8 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
     });
 
     const feeValue = new v1beta1.Fee({
-      amount: [{ denom: 'awqt', amount: new BigNumber(GateGasPrice).multipliedBy(validators_gas_limit).toString() }],
-      gas_limit: validators_gas_limit,
+      amount: [{ denom: 'awqt', amount: new BigNumber(GateGasPrice).multipliedBy(gasLimit).toString() }],
+      gas_limit: gasLimit,
     });
     const authInfo = new v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
 
