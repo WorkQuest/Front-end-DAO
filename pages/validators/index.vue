@@ -84,7 +84,7 @@ export default {
           fee: `${Math.ceil(item.commission.commission_rates.rate * 100)}%`,
           minStake: `${item.min_self_delegation} ${TokenSymbols.WQT}`,
           missedBlocks: item.missedBlocks,
-          stake: `${new BigNumber(item.tokens).shiftedBy(-this.balanceData.WQT.decimals).toString()} ${TokenSymbols.WQT}`,
+          stake: `${new BigNumber(item.tokens).shiftedBy(-this.balanceData.WQT.decimals).decimalPlaces(4).toString()} ${TokenSymbols.WQT}`,
         };
       });
     },
