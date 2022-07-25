@@ -213,6 +213,26 @@ extend('needToDelete', {
   params: ['needToDelete'],
 });
 
+extend('max_value', {
+  validate(value, { max }) {
+    return {
+      required: true,
+      valid: new BigNumber(value).isLessThanOrEqualTo(max),
+    };
+  },
+  params: ['max'],
+});
+
+extend('min_value', {
+  validate(value, { min }) {
+    return {
+      required: true,
+      valid: new BigNumber(value).isGreaterThanOrEqualTo(min),
+    };
+  },
+  params: ['min'],
+});
+
 export default ({ app }) => {
   configure({
     defaultMessage: (_field_, values) => app.i18n.t(`messages.${values._rule_}`, values),
