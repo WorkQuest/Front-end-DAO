@@ -142,7 +142,7 @@ export default {
       const amount = this.tokensAmount;
       this.feeTimeoutId = setTimeout(async () => {
         const checkAmount = new BigNumber(amount);
-        if (!amount || checkAmount.decimalPlaces() > 18 || checkAmount.isGreaterThan(this.balanceData.WQT.fullBalance)) {
+        if (!amount || checkAmount.decimalPlaces() > 18 || checkAmount.isGreaterThan(this.balanceData.WQT.fullBalance) || checkAmount.isZero()) {
           this.validatorsFee = '0';
           this.canSend = false;
           return;

@@ -149,7 +149,7 @@ export default {
       isWalletConnected: 'wallet/getIsWalletConnected',
     }),
     disabledUndelegate() {
-      return new BigNumber(this.delegatedData?.amount).isZero();
+      return !this.delegatedData || new BigNumber(this.delegatedData?.amount).isZero();
     },
     unbondingDays() {
       // Через N дней юзеру вернутся WQT после undelegate
@@ -229,8 +229,8 @@ export default {
         return;
       }
       this.delegatedData = {
-        amount: res.result.delegation_response.balance.amount,
-        shares: res.result.delegation_response.delegation.shares,
+        amount: res.result.delegation_response?.balance?.amount,
+        shares: res.result.delegation_response?.delegation?.shares,
       };
     },
     toNotFound() {
@@ -247,7 +247,7 @@ export default {
       const possibleTx = await CreateSignedTxForValidator(
         ValidatorsMethods.DELEGATE,
         this.validatorData.operator_address,
-        new BigNumber(1).shiftedBy(18).toString(),
+        new BigNumber(this.validatorData?.min_self_delegation || 1).shiftedBy(18).toString(),
       );
       const simulateFeeRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result });
       this.SetLoader(false);
@@ -259,8 +259,7 @@ export default {
           const arr = msg?.split('awqt');
           const balance = new BigNumber(arr[0]?.replace(/[^0-9]/g, ''))?.shiftedBy(-18)?.toString();
           const minBalanceToDelegate = new BigNumber(arr[1]?.replace(/[^0-9]/g, '')?.toString())?.shiftedBy(-18)?.plus(1)?.toString();
-          const symbol = TokenSymbols.WQT;
-          msg = this.$t('validators.balanceLessPossible', { balance, min: minBalanceToDelegate, s: symbol });
+          msg = this.$t('validators.balanceLessPossible', { balance, min: minBalanceToDelegate, s: TokenSymbols.WQT });
         }
         this.ShowToast(msg, 'Delegate error');
         this.CloseModal();
@@ -354,12 +353,12 @@ export default {
     /** VALIDATORS UNDELEGATE */
 
     async toUndelegateModal() {
-      if (this.disabledUndelegate) return;
+      if (this.disabledUndelegate || !this.delegatedData) return;
       this.SetLoader(true);
       const possibleTx = await CreateSignedTxForValidator(
         ValidatorsMethods.UNDELEGATE,
         this.validatorData.operator_address,
-        this.delegatedData.amount,
+        this.delegatedData?.amount,
       );
       const [possibleRes] = await Promise.all([
         this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result }),
@@ -372,11 +371,10 @@ export default {
           const arr = msg?.split('awqt');
           const balance = new BigNumber(arr[0]?.replace(/[^0-9]/g, ''))?.shiftedBy(-18)?.toString();
           const minBalanceToUndelegate = new BigNumber(arr[1]?.replace(/[^0-9]/g, '')?.toString())?.shiftedBy(-18)?.toString();
-          const symbol = TokenSymbols.WQT;
           msg = this.$t('validators.balanceLessPossibleUndelegate', {
             balance,
             min: minBalanceToUndelegate,
-            s: symbol,
+            s: TokenSymbols.WQT,
           });
         }
         this.ShowToast(msg, 'Undelegate error');
@@ -389,13 +387,13 @@ export default {
         title: this.$t('modals.undelegate'),
         delegateMode: DelegateMode.VALIDATORS,
         unbondingDays: this.unbondingDays,
-        tokensAmount: this.delegatedData.amount,
+        tokensAmount: this.delegatedData?.amount,
         submitMethod: async () => {
           this.SetLoader(true);
           const gasUsedTx = await CreateSignedTxForValidator(
             ValidatorsMethods.UNDELEGATE,
             this.validatorData.operator_address,
-            this.delegatedData.amount,
+            this.delegatedData?.amount,
           );
           const [simulateRes] = await Promise.all([
             this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result }),
@@ -436,7 +434,7 @@ export default {
               const undelegateTx = await CreateSignedTxForValidator(
                 ValidatorsMethods.UNDELEGATE,
                 this.validatorData.operator_address,
-                this.delegatedData.amount,
+                this.delegatedData?.amount,
                 resultingGasLimit.toString(),
               );
               const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: undelegateTx.result });

@@ -46,6 +46,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
+import { TokenSymbols } from '~/utils/enums';
 
 export default {
   name: 'Validators',
@@ -81,10 +82,9 @@ export default {
           investorAddress: address,
           id: address,
           fee: `${Math.ceil(item.commission.commission_rates.rate * 100)}%`,
-          minStake: item.min_self_delegation,
-          slots: item.slots,
+          minStake: `${item.min_self_delegation} ${TokenSymbols.WQT}`,
           missedBlocks: item.missedBlocks,
-          stake: new BigNumber(item.tokens).shiftedBy(-this.balanceData.WQT.decimals).toString(),
+          stake: `${new BigNumber(item.tokens).shiftedBy(-this.balanceData.WQT.decimals).toString()} ${TokenSymbols.WQT}`,
         };
       });
     },
@@ -100,7 +100,6 @@ export default {
           { key: 'fee', label: this.$t('validators.table.fee'), sortable: false },
           { key: 'stake', label: this.$t('validators.table.stake'), sortable: false },
           { key: 'minStake', label: this.$t('validators.table.minStake'), sortable: false },
-          { key: 'slots', label: this.$t('validators.table.slots'), sortable: false },
         );
       } else {
         mainFields.push(
