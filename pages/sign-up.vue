@@ -141,14 +141,6 @@ export default {
       inProgress: false,
     };
   },
-  mounted() {
-    this.ShowModal({
-      key: modals.status,
-      img: require('~/assets/img/ui/email.svg'),
-      title: this.$t('registration.emailConfirmTitle'),
-      subtitle: this.$t('registration.emailConfirm'),
-    });
-  },
   methods: {
     async signUp() {
       this.inProgress = true;
