@@ -326,6 +326,7 @@ export default {
       const data = [nonce, toChainIndex, value, accountAddress, userId, symbol];
 
       commit('setPendingHashLink', null);
+      console.log(this.$wsNotifs);
       await this.$wsNotifs.subscribe(`notifications/bridgeUsdt/${accountAddress}`, async (msg) => {
         commit('setPendingHashLink', `${ExplorerUrl}/tx/${msg.data.hash}`);
         await this.$wsNotifs.unsubscribe(`notifications/bridgeUsdt/${accountAddress}`);

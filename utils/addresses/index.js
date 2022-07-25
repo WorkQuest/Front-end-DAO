@@ -18,8 +18,10 @@ export const IS_PROD = ['master', 'stage', 'testnet'].includes(process.env.BRANC
  * @property GMAPKEY - use process.env on project,
  * @property SECRET_SUMSUB - use process.env on project
 
+ * @property WQ_ORACLE_URL
  * @property WQ_EXPLORER
  * @property WQ_WS_PROVIDER
+ * @property WS_NOTIFS_URL
 
  * @property WQ_PROVIDER
  * @property ETH_PROVIDER

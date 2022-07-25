@@ -7,6 +7,7 @@ export default {
   WQ_ORACLE_URL: 'https://dev-oracle.workquest.co/api/v1',
   WQ_EXPLORER: 'https://dev-explorer.workquest.co/api/v1',
   WQ_WS_PROVIDER: 'wss://mainnet-gate.workquest.co/tendermint-rpc/websocket',
+  WS_NOTIFS_URL: 'wss://notifications.workquest.co/api/v1/notifications',
 
   WQ_PROVIDER: 'https://dev-node-nyc3.workquest.co/',
   ETH_PROVIDER: 'https://speedy-nodes-nyc.moralis.io/a4b1a749a870bbd413acd4f0/eth/rinkeby',

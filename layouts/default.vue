@@ -416,6 +416,9 @@ export default {
       imageData: 'user/getImageData',
       userRole: 'user/getUserRole',
       currentLocale: 'user/getCurrentLang',
+
+      connections: 'main/notificationsConnectionStatus',
+      token: 'user/accessToken',
     }),
     locales() {
       return this.$i18n.locales.map((item) => ({
@@ -455,6 +458,20 @@ export default {
         },
       });
     }
+
+    // notifications
+    const { notifsConnection } = this.connections;
+    const {
+      $wsNotifs, token,
+    } = this;
+    if (!notifsConnection) {
+      await $wsNotifs.connect(token);
+    }
+    // wallet txs
+    await this.$store.dispatch('wallet/subscribeWS', {
+      hexAddress: this.userWalletAddress,
+      timestamp: this.$moment(),
+    });
   },
   methods: {
     setLocale(item) {
