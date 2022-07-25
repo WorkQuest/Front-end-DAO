@@ -101,6 +101,7 @@
     "emailConfirmNewLetter": "A new letter has been sent to your email"
   },
   "login": {
+    "wrongToken": "Wrong confirmation token. Please check the last letter on your email",
     "signIn": "Sign In",
     "account": "Haven’t account?",
     "remember": "Remember me",

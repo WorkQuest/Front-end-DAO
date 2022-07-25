@@ -1,7 +1,6 @@
 export default {
   default: 'default',
   status: 'status',
-  emailConfirm: 'emailConfirm',
   signWorkQuest: 'signWorkQuest',
   restore: 'restore',
   changePassword: 'changePassword',
