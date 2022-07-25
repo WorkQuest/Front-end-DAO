@@ -84,7 +84,7 @@ export default ({
       }
     }
 
-    const isWrongToken = error.response.daat.msg === 'Invalid confirmation code';
+    const isWrongToken = error.response.data.msg === 'Invalid confirmation code';
     if (error.response.data.code !== 400010 && !isWrongToken) {
       await store.dispatch('main/showToast', {
         title: 'Error',
