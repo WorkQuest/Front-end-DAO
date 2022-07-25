@@ -39,7 +39,7 @@
       data-selector="CONFIRM"
       @click="CloseModal"
     >
-      {{ $t('meta.btns.close') }}
+      {{ $t('modals.close') }}
     </base-btn>
   </div>
 </template>
@@ -136,10 +136,18 @@ export default {
     text-overflow: ellipsis;
   }
 }
+
 .icon {
   &-copy:before {
     color: $blue;
     font-size: 20px;
+  }
+}
+
+@include _480 {
+  .content__wallet {
+    display: flex;
+    flex-direction: column;
   }
 }
 </style>

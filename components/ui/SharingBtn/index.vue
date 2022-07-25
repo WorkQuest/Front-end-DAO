@@ -98,15 +98,22 @@ export default {
 
 <style lang="scss" scoped>
 .sharingBtn{
-    position: relative;
-    border-radius: 6px;
+  background: $white100 !important;
+  position: relative;
+  border-radius: 6px;
+
+  &:hover {
+    background: $blue !important;
+  }
   &:hover &__chain::before {
     color: $white;
   }
+
   &__chain:before{
     color: $blue;
     font-size: 25px;
   }
+
   &__socials{
     position : absolute;
     display : flex;
@@ -128,12 +135,15 @@ export default {
     background: $black0;
     text-decoration: none;
     transition: ease-out .2s;
+
     &:hover {
       background: $blue;
       border-color: $blue;
+
       & span {
         color: $white;
       }
+
       & img {
         filter: brightness(1000%) grayscale(0%);
       }
@@ -142,29 +152,36 @@ export default {
   &__icon {
     font-size: 25px;
   }
+
   &__btn-telegram{
     padding: 3px;
     width: 34px;
     height: 34px;
   }
+
   &__btn-telegram img {
     height: 25px;
     width: 25px;
   }
+
   &__btn-twitter span {
     color: #24CAFF;
   }
+
   &__btn-facebook span {
     color: #3B67D7;
   }
+
   &__btn-LinkedIn span {
     color: $lightblue;
   }
 }
+
 @include _480 {
   .sharingBtn{
     &__socials{
-      right: -25px;
+      right: auto;
+      left: auto;
     }
   }
 }

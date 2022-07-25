@@ -15,13 +15,13 @@
         class="message__action"
         @click="CloseModal"
       >
-        {{ $t('meta.close') }}
+        {{ $t('modals.close') }}
       </base-btn>
       <base-btn
         data-selector="CONFIRM"
         @click="handleConfirm"
       >
-        {{ $t('meta.addNow') }}
+        {{ $t('modals.addNow') }}
       </base-btn>
     </div>
   </div>
