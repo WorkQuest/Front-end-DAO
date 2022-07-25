@@ -4,8 +4,25 @@
     :title="$t('modals.withdraw')"
   >
     <div class="transfer__content content">
+      <div class="content__step-panel step-panel">
+        <div
+          class="step-panel__step"
+          :class="[{'step-panel__step_active': step === 'wallet'}]"
+          @click="step = 'wallet'"
+        >
+          {{ $t('wallet.walletAddress') }}
+        </div>
+        <div
+          class="step-panel__step"
+          :class="[{'step-panel__step_active': step === 'bank'}]"
+          @click="step = 'bank'"
+        >
+          {{ $t('wallet.bankCard') }}
+        </div>
+      </div>
       <validation-observer
-        v-slot="{handleSubmit, invalid}"
+        v-if="step === 'wallet'"
+        v-slot="{ handleSubmit }"
         tag="div"
         class="content_container"
       >
@@ -33,7 +50,7 @@
             :placeholder="$t('modals.amount')"
             :rules="`required|decimal|is_not:0|max_bn:${maxAmount}|decimalPlaces:18`"
             :name="$t('modals.amountField')"
-            @input="replaceDot"
+            type="number"
           >
             <template
               v-slot:right-absolute
@@ -52,6 +69,26 @@
             </template>
           </base-field>
         </div>
+        <div class="content__txFee txFee">
+          <div class="txFee__title">
+            {{ $t('wallet.table.trxFee') }}:
+          </div>
+          <div
+            v-if="!isCanSubmit"
+            class="txFee__loader-wrapper"
+          >
+            <loader
+              is-mini-loader
+              class="txFee__loader"
+            />
+          </div>
+          <div
+            v-else
+            class="txFee__amount"
+          >
+            {{ currentFee }} {{ nativeTokenSymbol }}
+          </div>
+        </div>
         <div class="content__buttons buttons">
           <base-btn
             mode="outline"
@@ -62,14 +99,17 @@
           </base-btn>
           <base-btn
             class="buttons__action"
-            :disabled="invalid || !isCanSubmit"
+            :disabled="!isCanSubmit"
             selector="SUBMIT"
             @click="handleSubmit(showWithdrawInfo)"
           >
-            {{ $t('meta.send') }}
+            {{ $t('meta.next') }}
           </base-btn>
         </div>
       </validation-observer>
+      <template v-else>
+        <bank-card />
+      </template>
     </div>
   </ctm-modal-box>
 </template>
@@ -78,16 +118,21 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import { TokenSymbols } from '~/utils/enums';
+import BankCard from '~/components/CtmModal/CtmModalDeposit/BankCard';
+import ERC20 from '~/abi/ERC20';
 
 export default {
   name: 'ModalWalletWithdraw',
+  components: { BankCard },
   data() {
     return {
+      step: 'wallet',
+
+      currentFee: 0,
       recipient: '',
       amount: 0,
-      step: 1,
       ddValue: 0,
-      maxFeeNativeToken: 0,
+      maxFeeForNativeToken: 0,
       isCanSubmit: true,
     };
   },
@@ -97,21 +142,22 @@ export default {
       isLoading: 'main/getIsLoading',
       balance: 'wallet/getBalanceData',
       selectedToken: 'wallet/getSelectedToken',
-      userData: 'user/getUserData',
+      userWalletAddress: 'user/getUserWalletAddress',
       isConnected: 'wallet/getIsWalletConnected',
     }),
-    tokenSymbolsDd() {
-      return [TokenSymbols.WQT];
+    nativeTokenSymbol() {
+      return TokenSymbols.WQT;
+    },
+    tokenBalance() {
+      return this.balance[this.selectedToken].fullBalance;
+    },
+    tokenDecimals() {
+      return +this.balance[this.selectedToken].decimals;
     },
     maxAmount() {
-      const {
-        selectedToken, balance, maxFeeNativeToken,
-      } = this;
-      const fullBalance = new BigNumber(balance[selectedToken].fullBalance);
-      if (selectedToken === TokenSymbols.WQT) {
-        return fullBalance.minus(maxFeeNativeToken).toString();
-      }
-      return fullBalance.toString();
+      const fullBalance = new BigNumber(this.balance.WQT.fullBalance);
+      const balanceMinusFee = fullBalance.minus(this.maxFeeForNativeToken).isGreaterThan(0);
+      return balanceMinusFee ? fullBalance.minus(this.maxFeeForNativeToken).toString() : 0;
     },
   },
   watch: {
@@ -119,11 +165,37 @@ export default {
       this.$store.dispatch('wallet/setSelectedToken', TokenSymbols[this.tokenSymbolsDd[val]]);
       this.amount = 0;
     },
+    async amount() {
+      if (!this.isConnected) return;
+      this.isCanSubmit = false;
+      this.currentFee = '...';
+      clearTimeout(this.timeoutId);
+      this.timeoutId = setTimeout(async () => {
+        const {
+          selectedToken, amount, userWalletAddress, tokenDecimals, nativeTokenSymbol, maxAmount,
+        } = this;
+
+        if (amount === '' || amount === null || new BigNumber(maxAmount).isLessThan(amount)) {
+          this.currentFee = 0;
+          this.isCanSubmit = false;
+        }
+
+        const nativeTokenFee = await this.$store.dispatch('wallet/getTransferFeeData', {
+          recipient: userWalletAddress,
+          value: amount,
+        });
+        this.currentFee = nativeTokenFee.ok ? nativeTokenFee.result.fee : 0;
+        this.isCanSubmit = true;
+      }, 300);
+    },
   },
   async mounted() {
-    const i = this.tokenSymbolsDd.indexOf(this.selectedToken);
-    this.ddValue = i >= 0 && i < this.tokenSymbolsDd.length ? i : 1;
+    this.SetLoader(true);
+    if (this.selectedToken !== TokenSymbols.WQT) {
+      await this.$store.dispatch('wallet/setSelectedToken', TokenSymbols.WQT);
+    }
     await this.updateMaxFee();
+    this.SetLoader(false);
   },
   methods: {
     checkFormatAddress(address) {
@@ -135,28 +207,22 @@ export default {
       const { recipient, amount, selectedToken } = this;
       submit({ recipient, amount, selectedToken });
     },
-    replaceDot() {
-      this.amount = this.amount.replace(/,/g, '.');
-    },
     // Для просчета максимальной суммы транзакции от комиссии
     async updateMaxFee() {
       if (!this.isConnected) return;
       this.isCanSubmit = false;
-      const {
-        selectedToken, userData, balance,
-      } = this;
-      if (selectedToken === TokenSymbols.WQT) {
-        const feeRes = await this.$store.dispatch('wallet/getTransferFeeData', {
-          recipient: userData.wallet.address,
-          value: balance.WQT.fullBalance,
-        });
-        if (feeRes?.ok) this.maxFeeNativeToken = feeRes?.result?.fee ?? 0;
-        else this.maxFeeNativeToken = 0;
-      }
+      const { userWalletAddress, balance } = this;
+      const feeRes = await this.$store.dispatch('wallet/getTransferFeeData', {
+        recipient: userWalletAddress,
+        value: balance.WQT.fullBalance,
+      });
+      if (feeRes?.ok) this.maxFeeForNativeToken = feeRes?.result?.fee ?? 0;
+      else this.maxFeeForNativeToken = 0;
       this.isCanSubmit = true;
     },
     maxBalance() {
       this.amount = this.maxAmount;
+      console.log(123, this.maxAmount, this.amount);
     },
   },
 };
@@ -193,6 +259,9 @@ export default {
 }
 
 .content {
+  &_container {
+    margin-top: 10px;
+  }
   &__step {
     display: flex;
     flex-direction: row;
@@ -224,6 +293,30 @@ export default {
     color: #D8DFE3;
     text-align: center;
   }
+
+  &__txFee {
+    margin-bottom: 20px;
+    position: relative;
+    display: flex;
+  }
+}
+
+.txFee {
+  &__loader-wrapper {
+    width: 10px;
+    margin-left: 10px;
+    position: relative;
+  }
+
+  &__loader {
+    position: absolute;
+    top: -10px;
+    background: none;
+  }
+
+  &__amount {
+    margin-left: 10px;
+  }
 }
 
 .grid {
@@ -234,9 +327,29 @@ export default {
 
 .max {
   &__button {
-    color: $black700 !important;
     margin-right: 10px !important;
     background-color: transparent !important;
+  }
+}
+
+.step-panel {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  user-select: none;
+
+  &__step {
+    @include text-simple;
+    font-weight: 400;
+    font-size: 16px;
+    color: $black500;
+    margin: 0 10px 0 0;
+    cursor: pointer;
+    &_active {
+      color: $black800;
+      border-bottom: 1px solid $blue;
+      padding: 0 0 12px 0;
+    }
   }
 }
 </style>
