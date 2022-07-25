@@ -6,7 +6,7 @@
       alt="credit card"
     >
     <p class="cardBank__text">
-      {{ $t('modals.deposit.uHaveToAddCard') }}
+      {{ $t('modals.depositModal.uHaveToAddCard') }}
     </p>
     <div class="btn-container">
       <base-btn
@@ -15,13 +15,13 @@
         class="message__action"
         @click="CloseModal"
       >
-        {{ $t('meta.btns.close') }}
+        {{ $t('meta.close') }}
       </base-btn>
       <base-btn
         data-selector="CONFIRM"
         @click="handleConfirm"
       >
-        {{ $t('meta.btns.addNow') }}
+        {{ $t('meta.addNow') }}
       </base-btn>
     </div>
   </div>
