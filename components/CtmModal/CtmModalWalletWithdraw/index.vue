@@ -209,7 +209,6 @@ export default {
     },
     maxBalance() {
       this.amount = this.maxAmount;
-      console.log(123, this.maxAmount, this.amount);
     },
   },
 };
