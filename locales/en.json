@@ -531,6 +531,7 @@
     "subText": "Scan the QR code or copy the address to send me a payment"
   },
   "wallet": {
+    "addVotes": "Add votes",
     "success": "Success",
     "failed": "Failed",
     "frozen": "Frozen balance",

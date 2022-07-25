@@ -105,7 +105,7 @@
                 class="balance__btn"
                 @click="showDelegateModal"
               >
-                {{ $t('modals.delegate') }}
+                {{ $t('wallet.addVotes') }}
               </base-btn>
             </div>
           </div>
@@ -590,9 +590,10 @@ export default {
 
   &__table {
     position: relative;
-    box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
     max-width: 100%;
+    margin-bottom: 1rem;
     overflow-x: auto;
+    box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
   }
 }
 

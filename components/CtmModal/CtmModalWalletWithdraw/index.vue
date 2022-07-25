@@ -86,7 +86,7 @@
             v-else
             class="txFee__amount"
           >
-            {{ currentFee }} {{ nativeTokenSymbol }}
+            {{ currentFee }} {{ $options.TokenSymbols.WQT }}
           </div>
         </div>
         <div class="content__buttons buttons">
@@ -119,11 +119,11 @@ import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import { TokenSymbols } from '~/utils/enums';
 import BankCard from '~/components/CtmModal/CtmModalDeposit/BankCard';
-import ERC20 from '~/abi/ERC20';
 
 export default {
   name: 'ModalWalletWithdraw',
   components: { BankCard },
+  TokenSymbols,
   data() {
     return {
       step: 'wallet',
@@ -131,7 +131,6 @@ export default {
       currentFee: 0,
       recipient: '',
       amount: 0,
-      ddValue: 0,
       maxFeeForNativeToken: 0,
       isCanSubmit: true,
     };
@@ -145,15 +144,6 @@ export default {
       userWalletAddress: 'user/getUserWalletAddress',
       isConnected: 'wallet/getIsWalletConnected',
     }),
-    nativeTokenSymbol() {
-      return TokenSymbols.WQT;
-    },
-    tokenBalance() {
-      return this.balance[this.selectedToken].fullBalance;
-    },
-    tokenDecimals() {
-      return +this.balance[this.selectedToken].decimals;
-    },
     maxAmount() {
       const fullBalance = new BigNumber(this.balance.WQT.fullBalance);
       const balanceMinusFee = fullBalance.minus(this.maxFeeForNativeToken).isGreaterThan(0);
@@ -161,10 +151,6 @@ export default {
     },
   },
   watch: {
-    ddValue(val) {
-      this.$store.dispatch('wallet/setSelectedToken', TokenSymbols[this.tokenSymbolsDd[val]]);
-      this.amount = 0;
-    },
     async amount() {
       if (!this.isConnected) return;
       this.isCanSubmit = false;
@@ -172,10 +158,11 @@ export default {
       clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
         const {
-          selectedToken, amount, userWalletAddress, tokenDecimals, nativeTokenSymbol, maxAmount,
+          amount, userWalletAddress, maxAmount,
         } = this;
 
-        if (amount === '' || amount === null || new BigNumber(maxAmount).isLessThan(amount)) {
+        console.log(amount);
+        if (amount === '' || amount === null || new BigNumber(maxAmount).isLessThan(amount) || amount < 0) {
           this.currentFee = 0;
           this.isCanSubmit = false;
         }
