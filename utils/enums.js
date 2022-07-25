@@ -43,6 +43,8 @@ export const Path = Object.freeze({
   DISCUSSIONS: '/discussions',
   WALLET: '/wallet',
   PROFILE: '/profile',
+
+  QRCODE: '/qrcode',
 });
 
 export const RouterNames = Object.freeze({

@@ -282,6 +282,10 @@
       "install": "Please install Metamask!",
       "subtitle": "Please open site from Metamask app"
     },
+    "depositModal": {
+      "scanQrCodeWallet": "Scan QR code or copy address to receive payment",
+      "walletCopied": "Wallet address copied successfully"
+    },
     "swap": "Swap",
     "network": "Network",
     "token": "Token",
@@ -518,6 +522,10 @@
       "rights": "All rights reserved"
     }
   },
+  "qrCodePage": {
+    "pageTitle": "Wallet address",
+    "subText": "Scan the QR code or copy the address to send me a payment"
+  },
   "wallet": {
     "success": "Success",
     "failed": "Failed",
@@ -525,11 +533,11 @@
     "WUSD": "WUSD wallet",
     "cryptoWallet": "Crypto wallet",
     "bankCard": "Bank card",
+    "walletAddress": "Wallet address",
     "send": "Send",
     "toThisAddress": "to this address",
     "wallet": "Wallet",
     "balance": "Balance",
-    "deposit": "Receive",
     "withdraw": "Withdraw",
     "transfer": "Buy / Send",
     "addCardProposal": "Add bank card for easy withdrawal",

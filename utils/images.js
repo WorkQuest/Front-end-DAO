@@ -10,5 +10,8 @@ export const images = Object.freeze({
 
   WQ_LOGO: require('~/assets/img/app/logo.svg'),
 
+  TELEGRAM: require('~/assets/img/social/footer_telegram.svg'),
+
   TRANSACTION_SEND: require('~/assets/img/ui/transactionSend.svg'),
+  CREDIT_CARD: require('~/assets/img/ui/creditCard.svg'),
 });

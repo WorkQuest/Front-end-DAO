@@ -84,7 +84,7 @@
                 class="balance__btn"
                 @click="showDepositModal"
               >
-                {{ $t('wallet.deposit') }}
+                {{ $t('modals.deposit') }}
               </base-btn>
               <base-btn
                 data-selector="SHOW-TRANSFER-MODAL"
