@@ -161,10 +161,10 @@ export default {
           amount, userWalletAddress, maxAmount,
         } = this;
 
-        console.log(amount);
         if (amount === '' || amount === null || new BigNumber(maxAmount).isLessThan(amount) || amount < 0) {
           this.currentFee = 0;
-          this.isCanSubmit = false;
+          this.isCanSubmit = true;
+          return;
         }
 
         const nativeTokenFee = await this.$store.dispatch('wallet/getTransferFeeData', {

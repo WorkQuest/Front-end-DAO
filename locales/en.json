@@ -148,6 +148,7 @@
     }
   },
   "meta": {
+    "approve": "Approve",
     "allTransactions": "All transactions",
     "delegations": "Delegations",
     "delegateNow": "Delegate Now",
