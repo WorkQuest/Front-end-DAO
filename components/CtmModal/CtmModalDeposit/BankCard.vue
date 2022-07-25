@@ -29,7 +29,7 @@
 
 <script>
 import { images } from '~/utils/images';
-// import { IS_PLUG } from '~/utils/locker-data';
+import { IS_PROD } from '~/utils/addresses';
 
 export default {
   name: 'BankCard',
@@ -43,12 +43,10 @@ export default {
   methods: {
     handleConfirm() {
       // TODO plug for release
-
-      // TODO: ADD PLUG!!! <<<<<<<< IN CUR PR
-      // if (IS_PLUG) {
-      //   this.ComingSoon();
-      //   return;
-      // }
+      if (IS_PROD) {
+        this.ShowToast('Coming soon', 'Still under construction');
+        return;
+      }
       this.ShowModal({ key: 'addCard', branchText: 'adding' });
     },
   },
