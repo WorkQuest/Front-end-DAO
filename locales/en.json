@@ -571,19 +571,6 @@
     "KYC": "KYC",
     "alreadyVerified": "Your profile already verified!"
   },
-  "chat": {
-    "openDispute": "Open dispute",
-    "approveQuest": "Approve quest",
-    "starredMessage": "Starred Message",
-    "starredChats": "Starred chats",
-    "createGroupChat": "Create group chat",
-    "messages": "Messages",
-    "chat": "Chat",
-    "quest": "Quest:",
-    "you": "You:",
-    "invitedYou": "invited you to a quest",
-    "writeYouMessage": "Write you message"
-  },
   "proposals": {
     "votingInfo": "Dear user, to participate in subsequent DAO voting or create your proposals, you need to increase your voting power. To vote, you need to delegate 100 WorkQuest tokens to your wallet. To make your offer in the DAO, you must delegate 10,000 WorkQuest tokens to your wallet.",
     "addProposals": "Add proposal",
