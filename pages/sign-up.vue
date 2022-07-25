@@ -14,7 +14,7 @@
         <span>{{ $t('signUp.haveAccount') }}</span>
         <nuxt-link
           class="auth__text auth__text_link"
-          to="/sign-in"
+          :to="$options.Path.SIGN_IN"
         >
           {{ $t('signUp.auth') }}
         </nuxt-link>
@@ -111,7 +111,7 @@
           </template>
         </base-field>
         <div class="auth__action">
-          <base-btn>
+          <base-btn :disabled="inProgress">
             {{ $t('signUp.create') }}
           </base-btn>
         </div>
@@ -123,11 +123,12 @@
 <script>
 import modals from '~/store/modals/modals';
 import { Path } from '~/utils/enums';
-import { accessLifetime } from '~/utils/constants/cookiesLifetime';
+import { accessLifetime, resendEmailLifetime } from '~/utils/constants/cookiesLifetime';
 
 export default {
   name: 'SignUp',
   layout: 'auth',
+  Path,
   data() {
     return {
       model: {
@@ -137,10 +138,12 @@ export default {
         password: '',
         passwordConfirm: '',
       },
+      inProgress: false,
     };
   },
   methods: {
     async signUp() {
+      this.inProgress = true;
       const payload = {
         firstName: this.model.firstName,
         lastName: this.model.lastName,
@@ -149,16 +152,19 @@ export default {
       };
       const response = await this.$store.dispatch('user/signUp', payload);
       if (response?.ok) {
-        this.$cookies.set('userStatus', response.result.userStatus, { path: Path.ROOT, maxAge: accessLifetime });
-        this.showConfirmEmailModal();
+        sessionStorage.setItem('resend-timer', JSON.stringify({
+          timerValue: resendEmailLifetime,
+          createdAt: Date.now(),
+        }));
         await this.$router.push(Path.SIGN_IN);
+        this.ShowModal({
+          key: modals.status,
+          img: require('~/assets/img/ui/email.svg'),
+          title: this.$t('registration.emailConfirmTitle'),
+          subtitle: this.$t('registration.emailConfirm'),
+        });
       }
-      this.SetLoader(false);
-    },
-    showConfirmEmailModal() {
-      this.ShowModal({
-        key: modals.emailConfirm,
-      });
+      this.inProgress = false;
     },
   },
 };
