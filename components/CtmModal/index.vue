@@ -15,7 +15,6 @@ import { mapGetters } from 'vuex';
 import modals from '@/store/modals/modals';
 import CtmModalGiveTransfer from './CtmModalGiveTransfer';
 import CtmModalShowFile from './CtmModalShowFile';
-import CtmModalConfirmEmail from './CtmModalConfirmEmail';
 import CtmModalChangePassword from './CtmModalChangePassword';
 import CtmModalRestore from './CtmModalRestore';
 import CtmModalPrivacy from './CtmModalPrivacy';
@@ -42,7 +41,6 @@ export default {
   components: {
     [modals.giveTransfer]: CtmModalGiveTransfer,
     [modals.showFile]: CtmModalShowFile,
-    [modals.emailConfirm]: CtmModalConfirmEmail,
     [modals.restore]: CtmModalRestore,
     [modals.changePassword]: CtmModalChangePassword,
     [modals.privacy]: CtmModalPrivacy,

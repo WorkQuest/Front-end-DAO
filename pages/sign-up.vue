@@ -141,6 +141,14 @@ export default {
       inProgress: false,
     };
   },
+  mounted() {
+    this.ShowModal({
+      key: modals.status,
+      img: require('~/assets/img/ui/email.svg'),
+      title: this.$t('registration.emailConfirmTitle'),
+      subtitle: this.$t('registration.emailConfirm'),
+    });
+  },
   methods: {
     async signUp() {
       this.inProgress = true;
@@ -157,7 +165,12 @@ export default {
           createdAt: Date.now(),
         }));
         await this.$router.push(Path.SIGN_IN);
-        this.ShowModal({ key: modals.emailConfirm });
+        this.ShowModal({
+          key: modals.status,
+          img: require('~/assets/img/ui/email.svg'),
+          title: this.$t('registration.emailConfirmTitle'),
+          subtitle: this.$t('registration.emailConfirm'),
+        });
       }
       this.inProgress = false;
     },
