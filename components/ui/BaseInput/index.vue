@@ -195,9 +195,9 @@ export default {
     },
     input($event) {
       if (this.type === 'number' && $event.target.value) {
-        let val = $event.target.value.toString().replace(',', '.').replace(/[^0-9.]/g, '');
+        let val = $event.target.value.toString().replace(/[^0-9.]/g, '');
         if (val[0] === '.') val = `${0}${val}`;
-        while (val.startsWith('0') && val.length > 1 && !(val.startsWith('0,') || val.startsWith('0.'))) {
+        while (val.startsWith('0') && val.length > 1 && !val.startsWith('0.')) {
           val = val.substr(1, val.length);
         }
         $event.target.value = val;
