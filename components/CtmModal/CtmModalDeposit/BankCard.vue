@@ -18,6 +18,7 @@
         {{ $t('modals.close') }}
       </base-btn>
       <base-btn
+        disabled
         data-selector="CONFIRM"
         @click="handleConfirm"
       >
