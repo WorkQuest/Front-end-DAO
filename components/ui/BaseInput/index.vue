@@ -175,12 +175,10 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      customType: '',
-    };
-  },
   computed: {
+    customType() {
+      return this.type === 'number' ? 'customNumber' : this.type;
+    },
     needToDelete() {
       return (this.value.length - 400);
     },
@@ -189,7 +187,6 @@ export default {
     },
   },
   mounted() {
-    this.customType = this.type === 'number' ? 'customNumber' : this.type;
     this.focus();
   },
   methods: {
