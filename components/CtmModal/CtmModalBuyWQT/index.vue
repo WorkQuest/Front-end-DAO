@@ -255,7 +255,6 @@ export default {
     },
     // Updates balance by current network & token
     async updateTokenData() {
-      console.log('update');
       this.SetLoader(true);
       const { tokenAddress } = this.tokenList[this.selectedToken];
       const [balance, decimals, symbol] = await Promise.all([
@@ -346,6 +345,9 @@ export default {
               });
               await this.$store.dispatch('wallet/connectToProvider', Chains.WORKNET);
             }
+          },
+          cancelMethod: async () => {
+            await this.$store.dispatch('wallet/connectToProvider', Chains.WORKNET);
           },
         });
       }).catch((err) => {

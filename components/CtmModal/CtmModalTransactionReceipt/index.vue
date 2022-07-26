@@ -38,7 +38,7 @@
           <base-btn
             class="buttons__button"
             mode="outline"
-            @click="CloseModal"
+            @click="close"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
@@ -109,6 +109,11 @@ export default {
         }
       }
       this.SetLoader(false);
+    },
+    async close() {
+      const { cancelMethod } = this.options;
+      this.CloseModal();
+      if (cancelMethod) await cancelMethod();
     },
   },
 };

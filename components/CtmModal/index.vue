@@ -75,8 +75,12 @@ export default {
     }),
   },
   methods: {
-    backgroundClick() {
-      if (!this.options.isUnclosable) this.close();
+    async backgroundClick() {
+      if (!this.options.isUnclosable) {
+        const { cancelMethod } = this.options;
+        this.close();
+        if (cancelMethod) await cancelMethod();
+      }
     },
     close() {
       this.$store.dispatch('modals/hide');

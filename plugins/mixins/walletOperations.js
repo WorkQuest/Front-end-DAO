@@ -1,9 +1,15 @@
 import BigNumber from 'bignumber.js';
+import { mapGetters } from 'vuex';
 import { ERC20 } from '~/abi';
 import modals from '~/store/modals/modals';
-import { TokenSymbols } from '~/utils/enums';
+import { Chains, TokenSymbols } from '~/utils/enums';
 
 export default {
+  computed: {
+    ...mapGetters({
+      selectedNetwork: 'wallet/getSelectedNetwork',
+    }),
+  },
   methods: {
     /**
      * Check allowance and making approve
@@ -80,7 +86,10 @@ export default {
               this.ShowToast('Approving done', 'Approve');
               await resolve(amount);
             },
-            cancel: async () => await reject(new Error('Cancel')),
+            cancelMethod: async () => {
+              await this.$store.dispatch('wallet/connectToProvider', Chains.WORKNET);
+              await reject(new Error('User rejected transaction'));
+            },
           });
         } else await resolve(amount);
       });

@@ -326,39 +326,27 @@ export default {
       const data = [nonce, toChainIndex, value, accountAddress, userId, symbol];
 
       commit('setPendingHashLink', null);
-      console.log(this.$wsNotifs);
-      await this.$wsNotifs.subscribe(`notifications/bridgeUsdt/${accountAddress}`, async (msg) => {
+      const subscribePath = `/notifications/bridgeUsdt/${accountAddress}`;
+      await this.$wsNotifs.subscribe(subscribePath, async (msg) => {
         commit('setPendingHashLink', `${ExplorerUrl}/tx/${msg.data.hash}`);
-        await this.$wsNotifs.unsubscribe(`notifications/bridgeUsdt/${accountAddress}`);
+        await this.$wsNotifs.unsubscribe(subscribePath);
       });
 
-      let swapRes = null;
       $nuxt.ShowToast('Swapping...', 'Swapping');
 
-      if (isNative) {
-        // eslint-disable-next-line prefer-const
-        let [gasPrice, gas] = await Promise.all([
-          provider.eth.getGasPrice(),
-          bridgeInstance.methods.swap(...data).estimateGas({ from: accountAddress, value }),
-        ]);
-        if (getters.getSelectedNetwork === Chains.ETHEREUM) gasPrice = new BigNumber(gasPrice.toString()).multipliedBy(ethBoost).toFixed(0);
-        swapRes = await bridgeInstance.methods.swap(...data).send({
-          from: accountAddress,
-          value,
-          gasPrice,
-          gas,
-        });
-      } else {
-        const [gasPrice, gas] = await Promise.all([
-          provider.eth.getGasPrice(),
-          bridgeInstance.methods.swap(...data).estimateGas({ from: accountAddress }),
-        ]);
-        swapRes = await bridgeInstance.methods.swap(...data).send({
-          from: accountAddress,
-          gasPrice,
-          gas,
-        });
-      }
+      const nativeValue = isNative ? value : null;
+      // eslint-disable-next-line prefer-const
+      let [gasPrice, gas] = await Promise.all([
+        provider.eth.getGasPrice(),
+        bridgeInstance.methods.swap(...data).estimateGas({ from: accountAddress, value: nativeValue }),
+      ]);
+      if (getters.getSelectedNetwork === Chains.ETHEREUM) gasPrice = new BigNumber(gasPrice.toString()).multipliedBy(ethBoost).toFixed(0);
+      const swapRes = await bridgeInstance.methods.swap(...data).send({
+        from: accountAddress,
+        gasPrice,
+        gas,
+        value: nativeValue,
+      });
 
       $nuxt.ShowToast('Swapping done', 'Swapping');
       return success(swapRes);

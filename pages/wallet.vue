@@ -343,7 +343,6 @@ export default {
     showDelegateModal() {
       this.ShowModal({
         key: modals.delegate,
-        max: this.balance.WQT.fullBalance, // TODO: check max correctly?
         delegateMode: DelegateMode.INVESTORS,
         investorAddress: this.userWalletAddress,
         callback: async () => this.$store.dispatch('wallet/updateFrozenBalance'),
