@@ -295,9 +295,9 @@ export default {
   }
 
   &__loader {
-    position: absolute;
-    top: -10px;
-    background: none;
+    position: absolute !important;
+    top: -10px !important;
+    background: none !important;
   }
 
   &__amount {
