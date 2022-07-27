@@ -240,10 +240,10 @@ export default {
 
     getNumbersFromString(str, divider) {
       const arr = str?.split(divider);
-      return success({
+      return {
         first: arr[0]?.replace(/[^0-9]/g, ''),
         second: arr[1]?.replace(/[^0-9]/g, ''),
-      });
+      };
     },
 
     /** VALIDATORS DELEGATE */
