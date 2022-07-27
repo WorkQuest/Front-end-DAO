@@ -1,7 +1,7 @@
 import { success, error } from '~/utils/success-error';
 import { connectWithMnemonic } from '~/utils/wallet';
 import { accessLifetime } from '~/utils/constants/cookiesLifetime';
-import { Path } from '~/utils/enums';
+import { Path, UserStatuses } from '~/utils/enums';
 
 export default {
   async signIn({ commit, dispatch }, payload) {
@@ -22,7 +22,7 @@ export default {
       });
       return response;
     } catch (e) {
-      return error(e.response.data.code, e.response.data.msg);
+      return error(e?.response?.data?.code, e?.response?.data?.msg);
     }
   },
   async registerWallet({ commit }, payload) {
@@ -35,7 +35,7 @@ export default {
   async signUp({ commit }, payload) {
     try {
       const response = await this.$axios.$post('/v1/auth/dao/register', payload);
-      commit('setTokens', response.result);
+      commit('setTokens', { access: response.result.access });
       return response;
     } catch (e) {
       return error();
@@ -50,10 +50,21 @@ export default {
       return error();
     }
   },
-  async confirm({ commit }, payload) {
-    commit('setTokens', { access: this.$cookies.get('access'), refresh: this.$cookies.get('refresh') });
-    this.$cookies.set('role', payload.role, { path: Path.ROOT, maxAge: accessLifetime });
-    return await this.$axios.$post('/v1/auth/confirm-email', payload);
+  async confirm({ commit, dispatch, getters }, payload) {
+    try {
+      const res = await this.$axios.$post('/v1/auth/confirm-email', payload);
+      this.$cookies.set('role', payload.role, {
+        path: Path.ROOT,
+        maxAge: accessLifetime,
+      });
+      this.$cookies.set('userStatus', UserStatuses.NeedSetRole, {
+        path: Path.ROOT,
+        maxAge: accessLifetime,
+      });
+      return res;
+    } catch (e) {
+      return error();
+    }
   },
   async getUserData({ commit }) {
     try {
@@ -83,10 +94,14 @@ export default {
       return null;
     }
   },
-  async setUserRole({ commit }) {
-    const response = await this.$axios.$post('/v1/profile/set-role');
-    commit('setUserRole', response.result);
-    return response;
+  async setUserRole({ commit }, payload) {
+    try {
+      const response = await this.$axios.$post('/v1/profile/set-role', payload);
+      commit('setUserRole', response.result);
+      return response;
+    } catch (e) {
+      return error();
+    }
   },
   async logout({ commit }) {
     commit('logOut');

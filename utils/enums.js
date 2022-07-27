@@ -44,6 +44,13 @@ export const Path = Object.freeze({
   PROFILE: '/profile',
 });
 
+export const RouterNames = Object.freeze({
+  SIGN_IN: 'sign-in',
+  SIGN_UP: 'sign-up',
+  ROLE: 'role',
+  ROOT: 'index',
+});
+
 export const UserRole = Object.freeze({
   WORKER: 'worker',
   EMPLOYER: 'employer',
@@ -126,11 +133,6 @@ export const ExplorerUrl = {
   stage: 'https://stage-explorer.workquest.co',
   develop: 'https://dev-explorer.workquest.co',
 }[process.env.BRANCH];
-
-export const ValidatorsMethods = Object.freeze({
-  DELEGATE: '/cosmos.staking.v1beta1.MsgDelegate',
-  UNDELEGATE: '/cosmos.staking.v1beta1.MsgUndelegate',
-});
 
 export const DelegateMode = Object.freeze({
   VALIDATORS: 0,
