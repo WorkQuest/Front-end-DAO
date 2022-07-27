@@ -238,6 +238,14 @@ export default {
       this.SetLoader(false);
     },
 
+    getNumbersFromString(str, divider) {
+      const arr = str?.split(divider);
+      return success({
+        first: arr[0]?.replace(/[^0-9]/g, ''),
+        second: arr[1]?.replace(/[^0-9]/g, ''),
+      });
+    },
+
     /** VALIDATORS DELEGATE */
 
     async toDelegateModal() {
@@ -251,14 +259,16 @@ export default {
       );
       const simulateFeeRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result });
       this.SetLoader(false);
+
       if (!simulateFeeRes.result) {
         let { msg } = simulateFeeRes;
         const isSequenceErr = msg?.includes('account sequence mismatch');
         const isAccountErr = msg?.includes('account number');
         if (msg && !isSequenceErr && !isAccountErr && simulateFeeRes?.code === 3 && msg?.includes('awqt')) {
-          const arr = msg?.split('awqt');
-          const balance = new BigNumber(arr[0]?.replace(/[^0-9]/g, ''))?.shiftedBy(-18)?.toString();
-          const minBalanceToDelegate = new BigNumber(arr[1]?.replace(/[^0-9]/g, '')?.toString())?.shiftedBy(-18)?.plus(1)?.toString();
+          const { first, second } = this.getNumbersFromString(msg, 'awqt');
+          const balance = first ? new BigNumber(first).shiftedBy(-18).toString() : 0;
+          const minBalanceToDelegate = second ? new BigNumber(second).shiftedBy(-18).plus(1).toString() : 0;
+
           msg = this.$t('validators.balanceLessPossible', { balance, min: minBalanceToDelegate, s: TokenSymbols.WQT });
         }
         this.ShowToast(msg, 'Delegate error');
@@ -368,9 +378,10 @@ export default {
       if (!possibleRes.result) {
         let msg = possibleRes?.msg;
         if (msg && msg?.includes('awqt')) {
-          const arr = msg?.split('awqt');
-          const balance = new BigNumber(arr[0]?.replace(/[^0-9]/g, ''))?.shiftedBy(-18)?.toString();
-          const minBalanceToUndelegate = new BigNumber(arr[1]?.replace(/[^0-9]/g, '')?.toString())?.shiftedBy(-18)?.toString();
+          const { first, second } = this.getNumbersFromString(msg, 'awqt');
+          const balance = first ? new BigNumber(first).shiftedBy(-18).toString() : 0;
+          const minBalanceToUndelegate = second ? new BigNumber(second).shiftedBy(-18).toString() : 0;
+
           msg = this.$t('validators.balanceLessPossibleUndelegate', {
             balance,
             min: minBalanceToUndelegate,
