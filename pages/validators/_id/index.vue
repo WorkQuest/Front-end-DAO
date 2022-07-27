@@ -75,25 +75,6 @@
         </div>
         <div class="validator__profile profile">
           <div class="profile__right">
-            <div class="right__bar">
-              <div class="bar__info">
-                <div class="bar__text">
-                  {{ $t('validator.slots') }}
-                </div>
-                <div class="bar__data">
-                  <div class="bar__text bar__text_grey">
-                    {{ `${$t('validator.occupied')}:` }}
-                  </div>
-                  <div class="bar__text bar__text_small">
-                    {{ `${slots} ${$t('validator.outOf')} 1000` }}
-                  </div>
-                </div>
-              </div>
-              <progress-bar
-                :value="slots / 10"
-                mode="blue"
-              />
-            </div>
             <div class="right__block">
               <div class="right__info">
                 <div class="right__data-name">
@@ -116,7 +97,7 @@
               <base-btn
                 mode="lightRed"
                 class="right__button"
-                :disabled="!delegatedData"
+                :disabled="disabledUndelegate"
                 @click="toUndelegateModal"
               >
                 {{ $t('modals.undelegate') }}
@@ -140,11 +121,12 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
-  DelegateMode, ExplorerUrl, GateGasPrice, TokenSymbols, ValidatorsMethods,
+  DelegateMode, ExplorerUrl, TokenSymbols,
 } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import { error, success } from '~/utils/success-error';
 import { CreateSignedTxForValidator } from '~/utils/wallet';
+import { GateGasPrice, ValidatorsMethods, ValidatorsGasLimit } from '~/utils/constants/validators';
 
 export default {
   name: 'Validator',
@@ -166,6 +148,9 @@ export default {
       userWalletAddress: 'user/getUserWalletAddress',
       isWalletConnected: 'wallet/getIsWalletConnected',
     }),
+    disabledUndelegate() {
+      return !this.delegatedData || new BigNumber(this.delegatedData?.amount).isZero();
+    },
     unbondingDays() {
       // Через N дней юзеру вернутся WQT после undelegate
       return Number(this.stakingParams.unbonding_time.slice(0, -1)) / 60 / 60 / 24;
@@ -244,21 +229,70 @@ export default {
         return;
       }
       this.delegatedData = {
-        amount: res.result.delegation_response.balance.amount,
-        shares: res.result.delegation_response.delegation.shares,
+        amount: res.result.delegation_response?.balance?.amount,
+        shares: res.result.delegation_response?.delegation?.shares,
       };
     },
     toNotFound() {
       this.notFounded = true;
       this.SetLoader(false);
     },
+
+    getNumbersFromString(str, divider) {
+      const arr = str?.split(divider);
+      return {
+        first: arr[0]?.replace(/[^0-9]/g, ''),
+        second: arr[1]?.replace(/[^0-9]/g, ''),
+      };
+    },
+
+    /** VALIDATORS DELEGATE */
+
     async toDelegateModal() {
+      // calculating possible delegate value
+      this.SetLoader(true);
+      await this.$store.dispatch('wallet/getBalance');
+      const possibleTx = await CreateSignedTxForValidator(
+        ValidatorsMethods.DELEGATE,
+        this.validatorData.operator_address,
+        new BigNumber(this.validatorData?.min_self_delegation || 1).shiftedBy(18).toString(),
+      );
+      const simulateFeeRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result });
+      this.SetLoader(false);
+
+      if (!simulateFeeRes.result) {
+        let { msg } = simulateFeeRes;
+        const isSequenceErr = msg?.includes('account sequence mismatch');
+        const isAccountErr = msg?.includes('account number');
+        if (msg && !isSequenceErr && !isAccountErr && simulateFeeRes?.code === 3 && msg?.includes('awqt')) {
+          const { first, second } = this.getNumbersFromString(msg, 'awqt');
+          const balance = first ? new BigNumber(first).shiftedBy(-18).toString() : 0;
+          const minBalanceToDelegate = second ? new BigNumber(second).shiftedBy(-18).plus(1).toString() : 0;
+
+          msg = this.$t('validators.balanceLessPossible', { balance, min: minBalanceToDelegate, s: TokenSymbols.WQT });
+        }
+        this.ShowToast(msg, 'Delegate error');
+        this.CloseModal();
+        return;
+      }
+      let { gas_used } = simulateFeeRes.gas_info;
+
+      // Max fee for send tx
+      const maxFeeValue = new BigNumber(gas_used > ValidatorsGasLimit ? gas_used : ValidatorsGasLimit).multipliedBy(GateGasPrice).shiftedBy(-18);
+      let maxValue = new BigNumber(this.balanceData.WQT.fullBalance).minus(maxFeeValue);
+      if (maxValue.isLessThan(0)) {
+        maxValue = '0';
+      } else maxValue = maxValue.toString();
+
+      // Opening Delegate modal
       this.ShowModal({
         key: modals.delegate,
         delegateMode: DelegateMode.VALIDATORS,
         unbondingDays: this.unbondingDays,
         investorAddress: this.ConvertToHex('wqvaloper', this.validatorData.operator_address),
+        validatorAddress: this.validatorData.operator_address,
         min: this.validatorData.min_self_delegation,
+        maxFee: maxFeeValue,
         submitMethod: async (amount) => {
           this.SetLoader(true);
 
@@ -268,15 +302,21 @@ export default {
             this.validatorData.operator_address,
             new BigNumber(amount).shiftedBy(18).toString(),
           );
-          const simulateRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result });
+          const [simulateRes] = await Promise.all([
+            this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result }),
+            this.$store.dispatch('wallet/getBalance'),
+          ]);
+          this.SetLoader(false);
           if (!simulateRes.result) {
             this.ShowToast(simulateRes.msg, 'Delegate error');
             this.CloseModal();
-            this.SetLoader(false);
             return;
           }
-          const { gas_used } = simulateRes.gas_info;
-          this.SetLoader(false);
+          gas_used = simulateRes.gas_info.gas_used;
+          const resultingGasLimit = new BigNumber(gas_used > ValidatorsGasLimit ? gas_used : ValidatorsGasLimit);
+          const feeValue = resultingGasLimit.multipliedBy(GateGasPrice).shiftedBy(-18).toString();
+
+          // Transaction receipt
           this.ShowModal({
             key: modals.transactionReceipt,
             title: this.$t('modals.delegate'),
@@ -287,7 +327,7 @@ export default {
               amount: { name: this.$t('modals.amount'), value: amount, symbol: TokenSymbols.WQT },
               fee: {
                 name: this.$t('wallet.table.trxFee'),
-                value: new BigNumber(gas_used).multipliedBy(GateGasPrice).shiftedBy(-18).toString(),
+                value: feeValue,
                 symbol: TokenSymbols.WQT,
               },
             },
@@ -306,7 +346,7 @@ export default {
                 ValidatorsMethods.DELEGATE,
                 this.validatorData.operator_address,
                 new BigNumber(amount).shiftedBy(18).toString(),
-                gas_used,
+                resultingGasLimit.toString(),
               );
               const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: delegateTx.result });
               if (broadcastRes.tx_response.raw_log !== '[]') {
@@ -319,30 +359,77 @@ export default {
         },
       });
     },
-    toUndelegateModal() {
+
+    /** VALIDATORS UNDELEGATE */
+
+    async toUndelegateModal() {
+      if (this.disabledUndelegate || !this.delegatedData) return;
+      this.SetLoader(true);
+      const possibleTx = await CreateSignedTxForValidator(
+        ValidatorsMethods.UNDELEGATE,
+        this.validatorData.operator_address,
+        this.delegatedData?.amount,
+      );
+      const [possibleRes] = await Promise.all([
+        this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result }),
+        this.$store.dispatch('wallet/getBalance'),
+      ]);
+      this.SetLoader(false);
+      if (!possibleRes.result) {
+        let msg = possibleRes?.msg;
+        if (msg && msg?.includes('awqt')) {
+          const { first, second } = this.getNumbersFromString(msg, 'awqt');
+          const balance = first ? new BigNumber(first).shiftedBy(-18).toString() : 0;
+          const minBalanceToUndelegate = second ? new BigNumber(second).shiftedBy(-18).toString() : 0;
+
+          msg = this.$t('validators.balanceLessPossibleUndelegate', {
+            balance,
+            min: minBalanceToUndelegate,
+            s: TokenSymbols.WQT,
+          });
+        }
+        this.ShowToast(msg, 'Undelegate error');
+        this.CloseModal();
+        return;
+      }
+
       this.ShowModal({
         key: modals.undelegate,
         title: this.$t('modals.undelegate'),
         delegateMode: DelegateMode.VALIDATORS,
         unbondingDays: this.unbondingDays,
-        tokensAmount: this.delegatedData.amount,
+        tokensAmount: this.delegatedData?.amount,
         submitMethod: async () => {
           this.SetLoader(true);
           const gasUsedTx = await CreateSignedTxForValidator(
             ValidatorsMethods.UNDELEGATE,
             this.validatorData.operator_address,
-            this.delegatedData.amount,
+            this.delegatedData?.amount,
           );
-          const simulateRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result });
-          const { gas_used } = simulateRes.gas_info;
+          const [simulateRes] = await Promise.all([
+            this.$store.dispatch('validators/simulate', { signedTxBytes: gasUsedTx.result }),
+            this.$store.dispatch('wallet/getBalance'),
+          ]);
           this.SetLoader(false);
+          if (!simulateRes.result) {
+            this.ShowToast(simulateRes.msg, 'Undelegate error');
+            this.CloseModal();
+            return;
+          }
+          const { gas_used } = simulateRes.gas_info;
+          const resultingGasLimit = new BigNumber(gas_used > ValidatorsGasLimit ? gas_used : ValidatorsGasLimit);
+
           this.ShowModal({
             key: modals.transactionReceipt,
             isShowSuccess: true,
             fields: {
               from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
               to: { name: this.$t('modals.toAddress'), value: this.convertedValidatorAddress },
-              gasLimit: { name: this.$t('modals.gasLimit'), value: gas_used },
+              fee: {
+                name: this.$t('wallet.table.trxFee'),
+                value: resultingGasLimit.multipliedBy(GateGasPrice).shiftedBy(-18).toString(),
+                symbol: TokenSymbols.WQT,
+              },
             },
             callback: async () => await new Promise((resolve) => {
               setTimeout(async () => {
@@ -358,8 +445,8 @@ export default {
               const undelegateTx = await CreateSignedTxForValidator(
                 ValidatorsMethods.UNDELEGATE,
                 this.validatorData.operator_address,
-                this.delegatedData.amount,
-                gas_used,
+                this.delegatedData?.amount,
+                resultingGasLimit.toString(),
               );
               const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: undelegateTx.result });
               if (broadcastRes.tx_response.raw_log !== '[]') {

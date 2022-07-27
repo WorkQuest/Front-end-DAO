@@ -1,5 +1,6 @@
 import converter from 'bech32-converting';
 import axios from 'axios';
+import BigNumber from 'bignumber.js';
 import { error, success } from '~/utils/success-error';
 import { getAddressFromConsensusPub } from '~/utils/wallet';
 import ENV from '~/utils/addresses';
@@ -25,6 +26,7 @@ export default {
         ...validators.map((item) => dispatch('getMissedBlocks', item.consensus_pubkey.key)),
       ]);
       for (let i = 0; i < validators.length; i += 1) {
+        validators[i].min_self_delegation = new BigNumber(validators[i].min_self_delegation).shiftedBy(-18).toString();
         validators[i].slots = infoRes[i].result;
         validators[i].missedBlocks = infoRes[i + validators.length].result;
       }
@@ -65,6 +67,7 @@ export default {
   async getValidatorByAddress({ commit, dispatch }, validatorAddress) {
     try {
       const { data } = await nodeApi.get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`);
+      data.validator.min_self_delegation = new BigNumber(data.validator.min_self_delegation).shiftedBy(-18).toString();
       commit('setValidatorData', data.validator);
       return success();
     } catch (e) {
@@ -108,7 +111,7 @@ export default {
       return data;
     } catch (e) {
       console.error('wallet/broadcast');
-      return error(-1, e?.response?.data?.message);
+      return error(e?.response?.data?.code, e?.response?.data?.message);
     }
   },
 };

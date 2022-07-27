@@ -19,7 +19,7 @@
             </div>
             <div
               class="item__subtitle"
-              :class="{field__subtitle_red: !canSend && item.name === $t('wallet.table.trxFee')}"
+              :class="{'item__subtitle_red': !canSend && item.name === $t('wallet.table.trxFee')}"
             >
               {{ item.value }}
               <span v-if="item.symbol">{{ item.symbol }}</span>
