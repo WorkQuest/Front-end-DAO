@@ -165,7 +165,7 @@ export default {
           .shiftedBy(-18);
         const maxValue = new BigNumber(this.balanceData.WQT.fullBalance).minus(maxFeeValue);
         this.validatorsFee = maxFeeValue.toString();
-        this.canSend = !maxValue.isLessThan(0);
+        this.canSend = maxValue.isGreaterThanOrEqualTo(0);
       }, 200);
     },
   },
