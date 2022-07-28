@@ -84,6 +84,14 @@ export default {
       return error();
     }
   },
+  async getRewardsForValidator({ _ }, { validatorAddress, userWalletAddress }) {
+    try {
+      const { data } = await nodeApi.get(`/cosmos/distribution/v1beta1/delegators/${userWalletAddress}/rewards/${validatorAddress}`);
+      return success(data);
+    } catch (e) {
+      return error();
+    }
+  },
 
   // Send tx
   async broadcast({ _ }, { signedTxBytes, broadCastMode = 'BROADCAST_MODE_SYNC' }) {

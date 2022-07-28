@@ -49,13 +49,9 @@
               <div class="left__text">
                 {{ $t('modals.address') }}
               </div>
-              <a
-                :href="explorerAddressUrl"
-                target="_blank"
-                class="left__date"
-              >
-                {{ CutTxn(convertedValidatorAddress, 6, 6) }}
-              </a>
+              <div class="left__data">
+                {{ validatorAddress }}
+              </div>
             </div>
             <div
               v-for="(item, key) in leftColumn"
@@ -66,7 +62,7 @@
                 <div class="left__text">
                   {{ item.name }}
                 </div>
-                <div class="left__date">
+                <div class="left__data">
                   {{ item.desc }}
                 </div>
               </div>
@@ -120,12 +116,13 @@
 <script>
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
+import converter from 'bech32-converting';
 import {
   DelegateMode, ExplorerUrl, TokenSymbols,
 } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import { error, success } from '~/utils/success-error';
-import { CreateSignedTxForValidator } from '~/utils/wallet';
+import { CreateSignedTxForValidator, getAddressFromConsensusPub } from '~/utils/wallet';
 import { GateGasPrice, ValidatorsMethods, ValidatorsGasLimit } from '~/utils/constants/validators';
 
 export default {
@@ -168,13 +165,6 @@ export default {
       }
       return res;
     },
-    convertedValidatorAddress() {
-      if (!this.validatorData) return '';
-      return this.ConvertToBech32('wq', this.ConvertToHex('wqvaloper', this.validatorData.operator_address));
-    },
-    explorerAddressUrl() {
-      return `${ExplorerUrl}/address/${this.convertedValidatorAddress}`;
-    },
   },
   beforeCreate() {
     this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
@@ -182,16 +172,7 @@ export default {
   async beforeMount() {
     if (!this.isWalletConnected) return;
     this.SetLoader(true);
-    const { id } = this.$route.params;
-    let validatorAddress = null;
-    try {
-      validatorAddress = this.ConvertToHex('wq', id);
-      validatorAddress = this.ConvertToBech32('wqvaloper', validatorAddress);
-      // eslint-disable-next-line no-empty
-    } catch (e) {
-      this.toNotFound();
-      return;
-    }
+    const { id: validatorAddress } = this.$route.params;
     // eslint-disable-next-line no-restricted-syntax
     for (const item of this.validatorsList) {
       if (item.operator_address === validatorAddress) {
@@ -323,7 +304,7 @@ export default {
             isShowSuccess: true,
             fields: {
               from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
-              to: { name: this.$t('modals.toAddress'), value: this.convertedValidatorAddress },
+              to: { name: this.$t('modals.toAddress'), value: this.validatorAddress },
               amount: { name: this.$t('modals.amount'), value: amount, symbol: TokenSymbols.WQT },
               fee: {
                 name: this.$t('wallet.table.trxFee'),
@@ -370,10 +351,19 @@ export default {
         this.validatorData.operator_address,
         this.delegatedData?.amount,
       );
-      const [possibleRes] = await Promise.all([
+
+      // const valconsValidatorAddress = converter('wqvalcons').toBech32(getAddressFromConsensusPub(this.validatorData.consensus_pubkey.key));
+      const [possibleRes, rewardsRes] = await Promise.all([
         this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result }),
+        this.$store.dispatch('validators/getRewardsForValidator', {
+          validatorAddress: this.validatorAddress,
+          userWalletAddress: this.ConvertToBech32('wq', this.userWalletAddress),
+        }),
         this.$store.dispatch('wallet/getBalance'),
       ]);
+
+      const reward = new BigNumber(rewardsRes?.result?.rewards[0]?.amount).shiftedBy(-18).toString();
+
       this.SetLoader(false);
       if (!possibleRes.result) {
         let msg = possibleRes?.msg;
@@ -399,6 +389,7 @@ export default {
         delegateMode: DelegateMode.VALIDATORS,
         unbondingDays: this.unbondingDays,
         tokensAmount: this.delegatedData?.amount,
+        reward,
         submitMethod: async () => {
           this.SetLoader(true);
           const gasUsedTx = await CreateSignedTxForValidator(
@@ -424,7 +415,7 @@ export default {
             isShowSuccess: true,
             fields: {
               from: { name: this.$t('modals.fromAddress'), value: this.ConvertToBech32('wq', this.userWalletAddress) },
-              to: { name: this.$t('modals.toAddress'), value: this.convertedValidatorAddress },
+              to: { name: this.$t('modals.toAddress'), value: this.validatorAddress },
               fee: {
                 name: this.$t('wallet.table.trxFee'),
                 value: resultingGasLimit.multipliedBy(GateGasPrice).shiftedBy(-18).toString(),
@@ -523,7 +514,6 @@ export default {
     display: grid;
     grid-template-columns: 76px auto;
     grid-gap: 20px;
-    align-items: center;
     &_data {
       grid-template-columns: auto auto;
     }
@@ -548,10 +538,12 @@ export default {
       font-weight: 500;
     }
   }
-  &__date {
+  &__data {
     font-weight: 400;
     font-size: 14px;
     color: $black300;
+    word-break: break-word;
+    white-space: pre-line;
   }
 }
 
