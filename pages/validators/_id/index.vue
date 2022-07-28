@@ -184,6 +184,12 @@ export default {
       if (!res.ok) this.toNotFound();
     }
 
+    if (!this.validatorData?.consensus_pubkey?.key) {
+      this.notFounded = true;
+      this.SetLoader(false);
+      return;
+    }
+
     const [slotsRes, missedBlocksRes] = await Promise.all([
       this.$store.dispatch('validators/getSlotsCount', validatorAddress),
       this.$store.dispatch('validators/getMissedBlocks', this.validatorData.consensus_pubkey.key),
