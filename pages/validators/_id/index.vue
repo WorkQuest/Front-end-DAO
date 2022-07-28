@@ -670,8 +670,19 @@ export default {
       grid-template-rows: repeat(2, 340px);
     }
   }
-  .profile__left_data {
-    grid-template-columns: 1fr;
+  .profile {
+    &__avatar {
+      height: 100px;
+      width: 100px;
+    }
+    &__left {
+      display: flex;
+      flex-direction: column;
+
+      &_data {
+        grid-template-columns: 1fr;
+      }
+    }
   }
   .bar {
     &__data {
