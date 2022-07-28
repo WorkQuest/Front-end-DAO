@@ -20,7 +20,7 @@
         </div>
         <div class="content__tokens tokens">
           <div class="tokens__title">
-            {{ $t('modals.tokensNumber') }}
+            {{ $t('modals.amount') }}
           </div>
           <label
             v-if="options.unbondingDays"
@@ -41,7 +41,7 @@
               class="footer__body"
               placeholder="10000 WQT"
               data-selector="AMOUNT"
-              :name="$tc('modals.tokensNumber')"
+              :name="$tc('modals.amount')"
               :rules="`required${min}|max_bn:${maxValue}|decimalPlaces:18`"
               type="number"
               @input="replaceDot"
