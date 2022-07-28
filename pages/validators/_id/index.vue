@@ -190,10 +190,10 @@ export default {
       this.$store.dispatch('validators/getStakingParams'),
       this.updateDelegatedAmount(),
     ]);
+    this.SetLoader(false);
     if (slotsRes.ok) this.slots = slotsRes.result;
     if (missedBlocksRes.ok) this.missedBlocks = missedBlocksRes.result;
     this.validatorAddress = validatorAddress;
-    this.SetLoader(false);
   },
   beforeDestroy() {
     this.$store.commit('validators/setValidatorData', null);
@@ -205,7 +205,7 @@ export default {
         userWalletAddress: this.ConvertToBech32('wq', this.userWalletAddress),
         validatorAddress: this.validatorData.operator_address,
       });
-      if (!res.ok) {
+      if (!res.ok || !res.result) {
         this.delegatedData = null;
         return;
       }
