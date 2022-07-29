@@ -712,7 +712,7 @@ export default {
     }
     &__block {
       grid-template-columns: auto;
-      grid-template-rows: repeat(2, 290px);
+      grid-template-rows: 1fr 1fr;
     }
   }
 }
