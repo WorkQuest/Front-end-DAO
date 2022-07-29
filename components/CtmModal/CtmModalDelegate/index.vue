@@ -83,7 +83,9 @@ import {
   TokenSymbols, DelegateMode,
 } from '~/utils/enums';
 import { CreateSignedTxForValidator, tempTxFeeValidators } from '~/utils/wallet';
-import { GateGasPrice, ValidatorsMethods, ValidatorsGasLimit } from '~/utils/constants/validators';
+import {
+  GateGasPrice, ValidatorsMethods, ValidatorsGasLimit, OverLimitForTx,
+} from '~/utils/constants/validators';
 
 export default {
   name: 'Delegate',
@@ -183,7 +185,7 @@ export default {
     if (this.options.delegateMode === DelegateMode.VALIDATORS) {
       this.SetLoader(false);
       this.balance = this.balanceData.WQT.fullBalance;
-      if (new BigNumber(this.balance).minus(tempTxFeeValidators).isLessThan(0)) {
+      if (new BigNumber(this.balance).minus(this.options.maxFee).isLessThan(0)) {
         this.ShowToast(this.$t('proposal.errors.transaction.notEnoughFunds'));
         this.balance = 0;
       }

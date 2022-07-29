@@ -141,7 +141,7 @@ import modals from '~/store/modals/modals';
 import { error, success } from '~/utils/success-error';
 import { CreateSignedTxForValidator, getAddressFromConsensusPub, getStyledAmount } from '~/utils/wallet';
 import {
-  GateGasPrice, ValidatorsMethods, ValidatorsGasLimit, ValidatorStatuses,
+  GateGasPrice, ValidatorsMethods, ValidatorsGasLimit, ValidatorStatuses, OverLimitForTx,
 } from '~/utils/constants/validators';
 
 export default {
@@ -319,9 +319,13 @@ export default {
     async toDelegateModal() {
       if (this.disabledDelegate) return;
 
+      // 1 wei -> gas_used (used)
+      // maxFee = used > limit ? used : limit
+
       // calculating possible delegate value
       this.SetLoader(true);
       await this.$store.dispatch('wallet/getBalance');
+      console.log(this.balanceData.WQT.fullBalance);
       const possibleTx = await CreateSignedTxForValidator(
         ValidatorsMethods.DELEGATE,
         this.validatorData.operator_address,
@@ -348,8 +352,10 @@ export default {
       let { gas_used } = simulateFeeRes.gas_info;
 
       // Max fee for send tx
-      const maxFeeValue = new BigNumber(gas_used > ValidatorsGasLimit ? gas_used : ValidatorsGasLimit).multipliedBy(GateGasPrice).shiftedBy(-18);
+      const maxFeeValue = new BigNumber((gas_used > ValidatorsGasLimit ? gas_used : ValidatorsGasLimit) * OverLimitForTx).multipliedBy(GateGasPrice).shiftedBy(-18);
+      console.log('max fee on show', maxFeeValue.toString());
       let maxValue = new BigNumber(this.balanceData.WQT.fullBalance).minus(maxFeeValue);
+      console.log(maxValue.toString());
       if (maxValue.isLessThan(0)) {
         maxValue = '0';
       } else maxValue = maxValue.toString();
