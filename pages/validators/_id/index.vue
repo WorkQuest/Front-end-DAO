@@ -141,7 +141,7 @@ import modals from '~/store/modals/modals';
 import { error, success } from '~/utils/success-error';
 import { CreateSignedTxForValidator, getAddressFromConsensusPub, getStyledAmount } from '~/utils/wallet';
 import {
-  GateGasPrice, ValidatorsMethods, ValidatorsGasLimit, ValidatorStatuses,
+  GateGasPrice, ValidatorsMethods, ValidatorsGasLimit, ValidatorStatuses, OverLimitForTx,
 } from '~/utils/constants/validators';
 
 export default {
@@ -348,7 +348,7 @@ export default {
       let { gas_used } = simulateFeeRes.gas_info;
 
       // Max fee for send tx
-      const maxFeeValue = new BigNumber(gas_used > ValidatorsGasLimit ? gas_used : ValidatorsGasLimit).multipliedBy(GateGasPrice).shiftedBy(-18);
+      const maxFeeValue = new BigNumber((gas_used > ValidatorsGasLimit ? gas_used : ValidatorsGasLimit) * OverLimitForTx).multipliedBy(GateGasPrice).shiftedBy(-18);
       let maxValue = new BigNumber(this.balanceData.WQT.fullBalance).minus(maxFeeValue);
       if (maxValue.isLessThan(0)) {
         maxValue = '0';
@@ -706,7 +706,7 @@ export default {
     }
     &__block {
       grid-template-columns: auto;
-      grid-template-rows: repeat(2, 290px);
+      grid-template-rows: 1fr 1fr;
     }
   }
 }
