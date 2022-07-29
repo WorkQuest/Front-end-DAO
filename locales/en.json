@@ -340,6 +340,7 @@
     "bodyMessage": "Hello",
     "areYouSure": "Are You Sure?",
     "transactionSend": "Transaction sent",
+    "transactionFail": "Transaction fail",
     "cardHasBeenAdded": "Card has been added",
     "deposit": "Deposit",
     "numberOfCard": "Number of card",
@@ -417,7 +418,8 @@
     "votingStartField": "voting start",
     "undelegate": "Undelegate",
     "shureToUndelegate": "Are you shure to undelegate {n}?",
-    "willBeUndelegate": "{n} tokens will be undelegate",
+    "willBeUndelegate": "{n} WQT will be undelegate",
+    "reward": "Reward: {n} WQT",
     "undelegateAmount": "Undelegate {n} WQT",
     "delegate": "Delegate",
     "investorAddress": "Investor address",
@@ -784,6 +786,8 @@
     "jailed": "jailed",
     "balanceLessPossible": "Balance ({balance} {s}) is less than the minimum possible to delegate: {min} {s}",
     "balanceLessPossibleUndelegate": "Balance ({balance} {s}) is less than the minimum possible to undelegate: {min} {s}",
+    "delegatedAmount": "Delegated amount",
+    "rewards": "Rewards",
     "table": {
       "name": "Name",
       "address": "Address",
@@ -799,13 +803,18 @@
     "title": "Validator Profile",
     "address": "Address",
     "fee": "Fee",
+    "active": "Active",
     "commonStake": "Common stake",
     "missedBlocks": "Missed blocks",
     "slots": "Slots",
     "occupied": "Occupied",
     "delegators": "Delegators",
     "minimalStake": "Minimal stake",
-    "outOf": "out of"
+    "errors": {
+      "limitReached": "The transaction limit has been reached!",
+      "entries": "You need to wait until one of the transactions is completed before sending a new one.",
+      "undelegateError": "Undelegate error"
+    }
   },
   "report": {
     "btn": {

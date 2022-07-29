@@ -133,9 +133,12 @@
       </nuxt-link>
     </template>
     <template #cell(validatorName)="el">
-      <nuxt-link :to="`${$options.Path.VALIDATORS}/${el.item.investorAddress}`">
+      <nuxt-link :to="`${$options.Path.VALIDATORS}/${el.item.validatorAddress}`">
         <span>{{ el.item.validatorName }}</span>
       </nuxt-link>
+    </template>
+    <template #cell(validatorAddress)="el">
+      <span>{{ CutTxn(el.item.validatorAddress) }}</span>
     </template>
   </b-table>
 </template>
