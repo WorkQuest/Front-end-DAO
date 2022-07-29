@@ -82,9 +82,9 @@ import { WQVoting } from '~/abi/index';
 import {
   TokenSymbols, DelegateMode,
 } from '~/utils/enums';
-import { CreateSignedTxForValidator, tempTxFeeValidators } from '~/utils/wallet';
+import { CreateSignedTxForValidator } from '~/utils/wallet';
 import {
-  GateGasPrice, ValidatorsMethods, ValidatorsGasLimit, OverLimitForTx,
+  GateGasPrice, ValidatorsMethods, ValidatorsGasLimit,
 } from '~/utils/constants/validators';
 
 export default {
