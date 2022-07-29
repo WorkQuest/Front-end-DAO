@@ -42,7 +42,7 @@
               placeholder="10000 WQT"
               data-selector="AMOUNT"
               :name="$tc('modals.amount')"
-              :rules="`required${min}|max_bn:${maxValue}|decimalPlaces:18`"
+              :rules="`required${min}|max_value:${maxValue}|decimalPlaces:18`"
               type="number"
               @input="replaceDot"
             />

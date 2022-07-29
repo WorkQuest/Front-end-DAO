@@ -88,6 +88,22 @@
                   {{ $tc('meta.wqtCount', validatorData ? validatorData.min_self_delegation : '') }}
                 </div>
               </div>
+              <div class="right__info">
+                <div class="right__data-name">
+                  {{ $t('validators.delegatedAmount') }}
+                </div>
+                <div class="right__data-desc">
+                  {{ $tc('meta.wqtCount', delegatedData ? delegatedData.styledAmount : 0) }}
+                </div>
+              </div>
+              <div class="right__info">
+                <div class="right__data-name">
+                  {{ $t('validators.rewards') }}
+                </div>
+                <div class="right__data-desc">
+                  {{ $tc('meta.wqtCount', rewards ) }}
+                </div>
+              </div>
             </div>
             <div class="right__block">
               <base-btn
@@ -101,6 +117,7 @@
               <base-btn
                 mode="lightBlue"
                 class="right__button"
+                :disabled="disabledDelegate"
                 @click="toDelegateModal"
               >
                 {{ $t('modals.delegate') }}
@@ -122,8 +139,10 @@ import {
 } from '~/utils/enums';
 import modals from '~/store/modals/modals';
 import { error, success } from '~/utils/success-error';
-import { CreateSignedTxForValidator, getAddressFromConsensusPub } from '~/utils/wallet';
-import { GateGasPrice, ValidatorsMethods, ValidatorsGasLimit } from '~/utils/constants/validators';
+import { CreateSignedTxForValidator, getAddressFromConsensusPub, getStyledAmount } from '~/utils/wallet';
+import {
+  GateGasPrice, ValidatorsMethods, ValidatorsGasLimit, ValidatorStatuses,
+} from '~/utils/constants/validators';
 
 export default {
   name: 'Validator',
@@ -134,6 +153,7 @@ export default {
       missedBlocks: 0,
       delegatedData: null,
       validatorAddress: null,
+      rewards: 0,
     };
   },
   computed: {
@@ -145,6 +165,10 @@ export default {
       userWalletAddress: 'user/getUserWalletAddress',
       isWalletConnected: 'wallet/getIsWalletConnected',
     }),
+    disabledDelegate() {
+      if (!this.validatorData) return true;
+      return (this.validatorData?.status === ValidatorStatuses.UNBONDING || this.validatorData?.jailed);
+    },
     disabledUndelegate() {
       return !this.delegatedData || new BigNumber(this.delegatedData?.amount).isZero();
     },
@@ -159,6 +183,7 @@ export default {
         { name: this.$t('validator.commonStake'), desc: this.$tc('meta.wqtCount', stake) },
         { name: this.$t('validator.fee'), desc: `${Math.ceil(this.validatorData?.commission?.commission_rates?.rate * 100)}%` },
         { name: this.$t('validator.missedBlocks'), desc: this.missedBlocks },
+        { name: this.$t('validator.active'), desc: this.disabledDelegate ? this.$t('proposal.no') : this.$t('proposal.yes') },
       ];
       if (this.validatorData?.jailed) {
         res.push({ name: this.$t('validators.table.status'), desc: this.$t('validators.jailed') });
@@ -190,21 +215,36 @@ export default {
       return;
     }
 
+    this.validatorAddress = validatorAddress;
+
     const [slotsRes, missedBlocksRes] = await Promise.all([
       this.$store.dispatch('validators/getSlotsCount', validatorAddress),
       this.$store.dispatch('validators/getMissedBlocks', this.validatorData.consensus_pubkey.key),
       this.$store.dispatch('validators/getStakingParams'),
       this.updateDelegatedAmount(),
+      this.getRewardsAmount(),
     ]);
     this.SetLoader(false);
     if (slotsRes.ok) this.slots = slotsRes.result;
     if (missedBlocksRes.ok) this.missedBlocks = missedBlocksRes.result;
-    this.validatorAddress = validatorAddress;
   },
   beforeDestroy() {
     this.$store.commit('validators/setValidatorData', null);
   },
   methods: {
+    async getRewardsAmount() {
+      const rewardsRes = await this.$store.dispatch('validators/getRewardsForValidator', {
+        validatorAddress: this.validatorAddress,
+        userWalletAddress: this.ConvertToBech32('wq', this.userWalletAddress),
+      });
+      if (rewardsRes.ok) {
+        const amount = rewardsRes?.result?.rewards[0]?.amount;
+        if (!amount) return;
+        const floored = new BigNumber(amount).toFixed(0);
+        this.rewards = new BigNumber(floored).shiftedBy(-this.balanceData.WQT.decimals).toString();
+      } else this.rewards = 0;
+    },
+
     async updateDelegatedAmount() {
       // Данные о делегировании с аккаунта юзера этому валидатору
       const res = await this.$store.dispatch('validators/getDelegatedDataForValidator', {
@@ -215,9 +255,12 @@ export default {
         this.delegatedData = null;
         return;
       }
+      const { delegation_response } = res.result;
+      const amount = delegation_response?.balance?.amount;
       this.delegatedData = {
-        amount: res.result.delegation_response?.balance?.amount,
-        shares: res.result.delegation_response?.delegation?.shares,
+        styledAmount: getStyledAmount(amount, true),
+        amount,
+        shares: delegation_response?.delegation?.shares,
       };
     },
     toNotFound() {
@@ -233,9 +276,49 @@ export default {
       };
     },
 
+    /** CHECK TRANSACTION, UPDATE DATA & SHOW STATUS MODAL */
+
+    async checkTransaction(txHash) {
+      await new Promise((resolve) => {
+        setTimeout(async () => {
+          const [txRes] = await Promise.all([
+            this.$store.dispatch('validators/getTransactionByHash', txHash),
+            this.$store.dispatch('validators/getSlotsCount', this.validatorAddress),
+            this.$store.dispatch('validators/getValidatorByAddress', this.validatorAddress),
+            this.updateDelegatedAmount(),
+            this.getRewardsAmount(),
+          ]);
+          if (!txRes.ok) {
+            // need to handle?
+            // как понимаю получим только если блок не успел сформировался после транзакции
+            resolve();
+          }
+          const { tx_response } = txRes.result;
+          if (typeof (tx_response?.raw_log) === 'string' && tx_response?.raw_log?.includes('out of gas')) {
+            this.ShowModal({
+              key: modals.status,
+              img: require('~/assets/img/ui/warning.svg'),
+              title: this.$t('modals.transactionFail'),
+              subtitle: tx_response.raw_log,
+            });
+            resolve();
+            return;
+          }
+          this.ShowModal({
+            key: modals.status,
+            img: require('~/assets/img/ui/transactionSend.svg'),
+            title: this.$t('modals.transactionSend'),
+          });
+          resolve();
+        }, 7000);
+      });
+    },
+
     /** VALIDATORS DELEGATE */
 
     async toDelegateModal() {
+      if (this.disabledDelegate) return;
+
       // calculating possible delegate value
       this.SetLoader(true);
       await this.$store.dispatch('wallet/getBalance');
@@ -318,16 +401,6 @@ export default {
                 symbol: TokenSymbols.WQT,
               },
             },
-            callback: async () => await new Promise((resolve) => {
-              setTimeout(async () => {
-                await Promise.all([
-                  this.$store.dispatch('validators/getSlotsCount', this.validatorAddress),
-                  this.$store.dispatch('validators/getValidatorByAddress', this.validatorAddress),
-                  this.updateDelegatedAmount(),
-                ]);
-                resolve();
-              }, 7000);
-            }),
             submitMethod: async () => {
               const delegateTx = await CreateSignedTxForValidator(
                 ValidatorsMethods.DELEGATE,
@@ -338,9 +411,8 @@ export default {
               const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: delegateTx.result });
               if (broadcastRes.tx_response.raw_log !== '[]') {
                 this.ShowToast(broadcastRes.tx_response.raw_log);
-                return error();
               }
-              return success();
+              await this.checkTransaction(broadcastRes?.tx_response?.txhash);
             },
           });
         },
@@ -358,22 +430,24 @@ export default {
         this.delegatedData?.amount,
       );
 
-      // const valconsValidatorAddress = converter('wqvalcons').toBech32(getAddressFromConsensusPub(this.validatorData.consensus_pubkey.key));
-      const [possibleRes, rewardsRes] = await Promise.all([
+      const [possibleRes] = await Promise.all([
         this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result }),
-        this.$store.dispatch('validators/getRewardsForValidator', {
-          validatorAddress: this.validatorAddress,
-          userWalletAddress: this.ConvertToBech32('wq', this.userWalletAddress),
-        }),
         this.$store.dispatch('wallet/getBalance'),
+        this.getRewardsAmount(),
       ]);
-
-      const reward = new BigNumber(rewardsRes?.result?.rewards[0]?.amount).shiftedBy(-18).toString();
 
       this.SetLoader(false);
       if (!possibleRes.result) {
         let msg = possibleRes?.msg;
-        if (msg && msg?.includes('awqt')) {
+        let title = this.$t('validator.undelegateError');
+
+        // Limit of unbonding txs for undelegate: 7
+        const isEntriesError = msg?.includes('too many unbonding delegation entries');
+
+        if (isEntriesError) {
+          title = this.$t('validator.errors.limitReached');
+          msg = this.$t('validator.errors.entries');
+        } else if (msg?.includes('awqt')) {
           const { first, second } = this.getNumbersFromString(msg, 'awqt');
           const balance = first ? new BigNumber(first).shiftedBy(-18).toString() : 0;
           const minBalanceToUndelegate = second ? new BigNumber(second).shiftedBy(-18).toString() : 0;
@@ -384,7 +458,7 @@ export default {
             s: TokenSymbols.WQT,
           });
         }
-        this.ShowToast(msg, 'Undelegate error');
+        this.ShowToast(msg, title);
         this.CloseModal();
         return;
       }
@@ -395,7 +469,7 @@ export default {
         delegateMode: DelegateMode.VALIDATORS,
         unbondingDays: this.unbondingDays,
         tokensAmount: this.delegatedData?.amount,
-        reward,
+        reward: this.rewards,
         submitMethod: async () => {
           this.SetLoader(true);
           const gasUsedTx = await CreateSignedTxForValidator(
@@ -428,16 +502,6 @@ export default {
                 symbol: TokenSymbols.WQT,
               },
             },
-            callback: async () => await new Promise((resolve) => {
-              setTimeout(async () => {
-                await Promise.all([
-                  this.$store.dispatch('validators/getSlotsCount', this.validatorAddress),
-                  this.$store.dispatch('validators/getValidatorByAddress', this.validatorAddress),
-                  this.updateDelegatedAmount(),
-                ]);
-                resolve();
-              }, 7000);
-            }),
             submitMethod: async () => {
               const undelegateTx = await CreateSignedTxForValidator(
                 ValidatorsMethods.UNDELEGATE,
@@ -445,12 +509,21 @@ export default {
                 this.delegatedData?.amount,
                 resultingGasLimit.toString(),
               );
+
+              // this response includes hash only & can includes raw_log error
               const broadcastRes = await this.$store.dispatch('validators/broadcast', { signedTxBytes: undelegateTx.result });
+
               if (broadcastRes.tx_response.raw_log !== '[]') {
+                // Limit of unbonding txs for undelegate: 7
+                const isEntriesError = broadcastRes.tx_response.raw_log.includes('too many unbonding delegation entries');
+                if (isEntriesError) {
+                  this.ShowToast(this.$t('validator.errors.entries'), this.$t('validator.errors.limitReached'));
+                  return;
+                }
                 this.ShowToast(broadcastRes.tx_response.raw_log);
-                return error();
+                return;
               }
-              return success();
+              await this.checkTransaction(broadcastRes?.tx_response?.txhash);
             },
           });
         },
@@ -521,7 +594,7 @@ export default {
     grid-template-columns: 76px auto;
     grid-gap: 20px;
     &_data {
-      grid-template-columns: auto auto;
+      grid-template-columns: 1fr 1fr;
     }
   }
   &__right {

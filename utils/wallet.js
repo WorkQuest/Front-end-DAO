@@ -11,7 +11,7 @@ import { error, success } from '~/utils/success-error';
 import { errorCodes } from '~/utils/enums';
 import { ERC20 } from '~/abi/index';
 import ENV from '~/utils/addresses/index';
-import { GateGasPrice, ValidatorsGasLimit } from '~/utils/constants/validators';
+import { GateGasPrice, OverLimitForTx, ValidatorsGasLimit } from '~/utils/constants/validators';
 
 const bip39 = require('bip39');
 
@@ -422,9 +422,12 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
       sequence: +data.account.base_account.sequence,
     });
 
+    // Sometimes gas_limit is less than gas_used, here we incr limit amount:
+    const limit = new BigNumber(gasLimit).multipliedBy(OverLimitForTx).toFixed(0).toString();
+
     const feeValue = new v1beta1.Fee({
-      amount: [{ denom: 'awqt', amount: new BigNumber(GateGasPrice).multipliedBy(gasLimit).toString() }],
-      gas_limit: gasLimit,
+      amount: [{ denom: 'awqt', amount: new BigNumber(GateGasPrice).multipliedBy(limit).toString() }], // gas price
+      gas_limit: limit,
     });
     const authInfo = new v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
 

@@ -47,6 +47,7 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import { TokenSymbols } from '~/utils/enums';
+import { ValidatorStatuses } from '~/utils/constants/validators';
 
 export default {
   name: 'Validators',
@@ -130,8 +131,8 @@ export default {
     async getValidators() {
       this.offset = (this.currPage - 1) * this.limit;
       const type = this.tableType === 'validators'
-        ? ['BOND_STATUS_BONDED', 'BOND_STATUS_UNBONDING']
-        : 'BOND_STATUS_UNBONDED';
+        ? [ValidatorStatuses.BONDED, ValidatorStatuses.UNBONDING]
+        : ValidatorStatuses.UNBONDED;
       await this.$store.dispatch('validators/getValidators', {
         status: type,
         limit: this.limit,

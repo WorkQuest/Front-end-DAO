@@ -5,6 +5,8 @@ import { getAddressFromConsensusPub } from '~/utils/wallet';
 
 /**
  * @property $axiosNode - axios instance of node api
+ * @property consensus_pubkey
+ * @property missed_blocks_counter
  */
 export default {
   async getValidators({ commit, dispatch }, { status, limit, offset }) {
@@ -90,6 +92,14 @@ export default {
       return error();
     }
   },
+  async getTransactionByHash({ _ }, transactionHash) {
+    try {
+      const res = await this.$axiosNode.$get(`/cosmos/tx/v1beta1/txs/${transactionHash}`);
+      return success(res);
+    } catch (e) {
+      return error();
+    }
+  },
 
   // Send tx
   async broadcast({ _ }, { signedTxBytes, broadCastMode = 'BROADCAST_MODE_SYNC' }) {
@@ -101,7 +111,6 @@ export default {
         headers: { 'Content-Type': 'application/json' },
       });
     } catch (e) {
-      console.error('wallet/broadcast');
       return error();
     }
   },
@@ -114,7 +123,6 @@ export default {
         headers: { 'Content-Type': 'application/json' },
       });
     } catch (e) {
-      console.error('wallet/broadcast');
       return error(e?.response?.data?.code, e?.response?.data?.message);
     }
   },
