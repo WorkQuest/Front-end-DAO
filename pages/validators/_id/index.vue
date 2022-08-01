@@ -133,13 +133,11 @@
 <script>
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
-import converter from 'bech32-converting';
 import {
-  DelegateMode, ExplorerUrl, TokenSymbols,
+  DelegateMode, TokenSymbols,
 } from '~/utils/enums';
 import modals from '~/store/modals/modals';
-import { error, success } from '~/utils/success-error';
-import { CreateSignedTxForValidator, getAddressFromConsensusPub, getStyledAmount } from '~/utils/wallet';
+import { CreateSignedTxForValidator, getStyledAmount } from '~/utils/wallet';
 import {
   GateGasPrice, ValidatorsMethods, ValidatorsGasLimit, ValidatorStatuses, OverLimitForTx, ValidatorStatusByStatuses,
 } from '~/utils/constants/validators';
@@ -328,6 +326,13 @@ export default {
         this.validatorData.operator_address,
         new BigNumber(this.validatorData?.min_self_delegation || 1).shiftedBy(18).toString(),
       );
+      if (!possibleTx.ok) {
+        if (possibleTx.code === 10404) {
+          this.ShowToast(this.$t('errors.notEnoughBalance'));
+        }
+        this.SetLoader(false);
+        return;
+      }
       const simulateFeeRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result });
       this.SetLoader(false);
 

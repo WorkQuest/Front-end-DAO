@@ -402,6 +402,10 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
   try {
     const address = converter('wq').toBech32(wallet.address);
     const data = await fetchCosmosAccount(address);
+    if (!data?.account?.base_account) {
+      // Account w/o any tx
+      return error(10404, 'Empty cosmos account');
+    }
     const { v1beta1 } = message.cosmos.tx;
     const { privKey, pubKeyAny } = await getPrivAndPublic(wallet.mnemonic);
     // txBody
