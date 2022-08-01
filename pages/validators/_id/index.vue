@@ -318,9 +318,9 @@ export default {
     async toDelegateModal() {
       if (this.disabledDelegate) return;
 
-      // calculating possible delegate value
       this.SetLoader(true);
-      await this.$store.dispatch('wallet/getBalance');
+
+      // calculating possible delegate value
       const possibleTx = await CreateSignedTxForValidator(
         ValidatorsMethods.DELEGATE,
         this.validatorData.operator_address,
@@ -333,7 +333,11 @@ export default {
         this.SetLoader(false);
         return;
       }
-      const simulateFeeRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result });
+
+      const [simulateFeeRes] = await Promise.all([
+        this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result }),
+        this.$store.dispatch('wallet/getBalance'),
+      ]);
       this.SetLoader(false);
 
       if (!simulateFeeRes.result) {
@@ -430,11 +434,19 @@ export default {
     async toUndelegateModal() {
       if (this.disabledUndelegate || !this.delegatedData) return;
       this.SetLoader(true);
+
       const possibleTx = await CreateSignedTxForValidator(
         ValidatorsMethods.UNDELEGATE,
         this.validatorData.operator_address,
         this.delegatedData?.amount,
       );
+      if (!possibleTx.ok) {
+        if (possibleTx.code === 10404) {
+          this.ShowToast(this.$t('errors.notEnoughBalance'));
+        }
+        this.SetLoader(false);
+        return;
+      }
 
       const [possibleRes] = await Promise.all([
         this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result }),
