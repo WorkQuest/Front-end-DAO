@@ -19,6 +19,12 @@ export const ValidatorStatuses = {
   UNBONDING: 'BOND_STATUS_UNBONDING', // не активный (в процессе отключения по желанию или сокращению), не генерирует блоки и не получает награды. по истечению unbondingTime токены будут возвращены юзерам
 };
 
+export const ValidatorStatusByStatuses = {
+  [ValidatorStatuses.BONDED]: 'BONDED',
+  [ValidatorStatuses.UNBONDED]: 'UNBONDED',
+  [ValidatorStatuses.UNBONDING]: 'UNBONDING',
+};
+
 // % to gas_limit
 export const OverLimitForTx = {
   develop: 1.01,

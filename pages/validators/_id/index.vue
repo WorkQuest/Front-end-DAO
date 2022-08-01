@@ -133,15 +133,13 @@
 <script>
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
-import converter from 'bech32-converting';
 import {
-  DelegateMode, ExplorerUrl, TokenSymbols,
+  DelegateMode, TokenSymbols,
 } from '~/utils/enums';
 import modals from '~/store/modals/modals';
-import { error, success } from '~/utils/success-error';
-import { CreateSignedTxForValidator, getAddressFromConsensusPub, getStyledAmount } from '~/utils/wallet';
+import { CreateSignedTxForValidator, getStyledAmount } from '~/utils/wallet';
 import {
-  GateGasPrice, ValidatorsMethods, ValidatorsGasLimit, ValidatorStatuses, OverLimitForTx,
+  GateGasPrice, ValidatorsMethods, ValidatorsGasLimit, ValidatorStatuses, OverLimitForTx, ValidatorStatusByStatuses,
 } from '~/utils/constants/validators';
 
 export default {
@@ -184,9 +182,10 @@ export default {
         { name: this.$t('validator.fee'), desc: `${Math.ceil(this.validatorData?.commission?.commission_rates?.rate * 100)}%` },
         { name: this.$t('validator.missedBlocks'), desc: this.missedBlocks },
         { name: this.$t('validator.active'), desc: this.disabledDelegate ? this.$t('proposal.no') : this.$t('proposal.yes') },
+        { name: this.$t('validators.table.status'), desc: ValidatorStatusByStatuses[this.validatorData?.status] },
       ];
       if (this.validatorData?.jailed) {
-        res.push({ name: this.$t('validators.table.status'), desc: this.$t('validators.jailed') });
+        res.push({ name: this.$t('validators.jailed'), desc: this.$t('proposal.yes') });
       }
       return res;
     },
@@ -319,15 +318,26 @@ export default {
     async toDelegateModal() {
       if (this.disabledDelegate) return;
 
-      // calculating possible delegate value
       this.SetLoader(true);
-      await this.$store.dispatch('wallet/getBalance');
+
+      // calculating possible delegate value
       const possibleTx = await CreateSignedTxForValidator(
         ValidatorsMethods.DELEGATE,
         this.validatorData.operator_address,
         new BigNumber(this.validatorData?.min_self_delegation || 1).shiftedBy(18).toString(),
       );
-      const simulateFeeRes = await this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result });
+      if (!possibleTx.ok) {
+        if (possibleTx.code === 10404) {
+          this.ShowToast(this.$t('errors.notEnoughBalance'));
+        }
+        this.SetLoader(false);
+        return;
+      }
+
+      const [simulateFeeRes] = await Promise.all([
+        this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result }),
+        this.$store.dispatch('wallet/getBalance'),
+      ]);
       this.SetLoader(false);
 
       if (!simulateFeeRes.result) {
@@ -424,11 +434,19 @@ export default {
     async toUndelegateModal() {
       if (this.disabledUndelegate || !this.delegatedData) return;
       this.SetLoader(true);
+
       const possibleTx = await CreateSignedTxForValidator(
         ValidatorsMethods.UNDELEGATE,
         this.validatorData.operator_address,
         this.delegatedData?.amount,
       );
+      if (!possibleTx.ok) {
+        if (possibleTx.code === 10404) {
+          this.ShowToast(this.$t('errors.notEnoughBalance'));
+        }
+        this.SetLoader(false);
+        return;
+      }
 
       const [possibleRes] = await Promise.all([
         this.$store.dispatch('validators/simulate', { signedTxBytes: possibleTx.result }),
