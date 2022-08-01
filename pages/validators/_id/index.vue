@@ -141,7 +141,7 @@ import modals from '~/store/modals/modals';
 import { error, success } from '~/utils/success-error';
 import { CreateSignedTxForValidator, getAddressFromConsensusPub, getStyledAmount } from '~/utils/wallet';
 import {
-  GateGasPrice, ValidatorsMethods, ValidatorsGasLimit, ValidatorStatuses, OverLimitForTx,
+  GateGasPrice, ValidatorsMethods, ValidatorsGasLimit, ValidatorStatuses, OverLimitForTx, ValidatorStatusByStatuses,
 } from '~/utils/constants/validators';
 
 export default {
@@ -184,9 +184,10 @@ export default {
         { name: this.$t('validator.fee'), desc: `${Math.ceil(this.validatorData?.commission?.commission_rates?.rate * 100)}%` },
         { name: this.$t('validator.missedBlocks'), desc: this.missedBlocks },
         { name: this.$t('validator.active'), desc: this.disabledDelegate ? this.$t('proposal.no') : this.$t('proposal.yes') },
+        { name: this.$t('validators.table.status'), desc: ValidatorStatusByStatuses[this.validatorData?.status] },
       ];
       if (this.validatorData?.jailed) {
-        res.push({ name: this.$t('validators.table.status'), desc: this.$t('validators.jailed') });
+        res.push({ name: this.$t('validators.jailed'), desc: this.$t('proposal.yes') });
       }
       return res;
     },
