@@ -369,7 +369,7 @@ export default {
         key: modals.delegate,
         delegateMode: DelegateMode.VALIDATORS,
         unbondingDays: this.unbondingDays,
-        investorAddress: this.ConvertToHex('wqvaloper', this.validatorData.operator_address),
+        investorAddress: this.validatorData.operator_address,
         validatorAddress: this.validatorData.operator_address,
         min: this.validatorData.min_self_delegation,
         maxFee: maxFeeValue,

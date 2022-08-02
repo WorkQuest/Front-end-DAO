@@ -13,7 +13,7 @@
             <base-field
               disabled
               data-selector="ADDRESS"
-              :value="convertValue"
+              :value="styledAddress"
               class="address__body"
             />
           </div>
@@ -123,9 +123,11 @@ export default {
       const max = new BigNumber(999999999999); // Validators delegate limit
       return possible.isLessThan(max) ? possible.toString() : max.toString();
     },
-    convertValue() {
+    styledAddress() {
       const { windowSize, investorAddress } = this;
-      const convertedValue = this.ConvertToBech32('wq', investorAddress);
+      const convertedValue = this.options.delegateMode === DelegateMode.INVESTORS
+        ? this.ConvertToBech32('wq', investorAddress)
+        : investorAddress;
       if (windowSize > 480) return convertedValue;
       let a = 10;
       if (windowSize > 450) a = 17;
