@@ -191,7 +191,7 @@ export default {
     },
   },
   beforeCreate() {
-    this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
+    this.$store.dispatch('wallet/checkWalletConnected');
   },
   async beforeMount() {
     if (!this.isWalletConnected) return;

@@ -311,16 +311,12 @@ export default {
     addressType() {
       this.updateWQAddress();
     },
-    async selectedNetwork() {
-      // await this.loadData(true);
-      // this.updateWQAddress();
-    },
     currentPage() {
       this.getTransactions();
     },
   },
   beforeMount() {
-    this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
+    this.$store.dispatch('wallet/checkWalletConnected');
   },
   async mounted() {
     if (!this.isWalletConnected) return;

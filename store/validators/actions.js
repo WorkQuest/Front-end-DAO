@@ -64,7 +64,7 @@ export default {
       return error();
     }
   },
-  async getValidatorByAddress({ commit, dispatch }, validatorAddress) {
+  async getValidatorByAddress({ commit }, validatorAddress) {
     try {
       const { validator } = await this.$axiosNode.$get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`);
       validator.min_self_delegation = new BigNumber(validator.min_self_delegation).shiftedBy(-18).toString();

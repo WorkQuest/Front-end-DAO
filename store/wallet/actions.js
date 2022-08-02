@@ -12,11 +12,19 @@ import {
   transferToken,
   fetchWalletContractData,
   connectWallet,
-  sendWalletTransaction, setIsEthNetWork, connectWalletToProvider, GetWalletProvider, ethBoost,
+  sendWalletTransaction,
+  setIsEthNetWork,
+  connectWalletToProvider,
+  GetWalletProvider,
+  ethBoost,
 } from '~/utils/wallet';
 import {
   Chains,
-  errorCodes, ExplorerUrl, ProviderTypesByChain, TokenMap, TokenSymbols, WalletTokensData, WorknetTokenAddresses,
+  errorCodes,
+  ExplorerUrl,
+  ProviderTypesByChain,
+  TokenMap,
+  WalletTokensData,
 } from '~/utils/enums';
 import { error, success } from '~/utils/success-error';
 import { ERC20, WQVoting } from '~/abi/index';
@@ -26,6 +34,10 @@ import BuyWQT from '~/abi/BuyWQT';
 let connectionWS = null;
 let callbackWS = null;
 
+/**
+ * @property $nuxt
+ * @property setLayout
+ */
 export default {
   async getTransactions({ commit }, params) {
     try {
@@ -51,21 +63,31 @@ export default {
       return false;
     }
   },
-  confirmPassword({ commit, getters }, { nuxt, callbackLayout }) {
+  /**
+   * @param commit
+   * @param getters
+   * @param payload { { callbackLayout: string } }
+   */
+  confirmPassword({ commit, getters }, payload) {
+    const callbackLayout = payload?.callbackLayout;
     if (callbackLayout) commit('setCallbackLayout', callbackLayout);
     commit('setIsOnlyConfirm', true);
-    nuxt.setLayout('confirmPassword');
+    $nuxt.setLayout('confirmPassword');
   },
   /**
-     * Check wallet is connected
-     * @returns boolean
-     */
-  checkWalletConnected({ commit, getters }, { nuxt, callbackLayout }) {
+   * Check wallet is connected
+   * @param commit
+   * @param getters
+   * @param payload { { callbackLayout: string } }
+   * @returns boolean
+   */
+  checkWalletConnected({ commit, getters }, payload) {
+    const callbackLayout = payload?.callbackLayout;
     const connected = getIsWalletConnected();
     commit('setIsOnlyConfirm', false);
     if (!connected) {
       if (callbackLayout) commit('setCallbackLayout', callbackLayout);
-      else nuxt.setLayout('confirmPassword');
+      else $nuxt.setLayout('confirmPassword');
     } else commit('setIsWalletConnected', true);
   },
   /**
@@ -132,10 +154,10 @@ export default {
      * @param recipient
      * @param value
      */
-  async transfer({ commit }, { recipient, value }) {
+  async transfer({ _ }, { recipient, value }) {
     return await transfer(recipient, value);
   },
-  async getTransferFeeData({ commit }, { recipient, value }) {
+  async getTransferFeeData({ _ }, { recipient, value }) {
     return await getTransferFeeData(recipient, value);
   },
   /**
@@ -144,7 +166,7 @@ export default {
      * @param recipient
      * @param value
      */
-  async transferWUSD({ commit }, { recipient, value }) {
+  async transferWUSD({ _ }, { recipient, value }) {
     return await transferToken(recipient, value);
   },
   /**
@@ -159,7 +181,7 @@ export default {
      * @param amount - decimal value
      * @returns {Promise<{result: *, ok: boolean}|{msg: string, code: number, data: null, ok: boolean}|undefined>}
      */
-  async getContractFeeData({ commit }, {
+  async getContractFeeData({ _ }, {
     method, abi, contractAddress, data, recipient, amount,
   }) {
     return await getContractFeeData(method, abi, contractAddress, data, recipient, amount);
@@ -195,7 +217,7 @@ export default {
      * @param commit
      * @param addresses - Array [address, ...]
      */
-  async getVotesByAddresses({ commit }, addresses) {
+  async getVotesByAddresses({ _ }, addresses) {
     try {
       const res = await fetchWalletContractData('getVotes', WQVoting, ENV.WORKNET_VOTING, [addresses]);
       return success(res);
@@ -248,7 +270,7 @@ export default {
       console.error('wallet/getDelegates', e);
     }
   },
-  async delegate({ commit, getters }, { toAddress, amount }) {
+  async delegate({ getters }, { toAddress, amount }) {
     try {
       amount = new BigNumber(amount).shiftedBy(getters.getBalanceData.WQT.decimals).toString();
       const res = await sendWalletTransaction('delegate', {

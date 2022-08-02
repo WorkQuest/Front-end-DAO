@@ -112,7 +112,7 @@ export default {
   },
   async beforeMount() {
     if (this.lastPage) this.currPage = this.lastPage;
-    await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
+    await this.$store.dispatch('wallet/checkWalletConnected');
   },
   async mounted() {
     if (!this.isWalletConnected) return;
