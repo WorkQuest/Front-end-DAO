@@ -38,7 +38,7 @@
           <base-btn
             class="buttons__button"
             mode="outline"
-            @click="CloseModal"
+            @click="close"
           >
             {{ $t('meta.cancel') }}
           </base-btn>
@@ -103,12 +103,17 @@ export default {
             await this.$store.dispatch('modals/show', {
               img: require('assets/img/ui/transactionSend.svg'),
               key: modals.status,
-              title: this.$t('modals.transactionSend'),
+              title: this.$t('modals.transactionSent'),
             });
           }
         }
       }
       this.SetLoader(false);
+    },
+    async close() {
+      const { cancelMethod } = this.options;
+      this.CloseModal();
+      if (cancelMethod) await cancelMethod();
     },
   },
 };

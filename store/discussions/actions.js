@@ -24,32 +24,32 @@ export default {
   },
   async getCurrentDiscussion({ commit }, discussionId) {
     try {
-      const response = await this.$axios.$get(`/v1/discussion/${discussionId}`);
-      commit('setCurrentDiscussion', response.result);
-      return response.result;
+      const { result } = await this.$axios.$get(`/v1/discussion/${discussionId}`);
+      commit('setCurrentDiscussion', result);
+      return result;
     } catch (e) {
       return console.log(e);
     }
   },
   async createDiscussion({ commit }, payload) {
     try {
-      const response = await this.$axios.$post('/v1/discussion/create', payload);
-      commit('setCurrentDiscussion', response.result);
-      return success(response.result);
+      const { result } = await this.$axios.$post('/v1/discussion/create', payload);
+      commit('setCurrentDiscussion', result);
+      return success(result);
     } catch (e) {
       console.log(e);
       return error();
     }
   },
-  async sendCommentOnDiscussion({ commit }, { id, payload }) {
+  async sendCommentOnDiscussion({ _ }, { id, payload }) {
     try {
-      const response = await this.$axios.$post(`/v1/discussion/${id}/comment/send`, payload);
-      return response.result;
+      const { result } = await this.$axios.$post(`/v1/discussion/${id}/comment/send`, payload);
+      return result;
     } catch (e) {
       return console.log(e);
     }
   },
-  async getSubCommentsLevel({ commit }, { id, additionalValue }) {
+  async getSubCommentsLevel({ _ }, { id, additionalValue }) {
     try {
       const response = await this.$axios.$get(`/v1/discussion/comment/${id}/sub-comments?${additionalValue || 'limit=5'}`);
       return response.result;
@@ -58,7 +58,7 @@ export default {
     }
   },
 
-  async toggleLikeOnComment({ commit }, { id, like }) {
+  async toggleLikeOnComment({ _ }, { id, like }) {
     try {
       let response = '';
       if (like) response = await this.$axios.$post(`/v1/discussion/comment/${id}/like`);
@@ -69,7 +69,7 @@ export default {
     }
   },
 
-  async toggleStarOnDiscussion({ commit }, { id, like }) {
+  async toggleStarOnDiscussion({ _ }, { id, like }) {
     try {
       if (like) await this.$axios.$post(`/v1/discussion/${id}/star`);
       else await this.$axios.$delete(`/v1/discussion/${id}/star`);
@@ -79,7 +79,7 @@ export default {
     }
   },
 
-  async toggleLikeOnDiscussion({ commit }, { id, like }) {
+  async toggleLikeOnDiscussion({ _ }, { id, like }) {
     try {
       if (like) await this.$axios.$post(`/v1/discussion/${id}/like`);
       else await this.$axios.$delete(`/v1/discussion/${id}/like`);
@@ -90,9 +90,9 @@ export default {
   },
   async getRootComments({ commit }, { discussionId, additionalValue }) {
     try {
-      const response = await this.$axios.$get(`/v1/discussion/${discussionId}/root-comments?${additionalValue || 'limit=4'}`);
-      commit('setRootComments', response.result);
-      return response.result;
+      const { result } = await this.$axios.$get(`/v1/discussion/${discussionId}/root-comments?${additionalValue || 'limit=4'}`);
+      commit('setRootComments', result);
+      return result;
     } catch (e) {
       return console.log(e);
     }
@@ -100,18 +100,18 @@ export default {
 
   async getPeopleListWhoLikeDiscussion({ commit }, discussionId) {
     try {
-      const response = await this.$axios.$get(`/v1/discussion/comment/${discussionId}/usersLikes`);
-      commit('setPeopleListWhoLikeDiscussion', response.result);
-      return response.result;
+      const { result } = await this.$axios.$get(`/v1/discussion/comment/${discussionId}/usersLikes`);
+      commit('setPeopleListWhoLikeDiscussion', result);
+      return result;
     } catch (e) {
       return console.log(e);
     }
   },
   async getUsersLikesOnComment({ commit }, commentId) {
     try {
-      const response = await this.$axios.$get(`/v1/discussion/comment/${commentId}/usersLikes`);
-      commit('setUsersLikesOnComment', response.result);
-      return response.result;
+      const { result } = await this.$axios.$get(`/v1/discussion/comment/${commentId}/usersLikes`);
+      commit('setUsersLikesOnComment', result);
+      return result;
     } catch (e) {
       return console.log(e);
     }

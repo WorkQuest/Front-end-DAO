@@ -274,7 +274,7 @@ export default {
     },
   },
   async beforeMount() {
-    await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
+    await this.$store.dispatch('wallet/checkWalletConnected');
   },
   async mounted() {
     if (!this.isWalletConnected) return;

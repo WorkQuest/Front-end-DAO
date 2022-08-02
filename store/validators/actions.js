@@ -1,16 +1,17 @@
 import converter from 'bech32-converting';
-import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { error, success } from '~/utils/success-error';
 import { getAddressFromConsensusPub } from '~/utils/wallet';
-import ENV from '~/utils/addresses';
 
-const nodeApi = axios.create({ baseURL: `${ENV.WQ_PROVIDER}/api` });
-
+/**
+ * @property $axiosNode - axios instance of node api
+ * @property consensus_pubkey
+ * @property missed_blocks_counter
+ */
 export default {
   async getValidators({ commit, dispatch }, { status, limit, offset }) {
     try {
-      const { data } = await nodeApi.get('/cosmos/staking/v1beta1/validators', {
+      const { validators, pagination } = await this.$axiosNode.$get('/cosmos/staking/v1beta1/validators', {
         params: {
           'pagination.count_total': true,
           'pagination.limit': limit,
@@ -18,7 +19,6 @@ export default {
           status,
         },
       });
-      const { validators } = data;
 
       // slots count & missed blocks for all validators
       const infoRes = await Promise.all([
@@ -32,16 +32,16 @@ export default {
       }
 
       commit('setValidatorsList', validators);
-      commit('setValidatorsCount', Number(data.pagination.total));
+      commit('setValidatorsCount', Number(pagination.total));
     } catch (e) {
-      console.error('validators/getValidators');
+      console.error('validators/getValidators', e);
     }
   },
   async getMissedBlocks({ _ }, consensusPubKey) {
     try {
       const validatorAddress = converter('wqvalcons').toBech32(getAddressFromConsensusPub(consensusPubKey));
-      const { data } = await nodeApi.get(`/cosmos/slashing/v1beta1/signing_infos/${validatorAddress}`);
-      return success(data.val_signing_info.missed_blocks_counter);
+      const { val_signing_info } = await this.$axiosNode.$get(`/cosmos/slashing/v1beta1/signing_infos/${validatorAddress}`);
+      return success(val_signing_info.missed_blocks_counter);
     } catch (e) {
       console.error('validators/getMissedBlocks');
       return error();
@@ -49,26 +49,26 @@ export default {
   },
   async getStakingParams({ commit }) {
     try {
-      const { data } = await nodeApi.get('/cosmos/staking/v1beta1/params');
-      commit('setStakingParams', data.params);
+      const { params } = await this.$axiosNode.$get('/cosmos/staking/v1beta1/params');
+      commit('setStakingParams', params);
     } catch (e) {
       console.error('validators/getMissedBlocks');
     }
   },
   async getSlotsCount({ _ }, validatorAddress) {
     try {
-      const { data } = await nodeApi.get(`/cosmos/staking/v1beta1/validators/${validatorAddress}/delegations`);
-      return success(data.pagination.total);
+      const { pagination } = await this.$axiosNode.$get(`/cosmos/staking/v1beta1/validators/${validatorAddress}/delegations`);
+      return success(pagination.total);
     } catch (e) {
       console.error('validators/getSlotsCount');
       return error();
     }
   },
-  async getValidatorByAddress({ commit, dispatch }, validatorAddress) {
+  async getValidatorByAddress({ commit }, validatorAddress) {
     try {
-      const { data } = await nodeApi.get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`);
-      data.validator.min_self_delegation = new BigNumber(data.validator.min_self_delegation).shiftedBy(-18).toString();
-      commit('setValidatorData', data.validator);
+      const { validator } = await this.$axiosNode.$get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`);
+      validator.min_self_delegation = new BigNumber(validator.min_self_delegation).shiftedBy(-18).toString();
+      commit('setValidatorData', validator);
       return success();
     } catch (e) {
       console.error('validators/getValidatorByAddress');
@@ -78,8 +78,24 @@ export default {
   // Сколько делегировали
   async getDelegatedDataForValidator({ _ }, { validatorAddress, userWalletAddress }) {
     try {
-      const { data } = await nodeApi.get(`/cosmos/staking/v1beta1/validators/${validatorAddress}/delegations/${userWalletAddress}`);
-      return success(data);
+      const res = await this.$axiosNode.$get(`/cosmos/staking/v1beta1/validators/${validatorAddress}/delegations/${userWalletAddress}`);
+      return success(res);
+    } catch (e) {
+      return error();
+    }
+  },
+  async getRewardsForValidator({ _ }, { validatorAddress, userWalletAddress }) {
+    try {
+      const res = await this.$axiosNode.$get(`/cosmos/distribution/v1beta1/delegators/${userWalletAddress}/rewards/${validatorAddress}`);
+      return success(res);
+    } catch (e) {
+      return error();
+    }
+  },
+  async getTransactionByHash({ _ }, transactionHash) {
+    try {
+      const res = await this.$axiosNode.$get(`/cosmos/tx/v1beta1/txs/${transactionHash}`);
+      return success(res);
     } catch (e) {
       return error();
     }
@@ -88,29 +104,25 @@ export default {
   // Send tx
   async broadcast({ _ }, { signedTxBytes, broadCastMode = 'BROADCAST_MODE_SYNC' }) {
     try {
-      const { data } = await nodeApi.post('/cosmos/tx/v1beta1/txs', {
+      return await this.$axiosNode.$post('/cosmos/tx/v1beta1/txs', {
         tx_bytes: signedTxBytes,
         mode: broadCastMode,
       }, {
         headers: { 'Content-Type': 'application/json' },
       });
-      return data;
     } catch (e) {
-      console.error('wallet/broadcast');
       return error();
     }
   },
-  async simulate(_, { signedTxBytes, broadCastMode = 'BROADCAST_MODE_SYNC' }) {
+  async simulate({ _ }, { signedTxBytes, broadCastMode = 'BROADCAST_MODE_SYNC' }) {
     try {
-      const { data } = await nodeApi.post('/cosmos/tx/v1beta1/simulate', {
+      return await this.$axiosNode.$post('/cosmos/tx/v1beta1/simulate', {
         tx_bytes: signedTxBytes,
         mode: broadCastMode,
       }, {
         headers: { 'Content-Type': 'application/json' },
       });
-      return data;
     } catch (e) {
-      console.error('wallet/broadcast');
       return error(e?.response?.data?.code, e?.response?.data?.message);
     }
   },

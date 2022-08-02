@@ -3,6 +3,7 @@ import moment from 'moment';
 import VueTippy, { TippyComponent } from 'vue-tippy';
 import converter from 'bech32-converting';
 import heic2any from 'heic2any';
+import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
 import ENV, { IS_PROD } from '~/utils/addresses/index';
 
@@ -33,11 +34,19 @@ Vue.mixin({
     },
     IsProd: () => IS_PROD,
     ConvertToBech32(prefix, address) {
-      return converter(prefix).toBech32(address);
+      try {
+        return converter(prefix).toBech32(address);
+      } catch (e) {
+        return address;
+      }
     },
     ConvertToHex(prefix, address) {
-      if (address.startsWith(prefix)) return converter(prefix).toHex(address);
-      return address;
+      try {
+        if (address.startsWith(prefix)) return converter(prefix).toHex(address);
+        return address;
+      } catch (e) {
+        return address;
+      }
     },
     async UploadFiles(files) {
       if (!files.length) return [];
@@ -90,10 +99,7 @@ Vue.mixin({
         appendToast: true,
       });
     },
-    Floor: (value, precision = 4) => {
-      const form = 10 ** precision;
-      return Math.floor(value * form) / form || 0;
-    },
+    Floor: (value, precision = 4) => new BigNumber(value).decimalPlaces(precision).toString(),
     Ceil: (value, precision = 4) => {
       const form = 10 ** precision;
       return Math.ceil(value * form) / form || 0;

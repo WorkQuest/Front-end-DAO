@@ -26,12 +26,15 @@ export default {
     '@/assets/scss/main.scss',
   ],
   plugins: [
+    { src: '@plugins/ws', mode: 'client' },
+    { src: '@plugins/axiosNode.js' },
     { src: '@plugins/axios.js' },
     { src: '@plugins/main.js' },
     { src: '@plugins/vee-validate.js' },
     { src: '@plugins/clipboard.js' },
     { src: '@plugins/injectComponents.js' },
     { src: '@plugins/vue-qrcode.js' },
+    { src: '@plugins/axiosOracle.js' },
   ],
   components: true,
   buildModules: [
@@ -78,12 +81,14 @@ export default {
   // },
   i18n: {
     locales: ['en'],
+    fallbackLocale: 'en',
     defaultLocale: 'en',
     strategy: 'no_prefix',
     vueI18n: {
       messages: {
         en: localeEn,
       },
+      silentFallbackWarn: true,
     },
     detectBrowserLanguage: {
       useCookie: true,

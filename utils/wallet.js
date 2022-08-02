@@ -11,7 +11,7 @@ import { error, success } from '~/utils/success-error';
 import { errorCodes } from '~/utils/enums';
 import { ERC20 } from '~/abi/index';
 import ENV from '~/utils/addresses/index';
-import { GateGasPrice, ValidatorsGasLimit } from '~/utils/constants/validators';
+import { GateGasPrice, OverLimitForTx, ValidatorsGasLimit } from '~/utils/constants/validators';
 
 const bip39 = require('bip39');
 
@@ -37,6 +37,11 @@ export const createWallet = (mnemonic) => {
 
 export const encryptStringWithKey = (toEncrypt, key) => AES.encrypt(toEncrypt, key).toString();
 export const decryptStringWitheKey = (toDecrypt, key) => AES.decrypt(toDecrypt, key).toString(enc.Utf8);
+
+let isEthNetwork = false;
+export const ethBoost = 1.1;
+// eslint-disable-next-line no-return-assign
+export const setIsEthNetWork = (isEthNetworkSelected) => isEthNetwork = isEthNetworkSelected;
 
 let cipherKey = null;
 export const getCipherKey = () => cipherKey;
@@ -69,6 +74,27 @@ export const getWalletAddress = () => wallet.address;
 // Метод нужен для вызова метода wallet не затрагивая другие данные
 export const initWallet = (address, key) => {
   wallet.init(address, key);
+};
+
+export const connectWalletToProvider = (providerType) => {
+  if (!getIsWalletConnected()) {
+    console.error('Wallet is not connected');
+    return error(-1, 'Wallet is not connected');
+  }
+
+  const provider = ENV[providerType];
+  if (!providerType || !provider) {
+    console.error(`Wrong provider type: ${providerType}`);
+    return error(-2, `Wrong provider type: ${providerType}`);
+  }
+
+  web3 = new Web3(provider);
+  if (wallet.privateKey) {
+    const account = web3.eth.accounts.privateKeyToAccount(wallet.privateKey);
+    web3.eth.accounts.wallet.add(account);
+    web3.eth.defaultAccount = account.address;
+  }
+  return success();
 };
 
 const contractInstances = {};
@@ -150,6 +176,8 @@ export const connectWithMnemonic = (userAddress) => {
 export const disconnect = () => {
   wallet.reset();
 };
+
+export const getWalletTransactionCount = () => web3.eth.getTransactionCount(wallet.address);
 
 const min = Object.freeze(new BigNumber(0.0001));
 /**
@@ -402,6 +430,10 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
   try {
     const address = converter('wq').toBech32(wallet.address);
     const data = await fetchCosmosAccount(address);
+    if (!data?.account?.base_account) {
+      // Account w/o any tx
+      return error(10404, 'Empty cosmos account');
+    }
     const { v1beta1 } = message.cosmos.tx;
     const { privKey, pubKeyAny } = await getPrivAndPublic(wallet.mnemonic);
     // txBody
@@ -422,9 +454,12 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
       sequence: +data.account.base_account.sequence,
     });
 
+    // Sometimes gas_limit is less than gas_used, here we incr limit amount:
+    const limit = new BigNumber(gasLimit).multipliedBy(OverLimitForTx).toFixed(0).toString();
+
     const feeValue = new v1beta1.Fee({
-      amount: [{ denom: 'awqt', amount: new BigNumber(GateGasPrice).multipliedBy(gasLimit).toString() }],
-      gas_limit: gasLimit,
+      amount: [{ denom: 'awqt', amount: new BigNumber(GateGasPrice).multipliedBy(limit).toString() }], // gas price
+      gas_limit: limit,
     });
     const authInfo = new v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
 
@@ -435,7 +470,6 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
     return error();
   }
 };
-export const tempTxFeeValidators = 0.01;
 
 export const getAddressFromConsensusPub = (pub) => {
   const foo = Buffer.from(pub, 'base64');

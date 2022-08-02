@@ -23,7 +23,7 @@
     class="base-btn"
     :class="btnClass"
     :data-selector="`BASE-BTN-LINK-${selector}`"
-    @click="$emit('click')"
+    @click="$emit('click', $event)"
   >
     <div class="icon-btn_left">
       <slot name="left" />
@@ -35,6 +35,7 @@
   </button>
 </template>
 <script>
+
 export default {
   props: {
     link: {
@@ -288,6 +289,7 @@ export default {
   }
 
   &_disabled {
+    user-select: none;
     pointer-events: none !important;
     color: $black200 !important;
     background: $black0 !important;
