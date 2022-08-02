@@ -70,7 +70,7 @@ export default {
     }),
   },
   async beforeCreate() {
-    await this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
+    await this.$store.dispatch('wallet/checkWalletConnected');
   },
   methods: {
     async addProposalModal() {

@@ -204,14 +204,14 @@ export default {
     },
     isConnected(newVal) {
       if (newVal) return;
-      this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
+      this.$store.dispatch('wallet/checkWalletConnected');
     },
     currentPage() {
       this.getTransactions();
     },
   },
   beforeMount() {
-    this.$store.dispatch('wallet/checkWalletConnected', { nuxt: this.$nuxt });
+    this.$store.dispatch('wallet/checkWalletConnected');
   },
   async mounted() {
     if (!this.isWalletConnected) return;
