@@ -188,7 +188,8 @@ export default {
     position: absolute;
     background: #FFFFFF;
     top: calc(100% + 4px);
-    display: grid;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     grid-gap: 15px;
