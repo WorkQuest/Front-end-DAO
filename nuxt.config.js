@@ -27,6 +27,7 @@ export default {
   ],
   plugins: [
     { src: '@plugins/ws', mode: 'client' },
+    { src: '@plugins/axiosNode.js' },
     { src: '@plugins/axios.js' },
     { src: '@plugins/main.js' },
     { src: '@plugins/vee-validate.js' },

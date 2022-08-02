@@ -25,6 +25,12 @@
         <div class="tokens__footer footer">
           {{ $t('modals.willBeUndelegate', { n: willBeUndelegate }) }}
         </div>
+        <div
+          v-if="options.reward"
+          class="tokens__footer footer"
+        >
+          {{ $t('modals.reward', { n: options.reward }) }}
+        </div>
       </div>
       <div
         v-if="options.unbondingDays"

@@ -156,11 +156,6 @@ export const ExplorerUrl = {
   develop: 'https://dev-explorer.workquest.co',
 }[process.env.BRANCH];
 
-export const ValidatorsMethods = Object.freeze({
-  DELEGATE: '/cosmos.staking.v1beta1.MsgDelegate',
-  UNDELEGATE: '/cosmos.staking.v1beta1.MsgUndelegate',
-});
-
 export const DelegateMode = Object.freeze({
   VALIDATORS: 0,
   INVESTORS: 1,

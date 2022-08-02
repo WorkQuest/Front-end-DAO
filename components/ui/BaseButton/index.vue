@@ -289,6 +289,7 @@ export default {
   }
 
   &_disabled {
+    user-select: none;
     pointer-events: none !important;
     color: $black200 !important;
     background: $black0 !important;

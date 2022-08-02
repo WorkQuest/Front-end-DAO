@@ -23,6 +23,7 @@ export const IS_PROD = ['master', 'stage', 'testnet'].includes(process.env.BRANC
  * @property WQ_WS_PROVIDER
  * @property WS_NOTIFS_URL
 
+ * @property WQ_CHAIN_ID - ChainID for current network
  * @property WQ_PROVIDER
  * @property ETH_PROVIDER
  * @property BSC_PROVIDER

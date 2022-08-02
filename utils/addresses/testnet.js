@@ -9,7 +9,8 @@ export default {
   WQ_WS_PROVIDER: 'wss://dev-node-nyc3.workquest.co/tendermint-rpc/websocket',
   WS_NOTIFS_URL: 'wss://testnet-notification.workquest.co/api/v1/notifications',
 
-  WQ_PROVIDER: 'https://testnet-gate.workquest.co',
+  WQ_CHAIN_ID: 'worktestnetwork_1991-1',
+  WQ_PROVIDER: 'https://testnet-gate.workquest.co/',
   ETH_PROVIDER: 'https://speedy-nodes-nyc.moralis.io/a4b1a749a870bbd413acd4f0/eth/rinkeby',
   BSC_PROVIDER: 'https://speedy-nodes-nyc.moralis.io/a4b1a749a870bbd413acd4f0/bsc/testnet',
   POLYGON_PROVIDER: 'https://speedy-nodes-nyc.moralis.io/a4b1a749a870bbd413acd4f0/polygon/mumbai',

@@ -13,6 +13,7 @@ export default {
   ETH_PROVIDER: 'https://speedy-nodes-nyc.moralis.io/a4b1a749a870bbd413acd4f0/eth/mainnet',
   BSC_PROVIDER: 'https://speedy-nodes-nyc.moralis.io/a4b1a749a870bbd413acd4f0/bsc/mainnet',
   POLYGON_PROVIDER: 'https://speedy-nodes-nyc.moralis.io/a4b1a749a870bbd413acd4f0/polygon/mainnet',
+  WQ_CHAIN_ID: 'workmainnetwork_2009-1',
 
   WORKNET_WBNB_TOKEN: '0x9C9fE9A77A3B0ed1d3584afaDd5873843bAF0E12',
   WORKNET_WETH_TOKEN: '0x75FC17d0C358F19528d5C24f29b37fA2aA725b1E',

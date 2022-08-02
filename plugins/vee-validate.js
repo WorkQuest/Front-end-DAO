@@ -184,17 +184,6 @@ extend('addressBech32', {
   message: 'Please enter correct {_field_}',
 });
 
-extend('max_bn', {
-  validate(value, { max }) {
-    return {
-      required: true,
-      valid: new BigNumber(value).isLessThanOrEqualTo(new BigNumber(max)),
-    };
-  },
-  params: ['max'],
-  message: 'Value must be more than or equal {max}',
-});
-
 extend('alpha_spaces_dash', {
   validate(value) {
     const regex = /^[\p{L}\-_\s]+$/u;
@@ -249,6 +238,26 @@ extend('have_funds', {
     };
   },
   params: ['balance', 'amount', 'symbol'],
+});
+
+extend('max_value', {
+  validate(value, { max }) {
+    return {
+      required: true,
+      valid: new BigNumber(value).isLessThanOrEqualTo(max),
+    };
+  },
+  params: ['max'],
+});
+
+extend('min_value', {
+  validate(value, { min }) {
+    return {
+      required: true,
+      valid: new BigNumber(value).isGreaterThanOrEqualTo(min),
+    };
+  },
+  params: ['min'],
 });
 
 export default ({ app }) => {
