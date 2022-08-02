@@ -4,7 +4,7 @@ import { accessLifetime } from '~/utils/constants/cookiesLifetime';
 import { Path, UserStatuses } from '~/utils/enums';
 
 export default {
-  async signIn({ commit, dispatch }, payload) {
+  async signIn({ commit }, payload) {
     try {
       const { email, password, isRememberMeSelected } = payload;
       const response = await this.$axios.$post('/v1/auth/login', {
@@ -25,7 +25,7 @@ export default {
       return error(e?.response?.data?.code, e?.response?.data?.msg);
     }
   },
-  async registerWallet({ commit }, payload) {
+  async registerWallet({ _ }, payload) {
     try {
       return await this.$axios.$post('/v1/auth/register/wallet', payload);
     } catch (e) {
@@ -41,7 +41,7 @@ export default {
       return error();
     }
   },
-  async resendEmail(_, { email }) {
+  async resendEmail({ _ }, { email }) {
     try {
       const { result } = await this.$axios.$post('/v1/auth/dao/resend-email', { email });
       return success(result);
@@ -50,7 +50,7 @@ export default {
       return error();
     }
   },
-  async confirm({ commit, dispatch, getters }, payload) {
+  async confirm({ _ }, payload) {
     try {
       const res = await this.$axios.$post('/v1/auth/confirm-email', payload);
       this.$cookies.set('role', payload.role, {
@@ -78,7 +78,7 @@ export default {
       return false;
     }
   },
-  async getSpecialUserData({ commit }, id) {
+  async getSpecialUserData({ _ }, id) {
     try {
       const { result } = await this.$axios.$get(`/v1/profile/${id}`);
       return result;
@@ -86,7 +86,7 @@ export default {
       return false;
     }
   },
-  async getUserByWalletAddress({ commit }, address) {
+  async getUserByWalletAddress({ _ }, address) {
     try {
       const { result } = await this.$axios.$get(`/v1/profile/wallet/${address}`);
       return result;
@@ -145,7 +145,7 @@ export default {
       return console.log(e);
     }
   },
-  async getUploadFileLink({ commit }, config) {
+  async getUploadFileLink({ _ }, config) {
     try {
       const { result } = await this.$axios.$post('/v1/storage/get-upload-link', config);
       return result;
@@ -153,7 +153,7 @@ export default {
       return null;
     }
   },
-  async uploadFile({ commit }, payload) {
+  async uploadFile({ _ }, payload) {
     try {
       await this.$axios.$put(payload.url, payload.data, {
         headers: {
@@ -209,7 +209,7 @@ export default {
       };
     }
   },
-  async validateTOTP({ commit }, payload) {
+  async validateTOTP({ _ }, payload) {
     try {
       const response = await this.$axios.$post('/v1/auth/session/current/validate-totp', payload);
       return response.result.isValid;
@@ -218,7 +218,7 @@ export default {
       return false;
     }
   },
-  async sendReport(_, payload) {
+  async sendReport({ _ }, payload) {
     try {
       const { ok } = await this.$axios.$post('/v1/report/send', payload);
       return ok;

@@ -13,7 +13,7 @@ export default {
   setProposalThreshold({ commit }, payload) {
     commit('setProposalThreshold', payload);
   },
-  async createProposal({ commit }, payload) {
+  async createProposal({ _ }, payload) {
     try {
       return await this.$axios.$post('v1/proposal/create', payload);
     } catch (e) {
@@ -30,7 +30,7 @@ export default {
       console.error('proposals/getProposals');
     }
   },
-  async getProposal({ commit }, { proposalId }) {
+  async getProposal({ _ }, { proposalId }) {
     try {
       const { result } = await this.$axios.$get(`v1/proposal/${proposalId}`);
       return success(result);
@@ -39,7 +39,7 @@ export default {
       return error(errorCodes.GetProposal, e.message, e);
     }
   },
-  async getProposalVotes({ commit }, { proposalId, params }) {
+  async getProposalVotes({ _ }, { proposalId, params }) {
     try {
       const res = await this.$axios.$get(`v1/proposal/${proposalId}/votes`, { params });
       return success(res);
@@ -53,7 +53,7 @@ export default {
   },
 
   /** Contracts */
-  async getVotesByAddresses({ commit }, addresses) {
+  async getVotesByAddresses({ _ }, addresses) {
     try {
       const res = await fetchWalletContractData('getVotes', WQVoting, ENV.WORKNET_VOTING, [addresses]);
       return success(res);
@@ -63,7 +63,7 @@ export default {
     }
   },
 
-  async getVotingPeriod(_) {
+  async getVotingPeriod({ _ }) {
     try {
       const res = await fetchWalletContractData('votingPeriod', WQVoting, ENV.WORKNET_VOTING);
       return success(res);
@@ -95,7 +95,7 @@ export default {
       console.error('wallet/getProposalThreshold');
     }
   },
-  async addProposal({ commit }, { description, nonce }) {
+  async addProposal({ _ }, { description, nonce }) {
     try {
       const res = await sendWalletTransaction('addProposal', {
         abi: WQVoting,
@@ -108,7 +108,7 @@ export default {
       return error(errorCodes.AddProposal, e.message, e);
     }
   },
-  async getProposalInfoById({ commit }, id) {
+  async getProposalInfoById({ _ }, id) {
     try {
       const res = await fetchWalletContractData('proposals', WQVoting, ENV.WORKNET_VOTING, [id]);
       return success(res);

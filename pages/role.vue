@@ -165,7 +165,7 @@ export default {
       this.step = WalletState.ImportOrCreate;
       if (getCipherKey() == null && !this.isLoginWithSocialNetwork) {
         this.isClearOnDestroy = false;
-        await this.$store.dispatch('wallet/confirmPassword', { nuxt: this.$nuxt, callbackLayout: 'role' });
+        await this.$store.dispatch('wallet/confirmPassword', { callbackLayout: 'role' });
       }
     }
   },

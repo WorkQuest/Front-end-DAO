@@ -311,8 +311,8 @@ export default {
         ...this.model,
         isRememberMeSelected: this.isRememberMeSelected,
       });
-      this.SetLoader(false);
       if (!res.ok) {
+        this.SetLoader(false);
         this.ShowToast(this.$t('signIn.enterEmail'));
         return;
       }
@@ -320,6 +320,7 @@ export default {
       this.userStatus = userStatus;
       this.userWalletAddress = address ? address.toLowerCase() : '';
       if (totpIsActive) {
+        this.SetLoader(false);
         await this.ShowModal({
           key: modals.securityCheck,
           actionMethod: async () => await this.nextStepAction(),
