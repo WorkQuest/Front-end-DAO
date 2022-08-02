@@ -38,6 +38,11 @@ export const createWallet = (mnemonic) => {
 export const encryptStringWithKey = (toEncrypt, key) => AES.encrypt(toEncrypt, key).toString();
 export const decryptStringWitheKey = (toDecrypt, key) => AES.decrypt(toDecrypt, key).toString(enc.Utf8);
 
+let isEthNetwork = false;
+export const ethBoost = 1.1;
+// eslint-disable-next-line no-return-assign
+export const setIsEthNetWork = (isEthNetworkSelected) => isEthNetwork = isEthNetworkSelected;
+
 let cipherKey = null;
 export const getCipherKey = () => cipherKey;
 // eslint-disable-next-line no-return-assign
@@ -69,6 +74,27 @@ export const getWalletAddress = () => wallet.address;
 // Метод нужен для вызова метода wallet не затрагивая другие данные
 export const initWallet = (address, key) => {
   wallet.init(address, key);
+};
+
+export const connectWalletToProvider = (providerType) => {
+  if (!getIsWalletConnected()) {
+    console.error('Wallet is not connected');
+    return error(-1, 'Wallet is not connected');
+  }
+
+  const provider = ENV[providerType];
+  if (!providerType || !provider) {
+    console.error(`Wrong provider type: ${providerType}`);
+    return error(-2, `Wrong provider type: ${providerType}`);
+  }
+
+  web3 = new Web3(provider);
+  if (wallet.privateKey) {
+    const account = web3.eth.accounts.privateKeyToAccount(wallet.privateKey);
+    web3.eth.accounts.wallet.add(account);
+    web3.eth.defaultAccount = account.address;
+  }
+  return success();
 };
 
 const contractInstances = {};
@@ -150,6 +176,8 @@ export const connectWithMnemonic = (userAddress) => {
 export const disconnect = () => {
   wallet.reset();
 };
+
+export const getWalletTransactionCount = () => web3.eth.getTransactionCount(wallet.address);
 
 const min = Object.freeze(new BigNumber(0.0001));
 /**

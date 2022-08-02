@@ -22,9 +22,12 @@ export default {
   undelegate: 'undelegate',
   showFile: 'showFile',
   transactionReceipt: 'transactionReceipt',
-  giveTransfer: 'giveTransfer',
+  walletWithdraw: 'walletWithdraw',
   collateralTransaction: 'collateralTransaction',
   securityCheck: 'securityCheck',
   warning: 'warning',
   reports: 'reports',
+  buyWQT: 'buyWQT',
+  pendingHash: 'pendingHash',
+  transactionSend: 'transactionSend',
 };

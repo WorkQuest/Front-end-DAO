@@ -13,7 +13,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '@/store/modals/modals';
-import CtmModalGiveTransfer from './CtmModalGiveTransfer';
+import CtmModalWalletWithdraw from './CtmModalWalletWithdraw';
 import CtmModalShowFile from './CtmModalShowFile';
 import CtmModalChangePassword from './CtmModalChangePassword';
 import CtmModalRestore from './CtmModalRestore';
@@ -22,7 +22,6 @@ import CtmModalDeposit from './CtmModalDeposit';
 import CtmModalAddCard from './CtmModalAddCard';
 import CtmModalWithdraw from './CtmModalWithdraw';
 import CtmModalStatus from './CtmModalStatus';
-import CtmModalConfirmDetails from './CtmModalConfirmDetails';
 import CtmModalChangePassInSettings from './CtmModalChangePassInSettings';
 import CtmModalTwoFAAuth from './CtmModalTwoFAAuth';
 import CtmModalDisableTwoFA from './CtmModalDisableTwoFA';
@@ -35,11 +34,14 @@ import CtmModalSignWorkQuest from './CtmModalSignWorkQuest';
 import CtmModalTransactionReceipt from './CtmModalTransactionReceipt';
 import CtmModalSecurityCheck from './CtmModalSecurityCheck';
 import CtmModalReport from '~/components/CtmModal/CtmModalReport';
+import CtmModalBuyWQT from '~/components/CtmModal/CtmModalBuyWQT';
+import CtmModalPendingHashStatus from '~/components/CtmModal/CtmModalPendingHashStatus';
+import CtmModalTransactionSend from '~/components/CtmModal/CtmModalTransactionSend';
 
 export default {
   name: 'ModalBox',
   components: {
-    [modals.giveTransfer]: CtmModalGiveTransfer,
+    [modals.walletWithdraw]: CtmModalWalletWithdraw,
     [modals.showFile]: CtmModalShowFile,
     [modals.restore]: CtmModalRestore,
     [modals.changePassword]: CtmModalChangePassword,
@@ -48,7 +50,6 @@ export default {
     [modals.addCard]: CtmModalAddCard,
     [modals.withdraw]: CtmModalWithdraw,
     [modals.status]: CtmModalStatus,
-    [modals.confirmDetails]: CtmModalConfirmDetails,
     [modals.changePassInSettings]: CtmModalChangePassInSettings,
     [modals.twoFAAuth]: CtmModalTwoFAAuth,
     [modals.disableTwoFAAuth]: CtmModalDisableTwoFA,
@@ -61,6 +62,9 @@ export default {
     [modals.transactionReceipt]: CtmModalTransactionReceipt,
     [modals.securityCheck]: CtmModalSecurityCheck,
     [modals.reports]: CtmModalReport,
+    [modals.buyWQT]: CtmModalBuyWQT,
+    [modals.pendingHash]: CtmModalPendingHashStatus,
+    [modals.transactionSend]: CtmModalTransactionSend,
   },
   data: () => ({ modals }),
   computed: {
@@ -71,8 +75,12 @@ export default {
     }),
   },
   methods: {
-    backgroundClick() {
-      if (!this.options.isUnclosable) this.close();
+    async backgroundClick() {
+      if (!this.options.isUnclosable) {
+        const { cancelMethod } = this.options;
+        this.close();
+        if (cancelMethod) await cancelMethod();
+      }
     },
     close() {
       this.$store.dispatch('modals/hide');

@@ -202,6 +202,44 @@ extend('needToDelete', {
   params: ['needToDelete'],
 });
 
+extend('min_tokens_amount', {
+  validate(value, { balance, min, symbol }) {
+    return {
+      valid: new BigNumber(balance).isGreaterThan(0),
+    };
+  },
+  params: ['balance', 'min', 'symbol'],
+});
+
+extend('max_buy_wqt', {
+  validate(value, { max }) {
+    return {
+      required: true,
+      valid: new BigNumber(value).isLessThanOrEqualTo(max),
+    };
+  },
+  params: ['max', 'symbol'],
+});
+
+extend('min_buy_wqt', {
+  validate(value, { min }) {
+    return {
+      required: true,
+      valid: new BigNumber(value).isGreaterThanOrEqualTo(min),
+    };
+  },
+  params: ['min', 'symbol'],
+});
+
+extend('have_funds', {
+  validate(value, { balance, amount }) {
+    return {
+      valid: new BigNumber(balance).isGreaterThanOrEqualTo(amount),
+    };
+  },
+  params: ['balance', 'amount', 'symbol'],
+});
+
 extend('max_value', {
   validate(value, { max }) {
     return {

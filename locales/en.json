@@ -67,7 +67,11 @@
     "walletNotLinked": "Wallet not linked",
     "alpha_spaces_dash": "The {_field_} field may only contain alphabetic characters as well as spaces, dashes and underscores",
     "characters_left": "Characters left -",
-    "needToDelete": "Need to delete extra symbols - {needToDelete}"
+    "needToDelete": "Need to delete extra symbols - {needToDelete}",
+    "min_tokens_amount": "Insufficient tokens, min amount {min} {symbol}.",
+    "min_buy_wqt" : "To avoid unnecessary fees and network slippage, the minimum amount for this pair is ${min} {symbol}",
+    "max_buy_wqt": "To avoid unnecessary fees and network slippage, the maximum amount for this pair is ${max} {symbol}",
+    "have_funds": "Not enough {symbol} to complete this transaction"
   },
   "labels": {
     "firstName": "First name",
@@ -144,6 +148,9 @@
     }
   },
   "meta": {
+    "approve": "Approve",
+    "allTransactions": "All transactions",
+    "delegations": "Delegations",
     "delegateNow": "Delegate Now",
     "confirm": "Confirm",
     "back": "Back",
@@ -271,11 +278,23 @@
     "title": "Skills"
   },
   "modals": {
+    "txIsPending": "Transaction is pending",
+    "pleaseWait": "Please wait...",
     "trxFee": "Transactions fee",
     "metamask": {
       "install": "Please install Metamask!",
       "subtitle": "Please open site from Metamask app"
     },
+    "depositModal": {
+      "scanQrCodeWallet": "Scan QR code or copy address to receive payment",
+      "walletCopied": "Wallet address copied successfully",
+      "uHaveToAddCard": "Please add a bank card to your account"
+    },
+    "addNow": "Add now",
+    "close": "Close",
+    "swap": "Swap",
+    "network": "Network",
+    "token": "Token",
     "txInfo": "Transaction info",
     "gasLimit": "Gas limit",
     "textCopy": "Text has been copied",
@@ -339,8 +358,9 @@
     "message": "Message",
     "bodyMessage": "Hello",
     "areYouSure": "Are You Sure?",
-    "transactionSend": "Transaction sent",
     "transactionFail": "Transaction fail",
+    "transactionSent": "Transaction sent",
+    "transactionCheck": "Check transaction",
     "cardHasBeenAdded": "Card has been added",
     "deposit": "Deposit",
     "numberOfCard": "Number of card",
@@ -510,18 +530,23 @@
       "rights": "All rights reserved"
     }
   },
+  "qrCodePage": {
+    "pageTitle": "Wallet address",
+    "subText": "Scan the QR code or copy the address to send me a payment"
+  },
   "wallet": {
+    "addVotes": "Add votes",
     "success": "Success",
     "failed": "Failed",
     "frozen": "Frozen balance",
     "WUSD": "WUSD wallet",
     "cryptoWallet": "Crypto wallet",
     "bankCard": "Bank card",
+    "walletAddress": "Wallet address",
     "send": "Send",
     "toThisAddress": "to this address",
     "wallet": "Wallet",
     "balance": "Balance",
-    "deposit": "Receive",
     "withdraw": "Withdraw",
     "transfer": "Buy / Send",
     "addCardProposal": "Add bank card for easy withdrawal",
@@ -536,24 +561,19 @@
       "value": "Quantity",
       "empty": "Transactions list is empty",
       "trxFee": "Transaction Fee"
+    },
+    "buyWQT": {
+      "amountOfWQTToReceive": "Amount of WQT to receive",
+      "buyButton": "Buy WQT",
+      "title": "Buy $WQT now!",
+      "sub": "The easiest way to buy $WQT is using $USDT.",
+      "networks": "Networks available for purchase: Ethereum, Binance Smart Chain and Polygon. After the purchase, $WQT will automatically deposit to your WorkNet network wallet, minus the transaction fee.",
+      "worknetFee": "Includes a WorkNet network fee."
     }
   },
   "kyc": {
     "KYC": "KYC",
     "alreadyVerified": "Your profile already verified!"
-  },
-  "chat": {
-    "openDispute": "Open dispute",
-    "approveQuest": "Approve quest",
-    "starredMessage": "Starred Message",
-    "starredChats": "Starred chats",
-    "createGroupChat": "Create group chat",
-    "messages": "Messages",
-    "chat": "Chat",
-    "quest": "Quest:",
-    "you": "You:",
-    "invitedYou": "invited you to a quest",
-    "writeYouMessage": "Write you message"
   },
   "proposals": {
     "votingInfo": "Dear user, to participate in subsequent DAO voting or create your proposals, you need to increase your voting power. To vote, you need to delegate 100 WorkQuest tokens to your wallet. To make your offer in the DAO, you must delegate 10,000 WorkQuest tokens to your wallet.",

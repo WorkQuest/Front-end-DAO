@@ -46,8 +46,10 @@ export default {
     }),
   },
   methods: {
-    close() {
-      this.$store.dispatch('modals/hide');
+    async close() {
+      const { cancelMethod } = this.options;
+      await this.$store.dispatch('modals/hide');
+      if (cancelMethod) await cancelMethod();
     },
   },
 };
