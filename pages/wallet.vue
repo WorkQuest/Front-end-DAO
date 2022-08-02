@@ -169,6 +169,9 @@
               :total-pages="totalPages"
             />
           </div>
+          <div v-else>
+            <empty-data />
+          </div>
         </div>
       </div>
     </div>
