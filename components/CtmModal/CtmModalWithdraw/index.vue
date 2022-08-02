@@ -178,7 +178,7 @@ export default {
       this.ShowModal({
         img: require('assets/img/ui/transactionSend.svg'),
         key: modals.status,
-        title: this.$t('modals.transactionSend'),
+        title: this.$t('modals.transactionSent'),
       });
     },
     showAddCardModal() {

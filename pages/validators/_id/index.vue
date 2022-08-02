@@ -306,7 +306,7 @@ export default {
           this.ShowModal({
             key: modals.status,
             img: require('~/assets/img/ui/transactionSend.svg'),
-            title: this.$t('modals.transactionSend'),
+            title: this.$t('modals.transactionSent'),
           });
           resolve();
         }, 7000);

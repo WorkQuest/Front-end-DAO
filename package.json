@@ -11,6 +11,7 @@
     "lint": "npm run lint:js"
   },
   "dependencies": {
+    "@hapi/nes": "^12.0.4",
     "@chenfengyuan/vue-qrcode": "^1.0.2",
     "@cosmostation/cosmosjs": "^0.11.2",
     "@noble/hashes": "^1.0.0",

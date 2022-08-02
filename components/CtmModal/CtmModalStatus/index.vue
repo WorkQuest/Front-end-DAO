@@ -22,6 +22,14 @@
               {{ options.subtitle }}
             </span>
           </div>
+          <div v-if="options.url">
+            <a
+              :href="options.url"
+              target="_blank"
+            >
+              {{ options.urlText }}
+            </a>
+          </div>
           <base-btn
             class="email__action"
             @click="closeModal"
