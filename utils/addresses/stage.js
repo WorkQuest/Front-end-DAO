@@ -9,7 +9,7 @@ export default {
   WQ_WS_PROVIDER: 'wss://mainnet-gate.workquest.co/tendermint-rpc/websocket',
   WS_NOTIFS_URL: 'wss://notifications.workquest.co/api/v1/notifications',
 
-  WQ_PROVIDER: 'https://mainnet-gate.workquest.co',
+  WQ_PROVIDER: 'https://mainnet-gate.workquest.co/',
   ETH_PROVIDER: 'https://speedy-nodes-nyc.moralis.io/a4b1a749a870bbd413acd4f0/eth/mainnet',
   BSC_PROVIDER: 'https://speedy-nodes-nyc.moralis.io/a4b1a749a870bbd413acd4f0/bsc/mainnet',
   POLYGON_PROVIDER: 'https://speedy-nodes-nyc.moralis.io/a4b1a749a870bbd413acd4f0/polygon/mainnet',
