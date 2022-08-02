@@ -132,6 +132,7 @@
         <div class="wallet__table-wrapper">
           <div class="wallet__switch-table">
             <base-btn
+              v-if="!$options.IS_PROD"
               data-selector="SWITCH-ALL"
               :mode="getSwitchButtonMode($options.WalletTables.TXS)"
               @click="selectedWalletTable = $options.WalletTables.TXS"
@@ -139,6 +140,7 @@
               {{ $t('meta.allTransactions') }}
             </base-btn>
             <base-btn
+              v-if="!$options.IS_PROD"
               data-selector="SWITCH-COLLATERAL"
               :mode="getSwitchButtonMode($options.WalletTables.DELEGATIONS)"
               @click="selectedWalletTable = $options.WalletTables.DELEGATIONS"
@@ -169,7 +171,7 @@
               :total-pages="totalPages"
             />
           </div>
-          <div v-else>
+          <div v-else-if="!$options.IS_PROD">
             <empty-data />
           </div>
         </div>
@@ -195,6 +197,7 @@ import { getStyledAmount } from '~/utils/wallet';
 import EmptyData from '~/components/ui/EmptyData';
 import { error, success } from '~/utils/success-error';
 import { BuyWQTTokensData } from '~/utils/constants/bridge';
+import { IS_PROD } from '~/utils/addresses';
 
 export default {
   name: 'Wallet',
@@ -203,6 +206,7 @@ export default {
   TokenSymbols,
   Chains,
   WalletTables,
+  IS_PROD,
   data() {
     return {
       cardClosed: false,
