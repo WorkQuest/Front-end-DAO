@@ -12,11 +12,19 @@ import {
   transferToken,
   fetchWalletContractData,
   connectWallet,
-  sendWalletTransaction, setIsEthNetWork, connectWalletToProvider, GetWalletProvider, ethBoost,
+  sendWalletTransaction,
+  setIsEthNetWork,
+  connectWalletToProvider,
+  GetWalletProvider,
+  ethBoost,
 } from '~/utils/wallet';
 import {
   Chains,
-  errorCodes, ExplorerUrl, ProviderTypesByChain, TokenMap, TokenSymbols, WalletTokensData, WorknetTokenAddresses,
+  errorCodes,
+  ExplorerUrl,
+  ProviderTypesByChain,
+  TokenMap,
+  WalletTokensData,
 } from '~/utils/enums';
 import { error, success } from '~/utils/success-error';
 import { ERC20, WQVoting } from '~/abi/index';
@@ -55,16 +63,26 @@ export default {
       return false;
     }
   },
-  confirmPassword({ commit, getters }, { callbackLayout }) {
+  /**
+   * @param commit
+   * @param getters
+   * @param payload { { callbackLayout: string } }
+   */
+  confirmPassword({ commit, getters }, payload) {
+    const callbackLayout = payload?.callbackLayout;
     if (callbackLayout) commit('setCallbackLayout', callbackLayout);
     commit('setIsOnlyConfirm', true);
     $nuxt.setLayout('confirmPassword');
   },
   /**
-     * Check wallet is connected
-     * @returns boolean
-     */
-  checkWalletConnected({ commit, getters }, { callbackLayout }) {
+   * Check wallet is connected
+   * @param commit
+   * @param getters
+   * @param payload { { callbackLayout: string } }
+   * @returns boolean
+   */
+  checkWalletConnected({ commit, getters }, payload) {
+    const callbackLayout = payload?.callbackLayout;
     const connected = getIsWalletConnected();
     commit('setIsOnlyConfirm', false);
     if (!connected) {
