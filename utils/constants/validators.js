@@ -1,7 +1,7 @@
 // min gas price by gate
 export const GateGasPrice = {
   develop: '10000000',
-  testnet: '1000000000000000000',
+  testnet: '85714285000000',
   stage: '85714285000000',
   master: '85714285000000',
 }[process.env.BRANCH];
