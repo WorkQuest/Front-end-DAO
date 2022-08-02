@@ -103,7 +103,7 @@ export default {
             await this.$store.dispatch('modals/show', {
               img: require('assets/img/ui/transactionSend.svg'),
               key: modals.status,
-              title: this.$t('modals.transactionSend'),
+              title: this.$t('modals.transactionSent'),
             });
           }
         }
