@@ -56,7 +56,7 @@
           {{ options.button }}
         </span>
         <span v-else>
-          {{ $t('meta.close') }}
+          {{ $t('modals.close') }}
         </span>
       </base-btn>
     </div>
