@@ -45,7 +45,7 @@ export default {
     border-radius: 6px;
     cursor: pointer;
     position: relative;
-    box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
+    @include shadow;
   }
   &__items {
     display: grid;
