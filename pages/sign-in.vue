@@ -200,7 +200,7 @@ export default {
     },
   },
   created() {
-    // for old cipher
+    // TODO: delete 12.10 | for old cipher
     localStorage.removeItem('mnemonic');
     sessionStorage.removeItem('mnemonic');
   },
