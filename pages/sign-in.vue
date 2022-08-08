@@ -199,6 +199,11 @@ export default {
       return isStartedTimer ? this.$tc('meta.units.seconds', this.DeclOfNum(timerValue), { count: timerValue }) : '';
     },
   },
+  created() {
+    // for old cipher
+    localStorage.removeItem('mnemonic');
+    sessionStorage.removeItem('mnemonic');
+  },
   async mounted() {
     const { token } = this.$route.query;
     if (token) sessionStorage.setItem('confirmToken', String(token));
@@ -287,7 +292,7 @@ export default {
       sessionStorage.removeItem('confirmToken');
       if (!this.userData.id) await this.$store.dispatch('user/getUserData');
 
-      const mnemonicInLocalStorage = JSON.parse(localStorage.getItem('mnemonic'));
+      const mnemonicInLocalStorage = JSON.parse(localStorage.getItem('wal'));
       const isWalletInMnemonicList = mnemonicInLocalStorage && mnemonicInLocalStorage[this.userData.wallet.address];
       if (!isWalletInMnemonicList && !this.isLoginWithSocial) return;
 
@@ -382,38 +387,24 @@ export default {
       }
 
       // Wallet assigned, checking storage
-      const sessionData = JSON.parse(sessionStorage.getItem('mnemonic'));
-      const storageData = JSON.parse(localStorage.getItem('mnemonic'));
-      if (!sessionData && !storageData) {
+      const storageData = JSON.parse(localStorage.getItem('wal'));
+      if (!storageData) {
         this.step = WalletState.ImportMnemonic;
         this.SetLoader(false);
         return;
       }
 
-      const sessionMnemonic = sessionData ? sessionData[this.userWalletAddress] : null;
-      const storageMnemonic = storageData ? storageData[this.userWalletAddress] : null;
-      if (!sessionMnemonic && !storageMnemonic) {
+      const key = this.userWalletAddress.toLowerCase();
+      const storageMnemonic = storageData ? storageData[key] : null;
+      if (!storageMnemonic) {
         this.step = WalletState.ImportMnemonic;
         this.SetLoader(false);
         return;
       }
-
-      // Check in session if exists
-      if (sessionMnemonic) {
-        const wallet = createWallet(sessionMnemonic);
-        if (wallet && wallet.address.toLowerCase() === this.userWalletAddress) {
-          this.saveToStorage(wallet);
-          await this.redirectUser();
-          this.SetLoader(false);
-          return;
-        }
-      }
-
-      // Check in storage
       if (storageMnemonic) {
         const mnemonic = decryptStringWitheKey(storageMnemonic, this.model.password);
         const wallet = createWallet(mnemonic);
-        if (wallet && wallet.address.toLowerCase() === this.userWalletAddress) {
+        if (wallet?.address?.toLowerCase() === this.userWalletAddress) {
           this.saveToStorage(wallet);
           await this.redirectUser();
           this.SetLoader(false);
@@ -421,7 +412,7 @@ export default {
         }
       }
 
-      // Session & Storage invalid mnemonics
+      // Storage invalid mnemonics
       this.ShowToast(this.$t('messages.mnemonic'), this.$t('modals.error'));
       this.SetLoader(false);
     },
@@ -459,21 +450,15 @@ export default {
       });
     },
     saveToStorage(wallet) {
-      initWallet(wallet.address, wallet.privateKey);
+      initWallet(wallet);
+      const key = wallet?.address?.toLowerCase();
       if (!this.isLoginWithSocial) {
-        localStorage.setItem('mnemonic', JSON.stringify({
-          ...JSON.parse(localStorage.getItem('mnemonic')),
-          [wallet.address.toLowerCase()]: encryptStringWithKey(wallet.mnemonic.phrase, this.model.password),
+        localStorage.setItem('wal', JSON.stringify({
+          ...JSON.parse(localStorage.getItem('wal')),
+          [key]: encryptStringWithKey(wallet.mnemonic.phrase, this.model.password),
         }));
       }
-      sessionStorage.setItem('mnemonic', JSON.stringify({
-        ...JSON.parse(sessionStorage.getItem('mnemonic')),
-        [wallet.address.toLowerCase()]: wallet.mnemonic.phrase,
-      }));
-      this.$store.dispatch('wallet/connectWallet', {
-        userWalletAddress: wallet.address,
-        userPassword: this.model.password,
-      });
+      this.$store.dispatch('wallet/connectWallet', { userWalletAddress: wallet.address, userPassword: this.model.password });
     },
     async redirectSocialLink(socialNetwork) {
       window.location = `${this.ENV.BASE_URL}v1/auth/login/dao/${socialNetwork}`;
@@ -540,10 +525,10 @@ export default {
       this.startTimer();
     },
     clearCookies() {
-      const mnemonicInLocalStorage = JSON.parse(localStorage.getItem('mnemonic'));
+      const mnemonicInLocalStorage = JSON.parse(localStorage.getItem('wal'));
       const isWalletInMnemonicList = mnemonicInLocalStorage && mnemonicInLocalStorage[this.userWalletAddress];
       if (this.isLoginWithSocial
-          || (this.userData.id && (isWalletInMnemonicList || localStorage.getItem('mnemonic')))) {
+          || (this.userData.id && (isWalletInMnemonicList || localStorage.getItem('wal')))) {
         return;
       }
       this.$cookies.remove('access');
