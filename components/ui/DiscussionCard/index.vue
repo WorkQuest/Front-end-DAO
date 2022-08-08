@@ -2,7 +2,7 @@
   <div class="discussion">
     <div class="discussion__user user">
       <img
-        :src="item.author && item.author.avatar ? item.author.avatar.url : require('~/assets/img/app/avatar_empty.png')"
+        :src="item.author && item.author.avatar ? item.author.avatar.url : $options.images.AVATAR_EMPTY"
         alt="userAvatar"
         class="user__avatar"
         @click="toInvestor(item.author.id)"
@@ -79,8 +79,12 @@
     </div>
   </div>
 </template>
+
 <script>
+import { images } from '~/utils/images';
+
 export default {
+  images,
   props: {
     item: {
       type: Object,

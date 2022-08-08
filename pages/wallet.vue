@@ -172,7 +172,7 @@
             />
           </div>
           <div v-else-if="!$options.IS_PROD">
-            <empty-data />
+            <DelegationsTable />
           </div>
         </div>
       </div>
@@ -184,7 +184,6 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
-import { ERC20 } from '~/abi/index';
 import {
   TokenSymbolByContract,
   TokenSymbols,
@@ -196,13 +195,13 @@ import {
 import { getStyledAmount } from '~/utils/wallet';
 import EmptyData from '~/components/ui/EmptyData';
 import { error, success } from '~/utils/success-error';
-import { BuyWQTTokensData } from '~/utils/constants/bridge';
 import { IS_PROD } from '~/utils/addresses';
+import DelegationsTable from '~/components/app/Pages/Wallet/DelegationsTable';
 
 export default {
   name: 'Wallet',
   middleware: 'auth',
-  components: { EmptyData },
+  components: { EmptyData, DelegationsTable },
   TokenSymbols,
   Chains,
   WalletTables,
@@ -508,11 +507,11 @@ export default {
   }
 
   &__card {
-    box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
+    @include shadow;
   }
 
   &__balance {
-    box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
+    @include shadow;
   }
 
   &__body {
@@ -595,7 +594,7 @@ export default {
     max-width: 100%;
     margin-bottom: 1rem;
     overflow-x: auto;
-    box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
+    @include shadow;
   }
 }
 
