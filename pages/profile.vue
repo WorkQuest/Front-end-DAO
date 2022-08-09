@@ -409,9 +409,9 @@ export default {
         localUserData, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
       } = this;
       this.localUserData.additionalInfo.address = this.userData?.locationPlaceName;
-      this.phone.main = localUserData.phone || localUserData.tempPhone || { fullPhone: null, codeRegion: 'RU' };
+      this.phone.main = localUserData.phone || localUserData.tempPhone || { fullPhone: null, codeRegion: 'US' };
 
-      this.phone.second = localUserData.additionalInfo.secondMobileNumber || { fullPhone: null, codeRegion: 'RU' };
+      this.phone.second = localUserData.additionalInfo.secondMobileNumber || { fullPhone: null, codeRegion: 'US' };
 
       this.socialInputs = [{
         key: 'instagram',
