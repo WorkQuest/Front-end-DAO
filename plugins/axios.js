@@ -91,6 +91,6 @@ export default ({
         text: error.response.data.msg,
       });
     }
-    throw error;
+    throw error?.response?.data;
   });
 };

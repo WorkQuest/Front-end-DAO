@@ -236,7 +236,6 @@ export default {
       initWallet(wallet);
       if (this.isLoginWithSocialNetwork) {
         await this.redirectUser();
-        this.SetLoader(false);
         return;
       }
       localStorage.setItem('wal', JSON.stringify({
@@ -244,7 +243,6 @@ export default {
         [wallet.address.toLowerCase()]: encryptStringWithKey(wallet.mnemonic.phrase, getCipherKey()),
       }));
       await this.redirectUser();
-      this.SetLoader(false);
     },
   },
 };
