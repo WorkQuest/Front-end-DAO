@@ -326,7 +326,7 @@ export default {
   }
 
   &__err {
-    color: #bb5151;
+    color: $error;
     font-size: 12px;
     min-height: 23px;
   }
