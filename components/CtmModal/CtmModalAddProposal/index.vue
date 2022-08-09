@@ -71,7 +71,9 @@
                   ref="fileUpload"
                   class="uploader__btn_hidden"
                   type="file"
+                  multiple
                   :accept="accept"
+                  :value="selectedDoc"
                   @change="handleFileSelected($event)"
                 >
                 <base-btn
@@ -129,6 +131,7 @@ export default {
       fileId: 0,
       documents: [],
       docsLimit: 10,
+      selectedDoc: '',
       accept: 'application/msword, application/pdf, image/png, image/jpeg, image/heic',
       acceptedTypes: [],
     };
@@ -386,7 +389,7 @@ export default {
   }
 
   &__error {
-    color: #F82727;
+    color: $error;
     font-size: 12px;
     min-height: 23px;
   }
