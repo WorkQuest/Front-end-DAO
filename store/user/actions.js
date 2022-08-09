@@ -177,12 +177,7 @@ export default {
       return response;
     } catch (e) {
       console.error('user/confirmEnable2FA', e);
-      return {
-        ok: e.ok,
-        code: e.code,
-        msg: e.msg,
-        data: e.data,
-      };
+      return error(e.code, e.msg, e.data);
     }
   },
   async disable2FA({ commit }, payload) {
@@ -193,12 +188,7 @@ export default {
       return response;
     } catch (e) {
       console.error('user/disable2FA', e);
-      return {
-        ok: e.ok,
-        code: e.code,
-        msg: e.msg,
-        data: e.data,
-      };
+      return error(e.code, e.msg, e.data);
     }
   },
   async enable2FA({ commit }, payload) {
@@ -208,12 +198,7 @@ export default {
       return response;
     } catch (e) {
       console.error('user/enable2FA', e);
-      return {
-        ok: e.ok,
-        code: e.code,
-        msg: e.msg,
-        data: e.data,
-      };
+      return error(e.code, e.msg, e.data);
     }
   },
   async validateTOTP({ _ }, payload) {
