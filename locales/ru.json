@@ -25,6 +25,7 @@
     "required_if": "The {_field_} field is required",
     "required": "The {_field_} field is required",
     "size": "The {_field_} field size must be less than {size}KB",
-    "decimal": "The {_field_} field must contain only decimal values"
+    "decimal": "The {_field_} field must contain only decimal values",
+    "geo_is_address": "Введите корректный адрес"
   }
 }

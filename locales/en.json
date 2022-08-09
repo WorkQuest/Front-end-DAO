@@ -71,7 +71,8 @@
     "min_tokens_amount": "Insufficient tokens, min amount {min} {symbol}.",
     "min_buy_wqt" : "To avoid unnecessary fees and network slippage, the minimum amount for this pair is ${min} {symbol}",
     "max_buy_wqt": "To avoid unnecessary fees and network slippage, the maximum amount for this pair is ${max} {symbol}",
-    "have_funds": "Not enough {symbol} to complete this transaction"
+    "have_funds": "Not enough {symbol} to complete this transaction",
+    "geo_is_address": "Please enter correct address"
   },
   "labels": {
     "firstName": "First name",
