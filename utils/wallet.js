@@ -1,12 +1,13 @@
 import { ethers } from 'ethers';
 import { AES, enc } from 'crypto-js';
+import sha256 from 'crypto-js/sha256';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
 import message from '@cosmostation/cosmosjs/src/messages/proto';
 import { keccak_256 } from '@noble/hashes/sha3';
 import converter from 'bech32-converting';
 import secp256k1 from 'secp256k1';
-import { sha256 } from 'ethers/lib.esm/utils';
+import { sha256 as ethersSha256 } from 'ethers/lib.esm/utils';
 import { error, success } from '~/utils/success-error';
 import { errorCodes } from '~/utils/enums';
 import { ERC20 } from '~/abi/index';
@@ -473,5 +474,5 @@ export const CreateSignedTxForValidator = async (method, validatorAddress, amoun
 
 export const getAddressFromConsensusPub = (pub) => {
   const foo = Buffer.from(pub, 'base64');
-  return sha256(foo).substr(2, 40);
+  return ethersSha256(foo).substr(2, 40);
 };
