@@ -7,7 +7,7 @@
   }
 
   & > caption {
-    padding: 12px 0px !important;
+    padding: 12px 0 !important;
   }
 
   &__title {
@@ -20,6 +20,13 @@
 
   &__th {
     font-weight: normal !important;
+  }
+
+  .b-table-details {
+    background: transparent !important;
+    & > td {
+      padding: 0 !important;
+    }
   }
 }
 

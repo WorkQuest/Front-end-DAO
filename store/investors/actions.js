@@ -32,4 +32,25 @@ export default {
   setLastPage({ commit }, page) {
     commit('setLastPage', page);
   },
+
+  /** INVESTORS DELEGATIONS */
+
+  async getHistory({ _ }, params) {
+    try {
+      if (!params) params = { limit: 10, offset: 0 };
+      const { result } = await this.$axios.$get('/v1/proposal/delegate/history', { params });
+      return result;
+    } catch (e) {
+      return { delegates: [], count: 0 };
+    }
+  },
+  async getVotes({ _ }, params) {
+    try {
+      if (!params) params = { limit: 10, offset: 0 };
+      const { result } = await this.$axios.$get('/v1/proposal/delegate/votes', { params });
+      return result;
+    } catch (e) {
+      return { votes: [], count: 0 };
+    }
+  },
 };

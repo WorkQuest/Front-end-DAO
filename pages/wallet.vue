@@ -149,7 +149,7 @@
             </base-btn>
           </div>
           <div
-            v-if="selectedWalletTable === $options.WalletTables.TXS"
+            v-show="selectedWalletTable === $options.WalletTables.TXS"
             class="wallet__txs"
           >
             <div class="wallet__table table">
@@ -159,11 +159,6 @@
                 :items="styledTransactions"
                 :fields="walletTableFields"
               />
-              <empty-data
-                v-if="!totalPages"
-                :description="$tc('wallet.table.empty')"
-                class="table__empty"
-              />
             </div>
             <base-pager
               v-if="totalPages > 1"
@@ -171,7 +166,7 @@
               :total-pages="totalPages"
             />
           </div>
-          <div v-else-if="!$options.IS_PROD">
+          <div v-show="!$options.IS_PROD && selectedWalletTable === $options.WalletTables.DELEGATIONS">
             <DelegationsTable />
           </div>
         </div>
@@ -190,10 +185,10 @@ import {
   WalletTables,
   Chains,
   WalletTokensData,
-  AddressType, DelegateMode,
+  AddressType,
+  DelegateMode,
 } from '~/utils/enums';
 import { getStyledAmount } from '~/utils/wallet';
-import EmptyData from '~/components/ui/EmptyData';
 import { error, success } from '~/utils/success-error';
 import { IS_PROD } from '~/utils/addresses';
 import DelegationsTable from '~/components/app/Pages/Wallet/DelegationsTable';
@@ -201,7 +196,7 @@ import DelegationsTable from '~/components/app/Pages/Wallet/DelegationsTable';
 export default {
   name: 'Wallet',
   middleware: 'auth',
-  components: { EmptyData, DelegationsTable },
+  components: { DelegationsTable },
   TokenSymbols,
   Chains,
   WalletTables,
