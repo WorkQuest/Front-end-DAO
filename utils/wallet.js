@@ -134,7 +134,6 @@ export const getContractInstance = (abiName, _abi, _address) => {
 export const connectWallet = (userAddress, userPassword) => {
   if (!userPassword || !userAddress) return error();
   if (wallet.address && wallet.privateKey) return success();
-  let _walletTemp;
   const storageData = JSON.parse(localStorage.getItem('wal'));
   if (!storageData) {
     return error();
@@ -148,7 +147,7 @@ export const connectWallet = (userAddress, userPassword) => {
   // Check in storage
   if (storageMnemonic) {
     const mnemonic = decryptStringWitheKey(storageMnemonic, userPassword);
-    _walletTemp = createWallet(mnemonic);
+    const _walletTemp = createWallet(mnemonic);
     if (_walletTemp?.address?.toLowerCase() === userAddress) {
       initWallet(_walletTemp);
       return success();

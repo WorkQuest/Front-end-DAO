@@ -386,7 +386,7 @@ export default {
         return;
       }
 
-      // Wallet assigned, checking storage
+      // Wallet assigned
       const storageData = JSON.parse(localStorage.getItem('wal'));
       if (!storageData) {
         this.step = WalletState.ImportMnemonic;
