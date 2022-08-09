@@ -1,5 +1,4 @@
 import { success, error } from '~/utils/success-error';
-import { connectWithMnemonic } from '~/utils/wallet';
 import { accessLifetime } from '~/utils/constants/cookiesLifetime';
 import { Path, UserStatuses } from '~/utils/enums';
 
@@ -71,7 +70,6 @@ export default {
       const response = await this.$axios.$get('/v1/profile/me');
       const { result } = response;
       commit('setUserData', result);
-      if (result.wallet?.address) connectWithMnemonic(result.wallet.address);
       return response;
     } catch (e) {
       console.error(e);
