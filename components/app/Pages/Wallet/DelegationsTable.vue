@@ -1,132 +1,132 @@
 <template>
-  <div class="delegations">
-    <b-table
-      v-if="delegatesCount"
-      :fields="fields"
-      :items="items"
-      show-empty
-      borderless
-      caption-top
-      thead-class="table__header"
-      :responsive="true"
-      tbody-tr-class="table__row"
-      class="delegations__table"
-    >
-      <template #table-caption>
-        <span class="delegations__title">Delegation</span>
-      </template>
-      <template #cell(username)="el">
-        <div class="delegations__user">
-          <img
-            :src="el.item.avatar || $options.images.AVATAR_EMPTY"
-            alt=""
-            class="avatar"
-            @click="openInvestorProfile(el.item.id)"
-          >
-          <span
-            class="table__grey link"
-            @click="openInvestorProfile(el.item.id)"
-          >
-            {{ el.item.username }}
-          </span>
-        </div>
-      </template>
-      <template #cell(address)="el">
-        <span>
-          {{ CutTxn(el.item.address, 6, 4) }}
-          <button-copy :copy-value="el.item.address" />
-        </span>
-      </template>
-      <template #cell(votingPower)="el">
-        <span>{{ el.item.votingPower }} WQT</span>
-      </template>
-      <template #cell(delegated)="el">
-        <span>{{ delegatedToUser?.id === el.item.id ? `${frozenBalance} WQT` : '' }}</span>
-      </template>
-
-      <template #cell(actions)="el">
-        <div class="delegations__actions">
-          <base-btn
-            v-if="delegatedToUser && delegatedToUser.id === el.item.id"
-            mode="lightRed"
-            @click="handleUndelegate(el.index)"
-          >
-            Undelegate
-          </base-btn>
-          <base-btn
-            mode="lightBlue"
-            @click="handleDelegate(el.index)"
-          >
-            Add power
-          </base-btn>
-        </div>
-      </template>
-
-      <template #cell(details)="el">
-        <div
-          class="down-btn"
-          @click="el.toggleDetails"
-        >
-          <span :class="`icon-chevron_${el.item._showDetails ? 'up' : 'down'} down-btn__icon`" />
-        </div>
-      </template>
-
-      <!--SUB TABLE-->
-
-      <template #row-details="el">
-        <b-card class="sub-table">
-          <!--HEADER FIELDS-->
-
-          <b-row class="sub-table__header">
-            <b-col />
-            <b-col
-              v-for="(item) of subFields"
-              :key="item.key"
+  <div class="delegations-wrapper">
+    <div class="delegations">
+      <div class="delegations__title">
+        {{ $t('meta.delegations') }}
+      </div>
+      <b-table
+        v-if="delegatesCount"
+        :fields="fields"
+        :items="items"
+        show-empty
+        borderless
+        thead-class="table__header"
+        :responsive="true"
+        tbody-tr-class="table__row"
+        class="delegations__table"
+      >
+        <template #cell(username)="el">
+          <div class="delegations__user">
+            <img
+              :src="el.item.avatar || $options.images.AVATAR_EMPTY"
+              alt=""
+              class="avatar"
+              @click="openInvestorProfile(el.item.id)"
             >
-              {{ item.label }}
-            </b-col>
-          </b-row>
+            <span
+              class="table__grey link"
+              @click="openInvestorProfile(el.item.id)"
+            >
+              {{ el.item.username }}
+            </span>
+          </div>
+        </template>
+        <template #cell(address)="el">
+          <span>
+            {{ CutTxn(el.item.address, 6, 4) }}
+            <button-copy :copy-value="el.item.address" />
+          </span>
+        </template>
+        <template #cell(votingPower)="el">
+          <span>{{ el.item.votingPower }} WQT</span>
+        </template>
+        <template #cell(delegated)="el">
+          <span>{{ delegatedToUser?.id === el.item.id ? `${frozenBalance} WQT` : '' }}</span>
+        </template>
 
-          <b-row v-show="!el.item.subCount">
-            <empty-data />
-          </b-row>
+        <template #cell(actions)="el">
+          <div class="delegations__actions">
+            <base-btn
+              mode="lightBlue"
+              @click="handleDelegate(el.index)"
+            >
+              {{ $t('wallet.addPower') }}
+            </base-btn>
+            <base-btn
+              v-if="delegatedToUser && delegatedToUser.id === el.item.id"
+              mode="lightRed"
+              @click="handleUndelegate(el.index)"
+            >
+              {{ $t('modals.undelegate') }}
+            </base-btn>
+          </div>
+        </template>
 
-          <!--ITEMS-->
-
-          <b-row
-            v-for="(item, i) of el.item.subItems"
-            v-show="el.item.subCount > 0"
-            :key="i"
-            class="mb-2"
+        <template #cell(details)="el">
+          <div
+            class="down-btn"
+            @click="el.toggleDetails"
           >
-            <b-col />
-            <b-col>
-              <a
-                :href="getTxLink(item.hash)"
-                target="_blank"
-                class="link"
+            <span :class="`icon-chevron_${el.item._showDetails ? 'up' : 'down'} down-btn__icon`" />
+          </div>
+        </template>
+
+        <!--SUB TABLE-->
+
+        <template #row-details="el">
+          <b-card class="sub-table">
+            <!--HEADER FIELDS-->
+
+            <b-row class="sub-table__header">
+              <b-col />
+              <b-col
+                v-for="(item) of subFields"
+                :key="item.key"
               >
-                {{ CutTxn(item.hash) }}
-              </a>
-            </b-col>
-            <b-col>{{ $moment(item.date).format('lll') }}</b-col>
-            <b-col>{{ item.type }}</b-col>
-            <b-col>{{ item.delegated }}</b-col>
-          </b-row>
+                {{ item.label }}
+              </b-col>
+            </b-row>
 
-          <b-row class="sub-table__pager">
-            <base-pager
-              v-if="getPagesSubCount(el.item.subCount) > 1"
-              v-model="el.item.subPage"
-              :total-pages="getPagesSubCount(el.item.subCount)"
-              @input="getUserHistory(items[el.index].addressHex, el.index)"
-            />
-          </b-row>
-        </b-card>
-      </template>
-    </b-table>
-    <empty-data v-else />
+            <b-row v-show="!el.item.subCount">
+              <empty-data />
+            </b-row>
 
+            <!--ITEMS-->
+
+            <b-row
+              v-for="(item, i) of el.item.subItems"
+              v-show="el.item.subCount > 0"
+              :key="i"
+              class="mb-2"
+            >
+              <b-col />
+              <b-col>
+                <a
+                  :href="getTxLink(item.hash)"
+                  target="_blank"
+                  class="link"
+                >
+                  {{ CutTxn(item.hash) }}
+                </a>
+              </b-col>
+              <b-col>{{ $moment(item.date).format('lll') }}</b-col>
+              <b-col>{{ item.type }}</b-col>
+              <b-col>{{ item.delegated }}</b-col>
+            </b-row>
+
+            <b-row class="sub-table__pager">
+              <base-pager
+                v-if="getPagesSubCount(el.item.subCount) > 1"
+                v-model="el.item.subPage"
+                :total-pages="getPagesSubCount(el.item.subCount)"
+                @input="getUserHistory(items[el.index].addressHex, el.index)"
+              />
+            </b-row>
+          </b-card>
+        </template>
+      </b-table>
+      <empty-data v-else />
+    </div>
     <base-pager
       v-if="totalPages > 1"
       v-model="page"
@@ -174,9 +174,9 @@ export default {
     }),
     fields() {
       return [
-        { key: 'username', label: 'Name', sortable: false },
-        { key: 'address', label: 'Address', sortable: false },
-        { key: 'votingPower', label: 'Voting power', sortable: false },
+        { key: 'username', label: this.$t('investors.table.name'), sortable: false },
+        { key: 'address', label: this.$t('modals.address'), sortable: false },
+        { key: 'votingPower', label: this.$t('investors.table.voting'), sortable: false },
         { key: 'delegated', label: 'Delegated', sortable: false },
         { key: 'actions', label: '', sortable: false },
         { key: 'details', label: '', sortable: false },
@@ -184,10 +184,10 @@ export default {
     },
     subFields() {
       return [
-        { key: 'hash', label: 'Tx Hash' },
-        { key: 'date', label: 'Date' },
-        { key: 'type', label: 'Type' },
-        { key: 'delegated', label: 'Delegated' },
+        { key: 'hash', label: this.$t('proposal.hashTitle') },
+        { key: 'date', label: this.$t('modals.date') },
+        { key: 'type', label: this.$t('wallet.table.type') },
+        { key: 'delegated', label: this.$t('wallet.table.delegated') },
       ];
     },
     columnsStyle() {
@@ -298,12 +298,14 @@ export default {
 <style scoped lang="scss">
 .delegations {
   overflow: auto;
-
+  @include shadow;
   &__table {
     width: 1180px;
   }
 
   &__title {
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
     background: $white;
     padding: 12px 10px;
     font-size: 16px;

@@ -132,7 +132,6 @@
         <div class="wallet__table-wrapper">
           <div class="wallet__switch-table">
             <base-btn
-              v-if="!$options.IS_PROD"
               data-selector="SWITCH-ALL"
               :mode="getSwitchButtonMode($options.WalletTables.TXS)"
               @click="selectedWalletTable = $options.WalletTables.TXS"
@@ -140,7 +139,6 @@
               {{ $t('meta.allTransactions') }}
             </base-btn>
             <base-btn
-              v-if="!$options.IS_PROD"
               data-selector="SWITCH-COLLATERAL"
               :mode="getSwitchButtonMode($options.WalletTables.DELEGATIONS)"
               @click="selectedWalletTable = $options.WalletTables.DELEGATIONS"
@@ -166,7 +164,7 @@
               :total-pages="totalPages"
             />
           </div>
-          <div v-show="!$options.IS_PROD && selectedWalletTable === $options.WalletTables.DELEGATIONS">
+          <div v-show="selectedWalletTable === $options.WalletTables.DELEGATIONS">
             <DelegationsTable />
           </div>
         </div>
@@ -190,7 +188,6 @@ import {
 } from '~/utils/enums';
 import { getStyledAmount } from '~/utils/wallet';
 import { error, success } from '~/utils/success-error';
-import { IS_PROD } from '~/utils/addresses';
 import DelegationsTable from '~/components/app/Pages/Wallet/DelegationsTable';
 
 export default {
@@ -200,7 +197,6 @@ export default {
   TokenSymbols,
   Chains,
   WalletTables,
-  IS_PROD,
   data() {
     return {
       cardClosed: false,
