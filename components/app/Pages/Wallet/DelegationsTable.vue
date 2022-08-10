@@ -10,29 +10,56 @@
       thead-class="table__header"
       :responsive="true"
       tbody-tr-class="table__row"
+      class="delegations__table"
     >
       <template #table-caption>
         <span class="delegations__title">Delegation</span>
       </template>
       <template #cell(username)="el">
-        <img
-          :src="el.item.avatar || $options.images.AVATAR_EMPTY"
-          alt=""
-          class="avatar"
-          @click="openInvestorProfile(el.item.id)"
-        >
-        <span
-          class="table__grey link"
-          @click="openInvestorProfile(el.item.id)"
-        >
-          {{ el.item.username }}
-        </span>
+        <div class="delegations__user">
+          <img
+            :src="el.item.avatar || $options.images.AVATAR_EMPTY"
+            alt=""
+            class="avatar"
+            @click="openInvestorProfile(el.item.id)"
+          >
+          <span
+            class="table__grey link"
+            @click="openInvestorProfile(el.item.id)"
+          >
+            {{ el.item.username }}
+          </span>
+        </div>
       </template>
       <template #cell(address)="el">
         <span>
-          {{ CutTxn(el.item.address) }}
+          {{ CutTxn(el.item.address, 6, 4) }}
           <button-copy :copy-value="el.item.address" />
         </span>
+      </template>
+      <template #cell(votingPower)="el">
+        <span>{{ el.item.votingPower }} WQT</span>
+      </template>
+      <template #cell(delegated)="el">
+        <span>{{ delegatedToUser?.id === el.item.id ? `${frozenBalance} WQT` : '' }}</span>
+      </template>
+
+      <template #cell(actions)="el">
+        <div class="delegations__actions">
+          <base-btn
+            v-if="delegatedToUser && delegatedToUser.id === el.item.id"
+            mode="lightRed"
+            @click="handleUndelegate(el.index)"
+          >
+            Undelegate
+          </base-btn>
+          <base-btn
+            mode="lightBlue"
+            @click="handleDelegate(el.index)"
+          >
+            Add power
+          </base-btn>
+        </div>
       </template>
 
       <template #cell(details)="el">
@@ -113,7 +140,11 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import { images } from '~/utils/images';
-import { ExplorerUrl, Path, TokenSymbols } from '~/utils/enums';
+import {
+  DelegateMode, ExplorerUrl, Path, TokenSymbols,
+} from '~/utils/enums';
+import modals from '~/store/modals/modals';
+import { getStyledAmount } from '~/utils/wallet';
 
 const MAIN_LIMIT = 10;
 const SUB_LIMIT = 5;
@@ -138,6 +169,8 @@ export default {
   computed: {
     ...mapGetters({
       userAddress: 'user/getUserWalletAddress',
+      delegatedToUser: 'investors/getDelegatedToUser',
+      frozenBalance: 'user/getFrozenBalance',
     }),
     fields() {
       return [
@@ -145,7 +178,8 @@ export default {
         { key: 'address', label: 'Address', sortable: false },
         { key: 'votingPower', label: 'Voting power', sortable: false },
         { key: 'delegated', label: 'Delegated', sortable: false },
-        { key: 'details', label: 'details', sortable: false },
+        { key: 'actions', label: '', sortable: false },
+        { key: 'details', label: '', sortable: false },
       ];
     },
     subFields() {
@@ -169,9 +203,35 @@ export default {
     },
   },
   async mounted() {
+    await this.$store.dispatch('wallet/getDelegates');
     await this.loadPage();
   },
   methods: {
+    async handleDelegate(index) {
+      this.ShowModal({
+        key: modals.delegate,
+        delegateMode: DelegateMode.INVESTORS,
+        investorAddress: this.items[index].addressHex,
+        callback: async () => {
+          this.page = 1;
+          await Promise.all([
+            this.loadPage(),
+            this.$store.dispatch('wallet/updateFrozenBalance'),
+            this.$store.dispatch('wallet/getDelegates'),
+          ]);
+        },
+      });
+    },
+    async handleUndelegate(index) {
+      this.ShowModal({
+        key: modals.undelegate,
+        delegateMode: DelegateMode.INVESTORS,
+        callback: async () => await Promise.all([
+          this.$store.dispatch('wallet/getDelegates'),
+          this.$store.dispatch('wallet/updateFrozenBalance'),
+        ]),
+      });
+    },
     openInvestorProfile(id) {
       this.$router.push(`${Path.INVESTORS}/${id}`);
     },
@@ -181,15 +241,18 @@ export default {
     getPagesSubCount(count) {
       return Math.ceil(count / SUB_LIMIT);
     },
-    updateItems() {
-      this.items = this.delegates.map((item, i) => {
+    async updateItems() {
+      const addresses = [];
+      this.items = this.delegates.map((item) => {
         const { delegateeWallet } = item;
+        addresses.push(delegateeWallet.address);
         return {
           id: delegateeWallet.user.id,
           avatar: delegateeWallet.user.avatar?.url,
           username: this.UserName(delegateeWallet.user.firstName, delegateeWallet.user.lastName),
           address: delegateeWallet.bech32Address,
           addressHex: delegateeWallet.address,
+          votingPower: 0,
 
           _showDetails: false,
           subCount: 0,
@@ -197,6 +260,11 @@ export default {
           subPage: 1,
         };
       });
+      const votes = await this.$store.dispatch('wallet/getVotesByAddresses', addresses);
+      if (votes.ok) {
+        votes.result.forEach((item, i) => { this.items[i].votingPower = getStyledAmount(item); });
+      }
+      await Promise.all(this.items.map((item, i) => this.getUserHistory(item.addressHex, i)));
     },
     async loadPage() {
       const { delegates, count } = await this.$store.dispatch('investors/getHistory', {
@@ -205,9 +273,7 @@ export default {
       });
       this.delegates = delegates;
       this.delegatesCount = count;
-      this.updateItems();
-
-      await Promise.all(delegates.map((item, i) => this.getUserHistory(item.addressHex, i)));
+      await this.updateItems();
     },
     async getUserHistory(delegatee, index) {
       const { votes, count } = await this.$store.dispatch('investors/getVotes', {
@@ -219,10 +285,9 @@ export default {
       this.items[index].subCount = count;
       this.items[index].subItems = votes.map((item) => ({
         hash: item.transactionHash,
-        date: item.timestamp,
-        type: 'delegate',
-        delegated: new BigNumber(item.newBalance).minus(item.previousBalance).shiftedBy(-18).toFixed(4)
-          .toString() + TokenSymbols.WQT,
+        date: new Date(item.delegateTimestamp * 1000),
+        type: item.type === 'delegate' ? this.$t('modals.delegate') : this.$t('modals.undelegate'),
+        delegated: `${new BigNumber(item.delegated).shiftedBy(-18).decimalPlaces(4).toString()}  ${TokenSymbols.WQT}`,
       }));
     },
   },
@@ -232,12 +297,31 @@ export default {
 
 <style scoped lang="scss">
 .delegations {
+  overflow: auto;
+
+  &__table {
+    width: 1180px;
+  }
+
   &__title {
     background: $white;
     padding: 12px 10px;
     font-size: 16px;
     width: 100%;
     line-height: 130%;
+  }
+
+  &__actions {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  &__user {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    grid-gap: 10px;
+    margin-right: 5px;
   }
 
   &__pager {
@@ -262,12 +346,19 @@ export default {
 
 .avatar {
    @include avatar;
-   margin-right: 10px;
    cursor: pointer;
 }
 
 .sub-table {
   border: none !important;
+
+  & > div {
+    padding: 0 !important;
+  }
+
+  .row {
+    margin: 0 0 10px 0 !important;
+  }
 
   &__header {
     margin-left: 0 !important;
@@ -277,10 +368,6 @@ export default {
     width: 100%;
     height: 41px;
     color: $blue;
-  }
-
-  &__row {
-
   }
 
   &__pager {
@@ -293,6 +380,7 @@ export default {
   cursor: pointer;
   color: $black800;
   text-decoration: none;
+  white-space: nowrap;
   &:hover {
     color: $blue;
   }
