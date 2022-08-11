@@ -7,7 +7,7 @@ export default {
     try {
       const {
         result: {
-          access, refresh, social, userStatus,
+          access, refresh, social, userStatus, address,
         },
       } = await this.$axios.$post('/v1/auth/login', {
         email,
@@ -22,7 +22,7 @@ export default {
       });
 
       return success({
-        access, refresh, social, userStatus,
+        access, refresh, social, userStatus, address,
       });
     } catch (e) {
       console.error('user/signIn', e);

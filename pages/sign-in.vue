@@ -22,7 +22,7 @@
       <form
         class="auth__fields"
         action=""
-        @submit.prevent="handleSubmit(signIn)"
+        @submit.prevent="handleSubmit(() => { signIn(model, isRememberMeSelected) })"
       >
         <base-field
           v-model="model.email"
@@ -69,7 +69,7 @@
           <div
             class="auth__text auth__text_link"
             data-selector="ACTION-BTN-FORGOT-PASSWORD"
-            @click="showRestoreModal()"
+            @click="showRestoreModal"
           >
             {{ $t('signIn.forgot') }}
           </div>
@@ -308,13 +308,13 @@ export default {
       }
       await this.$router.push(Path.PROPOSALS);
     },
-    async signIn() {
+    async signIn(model, isRememberMeSelected) {
       if (this.isLoading) return;
       this.SetLoader(true);
       this.model.email = this.model.email.trim();
       const res = await this.$store.dispatch('user/signIn', {
-        ...this.model,
-        isRememberMeSelected: this.isRememberMeSelected,
+        ...model,
+        isRememberMeSelected,
       });
       if (!res.ok) {
         this.SetLoader(false);
@@ -323,7 +323,7 @@ export default {
       }
       const { result: { userStatus, address, totpIsActive } } = res;
       this.userStatus = userStatus;
-      this.userWalletAddress = address ? address.toLowerCase() : '';
+      this.userWalletAddress = address?.toLowerCase();
       if (totpIsActive) {
         this.SetLoader(false);
         await this.ShowModal({
@@ -335,6 +335,7 @@ export default {
       }
     },
     async nextStepAction() {
+      this.CloseModal(); // for modal sign in
       const confirmToken = sessionStorage.getItem('confirmToken');
       // Unconfirmed account w/o confirm token
       if (this.userStatus === UserStatuses.Unconfirmed && !confirmToken) {
@@ -466,12 +467,11 @@ export default {
     showSignWorkQuest() {
       this.ShowModal({
         key: modals.signWorkQuest,
+        submitMethod: (model, isRememberMeSelected) => this.signIn(model, isRememberMeSelected),
       });
     },
     showRestoreModal() {
-      this.ShowModal({
-        key: modals.restore,
-      });
+      this.ShowModal({ key: modals.restore });
     },
     async resendLetter() {
       this.model.email = this.model.email.trim();
