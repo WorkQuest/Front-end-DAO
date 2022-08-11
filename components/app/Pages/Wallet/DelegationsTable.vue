@@ -160,10 +160,6 @@ export default {
 
       // Main table items
       items: [],
-
-      // For selected user
-      votes: [],
-      votesCount: 0,
     };
   },
   computed: {
