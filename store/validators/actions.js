@@ -123,7 +123,8 @@ export default {
         headers: { 'Content-Type': 'application/json' },
       });
     } catch (e) {
-      return error(e?.response?.data?.code, e?.response?.data?.message);
+      console.error('validators/simulate', e);
+      return error(e?.code, e?.message);
     }
   },
 };

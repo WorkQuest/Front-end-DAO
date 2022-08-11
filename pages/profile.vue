@@ -103,10 +103,10 @@
               data-selector="BASE-INPUT-FIELD-ADDRESS"
               :name="$t('modals.addressField')"
               mode-error="small"
-              :rules="isProfileEdit ? 'required' : ''"
+              :rules="isProfileEdit ? {required: true, geo_is_address: {geoCode} } : ''"
               class="profile-cont__field"
               @focus="isGeoInputOnFocus = true"
-              @input="getPositionData"
+              @input="debouncedAddressSearch(localUserData.additionalInfo.address)"
             >
               <template v-slot:left>
                 <span class="icon icon__input icon-location" />
@@ -290,6 +290,7 @@ import { GeoCode } from 'geo-coder';
 import modals from '~/store/modals/modals';
 import { UserRole, SumSubStatuses } from '~/utils/enums';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
+import debounce from '~/utils/debounce';
 
 export default {
   name: 'Settings',
@@ -330,6 +331,7 @@ export default {
           codeRegion: null,
         },
       },
+      debouncedAddressSearch: null,
     };
   },
   computed: {
@@ -385,6 +387,7 @@ export default {
   beforeMount() {
     this.isVerified = !!this.userData.statusKYC;
     this.setCurrData();
+    this.debouncedAddressSearch = debounce(this.getPositionData, 300);
   },
   methods: {
     hideAddressSelector() {
@@ -406,9 +409,9 @@ export default {
         localUserData, firstName, lastName, userInstagram, userFacebook, userLinkedin, userTwitter,
       } = this;
       this.localUserData.additionalInfo.address = this.userData?.locationPlaceName;
-      this.phone.main = localUserData.phone || localUserData.tempPhone || { fullPhone: null, codeRegion: 'RU' };
+      this.phone.main = localUserData.phone || localUserData.tempPhone || { fullPhone: null, codeRegion: 'US' };
 
-      this.phone.second = localUserData.additionalInfo.secondMobileNumber || { fullPhone: null, codeRegion: 'RU' };
+      this.phone.second = localUserData.additionalInfo.secondMobileNumber || { fullPhone: null, codeRegion: 'US' };
 
       this.socialInputs = [{
         key: 'instagram',
