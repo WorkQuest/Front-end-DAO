@@ -79,6 +79,7 @@ export default {
       isShowMnemonic: false,
       mnemonic: '',
       mnemonicInputType: 'password',
+      tryLimit: 5,
     };
   },
   computed: {
@@ -111,23 +112,12 @@ export default {
       return;
     }
     // Try to find mnemonic in storage by user wallet address
-    // Checking session storage
-    const session = JSON.parse(sessionStorage.getItem('mnemonic'));
-    let mnemonic = null;
-    if (session) {
-      mnemonic = session[this.userWalletAddress];
-      if (mnemonic) {
-        this.toDecrypt = mnemonic;
-        return;
-      }
-    }
-    // Checking local storage
-    const storage = JSON.parse(localStorage.getItem('mnemonic'));
+    const storage = JSON.parse(localStorage.getItem('wal'));
     if (!storage) {
       this.disconnect();
       return;
     }
-    mnemonic = storage[this.userWalletAddress];
+    const mnemonic = storage[this.userWalletAddress];
     if (!mnemonic) {
       this.disconnect();
       return;
@@ -143,7 +133,7 @@ export default {
     async checkPassword() {
       const checked = await this.$store.dispatch('wallet/checkPassword', this.password);
       if (!checked) {
-        if (this.counter >= 5) {
+        if (this.counter >= this.tryLimit) {
           this.ShowToast(this.$t('messages.attemptsExceeded'));
           this.disconnect(false);
         } else this.ShowToast(this.$t('messages.invalidPassword'));
@@ -158,12 +148,12 @@ export default {
         return;
       }
 
-      const checked = this.checkPassword();
+      const checked = await this.checkPassword();
+      if (!checked) return;
+
       if (this.isOnlyConfirm) {
-        if (checked) {
-          setCipherKey(this.password);
-          this.allowAccess();
-        }
+        setCipherKey(this.password);
+        this.allowAccess();
         return;
       }
 
@@ -176,12 +166,14 @@ export default {
       }
     },
     handleImport() {
-      sessionStorage.setItem('mnemonic', JSON.stringify({
-        ...JSON.parse(sessionStorage.getItem('mnemonic')),
-        [this.userWalletAddress]: this.mnemonic,
-      }));
-      if (connectWithMnemonic(this.userWalletAddress)) this.allowAccess();
-      else this.ShowToast(this.$t('messages.mnemonic'));
+      if (connectWithMnemonic(this.mnemonic, this.userWalletAddress)) this.allowAccess();
+      else {
+        this.ShowToast(this.$t('messages.mnemonic'));
+        if (this.counter >= this.tryLimit) {
+          this.disconnect(true);
+        }
+        this.counter += 1;
+      }
     },
     disconnect(showMnemonicError = true) {
       if (showMnemonicError) this.ShowToast(this.$t('messages.loginWithSecret'));

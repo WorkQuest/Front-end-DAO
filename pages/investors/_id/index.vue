@@ -235,14 +235,15 @@ export default {
       return this.delegatedToUser && this.investorAddress === this.delegatedToUser?.wallet?.address;
     },
     mainDataArr() {
-      return [
-        { key: 'firstName', icon: 'icon-user', isVisible: true },
-        { key: 'lastName', icon: 'icon-user', isVisible: true },
-        { key: 'location', icon: 'icon-location', isVisible: true },
-        { key: 'email', icon: 'icon-mail', isVisible: true },
-        { key: 'phone', icon: 'icon-phone', isVisible: true },
-        { key: 'secondPhone', icon: 'icon-phone', isVisible: this.investor.role === UserRole.EMPLOYER },
+      const fields = [
+        { key: 'firstName', icon: 'icon-user' },
+        { key: 'lastName', icon: 'icon-user' },
+        { key: 'location', icon: 'icon-location' },
+        { key: 'email', icon: 'icon-mail' },
+        { key: 'phone', icon: 'icon-phone' },
       ];
+      if (this.investor.role === UserRole.EMPLOYER) fields.push({ key: 'secondPhone', icon: 'icon-phone' });
+      return fields;
     },
     socialInputsArr() {
       return [

@@ -1,35 +1,40 @@
 import { success, error } from '~/utils/success-error';
-import { connectWithMnemonic } from '~/utils/wallet';
 import { accessLifetime } from '~/utils/constants/cookiesLifetime';
 import { Path, UserStatuses } from '~/utils/enums';
 
 export default {
-  async signIn({ commit }, payload) {
+  async signIn({ commit }, { email, password, isRememberMeSelected }) {
     try {
-      const { email, password, isRememberMeSelected } = payload;
-      const response = await this.$axios.$post('/v1/auth/login', {
+      const {
+        result: {
+          access, refresh, social, userStatus, address,
+        },
+      } = await this.$axios.$post('/v1/auth/login', {
         email,
         password,
       });
-      const {
-        access, refresh, social, userStatus,
-      } = response.result;
+
       commit('setTokens', {
         refresh: isRememberMeSelected ? refresh : null,
         access,
         social,
         userStatus,
       });
-      return response;
+
+      return success({
+        access, refresh, social, userStatus, address,
+      });
     } catch (e) {
-      return error(e?.response?.data?.code, e?.response?.data?.msg);
+      console.error('user/signIn', e);
+      return error(e.code, e.msg);
     }
   },
   async registerWallet({ _ }, payload) {
     try {
       return await this.$axios.$post('/v1/auth/register/wallet', payload);
     } catch (e) {
-      return error(e.response.data.code, e.response.data.msg);
+      console.error('user/registerWallet', e);
+      return error(e.code, e.msg);
     }
   },
   async signUp({ commit }, payload) {
@@ -71,7 +76,6 @@ export default {
       const response = await this.$axios.$get('/v1/profile/me');
       const { result } = response;
       commit('setUserData', result);
-      if (result.wallet?.address) connectWithMnemonic(result.wallet.address);
       return response;
     } catch (e) {
       console.error(e);
@@ -172,12 +176,8 @@ export default {
       commit('setTwoFAStatus', true);
       return response;
     } catch (e) {
-      return {
-        ok: e.response.data.ok,
-        code: e.response.data.code,
-        msg: e.response.data.msg,
-        data: e.response.data.data,
-      };
+      console.error('user/confirmEnable2FA', e);
+      return error(e.code, e.msg, e.data);
     }
   },
   async disable2FA({ commit }, payload) {
@@ -187,12 +187,8 @@ export default {
       commit('setTwoFAStatus', false);
       return response;
     } catch (e) {
-      return {
-        ok: e.response.data.ok,
-        code: e.response.data.code,
-        msg: e.response.data.msg,
-        data: e.response.data.data,
-      };
+      console.error('user/disable2FA', e);
+      return error(e.code, e.msg, e.data);
     }
   },
   async enable2FA({ commit }, payload) {
@@ -201,12 +197,8 @@ export default {
       commit('setTwoFACode', response.result);
       return response;
     } catch (e) {
-      return {
-        ok: e.response.data.ok,
-        code: e.response.data.code,
-        msg: e.response.data.msg,
-        data: e.response.data.data,
-      };
+      console.error('user/enable2FA', e);
+      return error(e.code, e.msg, e.data);
     }
   },
   async validateTOTP({ _ }, payload) {

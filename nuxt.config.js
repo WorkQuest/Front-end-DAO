@@ -70,6 +70,7 @@ export default {
     babel: {
       compact: false,
     },
+    postcss: null,
   },
   axios: {
     baseURL: ENV.BASE_URL,
