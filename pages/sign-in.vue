@@ -241,7 +241,7 @@ export default {
       });
     }
     if (!this.addressAssigned && !this.$cookies.get('access') && !this.$cookies.get('userStatus')) {
-      this.$store.dispatch('user/logout');
+      this.$store.dispatch('user/logout', false);
     }
   },
   methods: {
@@ -318,7 +318,6 @@ export default {
       });
       if (!res.ok) {
         this.SetLoader(false);
-        this.ShowToast(this.$t('signIn.enterEmail'));
         return;
       }
       const { result: { userStatus, address, totpIsActive } } = res;
@@ -476,17 +475,20 @@ export default {
     async resendLetter() {
       this.model.email = this.model.email.trim();
       const { email, password } = this.model;
+
       if (!email || !password) {
-        await this.$store.dispatch('main/showToast', {
-          text: this.$t('signIn.enterEmail'),
-        });
+        this.ShowToast(this.$t('signIn.enterEmail'));
         return;
       }
-      if (this.$cookies.get('access')) {
-        await this.$store.dispatch('user/resendEmail', { email });
-        this.ShowToast(this.$t('registration.emailConfirmNewLetter'), this.$t('registration.emailConfirmTitle'));
-        this.startTimer();
+
+      if (!this.$cookies.get('access')) {
+        await this.$store.dispatch('user/signIn', { email, password });
+        return;
       }
+
+      await this.$store.dispatch('user/resendEmail', { email });
+      this.ShowToast(this.$t('registration.emailConfirmNewLetter'), this.$t('registration.emailConfirmTitle'));
+      this.startTimer();
     },
     startTimer() {
       if (!this.isStartedTimer) {

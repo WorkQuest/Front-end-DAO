@@ -32,7 +32,6 @@ export default {
   logOut(state) {
     this.$cookies.remove('access');
     this.$cookies.remove('refresh');
-    this.$cookies.remove('status');
     this.$cookies.remove('userStatus');
     this.$cookies.remove('role');
     this.$cookies.remove('userLogin');
