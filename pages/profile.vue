@@ -103,7 +103,7 @@
               data-selector="BASE-INPUT-FIELD-ADDRESS"
               :name="$t('modals.addressField')"
               mode-error="small"
-              :rules="isProfileEdit ? {required: true, geo_is_address: {geoCode} } : ''"
+              :rules="isProfileEdit ? { required: true, geo_is_address: { addresses: addressesBuffer } } : ''"
               class="profile-cont__field"
               @focus="isGeoInputOnFocus = true"
               @input="debouncedAddressSearch(localUserData.additionalInfo.address)"
@@ -308,6 +308,7 @@ export default {
       isPositionSearch: false,
       isGeoInputOnFocus: false,
       addresses: [],
+      addressesBuffer: [],
       geoCode: null,
       delay: 0,
       sms: false,
@@ -388,6 +389,9 @@ export default {
     this.isVerified = !!this.userData.statusKYC;
     this.setCurrData();
     this.debouncedAddressSearch = debounce(this.getPositionData, 300);
+  },
+  mounted() {
+    this.geoCode = new GeoCode('google', { key: process.env.GMAPKEY });
   },
   methods: {
     hideAddressSelector() {
@@ -477,22 +481,17 @@ export default {
     },
     getPositionData(address) {
       this.addresses = [];
+      this.addressesBuffer = [];
       if (!address) {
         this.localUserData.additionalInfo.address = null;
         this.localUserData.location = null;
         return;
       }
-
-      if (!this.geoCode) this.geoCode = new GeoCode('google', { key: process.env.GMAPKEY });
-
-      const { geoCode } = this;
-
       this.isPositionSearch = true;
-
       this.setDelay(async () => {
         try {
-          const response = await geoCode.geolookup(address);
-          this.addresses = JSON.parse(JSON.stringify(response));
+          this.addresses = await this.geoCode.geolookup(address);
+          this.addressesBuffer = this.addresses;
           this.isPositionSearch = false;
         } catch (e) {
           console.log(e);
