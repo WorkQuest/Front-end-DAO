@@ -537,6 +537,7 @@
   },
   "wallet": {
     "addVotes": "Add votes",
+    "addPower": "Add power",
     "success": "Success",
     "failed": "Failed",
     "frozen": "Frozen balance",
@@ -561,7 +562,9 @@
       "transferred": "Amount",
       "value": "Quantity",
       "empty": "Transactions list is empty",
-      "trxFee": "Transaction Fee"
+      "trxFee": "Transaction Fee",
+      "type": "Type",
+      "delegated": "Delegated"
     },
     "buyWQT": {
       "amountOfWQTToReceive": "Amount of WQT to receive",
