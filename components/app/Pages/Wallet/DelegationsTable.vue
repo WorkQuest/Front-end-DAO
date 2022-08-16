@@ -274,7 +274,7 @@ export default {
     async getUserHistory(delegatee, index) {
       const { votes, count } = await this.$store.dispatch('investors/getVotes', {
         limit: SUB_LIMIT,
-        offset: Math.ceil(this.items[index].subPage - 1) * SUB_LIMIT,
+        offset: (this.items[index].subPage - 1) * SUB_LIMIT,
         delegatee,
         delegator: this.userAddress,
       });
