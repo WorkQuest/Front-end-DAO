@@ -392,6 +392,7 @@ export default {
   },
   mounted() {
     this.geoCode = new GeoCode('google', { key: process.env.GMAPKEY });
+    this.getPositionData(this.localUserData.additionalInfo.address);
   },
   methods: {
     hideAddressSelector() {
