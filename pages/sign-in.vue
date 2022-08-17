@@ -158,7 +158,7 @@
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
 import {
-  createWallet, decryptStringWitheKey, encryptStringWithKey, initWallet, setCipherKey,
+  createWallet, decryptStringWithKey, encryptStringWithKey, initWallet, setCipherKey,
 } from '~/utils/wallet';
 import CreateWallet from '~/components/ui/CreateWallet';
 import {
@@ -374,20 +374,21 @@ export default {
             sessionStorage.setItem('resend-timer', JSON.stringify(this.timer));
           }
           this.continueTimer();
-          this.ShowToast(this.$t('login.wrongToken'), this.$t('registration.emailConfirmTitle'));
+          this.ShowToast(this.$t('meta.wrongToken'), this.$t('registration.emailConfirmTitle'));
         }
         this.SetLoader(false);
         return;
       }
 
       // Wallet is not assigned to this account
-      if (!this.userWalletAddress || this.userStatus === UserStatuses.NeedSetRole) {
+      if (!this.userAddress) {
         setCipherKey(this.model.password);
         this.$cookies.set('userLogin', true, { path: Path.ROOT, maxAge: accessLifetime });
         await this.$router.push(Path.ROLE);
         this.SetLoader(false);
         return;
       }
+      this.userWalletAddress = this.userAddress.toLowerCase();
 
       // Wallet assigned
       const storageData = JSON.parse(localStorage.getItem('wal'));
@@ -397,7 +398,7 @@ export default {
         return;
       }
 
-      const key = this.userWalletAddress.toLowerCase();
+      const key = this.userAddress.toLowerCase();
       const storageMnemonic = storageData ? storageData[key] : null;
       if (!storageMnemonic) {
         this.step = WalletState.ImportMnemonic;
@@ -405,7 +406,7 @@ export default {
         return;
       }
       if (storageMnemonic) {
-        const mnemonic = decryptStringWitheKey(storageMnemonic, this.model.password);
+        const mnemonic = decryptStringWithKey(storageMnemonic, this.model.password);
         const wallet = createWallet(mnemonic);
         if (wallet?.address?.toLowerCase() === this.userWalletAddress) {
           this.saveToStorage(wallet);
@@ -416,8 +417,8 @@ export default {
       }
 
       // Storage invalid mnemonics
-      this.ShowToast(this.$t('messages.mnemonic'), this.$t('modals.error'));
-      this.SetLoader(false);
+      this.ShowToast(this.$t('messages.mnemonic'), this.$t('toasts.error'));
+      this.step = WalletState.ImportMnemonic;
     },
     async assignWallet(wallet) {
       const res = await this.$store.dispatch('user/registerWallet', {

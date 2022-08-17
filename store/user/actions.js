@@ -4,17 +4,20 @@ import { Path, UserStatuses } from '~/utils/enums';
 import { disconnect } from '~/utils/wallet';
 
 export default {
-  async signIn({ commit, dispatch, state }, payload) {
+  async signIn({ commit, dispatch, state }, { params, isRemember }) {
     try {
-      const { params, isRemember } = payload;
       const response = await this.$axios.$post('/v1/auth/login', params);
+
+      const {
+        access, refresh, userStatus, totpIsActive,
+      } = response.result;
+
       commit('setTokens', {
-        access: response.result.access,
-        refresh: isRemember ? response.result.refresh : null,
+        access,
+        refresh: isRemember ? refresh : null,
       });
-      if (response.result.userStatus === 1 && !response.result.totpIsActive) {
-        await dispatch('getMainData');
-      }
+
+      if (userStatus === 1 && !totpIsActive) await dispatch('getUserData');
       return response;
     } catch (e) {
       return error();
