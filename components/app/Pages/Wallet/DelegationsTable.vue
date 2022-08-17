@@ -291,6 +291,7 @@ export default {
 <style scoped lang="scss">
 .delegations {
   overflow: auto;
+  border-radius: 6px;
   background: $white;
 
   @include shadow;
