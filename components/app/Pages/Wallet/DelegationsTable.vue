@@ -186,9 +186,6 @@ export default {
         { key: 'delegated', label: this.$t('wallet.table.delegated') },
       ];
     },
-    columnsStyle() {
-      return `grid-template-columns: repeat(${this.fields.length}, 1fr);`;
-    },
     totalPages() {
       return Math.ceil(this.delegatesCount / MAIN_LIMIT);
     },
@@ -294,6 +291,8 @@ export default {
 <style scoped lang="scss">
 .delegations {
   overflow: auto;
+  background: $white;
+
   @include shadow;
   &__table {
     width: 1180px;
@@ -319,7 +318,7 @@ export default {
     display: grid;
     grid-template-columns: 40px 1fr;
     grid-gap: 10px;
-    margin-right: 5px;
+    margin-right: 10px;
   }
 
   &__pager {
@@ -330,6 +329,7 @@ export default {
 .down-btn {
   width: 43px;
   height: 43px;
+  margin-left: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
