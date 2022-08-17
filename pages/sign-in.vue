@@ -308,30 +308,28 @@ export default {
       }
       await this.$router.push(Path.PROPOSALS);
     },
-    async signIn(model, isRememberMeSelected) {
+    async signIn(model, rememberMe) {
       if (this.isLoading) return;
       this.SetLoader(true);
-      this.model.email = this.model.email.trim();
-      const res = await this.$store.dispatch('user/signIn', {
-        ...model,
-        isRememberMeSelected,
+      const { ok, result } = await this.$store.dispatch('user/signIn', {
+        params: model,
+        isRemember: rememberMe,
       });
-      if (!res.ok) {
-        this.SetLoader(false);
-        return;
+      if (ok) {
+        this.$cookies.set('userStatus', result.userStatus, { path: Path.ROOT, maxAge: accessLifetime });
+        this.userStatus = result.userStatus;
+        this.userAddress = result.address;
+        if (result.totpIsActive) {
+          await this.ShowModal({
+            key: modals.securityCheck,
+            isForLogin: true,
+            actionMethod: async () => await this.nextStepAction(),
+          });
+        } else {
+          await this.nextStepAction();
+        }
       }
-      const { result: { userStatus, address, totpIsActive } } = res;
-      this.userStatus = userStatus;
-      this.userWalletAddress = address?.toLowerCase();
-      if (totpIsActive) {
-        this.SetLoader(false);
-        await this.ShowModal({
-          key: modals.securityCheck,
-          actionMethod: async () => await this.nextStepAction(),
-        });
-      } else {
-        await this.nextStepAction();
-      }
+      this.SetLoader(false);
     },
     async nextStepAction() {
       this.CloseModal(); // for modal sign in

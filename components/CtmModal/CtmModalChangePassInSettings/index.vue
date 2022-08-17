@@ -152,17 +152,18 @@ export default {
         this.errorMsg = true;
         return;
       }
-      const payload = {
-        oldPassword: this.currentPasswordInput.trim(),
-        newPassword: this.newPasswordInput.trim(),
-      };
       this.SetLoader(true);
       try {
-        const response = await this.$store.dispatch('user/editUserPassword', payload);
+        const response = await this.$store.dispatch('user/editUserPassword', {
+          oldPassword: this.currentPasswordInput.trim(),
+          newPassword: this.newPasswordInput.trim(),
+        });
         if (response?.ok) {
           await this.$store.dispatch('user/signIn', {
-            email: this.email,
-            password: this.confirmNewPasswordInput,
+            params: {
+              email: this.email,
+              password: this.confirmNewPasswordInput,
+            },
           });
           this.ShowModal({
             key: modals.status,
