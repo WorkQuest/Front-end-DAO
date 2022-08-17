@@ -31,8 +31,7 @@ export default {
 <style lang="scss" scoped>
 .absence {
   width: 100%;
-  background-color: #f6f8fa;
-  margin-top: 60px;
+  padding: 10px 0;
   display: flex;
   justify-content: center;
   &__content {
@@ -42,7 +41,7 @@ export default {
     grid-gap: 20px;
   }
   &__desc {
-    color: #AAB0B9;
+    color: $black400;
   }
 }
 </style>

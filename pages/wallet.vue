@@ -132,7 +132,6 @@
         <div class="wallet__table-wrapper">
           <div class="wallet__switch-table">
             <base-btn
-              v-if="!$options.IS_PROD"
               data-selector="SWITCH-ALL"
               :mode="getSwitchButtonMode($options.WalletTables.TXS)"
               @click="selectedWalletTable = $options.WalletTables.TXS"
@@ -140,7 +139,6 @@
               {{ $t('meta.allTransactions') }}
             </base-btn>
             <base-btn
-              v-if="!$options.IS_PROD"
               data-selector="SWITCH-COLLATERAL"
               :mode="getSwitchButtonMode($options.WalletTables.DELEGATIONS)"
               @click="selectedWalletTable = $options.WalletTables.DELEGATIONS"
@@ -149,7 +147,7 @@
             </base-btn>
           </div>
           <div
-            v-if="selectedWalletTable === $options.WalletTables.TXS"
+            v-show="selectedWalletTable === $options.WalletTables.TXS"
             class="wallet__txs"
           >
             <div class="wallet__table table">
@@ -159,11 +157,6 @@
                 :items="styledTransactions"
                 :fields="walletTableFields"
               />
-              <empty-data
-                v-if="!totalPages"
-                :description="$tc('wallet.table.empty')"
-                class="table__empty"
-              />
             </div>
             <base-pager
               v-if="totalPages > 1"
@@ -171,8 +164,8 @@
               :total-pages="totalPages"
             />
           </div>
-          <div v-else-if="!$options.IS_PROD">
-            <empty-data />
+          <div v-show="selectedWalletTable === $options.WalletTables.DELEGATIONS">
+            <DelegationsTable />
           </div>
         </div>
       </div>
@@ -184,29 +177,26 @@
 import { mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import modals from '~/store/modals/modals';
-import { ERC20 } from '~/abi/index';
 import {
   TokenSymbolByContract,
   TokenSymbols,
   WalletTables,
   Chains,
   WalletTokensData,
-  AddressType, DelegateMode,
+  AddressType,
+  DelegateMode,
 } from '~/utils/enums';
 import { getStyledAmount } from '~/utils/wallet';
-import EmptyData from '~/components/ui/EmptyData';
 import { error, success } from '~/utils/success-error';
-import { BuyWQTTokensData } from '~/utils/constants/bridge';
-import { IS_PROD } from '~/utils/addresses';
+import DelegationsTable from '~/components/app/Pages/Wallet/DelegationsTable';
 
 export default {
   name: 'Wallet',
   middleware: 'auth',
-  components: { EmptyData },
+  components: { DelegationsTable },
   TokenSymbols,
   Chains,
   WalletTables,
-  IS_PROD,
   data() {
     return {
       cardClosed: false,
@@ -508,11 +498,11 @@ export default {
   }
 
   &__card {
-    box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
+    @include shadow;
   }
 
   &__balance {
-    box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
+    @include shadow;
   }
 
   &__body {
@@ -595,7 +585,7 @@ export default {
     max-width: 100%;
     margin-bottom: 1rem;
     overflow-x: auto;
-    box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
+    @include shadow;
   }
 }
 

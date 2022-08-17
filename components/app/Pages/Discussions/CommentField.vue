@@ -105,6 +105,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
+import { images } from '~/utils/images';
 
 export default {
   name: 'Comment',
@@ -138,7 +139,7 @@ export default {
       if (this.data.author.avatar && this.data.author.avatar.url) {
         return this.data.author.avatar.url;
       }
-      return require('~/assets/img/app/avatar_empty.png');
+      return images.AVATAR_EMPTY;
     },
     showReportBtn() {
       const { id: authorId } = this.data.author;

@@ -1,0 +1,12 @@
+@mixin shadow {
+  box-shadow: -1px 1px 8px 0px #e9edf2;
+}
+
+@mixin avatar {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid $black0;
+}

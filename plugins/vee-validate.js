@@ -261,11 +261,14 @@ extend('min_value', {
 });
 
 extend('geo_is_address', {
-  params: ['geoCode'],
-  validate: async (value, { geoCode }) => {
+  params: ['addresses'],
+  validate: async (value, { addresses }) => {
     try {
-      const address = await geoCode.geolookup(value);
-      return Array.isArray(address) && address.length > 0;
+      if (!value) return false;
+      for (let i = 0; i < addresses?.length; i += 1) {
+        if (value?.toLowerCase() === addresses[i].formatted.toLowerCase()) return true;
+      }
+      return false;
     } catch (e) {
       return false;
     }
