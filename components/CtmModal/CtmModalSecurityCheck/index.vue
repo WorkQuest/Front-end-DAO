@@ -17,12 +17,13 @@
           </div>
           <base-field
             v-model="securityCode"
+            auto-focus
+            :disabled="inProgress"
+            data-selector="SECURITY-CODE"
             :placeholder="$t('securityCheck.placeholder')"
             :name="$tc('securityCheck.title')"
-            data-selector="SECURITY-CODE"
             rules="required|alpha_num|length:6"
             class="content__input"
-            auto-focus
             @enter="handleSubmit(submit)"
           />
           <div class="content__body">
@@ -32,7 +33,7 @@
         <div class="content__buttons buttons">
           <base-btn
             class="buttons__button"
-            :disabled="!validated || !passed || invalid"
+            :disabled="!validated || !passed || invalid || inProgress"
             selector="SEND"
             @click="handleSubmit(submit)"
           >
@@ -53,6 +54,7 @@ export default {
     return {
       securityCode: '',
       errorMsg: false,
+      inProgress: false,
     };
   },
   computed: {
@@ -62,8 +64,13 @@ export default {
   },
   methods: {
     async submit() {
+      if (this.inProgress) return;
+
       const { actionMethod } = this.options;
+      this.inProgress = true;
       const result = await this.$store.dispatch('user/validateTOTP', { token: this.securityCode });
+      this.inProgress = false;
+
       if (result) {
         await this.CloseModal();
         await this.$store.dispatch('user/getUserData');

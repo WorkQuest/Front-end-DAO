@@ -308,18 +308,23 @@ export default {
       }
       await this.$router.push(Path.PROPOSALS);
     },
-    async signIn(model, rememberMe) {
+    async signIn({ email, password }, isRemember) {
       if (this.isLoading) return;
+
       this.SetLoader(true);
-      const { ok, result } = await this.$store.dispatch('user/signIn', {
-        params: model,
-        isRemember: rememberMe,
+      const { ok, result: { userStatus, address, totpIsActive } } = await this.$store.dispatch('user/signIn', {
+        params: {
+          email: email.trim(),
+          password,
+        },
+        isRemember,
       });
+
       if (ok) {
-        this.$cookies.set('userStatus', result.userStatus, { path: Path.ROOT, maxAge: accessLifetime });
-        this.userStatus = result.userStatus;
-        this.userAddress = result.address;
-        if (result.totpIsActive) {
+        this.$cookies.set('userStatus', userStatus, { path: Path.ROOT, maxAge: accessLifetime });
+        this.userStatus = userStatus;
+        this.userAddress = address;
+        if (totpIsActive) {
           await this.ShowModal({
             key: modals.securityCheck,
             isForLogin: true,

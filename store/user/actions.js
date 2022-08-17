@@ -68,13 +68,12 @@ export default {
   },
   async getUserData({ commit }) {
     try {
-      const response = await this.$axios.$get('/v1/profile/me');
-      const { result } = response;
+      const { result } = await this.$axios.$get('/v1/profile/me');
       commit('setUserData', result);
-      return response;
+      return success(result);
     } catch (e) {
-      console.error(e);
-      return false;
+      console.error('user/getUserData', e);
+      return error();
     }
   },
   async getSpecialUserData({ _ }, id) {
