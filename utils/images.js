@@ -16,4 +16,5 @@ export const images = Object.freeze({
 
   TRANSACTION_SEND: require('~/assets/img/ui/transactionSend.svg'),
   CREDIT_CARD: require('~/assets/img/ui/creditCard.svg'),
+  PASSWORD_CHANGED: require('~/assets/img/ui/password_changed.svg'),
 });

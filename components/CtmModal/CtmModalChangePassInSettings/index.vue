@@ -125,6 +125,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
+import { images } from '~/utils/images';
 
 export default {
   name: 'ModalChangePassSetting',
@@ -165,7 +166,7 @@ export default {
           });
           this.ShowModal({
             key: modals.status,
-            img: require('assets/img/ui/password_changed.svg'),
+            img: images.PASSWORD_CHANGED,
             title: this.$t('restore.modal'),
           });
         }
