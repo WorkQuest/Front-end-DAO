@@ -1,32 +1,26 @@
 import { success, error } from '~/utils/success-error';
 import { accessLifetime } from '~/utils/constants/cookiesLifetime';
 import { Path, UserStatuses } from '~/utils/enums';
+import { disconnect } from '~/utils/wallet';
 
 export default {
-  async signIn({ commit }, { email, password, isRememberMeSelected }) {
+  async signIn({ commit, dispatch, state }, { params, isRemember }) {
     try {
+      const response = await this.$axios.$post('/v1/auth/login', params);
+
       const {
-        result: {
-          access, refresh, social, userStatus, address,
-        },
-      } = await this.$axios.$post('/v1/auth/login', {
-        email,
-        password,
-      });
+        access, refresh, userStatus, totpIsActive,
+      } = response.result;
 
       commit('setTokens', {
-        refresh: isRememberMeSelected ? refresh : null,
         access,
-        social,
-        userStatus,
+        refresh: isRemember ? refresh : null,
       });
 
-      return success({
-        access, refresh, social, userStatus, address,
-      });
+      if (userStatus === 1 && !totpIsActive) await dispatch('getUserData');
+      return response;
     } catch (e) {
-      console.error('user/signIn', e);
-      return error(e.code, e.msg);
+      return error();
     }
   },
   async registerWallet({ _ }, payload) {
@@ -55,9 +49,13 @@ export default {
       return error();
     }
   },
-  async confirm({ _ }, payload) {
+  async confirm({ commit }, payload) {
     try {
-      const res = await this.$axios.$post('/v1/auth/confirm-email', payload);
+      commit('setTokens', {
+        access: this.$cookies.get('access'),
+        refresh: this.$cookies.get('refresh'),
+      });
+      await this.$axios.$post('/v1/auth/confirm-email', payload);
       this.$cookies.set('role', payload.role, {
         path: Path.ROOT,
         maxAge: accessLifetime,
@@ -66,20 +64,19 @@ export default {
         path: Path.ROOT,
         maxAge: accessLifetime,
       });
-      return res;
+      return success();
     } catch (e) {
       return error();
     }
   },
   async getUserData({ commit }) {
     try {
-      const response = await this.$axios.$get('/v1/profile/me');
-      const { result } = response;
+      const { result } = await this.$axios.$get('/v1/profile/me');
       commit('setUserData', result);
-      return response;
+      return success(result);
     } catch (e) {
-      console.error(e);
-      return false;
+      console.error('user/getUserData', e);
+      return error();
     }
   },
   async getSpecialUserData({ _ }, id) {
@@ -107,13 +104,23 @@ export default {
       return error();
     }
   },
-  async logout({ commit }) {
+  async logout({ commit, dispatch }, isValidToken = true) {
+    if (isValidToken) await this.$axios.$post('v1/auth/logout');
+    await this.$wsNotifs.disconnect();
+    await dispatch('wallet/unsubscribeWS', null, { root: true });
+    commit('wallet/setIsWalletConnected', false, { root: true });
+    disconnect(); // disconnect wq wallet
     commit('logOut');
   },
   async refreshTokens({ commit }) {
-    const response = await this.$axios.$post('/v1/auth/refresh-tokens');
-    commit('setTokens', response.result);
-    return response;
+    try {
+      const { result } = await this.$axios.$post('/v1/auth/refresh-tokens');
+      commit('setTokens', result);
+      return success(result);
+    } catch (e) {
+      console.error('user/refreshToken', e);
+      return error(e.code, e.msg);
+    }
   },
   async setCurrentPosition({ commit }, payload) {
     commit('setCurrentUserPosition', payload);

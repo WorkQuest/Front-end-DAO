@@ -289,8 +289,8 @@ export default {
       this.ShowModal({
         key: modals.status,
         img: require('~/assets/img/ui/questAgreed.svg'),
-        title: this.$t('modals.2FA.status'),
-        subtitle: this.$t('modals.2FA.enabled'),
+        title: this.$t('modals.2FAStatus'),
+        subtitle: this.$t('modals.2FAEnabled'),
       });
     },
     validationErrorFields(data) {

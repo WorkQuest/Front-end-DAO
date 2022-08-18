@@ -141,6 +141,9 @@ export default {
       inProgress: false,
     };
   },
+  beforeCreate() {
+    this.$store.dispatch('user/logout', false);
+  },
   methods: {
     async signUp() {
       this.inProgress = true;

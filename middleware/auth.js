@@ -19,7 +19,7 @@ export default async function ({
       store.commit('user/setTokens', payload);
     }
     if (!access || !app.$cookies.get('userLogin')) {
-      await store.dispatch('user/logout');
+      await store.dispatch('user/logout', false);
       return redirect(Path.SIGN_IN);
     }
     if (!store.getters['user/getUserData'].id && +userStatus === UserStatuses.Confirmed) {
@@ -37,8 +37,8 @@ export default async function ({
       if (walletAddress) {
         const sessionKey = sessionStorage.getItem(walletAddress);
         if (sessionKey) {
-          const { decryptStringWitheKey, createWallet, initWallet } = require('~/utils/wallet');
-          const wal = createWallet(decryptStringWitheKey(sessionKey, window.clientInformation.userAgent));
+          const { decryptStringWithKey, createWallet, initWallet } = require('~/utils/wallet');
+          const wal = createWallet(decryptStringWithKey(sessionKey, window.clientInformation.userAgent));
           if (wal?.address?.toLowerCase() === walletAddress) {
             initWallet(wal);
           }
@@ -49,7 +49,7 @@ export default async function ({
     return true;
   } catch (e) {
     console.log(e);
-    await store.dispatch('user/logout');
+    await store.dispatch('user/logout', false);
     return redirect(Path.SIGN_IN);
   }
 }
