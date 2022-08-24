@@ -291,6 +291,7 @@ import modals from '~/store/modals/modals';
 import { UserRole, SumSubStatuses } from '~/utils/enums';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 import debounce from '~/utils/debounce';
+import imageOptimization from '~/plugins/mixins/imageOptimization';
 
 export default {
   name: 'Settings',
@@ -298,6 +299,7 @@ export default {
   directives: {
     ClickOutside,
   },
+  mixins: [imageOptimization],
   data() {
     return {
       updatedPhone: {
@@ -542,6 +544,11 @@ export default {
 
         const reader = new FileReader();
         reader.readAsDataURL(file);
+
+        const fileInput = e.target;
+        await this.OptimizeImage(fileInput, file, 1024, 1024, 0.9);
+        // eslint-disable-next-line prefer-destructuring
+        file = fileInput.files[0];
 
         const result = await this.$store.dispatch('user/getUploadFileLink', { contentType: file.type });
 
