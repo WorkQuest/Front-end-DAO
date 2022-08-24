@@ -384,6 +384,9 @@ export default {
       }
       return phones;
     },
+    isDont2FAToEdit() {
+      return this.userData?.neverEditedProfileFlag;
+    },
   },
   beforeMount() {
     this.isVerified = !!this.userData.statusKYC;
@@ -459,15 +462,35 @@ export default {
       }];
     },
     handleClickEditBtn() {
-      if (this.isProfileEdit) this.editUserData();
-      else {
-        this.ShowModal({
-          key: modals.warning,
-          callback: () => {
-            this.isProfileEdit = true;
-          },
-        });
+      if (this.isProfileEdit) {
+        if (!this.isDont2FAToEdit) {
+          if (!this.userData.totpIsActive) {
+            this.ShowModal({
+              key: modals.status,
+              img: require('~/assets/img/ui/warning.svg'),
+              title: this.$t('settings.settingsInfo'),
+              subtitle: this.$t('settings.enable2FA'),
+            });
+            return;
+          }
+          this.ShowModal({
+            key: modals.securityCheck,
+            isOnlySubmit: true,
+            actionMethod: (totpCode) => this.editUserData(totpCode),
+          });
+          return;
+        }
+        this.editUserData();
+        return;
       }
+
+      this.ShowModal({
+        key: modals.warning,
+        text: `${this.$t('modals.warningDescription')}${this.isDont2FAToEdit ? `\n\n${this.$t('modals.2faInfo')}` : ''}`,
+        callback: () => {
+          this.isProfileEdit = true;
+        },
+      });
     },
     handleChangeSocial(val, key) {
       if (!val && key) this.localUserData.additionalInfo.socialNetwork[key] = null;
@@ -556,7 +579,7 @@ export default {
         key: modals.changePassInSettings,
       });
     },
-    async editUserData() {
+    async editUserData(totpCode) {
       const {
         avatarId, firstName, lastName, location, additionalInfo: {
           address, socialNetwork, description, company, CEO, website,
@@ -619,43 +642,51 @@ export default {
       if (userRole === UserRole.EMPLOYER) {
         const { arrayRatingStatusCanRespondToQuest, arrayRatingStatusInMySearch } = this.localUserData.employerProfileVisibilitySetting;
         config = {
-          ...config,
-          profileVisibility: {
-            ratingStatusCanRespondToQuest: arrayRatingStatusCanRespondToQuest,
-            ratingStatusInMySearch: arrayRatingStatusInMySearch,
-          },
-          additionalInfo: {
-            ...additionalInfo,
-            secondMobileNumber,
-            company,
-            CEO,
-            website,
+          totpCode,
+          profile: {
+            ...config,
+            profileVisibility: {
+              ratingStatusCanRespondToQuest: arrayRatingStatusCanRespondToQuest,
+              ratingStatusInMySearch: arrayRatingStatusInMySearch,
+            },
+            additionalInfo: {
+              ...additionalInfo,
+              secondMobileNumber,
+              company,
+              CEO,
+              website,
+            },
           },
         };
       } else {
         const { arrayRatingStatusCanInviteMeOnQuest, arrayRatingStatusInMySearch } = this.localUserData.workerProfileVisibilitySetting;
         config = {
-          ...config,
-          profileVisibility: {
-            ratingStatusCanInviteMeOnQuest: arrayRatingStatusCanInviteMeOnQuest,
-            ratingStatusInMySearch: arrayRatingStatusInMySearch,
-          },
-          priority,
-          workplace,
-          payPeriod,
-          costPerHour,
-          specializationKeys: userSpecializations.map((spec) => spec.path),
-          additionalInfo: {
-            ...additionalInfo,
-            skills: [],
-            educations,
-            workExperiences,
+          totpCode,
+          profile: {
+            ...config,
+            profileVisibility: {
+              ratingStatusCanInviteMeOnQuest: arrayRatingStatusCanInviteMeOnQuest,
+              ratingStatusInMySearch: arrayRatingStatusInMySearch,
+            },
+            priority,
+            workplace,
+            payPeriod,
+            costPerHour,
+            specializationKeys: userSpecializations.map((spec) => spec.path),
+            additionalInfo: {
+              ...additionalInfo,
+              skills: [],
+              educations,
+              workExperiences,
+            },
           },
         };
       }
-      const method = `/v1/${userRole}/profile/edit`;
-      const ok = await this.$store.dispatch('user/editProfile', { config, method });
+
+      this.SetLoader(true);
+      const ok = await this.$store.dispatch('user/editProfile', { config, userRole });
       if (ok) {
+        await this.$store.dispatch('user/getUserData');
         this.isProfileEdit = false;
         this.ShowModal({
           key: modals.status,
@@ -664,6 +695,7 @@ export default {
           subtitle: this.$t('modals.userDataHasBeenSaved'),
         });
       }
+      this.SetLoader(false);
       this.setCurrData();
     },
   },

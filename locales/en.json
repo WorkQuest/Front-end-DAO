@@ -452,7 +452,8 @@
     "votingEnd": "Voting end",
     "votingEndField": "voting End",
     "warning": "Warning",
-    "warningDescription": "Changing information on this platform will lead to changes on the main service",
+    "warningDescription": "Changing information on this platform will lead to changes on the main service.",
+    "2faInfo": "Changing the data will be possible only once, in order to make changes to the profile in the future, you will need to connect 2FA.",
     "recepientAddress": "Recepient address",
     "recepientAddressField": "recepient address",
     "cardNumber": "Card number",
@@ -649,6 +650,8 @@
     }
   },
   "settings": {
+    "settingsInfo": "Settings Info",
+    "enable2FA": "Please, enable TWO-Step authentication",
     "firstNumber": "Main phone number",
     "secondNumber": "Additional phone number",
     "description": "And you are beautiful",
