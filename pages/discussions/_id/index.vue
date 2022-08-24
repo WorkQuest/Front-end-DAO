@@ -232,8 +232,10 @@
 <script>
 
 import { mapGetters } from 'vuex';
+import imageOptimization from '~/plugins/mixins/imageOptimization';
 
 export default {
+  mixins: [imageOptimization],
   data() {
     return {
       accept: 'application/msword, application/pdf, image/jpeg, image/png, image/heic',
@@ -305,6 +307,13 @@ export default {
 
       if (file.type === 'image/heic') {
         file = await this.HEICConvertTo(file, 'image/jpeg');
+      }
+
+      if (type === 'img') {
+        const fileInput = e.target;
+        await this.OptimizeImage(fileInput, file, 1920, 1080, 0.9);
+        // eslint-disable-next-line prefer-destructuring
+        file = fileInput.files[0];
       }
 
       const { size, name } = file;
