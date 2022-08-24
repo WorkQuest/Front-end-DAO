@@ -147,9 +147,9 @@ export default {
   async changeProfile({ commit }, payload) {
     commit('changeProfile', payload);
   },
-  async editProfile({ commit }, { config, method }) {
+  async editProfile({ commit }, { config, userRole }) {
     try {
-      const { result, ok } = await this.$axios.$put(method, config);
+      const { result, ok } = await this.$axios.$put(`/v1/${userRole}/profile/edit`, config);
       commit('setUserData', result);
       return ok;
     } catch (e) {

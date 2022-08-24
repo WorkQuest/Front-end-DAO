@@ -66,7 +66,11 @@ export default {
     async submit() {
       if (this.inProgress) return;
 
-      const { actionMethod } = this.options;
+      const { actionMethod, isOnlySubmit } = this.options;
+      if (isOnlySubmit) {
+        await actionMethod(this.securityCode);
+        return;
+      }
       this.inProgress = true;
       const result = await this.$store.dispatch('user/validateTOTP', { token: this.securityCode });
       this.inProgress = false;
