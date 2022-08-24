@@ -13,7 +13,7 @@
         {{ $t('modals.warning') }}
       </div>
       <div class="warning__desc">
-        {{ $t('modals.warningDescription') }}
+        <span>{{ options.text }}</span>
       </div>
       <div class="warning__action">
         <base-btn
@@ -82,6 +82,7 @@ export default {
     text-align: center;
     color: #4C5767;
     margin-top: 5px;
+    white-space: pre-line;
   }
 
   &__action {
