@@ -94,8 +94,11 @@
 
 <script>
 
+import imageOptimization from '~/plugins/mixins/imageOptimization';
+
 export default {
   name: 'AddDiscussion',
+  mixins: [imageOptimization],
   data() {
     return {
       accept: 'application/msword, application/pdf, image/jpeg, image/png',
@@ -125,13 +128,20 @@ export default {
     checkContentType(file) {
       return this.acceptedTypes.indexOf(file.type) !== -1;
     },
-    handleFileSelected(e) {
+    async handleFileSelected(e) {
       if (!e.target.files[0] || this.docsLimitReached) return;
-      const file = e.target.files[0];
+      let file = e.target.files[0];
       const type = file.type.split('/').shift() === 'image' ? 'img' : 'doc';
 
       if (!this.checkContentType(file)) {
         return;
+      }
+
+      if (type === 'img') {
+        const fileInput = e.target;
+        await this.OptimizeImage(fileInput, file, 1920, 1080, 0.9);
+        // eslint-disable-next-line prefer-destructuring
+        file = fileInput.files[0];
       }
 
       const { size, name } = file;
