@@ -119,9 +119,11 @@ import BigNumber from 'bignumber.js';
 import { WQVoting } from '~/abi/index';
 import modals from '~/store/modals/modals';
 import { TokenSymbols } from '~/utils/enums';
+import imageOptimization from '~/plugins/mixins/imageOptimization';
 
 export default {
   name: 'ModalAddProposal',
+  mixins: [imageOptimization],
   data() {
     return {
       votingTopicInput: '',
@@ -235,6 +237,13 @@ export default {
 
       if (!this.checkContentType(file)) {
         return;
+      }
+
+      if (type === 'img') {
+        const fileInput = e.target;
+        await this.OptimizeImage(fileInput, file, 1920, 1080, 0.9);
+        // eslint-disable-next-line prefer-destructuring
+        file = fileInput.files[0];
       }
 
       const { size, name } = file;
