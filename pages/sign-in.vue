@@ -158,7 +158,7 @@
 import { mapGetters } from 'vuex';
 import modals from '~/store/modals/modals';
 import {
-  createWallet, decryptStringWitheKey, encryptStringWithKey, initWallet, setCipherKey,
+  createWallet, decryptStringWithKey, encryptStringWithKey, initWallet, setCipherKey,
 } from '~/utils/wallet';
 import CreateWallet from '~/components/ui/CreateWallet';
 import {
@@ -241,7 +241,7 @@ export default {
       });
     }
     if (!this.addressAssigned && !this.$cookies.get('access') && !this.$cookies.get('userStatus')) {
-      this.$store.dispatch('user/logout');
+      this.$store.dispatch('user/logout', false);
     }
   },
   methods: {
@@ -280,6 +280,15 @@ export default {
     goStep(step) {
       this.step = step;
     },
+    removeIncorrectStorage() {
+      const storageData = JSON.parse(localStorage.getItem('wal'));
+      const key = this.userWalletAddress.toLowerCase();
+      // remove decrypted incorrect mnemonic in storage
+      if (storageData && storageData[key]) {
+        delete storageData[key];
+        localStorage.setItem('wal', JSON.stringify(storageData));
+      }
+    },
     async redirectUser() {
       this.addressAssigned = true;
       this.$cookies.set('userLogin', true, { path: Path.ROOT, maxAge: accessLifetime });
@@ -308,31 +317,34 @@ export default {
       }
       await this.$router.push(Path.PROPOSALS);
     },
-    async signIn(model, isRememberMeSelected) {
+    async signIn({ email, password }, isRemember) {
       if (this.isLoading) return;
+
       this.SetLoader(true);
-      this.model.email = this.model.email.trim();
-      const res = await this.$store.dispatch('user/signIn', {
-        ...model,
-        isRememberMeSelected,
+      const { ok, result } = await this.$store.dispatch('user/signIn', {
+        params: {
+          email: email.trim(),
+          password,
+        },
+        isRemember,
       });
-      if (!res.ok) {
-        this.SetLoader(false);
-        this.ShowToast(this.$t('signIn.enterEmail'));
-        return;
+
+      if (ok) {
+        const { userStatus, address, totpIsActive } = result;
+        this.$cookies.set('userStatus', userStatus, { path: Path.ROOT, maxAge: accessLifetime });
+        this.userStatus = userStatus;
+        this.userAddress = address;
+        if (totpIsActive) {
+          await this.ShowModal({
+            key: modals.securityCheck,
+            isForLogin: true,
+            actionMethod: async () => await this.nextStepAction(),
+          });
+        } else {
+          await this.nextStepAction();
+        }
       }
-      const { result: { userStatus, address, totpIsActive } } = res;
-      this.userStatus = userStatus;
-      this.userWalletAddress = address?.toLowerCase();
-      if (totpIsActive) {
-        this.SetLoader(false);
-        await this.ShowModal({
-          key: modals.securityCheck,
-          actionMethod: async () => await this.nextStepAction(),
-        });
-      } else {
-        await this.nextStepAction();
-      }
+      this.SetLoader(false);
     },
     async nextStepAction() {
       this.CloseModal(); // for modal sign in
@@ -372,20 +384,21 @@ export default {
             sessionStorage.setItem('resend-timer', JSON.stringify(this.timer));
           }
           this.continueTimer();
-          this.ShowToast(this.$t('login.wrongToken'), this.$t('registration.emailConfirmTitle'));
+          this.ShowToast(this.$t('meta.wrongToken'), this.$t('registration.emailConfirmTitle'));
         }
         this.SetLoader(false);
         return;
       }
 
       // Wallet is not assigned to this account
-      if (!this.userWalletAddress || this.userStatus === UserStatuses.NeedSetRole) {
+      if (!this.userAddress) {
         setCipherKey(this.model.password);
         this.$cookies.set('userLogin', true, { path: Path.ROOT, maxAge: accessLifetime });
         await this.$router.push(Path.ROLE);
         this.SetLoader(false);
         return;
       }
+      this.userWalletAddress = this.userAddress.toLowerCase();
 
       // Wallet assigned
       const storageData = JSON.parse(localStorage.getItem('wal'));
@@ -395,7 +408,7 @@ export default {
         return;
       }
 
-      const key = this.userWalletAddress.toLowerCase();
+      const key = this.userAddress.toLowerCase();
       const storageMnemonic = storageData ? storageData[key] : null;
       if (!storageMnemonic) {
         this.step = WalletState.ImportMnemonic;
@@ -403,9 +416,10 @@ export default {
         return;
       }
       if (storageMnemonic) {
-        const mnemonic = decryptStringWitheKey(storageMnemonic, this.model.password);
+        const mnemonic = decryptStringWithKey(storageMnemonic, this.model.password);
+        if (!mnemonic) this.removeIncorrectStorage();
         const wallet = createWallet(mnemonic);
-        if (wallet?.address?.toLowerCase() === this.userWalletAddress) {
+        if (mnemonic && wallet?.address?.toLowerCase() === this.userWalletAddress) {
           this.saveToStorage(wallet);
           await this.redirectUser();
           this.SetLoader(false);
@@ -414,8 +428,9 @@ export default {
       }
 
       // Storage invalid mnemonics
-      this.ShowToast(this.$t('messages.mnemonic'), this.$t('modals.error'));
-      this.SetLoader(false);
+      this.ShowToast(this.$t('messages.mnemonic'), this.$t('toasts.error'));
+      this.removeIncorrectStorage();
+      this.step = WalletState.ImportMnemonic;
     },
     async assignWallet(wallet) {
       const res = await this.$store.dispatch('user/registerWallet', {
@@ -476,17 +491,20 @@ export default {
     async resendLetter() {
       this.model.email = this.model.email.trim();
       const { email, password } = this.model;
+
       if (!email || !password) {
-        await this.$store.dispatch('main/showToast', {
-          text: this.$t('signIn.enterEmail'),
-        });
+        this.ShowToast(this.$t('signIn.enterEmail'));
         return;
       }
-      if (this.$cookies.get('access')) {
-        await this.$store.dispatch('user/resendEmail', { email });
-        this.ShowToast(this.$t('registration.emailConfirmNewLetter'), this.$t('registration.emailConfirmTitle'));
-        this.startTimer();
+
+      if (!this.$cookies.get('access')) {
+        await this.$store.dispatch('user/signIn', { email, password });
+        return;
       }
+
+      await this.$store.dispatch('user/resendEmail', { email });
+      this.ShowToast(this.$t('registration.emailConfirmNewLetter'), this.$t('registration.emailConfirmTitle'));
+      this.startTimer();
     },
     startTimer() {
       if (!this.isStartedTimer) {

@@ -35,9 +35,22 @@ export const createWallet = (mnemonic) => {
     return false;
   }
 };
-
-export const encryptStringWithKey = (toEncrypt, key) => AES.encrypt(toEncrypt, sha256(key).toString()).toString();
-export const decryptStringWitheKey = (toDecrypt, key) => AES.decrypt(toDecrypt, sha256(key).toString()).toString(enc.Utf8);
+export const encryptStringWithKey = (toEncrypt, key) => {
+  try {
+    return AES.encrypt(toEncrypt, sha256(key).toString()).toString();
+  } catch (e) {
+    console.log('encr', e);
+    return '';
+  }
+};
+export const decryptStringWithKey = (toDecrypt, key) => {
+  try {
+    return AES.decrypt(toDecrypt, sha256(key).toString()).toString(enc.Utf8);
+  } catch (e) {
+    console.log('decr', e);
+    return '';
+  }
+};
 
 let isEthNetwork = false;
 export const ethBoost = 1.1;
@@ -146,7 +159,7 @@ export const connectWallet = (userAddress, userPassword) => {
 
   // Check in storage
   if (storageMnemonic) {
-    const mnemonic = decryptStringWitheKey(storageMnemonic, userPassword);
+    const mnemonic = decryptStringWithKey(storageMnemonic, userPassword);
     const _walletTemp = createWallet(mnemonic);
     if (_walletTemp?.address?.toLowerCase() === userAddress) {
       initWallet(_walletTemp);

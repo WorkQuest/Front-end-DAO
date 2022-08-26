@@ -260,7 +260,7 @@
   },
   "privacy": {
     "title": "Privacy policy",
-    "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus magna fringilla urna, porttitor",
+    "desc": "To complete the registration on the platform, you must carefully read the following documents and agree to the terms of use of the DAO WorkQuest platform.",
     "agree": "I agree with",
     "privacyLink": "Privacy policy",
     "termsLink": "Terms & Conditions",
@@ -452,7 +452,8 @@
     "votingEnd": "Voting end",
     "votingEndField": "voting End",
     "warning": "Warning",
-    "warningDescription": "Changing information on this platform will lead to changes on the main service",
+    "warningDescription": "Changing information on this platform will lead to changes on the main service.",
+    "2faInfo": "Changing the data will be possible only once, in order to make changes to the profile in the future, you will need to connect 2FA.",
     "recepientAddress": "Recepient address",
     "recepientAddressField": "recepient address",
     "cardNumber": "Card number",
@@ -537,6 +538,7 @@
   },
   "wallet": {
     "addVotes": "Add votes",
+    "addPower": "Add power",
     "success": "Success",
     "failed": "Failed",
     "frozen": "Frozen balance",
@@ -561,7 +563,9 @@
       "transferred": "Amount",
       "value": "Quantity",
       "empty": "Transactions list is empty",
-      "trxFee": "Transaction Fee"
+      "trxFee": "Transaction Fee",
+      "type": "Type",
+      "delegated": "Delegated"
     },
     "buyWQT": {
       "amountOfWQTToReceive": "Amount of WQT to receive",
@@ -646,6 +650,8 @@
     }
   },
   "settings": {
+    "settingsInfo": "Settings Info",
+    "enable2FA": "Please, enable TWO-Step authentication",
     "firstNumber": "Main phone number",
     "secondNumber": "Additional phone number",
     "description": "And you are beautiful",

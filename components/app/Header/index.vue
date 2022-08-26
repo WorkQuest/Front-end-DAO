@@ -139,7 +139,7 @@ export default {
   width: 100%;
   height: 124px;
   border-radius: 0 0 50px 50px;
-  box-shadow: -1px 1px 8px 0px rgba(34, 60, 80, 0.2);
+  @include shadow;
   &__container {
     height: 100%;
     max-width: 1000px;

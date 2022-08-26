@@ -1,6 +1,9 @@
 import Connection from '~/plugins/connection';
 import ENV from '~/utils/addresses/index';
 
+/**
+ * @property $wsNotifs - instance of notifications
+ */
 export default async ({ store, $axios }, inject) => {
   const connectionManager = {
     availableConnections: [],
