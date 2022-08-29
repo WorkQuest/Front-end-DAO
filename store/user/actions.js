@@ -226,4 +226,13 @@ export default {
       return false;
     }
   },
+  async passwordSendCode({ commit }, payload) {
+    try {
+      await this.$axios.$post('/v1/restore-password/send-code', payload);
+      return success();
+    } catch (e) {
+      console.error('user/passwordSendCode', e);
+      return error(e.code, e.msg);
+    }
+  },
 };

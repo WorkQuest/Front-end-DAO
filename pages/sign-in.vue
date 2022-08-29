@@ -28,7 +28,7 @@
           v-model="model.email"
           class="auth__input"
           rules="required|email"
-          :name="$t('signUp.email')"
+          :name="$tc('signUp.email')"
           :placeholder="$t('signUp.email')"
           mode="icon"
           autocomplete="username"
@@ -46,7 +46,7 @@
           class="auth__input"
           :placeholder="$t('signUp.password')"
           mode="icon"
-          :name="$t('signUp.password')"
+          :name="$tc('signUp.password')"
           autocomplete="current-password"
           rules="required_if|min:8"
           type="password"
@@ -64,7 +64,7 @@
           <base-checkbox
             v-model="isRememberMeSelected"
             name="remember"
-            :label="$t('signIn.remember')"
+            :label="$tc('signIn.remember')"
           />
           <div
             class="auth__text auth__text_link"
@@ -104,7 +104,7 @@
         <div class="auth__icons">
           <button
             class="auth__btn auth__btn_workQuest"
-            @click="showSignWorkQuest()"
+            @click="showSignWorkQuest"
           >
             <img
               src="~assets/img/app/logo.svg"
