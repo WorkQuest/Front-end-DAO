@@ -7,6 +7,8 @@ import { keccak_256 } from '@noble/hashes/sha3';
 import converter from 'bech32-converting';
 import secp256k1 from 'secp256k1';
 import { sha256 } from 'ethers/lib.esm/utils';
+import BIP32Factory from 'bip32';
+import * as ecc from 'tiny-secp256k1';
 import { error, success } from '~/utils/success-error';
 import { errorCodes } from '~/utils/enums';
 import { ERC20 } from '~/abi/index';
@@ -15,10 +17,7 @@ import { GateGasPrice, OverLimitForTx, ValidatorsGasLimit } from '~/utils/consta
 
 const bip39 = require('bip39');
 
-let bip32Lib;
-const BIP32Factory = require('bip32').default;
-
-import('tiny-secp256k1').then((ecc) => BIP32Factory(ecc)).then((bip32) => { bip32Lib = bip32; });
+const bip32 = BIP32Factory(ecc);
 
 BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN });
 BigNumber.config({ EXPONENTIAL_AT: 60 });
@@ -377,7 +376,7 @@ const fetchCosmosAccount = async (address) => fetch(`${ENV.WQ_PROVIDER}/api/cosm
 
 const getPrivAndPublic = async (mnemonic) => {
   const seed = await bip39.mnemonicToSeed(mnemonic);
-  const node = bip32Lib.fromSeed(seed);
+  const node = bip32.fromSeed(seed);
   const child = node.derivePath(path);
 
   const ECPariPriv = child.privateKey;
